@@ -56,4 +56,7 @@ backend/igeolu/.nb-gradle/
 ### VS Code ###
 backend/igeolu/.vscode/
 
+### key file ###
+backend/igeolu/src/main/resources/application-key.yml
+
 ################
