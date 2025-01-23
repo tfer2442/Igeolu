@@ -6,4 +6,4 @@ COPY ${JAR_FILE} app.jar
 
 # prod 파일 실행 명령어
 # ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
-ENTRYPOINT ["java", "-jar", "/config.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
