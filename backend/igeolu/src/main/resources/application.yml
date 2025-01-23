@@ -1,7 +1,4 @@
 spring:
-  config:
-    import: "application-key.yml"
-
   application:
     name: igeolu
 
@@ -18,3 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  profiles:
+    include:
+      - key
