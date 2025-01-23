@@ -1,0 +1,20 @@
+spring:
+  config:
+    import: "application-key.yml"
+
+  application:
+    name: igeolu
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://43.203.21.142:3306/igeolu?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: igeolu
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
