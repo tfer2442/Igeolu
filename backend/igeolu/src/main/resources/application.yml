@@ -8,5 +8,7 @@ spring:
         - local
       prod:
         - prod
+      dev:
+        - dev
     include:
       - key

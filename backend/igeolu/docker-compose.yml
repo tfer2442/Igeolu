@@ -4,7 +4,7 @@ services:
   spring-app:
     build:
       context: .  # Dockerfile이 위치한 폴더
-      dockerfile: Dockerfile.dev  # Spring Boot Dockerfile 이름
+      dockerfile: Dockerfile.local  # Spring Boot Dockerfile 이름
     restart: always
     ports:
       - "8080:8080"  # Spring Boot 애플리케이션 포트 매핑
@@ -17,12 +17,14 @@ services:
     image: mysql:8.0
     restart: always
     ports:
-      - "12206:3306"
+      - "3300:3306"
     volumes:
       - igeolu-mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: igeolu
-      MYSQL_DATABASE: igeolul
+      MYSQL_DATABASE: igeolu
+      MYSQL_USER: local
+      MYSQL_PASSWORD: local
+      MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Seoul
     command:
       - --character-set-server=utf8mb4
