@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: igeolu
+
+  profiles:
+    group:
+      local:
+        - local
+      prod:
+        - prod
+    include:
+      - key
