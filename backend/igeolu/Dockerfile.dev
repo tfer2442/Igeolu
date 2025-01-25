@@ -1,0 +1,14 @@
+# 1단계: Build stage
+FROM gradle:7.6.0-jdk17 as builder
+WORKDIR /app
+COPY . .
+RUN gradle bootJar --no-daemon
+
+# 2단계: Runtime stage
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+ARG JAR_FILE=/app/build/libs/*.jar
+COPY --from=builder ${JAR_FILE} app.jar
+ENV TZ=Asia/Seoul \
+    LANG=ko_KR.UTF-8
+ENTRYPOINT ["java", "-jar", "app.jar"]
