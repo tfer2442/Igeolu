@@ -12,3 +12,7 @@ spring:
         - dev
     include:
       - key
+
+springdoc:
+  swagger-ui:
+    path: /api/swagger-ui.html
