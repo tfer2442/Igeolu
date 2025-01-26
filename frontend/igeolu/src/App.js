@@ -1,11 +1,16 @@
-import './styles/global.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Chat from './pages/Chat/Chat';
 
-function App() {
+const App = () => {
   return (
-    <div>
-      <h1>Hello, World!</h1>
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={<h1>Home Page</h1>} />
+        <Route path='/chat' element={<Chat />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
