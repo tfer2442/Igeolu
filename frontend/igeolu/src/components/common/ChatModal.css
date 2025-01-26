@@ -1,0 +1,78 @@
+/* src/components/common/ChatModal.css */
+.chat-modal-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end; /* 모달을 오른쪽에 정렬 */
+    align-items: center;
+    z-index: 1050; /* 충분히 높은 값으로 다른 요소 위에 표시 */
+    pointer-events: none;
+}
+
+.chat-modal {
+    background-color: white;
+    width: 390px;
+    height: 690px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px; /* 오른쪽 가장자리로부터 10px 떨어지도록 설정 */ 
+    pointer-events: auto; /* 모달 내에서는 포인터 이벤트 활성화 */
+}
+
+.modal-header {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.close-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.chat-room-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto; /* 내용이 많을 경우 스크롤바 생성 */
+    flex-grow: 1;
+}
+
+.chat-room-item {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.chat-room-item:hover {
+    background-color: #f0f0f0;
+}
+
+.room-details h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    color: #000;
+}
+
+.room-details p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+}
