@@ -5,7 +5,7 @@ function DesktopHome() {
     console.log('로그인 |회원가입');
   };
     return (
-      <div>
+      <div className='desktop-home-page'>
         <DesktopMainPageNav onLoginSigninClick={handleLoginSigninClick} />
 
       </div>

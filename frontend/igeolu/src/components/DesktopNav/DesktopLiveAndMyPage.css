@@ -1,27 +1,27 @@
-.desktop-main-nav {
+.desktop-live-and-my-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width:90%;
+    width: 90%;
     height: 10%;
     margin: 0 auto;
     margin-top: 20px;
 }
-.desktop-main-nav__middle-links {
+.desktop-live-and-my-nav__right {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 400px;
+    gap: 20px;
 }
-.desktop-main-nav__middle-links a {
+.desktop-live-and-my-nav__right-links a{
     text-decoration: none;
     color: black;
     font-size: 16px;
+    margin-left: 10px;
 }
-.desktop-main-nav__middle-links a:hover {
+.desktop-live-and-my-nav__right-links a:hover {
     color: #01ADFF;
 }
-.desktop-main-nav__login-signin-btn {
+.desktop-live-and-my-nav__login-signin-btn {
     border: 1px solid #E2E1E1;
     border-radius: 5px;
     font-size: 16px;
@@ -32,6 +32,6 @@
     width: 150px;
     height: 40px;
 }
-.desktop-main-nav__login-signin-btn:hover {
-   box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+.desktop-live-and-my-nav__login-signin-btn:hover {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 }

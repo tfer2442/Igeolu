@@ -1,0 +1,60 @@
+.desktop-live-page__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90vw;
+    height: 80vh;
+    margin: 10px auto;
+    gap: 20px;
+}
+
+.desktop-live-page__left-content {
+    width: 70%;
+    height: 100%;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.desktop-live-page__left-content__live-video {
+    width: 100%;
+    height: 70%;
+    border: 1px solid #E2E1E1;
+}
+.desktop-live-page__left-content__bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 30%;
+    gap: 40px;
+}
+.desktop-live-page__left-content__bottom-content__ai-checklist {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #01ADFF;
+    border-radius: 5px;
+}
+.desktop-live-page__left-content__bottom-content__live-order-list {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #01ADFF;
+    border-radius: 5px;
+}
+.desktop-live-page__right-content {
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.desktop-live-page__right-content__memo {
+    width: 100%;
+    height: 60%;
+    border: 1px solid #01ADFF;
+    border-radius: 5px;
+}
+.desktop-live-page__right-content__my-cam {
+    width: 100%;
+    height: 40%;
+    border: 1px solid #E2E1E1;
+}
