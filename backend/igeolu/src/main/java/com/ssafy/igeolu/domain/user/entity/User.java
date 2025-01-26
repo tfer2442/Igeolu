@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +38,8 @@ public class User {
 
 	private String username;
 
-	private String role;
+	@Enumerated(EnumType.STRING) // ROLE_MEMBER, ROLE_REALTOR 로 저장
+	private Role role;
 
 	private String profileFilePath;
 
