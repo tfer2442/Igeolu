@@ -6,9 +6,8 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Property {
-    @Id
-    @Column(name = "id")
-    private Integer id;
-
+	@Id
+	@Column(name = "id")
+	private Integer id;
 
 }
