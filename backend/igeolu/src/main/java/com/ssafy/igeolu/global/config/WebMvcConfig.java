@@ -9,7 +9,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins("http://localhost:3000", "https://i12d205.p.ssafy.io", "http://https://i12d205.p.ssafy.io")
+			.allowedOrigins("http://localhost:3000", "https://i12d205.p.ssafy.io", "http://i12d205.p.ssafy.io")
 			.allowCredentials(true)
 			.allowedHeaders("*")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
