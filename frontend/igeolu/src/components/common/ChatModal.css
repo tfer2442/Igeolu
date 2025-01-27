@@ -6,7 +6,7 @@
     bottom: 0;
     display: flex;
     justify-content: flex-end; /* 모달을 오른쪽에 정렬 */
-    align-items: center;
+    align-items: flex-end; /* 하단 정렬 */
     z-index: 1050; /* 충분히 높은 값으로 다른 요소 위에 표시 */
     pointer-events: none;
 }
@@ -14,16 +14,24 @@
 .chat-modal {
     background-color: white;
     width: 390px;
-    height: 690px;
+    min-height: 600px; /* 최소 높이 설정 */
+    height: auto; /* 높이를 자동으로 설정하여 내용에 맞춤 */
+    max-height: calc(100vh - 120px); /* 뷰포트 높이에서 상단 여백을 제외한 최대 높이 설정 */
+    
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
+    margin-bottom: 100px;
     margin-right: 10px; /* 오른쪽 가장자리로부터 10px 떨어지도록 설정 */ 
     pointer-events: auto; /* 모달 내에서는 포인터 이벤트 활성화 */
+    
 }
 
 .modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     padding: 16px;
     background-color: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
