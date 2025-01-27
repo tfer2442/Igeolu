@@ -1,14 +1,22 @@
+// components/common/ChatModal.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import './ChatModal.css';
 
-const ChatModal = ({ chatRooms, onSelectChatRoom, onClose }) => {
+const ChatModal = ({ chatRooms, onSelectChatRoom, onClose, isModalOpen }) => {
   return (
-    <div className="chat-modal-overlay">
-      <div className="chat-modal">
+    <div className={`chat-modal-overlay ${isModalOpen ? 'active' : ''}`} role="button" tabIndex="0" onClick={onClose} onKeyDown={(e) => {
+      if (e.key === 'Escape' || e.key === ' ') {
+        onClose();
+      }
+    }}>
+      <div className={`chat-modal ${isModalOpen ? 'active' : ''}`} role="button" tabIndex="0" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => {
+    if (e.key === 'Escape' || e.key === ' ') {
+      onClose();
+    }
+  }}>
         <header className="modal-header">
           <h3>채팅방 목록</h3>
-          <button className="close-button" onClick={onClose}>❌</button>
         </header>
         <ul className="chat-room-list">
           {chatRooms.map((room, index) => (
@@ -41,6 +49,7 @@ ChatModal.propTypes = {
   chatRooms: PropTypes.array.isRequired,
   onSelectChatRoom: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  isModalOpen: PropTypes.bool.isRequired,
 };
 
 export default ChatModal;

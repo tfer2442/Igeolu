@@ -1,16 +1,15 @@
 // src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home/Home'; // Home 컴포넌트 임포트
-import ChatButton from './components/common/Button/ChatButton'; // ChatButton 컴포넌트 임포트
+import Home from './pages/Home/Home';
+import ChatButton from './components/common/Button/ChatButton';
 import ChatModal from './components/common/ChatModal';
 
 function App() {
-  console.log('페이지 초기화!');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+    setIsModalOpen(!isModalOpen); // 모달 상태 토글
   };
 
   return (
@@ -20,13 +19,13 @@ function App() {
           <Route path='/' element={<Home />} />
         </Routes>
         <ChatButton onClick={toggleModal} />
-        {isModalOpen && (
-          <ChatModal
-            chatRooms={[]}
-            onSelectChatRoom={() => {}}
-            onClose={toggleModal}
-          />
-        )}
+
+        <ChatModal
+          chatRooms={[]}
+          onSelectChatRoom={() => {}}
+          onClose={toggleModal}
+          isModalOpen={isModalOpen} // 상태를 props로 전달
+        />
       </div>
     </Router>
   );
