@@ -4,6 +4,10 @@ spring:
     url: jdbc:mysql://mysql:3306/igeolu?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: local
     password: local
+  data:
+    mongodb:
+      # username = local, password = local, dbname = igeolu
+      uri: mongodb://local:local@localhost:8080/igeolu
 
   jpa:
     show-sql: true

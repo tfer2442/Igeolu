@@ -30,5 +30,21 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
 
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: local
+      MONGO_INITDB_ROOT_PASSWORD: local
+      TZ: Asia/Seoul
+    volumes:
+      - mongodb_data:/data/db # MongoDB 데이터 저장
+      - mongodb_config:/data/configdb # MongoDB 설정 저장
+    ports:
+      - "27017:27017"
+
 volumes:
   igeolu-mysql:  # MySQL 데이터 저장소
+  mongodb_data:
+  mongodb_config:
