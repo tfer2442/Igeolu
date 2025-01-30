@@ -1,19 +1,40 @@
 // src/App.js
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import Home from './pages/Home/Home';
 import ChatButton from './components/common/Button/ChatButton';
 import ChatModal from './components/common/ChatModal';
-import ChatRoom from './components/common/ChatRoom'; // 새로운 채팅방 컴포넌트 임포트
+import ChatRoom from './components/common/ChatRoom';
+import MobileChatList from './pages/Mobile/MobileChatList';
+import MobileChatRoom from './pages/Mobile/MobileChatRoom';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [isLeaving, setIsLeaving] = useState(false); // 애니메이션 상태 추가
+  const [isLeaving, setIsLeaving] = useState(false);
+  const [chatRooms, setChatRooms] = useState([]);
+  const location = useLocation();
+
+  const isMobileChatRoute = location.pathname.startsWith('/m/chat');
+
+  const fetchChatRooms = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/chatList');
+      setChatRooms(response.data);
+    } catch (error) {
+      console.error('채팅방 목록 조회 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen || location.pathname === '/m/chat') {
+      fetchChatRooms();
+    }
+  }, [isModalOpen, location.pathname]);
 
   const toggleModal = () => {
     if (selectedRoom) {
-      // 채팅방이 열려있을 때
       setIsLeaving(true);
       setTimeout(() => {
         setSelectedRoom(null);
@@ -21,7 +42,6 @@ function App() {
         setIsLeaving(false);
       }, 300);
     } else {
-      // 채팅방이 닫혀있을 때
       setIsModalOpen(!isModalOpen);
     }
   };
@@ -36,31 +56,47 @@ function App() {
     setIsModalOpen(true);
   };
 
-  return (
-    <Router>
-      <div className='App'>
-        <Routes>
-          <Route path='/' element={<Home />} />
-        </Routes>
-        <ChatButton onClick={toggleModal} />
-        {!selectedRoom && (
-          <ChatModal
-            chatRooms={[{ name: 'Room 1' }, { name: 'Room 2' }]}
-            onSelectChatRoom={selectRoom}
-            onClose={toggleModal}
-            isModalOpen={isModalOpen}
-          />
-        )}
+  const handleUpdateRooms = (updatedRooms) => {
+    setChatRooms(updatedRooms);
+  };
 
-        {selectedRoom && (
-          <ChatRoom
-            room={selectedRoom}
-            onBack={handleBack}
-            isLeaving={isLeaving} // isLeaving prop 추가
-          />
-        )}
-      </div>
-    </Router>
+  return (
+    <div className='App'>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route 
+          path="/m/chat" 
+          element={
+            <MobileChatList 
+              chatRooms={chatRooms} 
+              onUpdateRooms={handleUpdateRooms}
+            />
+          } 
+        />
+        <Route path="/m/chat/:roomId" element={<MobileChatRoom />} />
+      </Routes>
+      
+      {!isMobileChatRoute && (
+        <>
+          <ChatButton onClick={toggleModal} />
+          {!selectedRoom && (
+            <ChatModal
+              chatRooms={chatRooms}
+              onSelectChatRoom={selectRoom}
+              onClose={toggleModal}
+              isModalOpen={isModalOpen}
+            />
+          )}
+          {selectedRoom && (
+            <ChatRoom
+              room={selectedRoom}
+              onBack={handleBack}
+              isLeaving={isLeaving}
+            />
+          )}
+        </>
+      )}
+    </div>
   );
 }
 

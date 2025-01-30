@@ -1,0 +1,86 @@
+/* src/pages/Home/Home.css */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.home-container h1 {
+  margin: 20px 0;
+}
+
+.selection-container {
+  display: flex;
+  gap: 40px;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.selection-box {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.selection-box h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.user-list, .realtor-list {
+  display: grid;
+  gap: 10px;
+}
+
+.select-button {
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.select-button:hover {
+  background-color: #e0e0e0;
+}
+
+.select-button.selected {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.selected-info {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.selected-info p {
+  margin: 5px 0;
+}
+
+.create-chat-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.create-chat-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.create-chat-button:hover:not(:disabled) {
+  background-color: #45a049;
+}

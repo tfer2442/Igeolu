@@ -1,0 +1,61 @@
+/* src/pages/Mobile/MobileChatList.css*/
+.mobile-chat-list {
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-header {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mobile-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.chat-rooms {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-room-item {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    background: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .chat-room-item:hover,
+.chat-room-item:focus {
+  background-color: #f8f9fa;
+  outline: none;
+}
+
+.chat-room-item:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: -2px;
+}
+
+.room-info h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.last-message {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
