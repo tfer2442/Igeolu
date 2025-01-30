@@ -1,11 +1,11 @@
-import './Registration.css';
+import './Registration_Edit.css';
 import { useState } from 'react'
 // 등록 버튼 
 import Registration_Button from '../../components/common/Registration_Button/Registration_Button';
 // 뒤로가기 버튼
 import BackButton from '../../components/common/Back_Button/Back_Button';
 
-const Registration = () => {
+const Registration_Edit = () => {
     const [optionsVisible, setOptionsVisible] = useState(false);// 옵션을 접고 펴진 상태
 
     const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션 상태
@@ -38,10 +38,16 @@ const Registration = () => {
         setImages([...images, ...imageUrls]);
     };
 
-    // 버튼 누르면 매물 등록 메시지 출력
-    const handleRegister = () => {
-        alert("매물이 등록되었습니다!");
+    // 버튼 누르면 수정 메시지 출력
+    const edit_message = () => {
+        alert("매물이 수정되었습니다!");
     };
+
+    // 버튼 누르면 거래완료 메시지 출력
+    const complete_message = () => {
+        alert("매물이 거래완료되었습니다!");
+    };
+
 
     // 옵션 리스트
     const optionsList = [
@@ -64,7 +70,7 @@ const Registration = () => {
                 <div className="Block">
                     <label>매물 소개</label>
                     <div className='Imagie_input'>
-                        <textarea className="Introduction" placeholder="매물 소개를 입력해 주세요."></textarea>
+                        <textarea className="Introduction"></textarea>
                         <input type="file" multiple accept="image/*" onChange={handleImageUpload} />
                     </div>
 
@@ -73,32 +79,32 @@ const Registration = () => {
                 <div className="Block">
                     <label>보증금/월세</label>
                     <div className = "S_input">
-                        <input placeholder="보증금"></input>
-                        <input placeholder="월세"></input>
+                        <input></input>
+                        <input></input>
                     </div>
                 </div>
 
                 <div className="Block">
                     <label>전용면적</label>
-                    <input placeholder="00m^2"></input>
+                    <input></input>
                 </div>
 
                 <div className="Block">
                     <label>사용승인일</label>
-                    <input placeholder="2100.01.01"></input>
+                    <input></input>
                 </div>
 
                 <div className="Block">
                     <label>해당층/총층</label>
                     <div className = "S_input">
-                        <input placeholder="해당층"></input>
-                        <input placeholder="건물 총 층수"></input>
+                        <input></input>
+                        <input></input>
                     </div>
                 </div>
 
                 <div className="Block">
                     <label>도로명 주소</label>
-                    <input placeholder="00도 00시 00로 00(00동, 0000)"></input>
+                    <input></input>
                 </div>
 
             </div>
@@ -123,7 +129,10 @@ const Registration = () => {
                 </div>
 
                 {/* 매물 등록 버튼 */}
-                <Registration_Button onClick={handleRegister}>매물 등록</Registration_Button >
+                <div className="ButtonContainer">
+                    <Registration_Button onClick={edit_message}>수정</Registration_Button>
+                    <Registration_Button onClick={complete_message}>거래완료</Registration_Button>
+                </div>
 
             </div>
 
@@ -131,4 +140,4 @@ const Registration = () => {
     )
 }
 
-export default Registration
+export default Registration_Edit

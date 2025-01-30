@@ -140,3 +140,16 @@ body, html {
 .Option.selected {
     color: #01ADFF;
 }
+
+.ButtonContainer {
+    display: flex;
+    width: 100%;
+    gap: 10px; /* 버튼 간격 조절 */
+}
+
+.HalfButton {
+    flex: 1; /* 버튼이 부모 컨테이너의 절반씩 차지 */
+    padding: 15px;
+    font-size: 18px;
+    text-align: center;
+}
