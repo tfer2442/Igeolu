@@ -16,3 +16,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+openvidu:
+  url: http://openvidu:4443
+  secret: MY_SECRET
