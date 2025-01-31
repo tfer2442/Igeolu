@@ -15,3 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+openvidu:
+  url: ENC(0HffXy655yIdz8f4EZiOvO4fveBOFrSnMba10RDrFJs=)
+  secret: ENC(zFB639FeZhpGgE+k36hLKIiKZa/3tgCF)
