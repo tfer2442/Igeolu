@@ -35,6 +35,7 @@ services:
     container_name: mongodb
     restart: always
     environment:
+      MONGO_INITDB_DATABASE: igeolu
       MONGO_INITDB_ROOT_USERNAME: local
       MONGO_INITDB_ROOT_PASSWORD: local
       TZ: Asia/Seoul
