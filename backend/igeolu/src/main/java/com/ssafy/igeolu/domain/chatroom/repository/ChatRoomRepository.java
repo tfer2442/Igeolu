@@ -10,4 +10,6 @@ import com.ssafy.igeolu.domain.user.entity.User;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
 	List<ChatRoom> findByMember(User member);
+
+	List<ChatRoom> findByRealtor(User realtor);
 }

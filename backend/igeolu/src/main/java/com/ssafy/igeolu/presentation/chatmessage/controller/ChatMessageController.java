@@ -22,25 +22,29 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/chats/messages")
 public class ChatMessageController {
 
-	private final SimpMessageSendingOperations template;
+	private final SimpMessageSendingOperations stompTemplate;
 	private final ChatMessageFacadeService chatMessageFacadeService;
 
 	// 이전 채팅 내용 조회
-	@GetMapping("/room/{roomId}")
-	public Mono<ResponseEntity<List<ChatMessageGetResponseDto>>> getMessages(@PathVariable("roomId") Long roomId) {
+	@GetMapping("/api/chats/messages/room/{roomId}")
+	public Mono<ResponseEntity<List<ChatMessageGetResponseDto>>> getMessages(@PathVariable("roomId") Integer roomId) {
 		Flux<ChatMessageGetResponseDto> response = chatMessageFacadeService.getChatMessageList(roomId);
 		return response.collectList().map(ResponseEntity::ok);
 	}
 
-	//메세지 송신 및 수신
-	@MessageMapping("")
+	/**
+	 * 메세지 송신 및 수신
+	 * 1. front 에서 /chats 으로 websocket handshake(api 는 WebSocketConfig 에서 설정)
+	 * 2. front 에서 /pub/chats/messages 로 해당 메서드 호출
+	 * 3. front 에서 /sub/chats/{roomId} 로 보냄
+	 */
+	@MessageMapping("/chats/messages")
 	public Mono<ResponseEntity<Void>> receiveMessage(@RequestBody ChatMessagePostRequestDto request) {
 		return chatMessageFacadeService.saveChatMessage(request).flatMap(message -> {
 			// 메시지를 해당 채팅방 구독자들에게 전송
-			template.convertAndSend("/sub/chats/" + request.getRoomId(), message);
+			stompTemplate.convertAndSend("/sub/chats/" + request.getRoomId(), message);
 			return Mono.just(ResponseEntity.ok().build());
 		});
 	}
@@ -48,9 +52,9 @@ public class ChatMessageController {
 	/**
 	 * 사용자가 메시지를 읽었을 때 호출
 	 */
-	// @PostMapping("/rooms/{roomId}/user/{userId}")
-	// public Mono<ResponseEntity<Void>> markMessagesAsRead(@PathVariable Long roomId, @PathVariable Long userId) {
-	// 	return chatMessageService.markMessagesAsRead(userId, roomId)
-	// 		.then(Mono.just(ResponseEntity.ok().build()));
-	// }
+	@PostMapping("/rooms/{roomId}/user/{userId}")
+	public Mono<ResponseEntity<Void>> markMessagesAsRead(@PathVariable Integer roomId, @PathVariable Integer userId) {
+		return chatMessageFacadeService.markMessagesAsRead(userId, roomId)
+			.then(Mono.just(ResponseEntity.ok().build()));
+	}
 }

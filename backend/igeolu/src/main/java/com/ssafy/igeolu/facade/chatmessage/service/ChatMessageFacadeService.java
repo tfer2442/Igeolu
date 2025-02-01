@@ -8,7 +8,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ChatMessageFacadeService {
-	Flux<ChatMessageGetResponseDto> getChatMessageList(Long id);
+	Flux<ChatMessageGetResponseDto> getChatMessageList(Integer id);
 
 	Mono<ChatMessagePostResponseDto> saveChatMessage(ChatMessagePostRequestDto request);
+
+	Mono<Void> markMessagesAsRead(Integer userId, Integer roomId);
 }

@@ -1,6 +1,6 @@
 package com.ssafy.igeolu.facade.chatmessage.dto.response;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
 
@@ -14,8 +14,8 @@ import lombok.Data;
 public class ChatMessagePostResponseDto {
 
 	private ObjectId messageId;
-	private Long writerId;
+	private Integer writerId;
 
 	private String content;
-	private Date createdAt;
+	private LocalDateTime createdAt;
 }

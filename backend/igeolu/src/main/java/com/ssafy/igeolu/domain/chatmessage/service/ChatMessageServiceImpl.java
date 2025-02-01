@@ -7,7 +7,6 @@ import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessage;
 import com.ssafy.igeolu.domain.chatmessage.entity.UserRoomStatus;
 import com.ssafy.igeolu.domain.chatmessage.repository.ChatMessageRepository;
 import com.ssafy.igeolu.domain.chatmessage.repository.UserRoomStatusRepository;
-import com.ssafy.igeolu.facade.chatmessage.dto.response.ChatMessagePostResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -21,7 +20,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	private final ChatMessageRepository chatMessageRepository;
 	private final UserRoomStatusRepository userRoomStatusRepository;
 
-	public Flux<ChatMessage> getChatMessageList(Long id) {
+	public Flux<ChatMessage> getChatMessageList(Integer id) {
 
 		return chatMessageRepository.findAllByRoomId(id);
 	}
@@ -34,7 +33,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	/**
 	 * 메시지를 읽음 처리하는 메서드
 	 */
-	public Mono<Void> markMessagesAsRead(Long userId, Long roomId) {
+	public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
 		return chatMessageRepository.findFirstByRoomIdOrderByIdDesc(roomId) // 가장 최근 메시지 가져오기
 			.flatMap(latestMessage -> userRoomStatusRepository.findByUserIdAndRoomId(userId, roomId)
 				.defaultIfEmpty(UserRoomStatus.builder()
@@ -57,11 +56,18 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	/**
 	 * 읽지 않은 메시지 개수를 조회하는 메서드
 	 */
-	public Mono<Long> countUnreadMessages(Long userId, Long roomId) {
+	public Mono<Long> countUnreadMessages(Integer userId, Integer roomId) {
 		return userRoomStatusRepository.findByUserIdAndRoomId(userId, roomId)
 			.flatMap(userRoomStatus ->
 				chatMessageRepository.countByRoomIdAndIdGreaterThan(roomId, userRoomStatus.getLastReadMessageId())
 			)
 			.defaultIfEmpty(0L); // 읽은 기록이 없으면 0 반환
+	}
+
+	/**
+	 * 채팅방 ID에 대한 마지막 메시지 가져오기
+	 */
+	public Mono<ChatMessage> getLastMessage(Integer roomId) {
+		return chatMessageRepository.findTopByRoomIdOrderByIdDesc(roomId);
 	}
 }

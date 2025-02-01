@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 
-	public User getUserById(Long id) {
+	public User getUserById(Integer id) {
 		return userRepository.findById(id).orElseThrow();
 	}
 }

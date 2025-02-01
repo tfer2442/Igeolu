@@ -1,6 +1,6 @@
 package com.ssafy.igeolu.facade.chatroom.dto.response;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +11,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class ChatRoomListGetResponseDto {
 
-	private Long roomId;
-	private Long userId;
+	private Integer roomId;
+	private Integer userId;
 	private String userName;
 	private String userProfileUrl;
-	private LocalDate createdAt;
+	private LocalDateTime updatedAt;
 
 	private String lastMessage;
-	private Integer unreadCount;
+	private Long unreadCount;
 }

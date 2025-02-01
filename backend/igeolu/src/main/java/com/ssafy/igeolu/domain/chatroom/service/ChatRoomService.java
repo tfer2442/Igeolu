@@ -9,5 +9,7 @@ public interface ChatRoomService {
 
 	ChatRoom createChatRoom(User member, User realtor);
 
-	List<ChatRoom> getChatRoomList(User member);
+	List<ChatRoom> getChatRoomList(User user);
+
+	User getOpponentUser(ChatRoom chatRoom, User user);
 }

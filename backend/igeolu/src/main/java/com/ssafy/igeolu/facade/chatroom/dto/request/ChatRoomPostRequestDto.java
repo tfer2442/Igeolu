@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ChatRoomPostRequestDto {
 
-	private Long memberId;
-	private Long realtorId;
+	private Integer memberId;
+	private Integer realtorId;
 }

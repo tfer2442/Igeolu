@@ -1,8 +1,9 @@
 package com.ssafy.igeolu.domain.chatmessage.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.Id;
@@ -19,8 +20,11 @@ import lombok.NoArgsConstructor;
 public class ChatMessage {
 	@Id
 	private ObjectId id;
-	private Long roomId;
+	private Integer roomId;
 	private String content;
 
-	private Long writerId;
+	private Integer writerId;
+
+	@CreatedDate
+	private LocalDateTime createdAt;
 }

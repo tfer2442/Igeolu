@@ -8,5 +8,5 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class ChatRoomPostResponseDto {
-	private Long id;
+	private Integer id;
 }

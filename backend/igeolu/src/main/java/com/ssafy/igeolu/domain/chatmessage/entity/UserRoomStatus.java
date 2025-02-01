@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 public class UserRoomStatus {
 	@Id
 	private ObjectId id;
-	private Long userId;
-	private Long roomId;
+	private Integer userId;
+	private Integer roomId;
 
 	// 유저가 해당방에서 마지막으로 읽은 메시지 ID
 	private ObjectId lastReadMessageId;

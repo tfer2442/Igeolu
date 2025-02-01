@@ -4,5 +4,5 @@ import com.ssafy.igeolu.domain.user.entity.User;
 
 public interface UserService {
 
-	User getUserById(Long id);
+	User getUserById(Integer id);
 }

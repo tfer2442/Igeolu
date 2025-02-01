@@ -19,13 +19,13 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 	private final ChatMessageService chatMessageService;
 
 	@Override
-	public Flux<ChatMessageGetResponseDto> getChatMessageList(Long roomId) {
+	public Flux<ChatMessageGetResponseDto> getChatMessageList(Integer roomId) {
 		Flux<ChatMessage> chatMessages = chatMessageService.getChatMessageList(roomId);
 
 		return chatMessages.map(o -> ChatMessageGetResponseDto.builder()
 			.writerId(o.getWriterId())
 			.content(o.getContent())
-			.createdAt(o.getId().getDate())
+			.createdAt(o.getCreatedAt())
 			.build());
 	}
 
@@ -43,7 +43,13 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 				.messageId(m.getId())
 				.writerId(m.getWriterId())
 				.content(m.getContent())
-				.createdAt(m.getId().getDate())
+				.createdAt(m.getCreatedAt())
 				.build());
 	}
+
+	@Override
+	public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
+		return chatMessageService.markMessagesAsRead(userId, roomId);
+	}
+
 }

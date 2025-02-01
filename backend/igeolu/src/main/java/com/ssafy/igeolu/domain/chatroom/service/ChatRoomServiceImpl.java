@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.chatroom.entity.ChatRoom;
 import com.ssafy.igeolu.domain.chatroom.repository.ChatRoomRepository;
+import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,28 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	}
 
 	@Override
-	public List<ChatRoom> getChatRoomList(User member) {
-		List<ChatRoom> chatRoomList = chatRoomRepository.findByMember(member);
-		return chatRoomList;
+	public List<ChatRoom> getChatRoomList(User user) {
+
+		if (user.getRole() == Role.ROLE_MEMBER) {
+			return chatRoomRepository.findByMember(user);
+		}
+
+		if (user.getRole() == Role.ROLE_REALTOR) {
+			return chatRoomRepository.findByRealtor(user);
+		}
+
+		throw new RuntimeException("잘못된 유저 역할을 가진 접근입니다.");
+	}
+
+	public User getOpponentUser(ChatRoom chatRoom, User user) {
+		if (chatRoom.getMember().equals(user)) {
+			return chatRoom.getRealtor();
+		}
+
+		if (chatRoom.getRealtor().equals(user)) {
+			return chatRoom.getMember();
+		}
+
+		throw new RuntimeException("잘못된 상대방 입니다.");
 	}
 }

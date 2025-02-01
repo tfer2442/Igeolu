@@ -6,7 +6,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ChatMessageService {
-	Flux<ChatMessage> getChatMessageList(Long id);
+	Flux<ChatMessage> getChatMessageList(Integer id);
 
 	Mono<ChatMessage> saveChatMessage(ChatMessage chatMessage);
+
+	Mono<Void> markMessagesAsRead(Integer userId, Integer roomId);
+
+	Mono<Long> countUnreadMessages(Integer userId, Integer roomId);
+
+	Mono<ChatMessage> getLastMessage(Integer roomId);
 }
