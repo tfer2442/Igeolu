@@ -7,7 +7,7 @@ spring:
   data:
     mongodb:
       # username = local, password = local, dbname = igeolu
-      uri: mongodb://local:local@localhost:8080/igeolu
+      uri: mongodb://local:local@localhost:8080/igeolu?authSource=admin
 
   jpa:
     show-sql: true
