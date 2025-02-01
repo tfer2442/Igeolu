@@ -2,12 +2,14 @@ package com.ssafy.igeolu.facade.chatroom.service;
 
 import java.util.List;
 
-import com.ssafy.igeolu.domain.chatroom.dto.request.ChatRoomGetRequestDto;
-import com.ssafy.igeolu.domain.chatroom.dto.response.ChatRoomGetResponseDto;
+import com.ssafy.igeolu.facade.chatroom.dto.request.ChatRoomListGetRequestDto;
+import com.ssafy.igeolu.facade.chatroom.dto.request.ChatRoomPostRequestDto;
+import com.ssafy.igeolu.facade.chatroom.dto.response.ChatRoomListGetResponseDto;
+import com.ssafy.igeolu.facade.chatroom.dto.response.ChatRoomPostResponseDto;
 
 public interface ChatRoomFacadeService {
 
-	ChatRoomGetResponseDto createChatRoom(ChatRoomGetRequestDto requestChatRoomDto);
+	ChatRoomPostResponseDto createChatRoom(ChatRoomPostRequestDto request);
 
-	List<ChatRoomGetResponseDto> findChatRoomList();
+	List<ChatRoomListGetResponseDto> getChatRoomList(ChatRoomListGetRequestDto request);
 }
