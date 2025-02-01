@@ -14,7 +14,7 @@ services:
     depends_on:
       - mysql  # MySQL이 먼저 실행되도록 설정
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0.36
     restart: always
     ports:
       - "3300:3306"
@@ -35,6 +35,7 @@ services:
     container_name: mongodb
     restart: always
     environment:
+      MONGO_INITDB_DATABASE: igeolu
       MONGO_INITDB_ROOT_USERNAME: local
       MONGO_INITDB_ROOT_PASSWORD: local
       TZ: Asia/Seoul
@@ -43,6 +44,13 @@ services:
       - mongodb_config:/data/configdb # MongoDB 설정 저장
     ports:
       - "27017:27017"
+
+  openvidu:
+    image: openvidu/openvidu-dev:2.31.0
+    ports:
+      - "4443:4443"
+    environment:
+      - OPENVIDU_SECRET=MY_SECRET
 
 volumes:
   igeolu-mysql:  # MySQL 데이터 저장소
