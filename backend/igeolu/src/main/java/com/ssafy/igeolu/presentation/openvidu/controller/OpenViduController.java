@@ -70,7 +70,7 @@ public class OpenViduController {
 	public ResponseEntity<JoinLivePostResponseDto> joinLive(@RequestBody @Valid JoinLivePostRequestDto request) {
 		try {
 			Session session = openVidu.getActiveSession(request.getSessionId());
-			
+
 			if (session == null) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(null);
@@ -81,6 +81,7 @@ public class OpenViduController {
 				.role(OpenViduRole.SUBSCRIBER)
 				.data("Customer")
 				.build();
+
 			Connection connection = session.createConnection(connectionProps);
 			String token = connection.getToken();
 			JoinLivePostResponseDto responseDto = JoinLivePostResponseDto.builder()
