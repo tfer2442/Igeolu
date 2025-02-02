@@ -1,63 +1,89 @@
-// src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import axios from 'axios';
+
+// Page Components
 import Home from './pages/Home/Home';
-import ChatButton from './components/common/Button/ChatButton';
-import ChatModal from './components/common/ChatModal';
-import ChatRoom from './components/common/ChatRoom';
 import MobileChatList from './pages/Mobile/MobileChatList';
 import MobileChatRoom from './pages/Mobile/MobileChatRoom';
 
-function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [isLeaving, setIsLeaving] = useState(false);
-  const [chatRooms, setChatRooms] = useState([]);
-  const location = useLocation();
+// Common Components
+import ChatButton from './components/common/Button/ChatButton';
+import ChatModal from './components/common/ChatModal';
+import ChatRoom from './components/common/ChatRoom';
+import SlideLayout from './components/common/SlideLayout';
 
+// Constants
+const API_BASE_URL = 'http://localhost:8080';
+
+function App() {
+  // State
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [chatRooms, setChatRooms] = useState([]);
+  
+  // Hooks
+  const location = useLocation();
   const isMobileChatRoute = location.pathname.startsWith('/m/chat');
 
-  const fetchChatRooms = async () => {
+  // API Calls
+  const fetchChatRooms = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatList');
+      const response = await axios.get(`${API_BASE_URL}/chatList`);
       setChatRooms(response.data);
     } catch (error) {
       console.error('채팅방 목록 조회 실패:', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (isModalOpen || location.pathname === '/m/chat') {
+    if (isOpen || location.pathname === '/m/chat') {
       fetchChatRooms();
     }
-  }, [isModalOpen, location.pathname]);
+  }, [isOpen, location.pathname, fetchChatRooms]);
 
-  const toggleModal = () => {
-    if (selectedRoom) {
-      setIsLeaving(true);
-      setTimeout(() => {
-        setSelectedRoom(null);
-        setIsModalOpen(false);
-        setIsLeaving(false);
-      }, 300);
-    } else {
-      setIsModalOpen(!isModalOpen);
-    }
+  // Event Handlers
+  const handleToggleChat = () => {
+    setIsOpen(!isOpen);
   };
 
-  const selectRoom = (room) => {
+  const handleSelectRoom = (room) => {
     setSelectedRoom(room);
-    setIsModalOpen(false);
   };
 
   const handleBack = () => {
     setSelectedRoom(null);
-    setIsModalOpen(true);
   };
 
-  const handleUpdateRooms = (updatedRooms) => {
-    setChatRooms(updatedRooms);
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedRoom(null);
+  };
+
+  // Render Methods
+  const renderChatInterface = () => {
+    if (isMobileChatRoute) return null;
+
+    return (
+      <>
+        <ChatButton onClick={handleToggleChat} />
+        <SlideLayout isOpen={isOpen} onClose={handleClose}>
+          {!selectedRoom ? (
+            <ChatModal
+              chatRooms={chatRooms}
+              onSelectChatRoom={handleSelectRoom}
+              onClose={handleClose}
+              isModalOpen={true}
+            />
+          ) : (
+            <ChatRoom
+              room={selectedRoom}
+              onBack={handleBack}
+            />
+          )}
+        </SlideLayout>
+      </>
+    );
   };
 
   return (
@@ -66,36 +92,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route 
           path="/m/chat" 
-          element={
-            <MobileChatList 
-              chatRooms={chatRooms} 
-              onUpdateRooms={handleUpdateRooms}
-            />
-          } 
+          element={<MobileChatList chatRooms={chatRooms} />} 
         />
-        <Route path="/m/chat/:roomId" element={<MobileChatRoom />} />
+        <Route 
+          path="/m/chat/:roomId" 
+          element={<MobileChatRoom />} 
+        />
       </Routes>
-      
-      {!isMobileChatRoute && (
-        <>
-          <ChatButton onClick={toggleModal} />
-          {!selectedRoom && (
-            <ChatModal
-              chatRooms={chatRooms}
-              onSelectChatRoom={selectRoom}
-              onClose={toggleModal}
-              isModalOpen={isModalOpen}
-            />
-          )}
-          {selectedRoom && (
-            <ChatRoom
-              room={selectedRoom}
-              onBack={handleBack}
-              isLeaving={isLeaving}
-            />
-          )}
-        </>
-      )}
+      {renderChatInterface()}
     </div>
   );
 }

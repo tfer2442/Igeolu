@@ -1,43 +1,53 @@
-// src/services/chatRoomsWebSocket.js
+import { Stomp } from '@stomp/stompjs';
+
 class ChatRoomsWebSocketService {
   constructor(onUpdateCallback) {
-    this.ws = null;
+    this.stompClient = null;
     this.onUpdateCallback = onUpdateCallback;
   }
 
   connect() {
-    this.ws = new WebSocket('ws://localhost:8080/ws/chatRooms');
+    const socket = new WebSocket('ws://localhost:8080/ws');
+    this.stompClient = Stomp.over(socket);
+    
+    return new Promise((resolve, reject) => {
+      this.stompClient.connect({}, () => {
+        console.log('ChatRooms WebSocket Connected');
+        
+        // 채팅방 목록 업데이트를 구독
+        this.stompClient.subscribe('/sub/chatRooms', (message) => {
+          try {
+            const updatedRooms = JSON.parse(message.body);
+            this.onUpdateCallback(updatedRooms);
+          } catch (error) {
+            console.error('Failed to parse WebSocket message:', error);
+          }
+        });
 
-    this.ws.onopen = () => {
-      console.log('ChatRooms WebSocket Connected');
-    };
+        resolve();
+      }, (error) => {
+        console.error('ChatRooms WebSocket Error:', error);
+        // 연결 실패시 재시도
+        setTimeout(() => {
+          this.connect();
+        }, 3000);
+        reject(error);
+      });
 
-    this.ws.onmessage = (event) => {
-      try {
-        const updatedRooms = JSON.parse(event.data);
-        this.onUpdateCallback(updatedRooms);
-      } catch (error) {
-        console.error('Failed to parse WebSocket message:', error);
-      }
-    };
-
-    this.ws.onerror = (error) => {
-      console.error('ChatRooms WebSocket Error:', error);
-    };
-
-    this.ws.onclose = () => {
-      console.log('ChatRooms WebSocket Disconnected');
       // 연결이 끊어졌을 때 재연결 시도
-      setTimeout(() => {
-        this.connect();
-      }, 3000);
-    };
+      this.stompClient.onDisconnect = () => {
+        console.log('ChatRooms WebSocket Disconnected');
+        setTimeout(() => {
+          this.connect();
+        }, 3000);
+      };
+    });
   }
 
   disconnect() {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
+    if (this.stompClient) {
+      this.stompClient.disconnect();
+      this.stompClient = null;
     }
   }
 }

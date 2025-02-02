@@ -1,107 +1,133 @@
-// src/components/common/ChatRoom.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import ChatWebSocketService from '../../services/chatWebSocket';
-import axios from 'axios';
+import chatApi from '../../services/chatApi';
+import ChatMessage from './ChatMessage/ChatMessage';
 import './ChatRoom.css';
 
-const ChatRoom = ({ room, onBack, isLeaving }) => {
+const CURRENT_USER_ID = 123; // 실제 구현시 인증 시스템에서 가져와야 함
+
+const ChatRoom = ({ room, onBack }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [isActive, setIsActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const webSocketRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
-  // 기존 메시지 로드
-  const fetchMessages = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/chat/${room.id}`); // (GET) 기존 메시지 조회
-      setMessages(response.data);
-    } catch (error) {
-      console.error('Failed to fetch messages:', error);
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // WebSocket 연결 설정
+  const fetchMessages = useCallback(async () => {
+    try {
+      const fetchedMessages = await chatApi.getChatMessages(room.roomId);
+      setMessages(fetchedMessages);
+      scrollToBottom();
+    } catch (error) {
+      setError('메시지를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [room.roomId]);
+
   useEffect(() => {
-    // 입장 애니메이션
-    setTimeout(() => setIsActive(true), 50);
+    const setupChat = async () => {
+      await fetchMessages();
 
-    // WebSocket 연결
-    webSocketRef.current = new ChatWebSocketService(
-      room.id,
-      (message) => {
-        setMessages(prev => [...prev, message]);
-      }
-    );
-    webSocketRef.current.connect();
+      webSocketRef.current = new ChatWebSocketService(
+        room.roomId,
+        (message) => {
+          setMessages(prev => [...prev, message]);
+          scrollToBottom();
+        }
+      );
+      await webSocketRef.current.connect();
+    };
 
-    // 기존 메시지 로드
-    fetchMessages();
+    setupChat();
 
-    // 컴포넌트 언마운트 시 cleanup
     return () => {
       if (webSocketRef.current) {
         webSocketRef.current.disconnect();
       }
     };
-  }, [room.id]);
+  }, [room.roomId, fetchMessages]);
 
-  // 뒤로가기기
-  const handleBack = () => {
-    setIsActive(false);
-    setTimeout(() => {
-      onBack();
-    }, 300);
-  };
-
-  // 메시지 전송송
   const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
-    
+    const trimmedMessage = newMessage.trim();
+    if (!trimmedMessage) return;
+
     const messageData = {
-      id: Date.now(), // 임시 ID (현재 날짜?)
-      name: "사용자", // 실제 구현 시 사용자 정보 필요
-      message: newMessage
+      roomId: room.roomId,
+      userId: CURRENT_USER_ID,
+      content: trimmedMessage
     };
 
-    webSocketRef.current.sendMessage(messageData);
+    webSocketRef.current?.sendMessage(messageData);
     setNewMessage('');
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
-    <div className="chat-room-overlay">
-      <div className={`chat-room-container ${isActive ? 'active' : ''} ${isLeaving ? 'leaving' : ''}`}>
-        <header className="chat-room-header">
-          <button onClick={handleBack} className="back-button">🔙</button>
-          <h3 className="chat-room-title">{room.name}</h3>
-        </header>
-        <div className="messages-container">
-          {messages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className={`message ${msg.name === "사용자" ? 'message-sent' : 'message-received'}`}
-            >
-              {msg.message}
-            </div>
-          ))}
-        </div>
-        <div className="message-input-container">
-          <input
-            type="text"
-            className="message-input"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleSendMessage();
-              }
-            }}
-            placeholder="Type a message..."
-          />
-          <button onClick={handleSendMessage} className="send-button">
-            Send
-          </button>
-        </div>
+    <div className="chat-room">
+      <header className="chat-room-header">
+        <button 
+          onClick={onBack} 
+          className="back-button"
+          aria-label="채팅방 목록으로 돌아가기"
+        >
+          ←
+        </button>
+        <h2 className="chat-room-title">{room.userName}</h2>
+      </header>
+
+      <div className="messages-container">
+        {isLoading ? (
+          <div className="loading-state">메시지를 불러오는 중...</div>
+        ) : error ? (
+          <div className="error-state">
+            {error}
+            <button onClick={fetchMessages} className="retry-button">
+              다시 시도
+            </button>
+          </div>
+        ) : (
+          <>
+            {messages.map((message) => (
+              <ChatMessage
+                key={message.messageId}
+                message={message}
+                isCurrentUser={message.userId === CURRENT_USER_ID}
+              />
+            ))}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+
+      <div className="message-input-container">
+        <textarea
+          className="message-input"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="메시지를 입력하세요..."
+          rows={1}
+        />
+        <button 
+          onClick={handleSendMessage} 
+          className="send-button"
+          disabled={!newMessage.trim()}
+        >
+          전송
+        </button>
       </div>
     </div>
   );
@@ -109,11 +135,10 @@ const ChatRoom = ({ room, onBack, isLeaving }) => {
 
 ChatRoom.propTypes = {
   room: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired
+    roomId: PropTypes.number.isRequired,
+    userName: PropTypes.string.isRequired
   }).isRequired,
-  onBack: PropTypes.func.isRequired,
-  isLeaving: PropTypes.bool
+  onBack: PropTypes.func.isRequired
 };
 
 export default ChatRoom;
