@@ -1,5 +1,0 @@
-# https://www.devglan.com/online-tools/jasypt-online-encryption-decryption#google_vignette
-jasypt:
-  encryptor:
-    bean: jasyptStringEncryptor
-    key: zipdaesungrememberthisandggulbangrememberthis6e7495fdcf91db7c4ceeebdb5aa332ef2bf214aec717c99e5fa82c07e60711cac5c81d6cd775649caa98a99fb481fe476ae01c93a9572118a2ba868ad5476119
