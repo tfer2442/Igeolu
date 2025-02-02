@@ -1,28 +1,32 @@
 /* components/common/Chat/ChatExtras/ChatExtras.css */
+/* 📌 추가 기능 섹션 (기본 스타일) */
 .chat-extras {
   padding: 16px;
-  height: 120px; /* 고정 높이 설정 */
-  background-color: #272626;
+  height: 120px;
+  background-color: #272626; /* 어두운 배경색 */
 }
 
+/* 📌 추가 기능이 닫혀 있을 때 숨김 */
 .chat-extras:not(.open) {
   display: none;
 }
 
+/* 📌 추가 기능 내부 컨텐츠 (버튼 컨테이너) */
 .chat-extras-content {
   display: flex;
-  gap: 16px;
+  gap: 16px; /* 버튼 간격 */
   justify-content: flex-start;
 }
-  
-  .extra-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    border: none;
-    color: white;
-    padding: 8px;
-    cursor: pointer;
-  }
+
+/* 📌 추가 기능 버튼 스타일 */
+.extra-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px; /* 아이콘과 텍스트 사이 간격 */
+  background: none;
+  border: none;
+  color: white; /* 텍스트 색상 */
+  padding: 8px;
+  cursor: pointer;
+}

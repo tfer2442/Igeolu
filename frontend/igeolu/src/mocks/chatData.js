@@ -59,6 +59,78 @@ export const mockChatMessages = {
       userId: 123456, // 현재 사용자 ID
       content: "전용면적과 방향이 궁금합니다.",
       createdAt: "2024-02-02T10:32:00"
+    },
+    {
+      messageId: 4,
+      userId: 123456, // 현재 사용자 ID
+      content: "안녕하세요, 매물 문의드립니다.",
+      createdAt: "2024-02-02T10:33:00"
+    },
+    {
+      messageId: 5,
+      userId: 1, // 상대방 ID
+      content: "네, 어떤 점이 궁금하신가요?",
+      createdAt: "2024-02-02T10:34:00"
+    },
+    {
+      messageId: 6,
+      userId: 123456, // 현재 사용자 ID
+      content: "전용면적과 방향이 궁금합니다.",
+      createdAt: "2024-02-02T10:35:00"
+    },
+    {
+      messageId: 7,
+      userId: 123456, // 현재 사용자 ID
+      content: "안녕하세요, 매물 문의드립니다.",
+      createdAt: "2024-02-02T10:36:00"
+    },
+    {
+      messageId: 8,
+      userId: 1, // 상대방 ID
+      content: "네, 어떤 점이 궁금하신가요?",
+      createdAt: "2024-02-02T10:37:00"
+    },
+    {
+      messageId: 9,
+      userId: 123456, // 현재 사용자 ID
+      content: "전용면적과 방향이 궁금합니다.",
+      createdAt: "2024-02-02T10:38:00"
+    },
+    {
+      messageId: 10,
+      userId: 123456, // 현재 사용자 ID
+      content: "안녕하세요, 매물 문의드립니다.",
+      createdAt: "2024-02-02T10:39:00"
+    },
+    {
+      messageId: 11,
+      userId: 1, // 상대방 ID
+      content: "네, 어떤 점이 궁금하신가요?",
+      createdAt: "2024-02-02T10:40:00"
+    },
+    {
+      messageId: 12,
+      userId: 123456, // 현재 사용자 ID
+      content: "전용면적과 방향이 궁금합니다.",
+      createdAt: "2024-02-02T10:41:00"
+    },
+    {
+      messageId: 13,
+      userId: 123456, // 현재 사용자 ID
+      content: "안녕하세요, 매물 문의드립니다.",
+      createdAt: "2024-02-02T10:42:00"
+    },
+    {
+      messageId: 14,
+      userId: 1, // 상대방 ID
+      content: "네, 어떤 점이 궁금하신가요?",
+      createdAt: "2024-02-02T10:43:00"
+    },
+    {
+      messageId: 15,
+      userId: 123456, // 현재 사용자 ID
+      content: "전용면적과 방향이 궁금합니다.",
+      createdAt: "2024-02-02T10:44:00"
     }
   ],
   2: [ // roomId: 2의 메시지들

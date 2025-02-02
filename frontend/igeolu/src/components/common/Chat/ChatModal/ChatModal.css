@@ -1,6 +1,6 @@
 /* src/components/common/ChatModal.css */
 
-/* Chat Modal Container */
+/* 📌 채팅 모달 컨테이너 */
 .chat-modal {
   display: flex;
   flex-direction: column;
@@ -13,12 +13,14 @@
   transition: all 0.3s ease;
 }
 
+/* 📌 활성화된 모달 스타일 */
 .chat-modal.active {
   opacity: 1;
   visibility: visible;
   transform: translateX(0);
 }
 
+/* 📌 모달 헤더 */
 .modal-header {
   padding: 1rem;
   border-bottom: 1px solid #dee2e6;
@@ -28,6 +30,7 @@
   align-items: center;
 }
 
+/* 📌 모달 닫기 버튼 */
 .close-button {
   background: none;
   border: none;
@@ -47,14 +50,8 @@
 .close-button:hover {
   background-color: #f0f0f0;
 }
-  
-/* Modal Header */
-.modal-header {
-  padding: 1rem;
-  /* border-bottom: 1px solid #dee2e6; */
-  background-color: white;
-}
 
+/* 📌 모달 제목 스타일 */
 .modal-title {
   margin: 0;
   font-size: 1rem;
@@ -62,7 +59,7 @@
   color: #333;
 }
 
-/* Chat Room List */
+/* 📌 채팅방 목록 컨테이너 */
 .chat-room-list {
   flex: 1;
   overflow-y: auto;
@@ -71,10 +68,7 @@
   list-style: none;
 }
 
-/* .chat-room-item {
-  border-bottom: 1px solid #dee2e6;
-} */
-
+/* 📌 채팅방 버튼 스타일 */
 .chat-room-button {
   width: 100%;
   padding: 1rem;
@@ -96,7 +90,7 @@
   outline-offset: -2px;
 }
 
-/* Room Details */
+/* 📌 채팅방 정보 (이름, 마지막 메시지) */
 .room-details {
   display: flex;
   flex-direction: column;
@@ -119,26 +113,22 @@
   white-space: nowrap;
 }
 
-/* ChatModal.css에 추가 */
-
-/* Content Container */
+/* 📌 모달 본문 컨테이너 */
 .modal-content {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* padding: 1rem; */
-  /* padding-right: 1rem; */
 }
 
-/* Loading State */
+/* 📌 로딩 상태 스타일 */
 .loading-state {
   text-align: center;
   color: #666;
   font-size: 1rem;
 }
 
-/* Error State */
+/* 📌 에러 상태 스타일 */
 .error-state {
   text-align: center;
   display: flex;
@@ -148,6 +138,7 @@
   color: #111111;
 }
 
+/* 📌 다시 시도 버튼 */
 .retry-button {
   padding: 0.5rem 1rem;
   background-color: #fe6e6e;
@@ -163,14 +154,14 @@
   background-color: #fe6e6e;
 }
 
-/* Empty State */
+/* 📌 빈 상태 (채팅방 없음) 스타일 */
 .empty-state {
   text-align: center;
   color: #666;
   font-size: 1rem;
 }
 
-/* ChatRoomList가 있을 때는 modal-content를 전체 높이로 */
+/* 📌 채팅방 리스트가 있을 때, 스크롤 가능하도록 설정 */
 .modal-content .chat-room-list {
   width: 100%;
   height: 100%;
