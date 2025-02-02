@@ -1,0 +1,137 @@
+/* ChatRoomList.css */
+.chat-room-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chat-room-item {
+  /* border-bottom: 1px solid #e9ecef; */
+  overflow-y: auto;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Chrome, Safari and Opera */
+.chat-room-list::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-room-button {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chat-room-button:hover {
+  background-color: #f8f9fa;
+}
+
+/* 프로필 이미지 */
+.user-profile {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.profile-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #495057;
+}
+
+/* 채팅 내용 */
+.chat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #272626;
+}
+
+.user-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.message-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #868e96;
+}
+
+.unread-count {
+  flex-shrink: 0;
+  background-color: #01adff;  /* 파란색 배경 */
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.last-message {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  color: #8d8d8d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 모바일 스타일 */
+.chat-room-list.mobile .user-name {
+  color: #FFFFFF;
+}
+
+.chat-room-list.mobile .last-message {
+  color: #FFFFFF;
+}

@@ -1,3 +1,5 @@
+// src/components/common/SlideLayout.jsx
+
 import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import './SlideLayout.css';

@@ -1,20 +1,19 @@
+/* src/components/common/SlideLayout.jsx */
+
 /* Layout */
 .slide-layout {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: -1;
-    visibility: hidden;
-  }
-  
-  .slide-layout-open {
-    pointer-events: auto;
-    left: 0;
-    z-index: 1050;
-    visibility: visible;
-  }
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+}
+
+.slide-layout-open {
+  visibility: visible;
+  z-index: 1050;
+}
   
   /* Overlay */
   .slide-overlay {

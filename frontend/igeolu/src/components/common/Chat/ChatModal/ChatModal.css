@@ -1,0 +1,178 @@
+/* src/components/common/ChatModal.css */
+
+/* Chat Modal Container */
+.chat-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+
+.chat-modal.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #f0f0f0;
+}
+  
+/* Modal Header */
+.modal-header {
+  padding: 1rem;
+  /* border-bottom: 1px solid #dee2e6; */
+  background-color: white;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Chat Room List */
+.chat-room-list {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* .chat-room-item {
+  border-bottom: 1px solid #dee2e6;
+} */
+
+.chat-room-button {
+  width: 100%;
+  padding: 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chat-room-button:hover,
+.chat-room-button:focus {
+  background-color: #f8f9fa;
+  outline: none;
+}
+
+.chat-room-button:focus-visible {
+  outline: 2px solid #4CAF50;
+  outline-offset: -2px;
+}
+
+/* Room Details */
+.room-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.room-name {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.room-last-message {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ChatModal.css에 추가 */
+
+/* Content Container */
+.modal-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 1rem; */
+  /* padding-right: 1rem; */
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Error State */
+.error-state {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #111111;
+}
+
+.retry-button {
+  padding: 0.5rem 1rem;
+  background-color: #fe6e6e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #fe6e6e;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* ChatRoomList가 있을 때는 modal-content를 전체 높이로 */
+.modal-content .chat-room-list {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}

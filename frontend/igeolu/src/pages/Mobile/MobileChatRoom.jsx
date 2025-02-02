@@ -1,108 +1,49 @@
-// src/pages/Mobile/MobileChatRoom.jsx
-import React, { useState, useEffect, useRef } from 'react';
+// pages/Mobile/MobileChatRoom.jsx
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import ChatWebSocketService from '../../services/chatWebSocket';
+import ChatRoom from '../../components/common/Chat/ChatRoom/ChatRoom';
+import chatApi from '../../services/chatApi';
+import { USER } from '../../utils/constants';
+import { mockChatRooms } from '../../mocks/chatData';
 import './MobileChatRoom.css';
 
 const MobileChatRoom = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
   const [room, setRoom] = useState(null);
-  const webSocketRef = useRef(null);
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRoom = async () => {
+    const fetchRoomData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/chat/${roomId}`);
-        setRoom(response.data.room);
-        setMessages(response.data.messages);
+        // mock 데이터에서 해당 roomId의 방 정보 찾기
+        const foundRoom = mockChatRooms.find(room => room.roomId === Number(roomId));
+        
+        if (!foundRoom) {
+          throw new Error('채팅방을 찾을 수 없습니다.');
+        }
+
+        setRoom(foundRoom);
+        await chatApi.markMessagesAsRead(roomId, USER.CURRENT_USER_ID);
       } catch (error) {
-        console.error('Failed to fetch room data:', error);
+        setError('채팅방 정보를 불러오는데 실패했습니다.');
+        console.error('채팅방 정보 조회 실패:', error);
       }
     };
 
-    fetchRoom();
-    
-    webSocketRef.current = new ChatWebSocketService(
-      roomId,
-      (message) => {
-        setMessages(prev => [...prev, message]);
-        scrollToBottom();
-      }
-    );
-    webSocketRef.current.connect();
-
-    return () => {
-      if (webSocketRef.current) {
-        webSocketRef.current.disconnect();
-      }
-    };
+    fetchRoomData();
   }, [roomId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
-    
-    const messageData = {
-      id: Date.now(),
-      name: "사용자",
-      message: newMessage
-    };
-
-    webSocketRef.current.sendMessage(messageData);
-    setNewMessage('');
+  const handleBack = () => {
+    navigate('/m/chat');
   };
+
+  if (!room) return null;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="mobile-chat-room">
-      <header className="mobile-chat-header">
-        <button className="back-btn" onClick={() => navigate('/m/chat')}>
-          <span>←</span>
-        </button>
-        <h2>{room?.name}</h2>
-      </header>
-      
-      <div className="messages-container">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`message ${msg.name === "사용자" ? 'sent' : 'received'}`}
-          >
-            <div className="message-content">
-              {msg.message}
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className="message-input-area">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-          placeholder="메시지를 입력하세요..."
-        />
-        <button 
-          className="send-button"
-          onClick={handleSendMessage}
-          disabled={!newMessage.trim()}
-        >
-          전송
-        </button>
-      </div>
+      <ChatRoom room={room} onBack={handleBack} isMobile={true} />
     </div>
   );
 };

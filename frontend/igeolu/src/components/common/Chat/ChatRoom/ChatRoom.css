@@ -1,0 +1,206 @@
+/* ChatRoom.css */
+/* Base Container */
+.chat-room {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+}
+
+.chat-room.mobile {
+  background-color: #272626;
+}
+
+/* Header Section */
+.chat-room-header {
+  padding: 1rem;
+  background-color: #FFFFFF; /* 기본값(데스크톱)을 흰색으로 */
+  border-bottom: 1px solid #343434;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* 모바일일 때만 어두운 배경 */
+.chat-room.mobile .chat-room-header {
+  background-color: #272626;
+  border-bottom: 1px solid #343434;
+}
+
+.back-button {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #000000;
+}
+
+.chat-room-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #000000;
+  flex-grow: 1;
+}
+
+.chat-room.mobile .chat-room-title,
+.chat-room.mobile .back-button {
+  color: white;
+}
+
+
+/* Messages Section */
+.messages-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Input Section */
+.input-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.input-wrapper.extras-open {
+  transform: translateY(-80px); /* -100px에서 -80px로 수정 */
+}
+
+.message-input-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 8px;
+  position: relative; /* 변경 */
+}
+
+.extras-toggle-button {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  font-size: 24px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #01adff;  /* 파란색 배경 */
+  color: white;              /* 흰색 아이콘 */
+  border-radius: 50%;        /* 원형 모양 */
+}
+
+.input-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.message-input {
+  width: 100%;
+  padding: 12px 48px 12px 16px;
+  border: 1px solid #7aa5f5;
+  border-radius: 20px;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  background: transparent;
+}
+
+.message-input::placeholder {
+  color: #999;
+}
+
+.send-button {
+  position: absolute;
+  right: 20px; /* 조정 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  background-color: #01adff;  /* 파란색 배경 */
+  color: white;              /* 흰색 아이콘 */
+  border-radius: 50%;        /* 원형 모양 */
+}
+
+/* 모바일일 때는 흰색으로 */
+.chat-room.mobile .extras-toggle-button,
+.chat-room.mobile .send-button {
+  background-color: white;   /* 흰색 배경 */
+  color: #01adff;           /* 파란색 아이콘 */
+}
+
+.send-button::before {
+  content: "↑";
+  font-size: 18px;
+}
+
+/* Extras Section */
+.chat-extras {
+  padding: 0; /* 전체 패딩 제거 */
+  background-color: #e2e1e1;
+  border-top: 1px solid #dee2e6;
+}
+
+.chat-extras.show {
+  display: block;
+}
+
+.chat-extras-content {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 16px;
+}
+
+.extra-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #000000;  /* 검은색 글씨 */
+}
+
+/* 모바일 스타일 */
+.chat-room.mobile .chat-extras {
+  background-color: #2f2e2e;  /* 어두운 회색 배경 */
+  border-top: 1px solid #343434;
+}
+
+/* 모바일 버전의 색상 조정 */
+.chat-room.mobile .chat-room-header {
+  background-color: #272626;
+  border-bottom: 1px solid #343434;
+}
+
+.chat-room.mobile .extra-button {
+  color: #ffffff;  /* 흰색 글씨 */
+}
+
+.chat-room.mobile .chat-room-title,
+.chat-room.mobile .back-button {
+  color: white;
+}
+
+/* hover 효과 */
+.extras-toggle-button:hover,
+.send-button:hover {
+  opacity: 0.9;
+}
