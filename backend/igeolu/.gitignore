@@ -1,0 +1,62 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### IntelliJ IDEA specific files ###
+.idea/
+*.iml
+*.iws
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### VS Code ###
+.vscode/
+
+
+### backend ###
+
+HELP.md
+backend/igeolu/.gradle
+backend/igeolu/build/
+backend/igeolu/!gradle/wrapper/gradle-wrapper.jar
+backend/igeolu/!**/src/main/**/build/
+backend/igeolu/!**/src/test/**/build/
+
+### STS ###
+backend/igeolu/.apt_generated
+backend/igeolu/.classpath
+backend/igeolu/.factorypath
+backend/igeolu/.project
+backend/igeolu/.settings
+backend/igeolu/.springBeans
+backend/igeolu/.sts4-cache
+backend/igeolu/bin/
+backend/igeolu/!**/src/main/**/bin/
+backend/igeolu/!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+backend/igeolu/.idea
+backend/igeolu/*.iws
+backend/igeolu/*.iml
+backend/igeolu/*.ipr
+backend/igeolu/out/
+backend/igeolu/!**/src/main/**/out/
+backend/igeolu/!**/src/test/**/out/
+
+### NetBeans ###
+backend/igeolu/nbproject/private/
+backend/igeolu/nbbuild/
+backend/igeolu/dist/
+backend/igeolu/nbdist/
+backend/igeolu/.nb-gradle/
+
+### VS Code ###
+backend/igeolu/.vscode/
+
+### key file ###
+backend/igeolu/src/main/resources/application-key.yml
+
+################
