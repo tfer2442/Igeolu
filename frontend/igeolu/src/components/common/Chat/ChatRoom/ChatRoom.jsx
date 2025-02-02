@@ -32,7 +32,9 @@ const ChatRoom = ({ room, onBack, isMobile }) => {
 
   /* 📌 메시지 목록 스크롤을 최하단으로 이동 */
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
   };
 
   /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 */
@@ -123,6 +125,7 @@ const ChatRoom = ({ room, onBack, isMobile }) => {
       </header>
 
       {/* 📌 메시지 목록 */}
+      <div className={`input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
       <div className='messages-container'>
         {isLoading ? (
           <div className='loading-state'>메시지를 불러오는 중...</div>
@@ -156,7 +159,7 @@ const ChatRoom = ({ room, onBack, isMobile }) => {
       </div>
 
       {/* 📌 메시지 입력창 및 추가 기능 */}
-      <div className={`input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
+      
         <div className='message-input-container'>
           <button
             className='extras-toggle-button'

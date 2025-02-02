@@ -1,10 +1,12 @@
 /* src/components/common/Chat/ChatRoom/ChatRoom.css */
 /* 📌 채팅방 전체 스타일 */
 .chat-room {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100vh; /* 💡 전체 화면 차지 */
   background-color: #FFFFFF;
+  position: relative; /* 입력창의 위치 조정 */
+  overflow: hidden; /* 스크롤 문제 방지 */
 }
 
 /* 📌 모바일에서 채팅방 배경색 변경 */
@@ -14,12 +16,14 @@
 
 /* 📌 헤더 스타일 */
 .chat-room-header {
+  position: relative; /* 💡 고정되지 않고 정상적으로 보이도록 조정 */
   padding: 1rem;
   background-color: #FFFFFF;
   border-bottom: 1px solid #343434;
   display: flex;
   align-items: center;
   gap: 1rem;
+  z-index: 10; /* 💡 다른 요소들보다 위에 있도록 설정 */
 }
 
 /* 📌 모바일에서 헤더 배경색 변경 */
@@ -60,21 +64,23 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  height: calc(100vh - 120px); /* 💡 헤더 + 입력창 제외한 높이 설정 */
+  min-height: 0; /* 🔹 flex 사용 시 필요 */
 }
 
 /* 📌 입력 영역 컨테이너 */
 .input-wrapper {
-  position: fixed;
+  position: absolute; /* 💡 fixed → absolute */
   bottom: 0;
   left: 0;
   right: 0;
   background-color: inherit;
-  transition: transform 0.3s ease;
+  transition: margin-bottom 0.3s ease;
 }
 
 /* 📌 추가 기능이 열렸을 때 입력창 이동 */
 .input-wrapper.extras-open {
-  transform: translateY(-80px);
+  margin-bottom: 80px; /* transform 대신 margin을 이용 */
 }
 
 /* 📌 메시지 입력 영역 스타일 */
