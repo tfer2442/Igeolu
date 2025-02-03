@@ -42,6 +42,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		throw new RuntimeException("잘못된 유저 역할을 가진 접근입니다.");
 	}
 
+	@Override
 	public User getOpponentUser(ChatRoom chatRoom, User user) {
 		if (chatRoom.getMember().equals(user)) {
 			return chatRoom.getRealtor();

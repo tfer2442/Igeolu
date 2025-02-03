@@ -20,11 +20,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	private final ChatMessageRepository chatMessageRepository;
 	private final UserRoomStatusRepository userRoomStatusRepository;
 
+	@Override
 	public Flux<ChatMessage> getChatMessageList(Integer id) {
 
 		return chatMessageRepository.findAllByRoomId(id);
 	}
 
+	@Override
 	public Mono<ChatMessage> saveChatMessage(ChatMessage chatMessage) {
 
 		return chatMessageRepository.save(chatMessage);
@@ -33,6 +35,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	/**
 	 * 메시지를 읽음 처리하는 메서드
 	 */
+	@Override
 	public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
 		return chatMessageRepository.findFirstByRoomIdOrderByIdDesc(roomId) // 가장 최근 메시지 가져오기
 			.flatMap(latestMessage -> userRoomStatusRepository.findByUserIdAndRoomId(userId, roomId)
@@ -56,6 +59,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	/**
 	 * 읽지 않은 메시지 개수를 조회하는 메서드
 	 */
+	@Override
 	public Mono<Long> countUnreadMessages(Integer userId, Integer roomId) {
 		return userRoomStatusRepository.findByUserIdAndRoomId(userId, roomId)
 			.flatMap(userRoomStatus ->
@@ -67,6 +71,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	/**
 	 * 채팅방 ID에 대한 마지막 메시지 가져오기
 	 */
+	@Override
 	public Mono<ChatMessage> getLastMessage(Integer roomId) {
 		return chatMessageRepository.findTopByRoomIdOrderByIdDesc(roomId);
 	}
