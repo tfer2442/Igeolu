@@ -19,6 +19,8 @@ function App() {
         <Route path="/mobile-my-page" element={<MobileMyPage />} />
       </Routes>
     </BrowserRouter>
+
+    
   );
 }
 export default App;

@@ -1,0 +1,116 @@
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    color: white;
+    background-color: #272626;
+}
+
+
+
+.Registration {
+    position: relative;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 15px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.BackButton {
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.Registration h2 {
+    text-align: center;
+    margin: 50px;
+}
+
+.Registration_input {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    
+}
+
+
+.Block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%; /* 부모 컨테이너 너비에 맞게 설정 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */ 
+}
+
+.Block input{
+    flex: 1;
+    background-color: #2F2E2E;
+    padding: 10px;
+    border: 1px solid #403F3F;
+    color: white;
+    cursor: pointer;
+}
+
+
+
+
+.S_input {
+    display: flex;
+    gap: 5px;
+}
+
+
+
+.Options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background-color: #2F2E2E;
+    border: 1px solid #403F3F;
+    border-radius: 10px;
+    cursor: pointer;
+    max-height: 200px; /* 옵션창 높이 제한 */
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    position: relative; /* 버튼과 충돌 방지 */
+    margin-bottom: 30px; /* 옵션창 아래 간격 추가 */
+}
+
+.Option {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.Option.selected {
+    color: #01ADFF
+}
+
+.Registration_Button {
+    width: 80%;
+    padding: 10px;
+    margin: 0 auto;
+    background-color: #01ADFF;
+    color: white;
+    font-size: 20px;
+    border: 1px solid #01ADFF;
+    border-radius: 50px;
+    cursor: pointer;
+    align-self: center;
+    margin-top: 20px;
+    margin-bottom: 50px; /* 버튼 아래 간격 추가 */
+}
