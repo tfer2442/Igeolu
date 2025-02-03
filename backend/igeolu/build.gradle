@@ -57,6 +57,10 @@ dependencies {
 
     // websocket for chat
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // proj4j
+    implementation("org.locationtech.proj4j:proj4j:1.3.0")
+    implementation("org.locationtech.proj4j:proj4j-epsg:1.3.0")
 }
 
 tasks.named('test') {

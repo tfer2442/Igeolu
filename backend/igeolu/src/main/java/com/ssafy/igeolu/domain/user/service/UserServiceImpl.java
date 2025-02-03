@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
