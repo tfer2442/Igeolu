@@ -118,40 +118,9 @@ function MobileLivePage() {
         }
     };
 
-    const toggleRecording = async () => {
-        try {
-            if (!isRecording) {
-                await axios.post(
-                    `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/start`,
-                    {
-                        session: sessionId,
-                        outputMode: 'COMPOSED',
-                        hasAudio: true,
-                        hasVideo: true,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                );
-            } else {
-                await axios.post(
-                    `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${sessionId}`,
-                    {},
-                    {
-                        headers: {
-                            Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                );
-            }
-            setIsRecording(!isRecording);
-        } catch (error) {
-            console.error('Error toggling recording:', error);
-        }
+    const toggleRecording = () => {
+        // TODO: 녹화 API 구현 후 기능 추가 예정
+        setIsRecording(!isRecording);
     };
 
     const leaveSession = () => {
