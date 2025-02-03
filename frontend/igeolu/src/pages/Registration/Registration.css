@@ -1,142 +1,140 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-    color: white;
-    background-color: #272626;
+   margin: 0;
+   padding: 0;
+   width: 100%;
+   height: 100%;
+   overflow-x: hidden;
+   color: white;
+   background-color: #272626;
 }
 
 .Registration {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 15px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    box-sizing: border-box;
-    position: relative;
+   max-width: 500px;
+   margin: 20px auto;
+   padding: 15px; 
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 20px;
+   box-sizing: border-box;
+   position: relative;
 }
 
 .Registration h2 {
-    text-align: center;
-    margin: 50px 0;
+   text-align: center;
+   margin: 50px 0;
 }
 
 .Registration_input {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    padding: 0 15px; 
-    box-sizing: border-box;
-    align-items: center;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 100%;
+   padding: 0 15px; 
+   box-sizing: border-box;
+   align-items: center;
 }
 
 .Introduction {
-    width: 90%;
-    max-width: 250px; /* 최대 너비 제한 */
-    height: 120px; /* 세로 길이 조정 */
-    padding: 10px;
-    background-color: #2F2E2E;
-    border: 1px solid #403F3F;
-    color: white;
-    resize: none; /* 사용자가 크기 조정 불가능하도록 설정 */
-    transition: border-color 0.3s ease;
+   width: 90%;
+   max-width: 250px; /* 최대 너비 제한 /
+   height: 120px; / 세로 길이 조정 /
+   padding: 10px;
+   background-color: #2F2E2E;
+   border: 1px solid #403F3F;
+   color: white;
+   resize: none; / 사용자가 크기 조정 불가능하도록 설정 */
+   transition: border-color 0.3s ease;
 }
 
 .Introduction:focus {
-    border-color: #01ADFF; /* 포커스 시 테두리 색 변경 */
+   border-color: #01ADFF; /* 포커스 시 테두리 색 변경 */
 }
 
-
 .Block {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 16px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 100%;
+   box-sizing: border-box;
+   font-size: 16px;
 }
 
 .Block input {
-    background-color: #2F2E2E;
-    padding: 10px;
-    border: 1px solid #403F3F;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
+   background-color: #2F2E2E;
+   padding: 10px;
+   border: 1px solid #403F3F;
+   color: white;
+   cursor: pointer;
+   font-size: 16px;
 }
 
 /* 이미지 선택 관련 */
 .Imagie_input {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+   display: flex;
+   gap: 15px;
+   align-items: center;
+   justify-content: space-between;
+   width: 100%;
 }
 
 .Imagie_input input[type="text"] {
-    flex: 2;
-    padding: 15px;
-    border: 1px solid #403F3F;
-    background-color: #2F2E2E;
-    color: white;
-    box-sizing: border-box;
-    font-size: 16px;
+   flex: 2;
+   padding: 15px;
+   border: 1px solid #403F3F;
+   background-color: #2F2E2E;
+   color: white;
+   box-sizing: border-box;
+   font-size: 16px;
 }
 
 .Imagie_input input[type="file"] {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #403F3F;
-    background-color: #2F2E2E;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 150px; 
+   flex: 1;
+   padding: 10px;
+   border: 1px solid #403F3F;
+   background-color: #2F2E2E;
+   color: white;
+   cursor: pointer;
+   font-size: 14px;
+   box-sizing: border-box;
+   width: 100%;
+   max-width: 150px; 
 }
 
 /* 작은 크기 input */
 .S_input {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    box-sizing: border-box;
+   display: flex;
+   gap: 10px;
+   width: 100%;
+   box-sizing: border-box;
 }
 
 .S_input input {
-    flex: 1;
-    min-width: 0;
+   flex: 1;
+   min-width: 0;
 }
-
 
 /* 옵션 관련 */
 .Options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 5px;
-    padding: 10px 0px;
-    background-color: #2F2E2E;
-    border: 1px solid #403F3F;
-    border-radius: 10px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    cursor: pointer;
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+   gap: 5px;
+   padding: 10px 0px;
+   background-color: #2F2E2E;
+   border: 1px solid #403F3F;
+   border-radius: 10px;
+   max-height: 200px;
+   overflow-y: auto;
+   margin-bottom: 20px;
+   cursor: pointer;
 }
 
 .Option {
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
+   padding: 10px;
+   border-radius: 5px;
+   text-align: center;
 }
 
 .Option.selected {
-    color: #01ADFF;
+   color: #01ADFF;
 }

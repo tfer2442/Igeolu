@@ -1,49 +1,117 @@
 import './Registration.css';
 import { useState } from 'react'
-// 등록 버튼 
+
 import Registration_Button from '../../components/common/Registration_Button/Registration_Button';
-// 뒤로가기 버튼
 import BackButton from '../../components/common/Back_Button/Back_Button';
+import AddressSearch from '../../components/common/AddressSearch/AddressSearch';
 
 const Registration = () => {
-    const [optionsVisible, setOptionsVisible] = useState(false);// 옵션을 접고 펴진 상태
+    // 기존 상태들
+    const [optionsVisible, setOptionsVisible] = useState(false);
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [images, setImages] = useState([]);
+    const [imageFiles, setImageFiles] = useState([]);
 
-    const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션 상태
+    // 입력 필드 상태들
+    const [description, setDescription] = useState('');
+    const [deposit, setDeposit] = useState('');
+    const [monthlyRent, setMonthlyRent] = useState('');
+    const [area, setArea] = useState('');
+    const [approvalDate, setApprovalDate] = useState('');
+    const [currentFloor, setCurrentFloor] = useState('');
+    const [totalFloors, setTotalFloors] = useState('');
+    
+    // 주소 관련 상태
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [address, setAddress] = useState('');
 
-    const [images, setImages] = useState([]); // 이미지 리스트 상태
-
-    // 옵션 누르면 펴지고 접힘
-    const toggleOptions = () => {
-        setOptionsVisible(!optionsVisible);
-    };
-
-    // 옵션 누르면 선택, 해제
+    const toggleOptions = () => setOptionsVisible(!optionsVisible);
+    
     const toggleOption = (option) => {
         if (selectedOptions.includes(option)) {
-            setSelectedOptions(selectedOptions.filter((item) => item !== option)); // 선택 해제
+            setSelectedOptions(selectedOptions.filter(item => item !== option));
         } else {
-            setSelectedOptions([...selectedOptions, option]); // 선택 추가
+            setSelectedOptions([...selectedOptions, option]);
         }
     };
 
-    // 브라우저의 뒤로가기 기능 호출
     const handleBack = () => {
         window.history.back();
     };
 
-    // 이미지 추가 핸들러
     const handleImageUpload = (event) => {
         const files = Array.from(event.target.files);
-        const imageUrls = files.map((file) => URL.createObjectURL(file));
+        const imageUrls = files.map(file => URL.createObjectURL(file));
         setImages([...images, ...imageUrls]);
+        setImageFiles([...imageFiles, ...files]);
     };
 
-    // 버튼 누르면 매물 등록 메시지 출력
-    const handleRegister = () => {
-        alert("매물이 등록되었습니다!");
+    const handleRegister = async () => {
+        try {
+            if (!selectedAddress) {
+                alert('주소를 선택해주세요.');
+                return;
+            }
+
+            if (!description || !deposit || !monthlyRent || !area || 
+                !approvalDate || !currentFloor || !totalFloors) {
+                alert('필수 항목을 모두 입력해주세요.');
+                return;
+            }
+
+            const requestData = {
+                userId: 12345,
+                description,
+                deposit: Number(deposit),
+                monthlyRent: Number(monthlyRent),
+                area: Number(area),
+                approvalDate,
+                currentFloor: Number(currentFloor),
+                totalFloors: Number(totalFloors),
+                address: selectedAddress.fullAddress,
+                latitude: selectedAddress.latitude,
+                longitude: selectedAddress.longitude,
+                dongCode: selectedAddress.dongCode,
+                propertyOption: {
+                    name: selectedOptions
+                },
+                images: ["image1.jpg", "image2.jpg"]
+            };
+
+            const response = await fetch('http://192.168.0.4:3000/api/properties/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const data = await response.json();
+
+            if (data.statusCode === 200) {
+                alert("매물이 등록되었습니다!");
+                // 폼 초기화
+                setDescription('');
+                setDeposit('');
+                setMonthlyRent('');
+                setArea('');
+                setApprovalDate('');
+                setCurrentFloor('');
+                setTotalFloors('');
+                setAddress('');
+                setSelectedAddress(null);
+                setSelectedOptions([]);
+                setImages([]);
+                setImageFiles([]);
+            } else {
+                throw new Error('매물 등록에 실패했습니다.');
+            }
+        } catch (error) {
+            alert('매물 등록 중 오류가 발생했습니다.');
+        }
     };
 
-    // 옵션 리스트
     const optionsList = [
         '무인택배함', '에어컨', '침대', 'TV', '책상', '전자레인지', '샤워부스', '주차장',
         '세탁기', '옷장', '가스레인지', '현관보안', '냉장고', '건조기', '오븐',
@@ -52,61 +120,106 @@ const Registration = () => {
 
     return (
         <div className="Registration">
-
-            {/* 왼쪽 상단 뒤로가기 버튼 */}
             <BackButton onClick={handleBack} />
+            <h2>매물 등록</h2>
 
-            <div>
-                <h2>매물 등록</h2>
-            </div>
-
-            <div className= "Registration_input">
+            <div className="Registration_input">
                 <div className="Block">
                     <label>매물 소개</label>
                     <div className='Imagie_input'>
-                        <textarea className="Introduction" placeholder="매물 소개를 입력해 주세요."></textarea>
-                        <input type="file" multiple accept="image/*" onChange={handleImageUpload} />
+                        <textarea 
+                            className="Introduction" 
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="매물 소개를 입력해 주세요."
+                        />
+                        <input 
+                            type="file" 
+                            multiple 
+                            accept="image/*" 
+                            onChange={handleImageUpload} 
+                        />
                     </div>
-
                 </div>
 
                 <div className="Block">
                     <label>보증금/월세</label>
-                    <div className = "S_input">
-                        <input placeholder="보증금"></input>
-                        <input placeholder="월세"></input>
+                    <div className="S_input">
+                        <input 
+                            type="number"
+                            value={deposit}
+                            onChange={(e) => setDeposit(e.target.value)}
+                            placeholder="보증금"
+                        />
+                        <input 
+                            type="number"
+                            value={monthlyRent}
+                            onChange={(e) => setMonthlyRent(e.target.value)}
+                            placeholder="월세"
+                        />
                     </div>
                 </div>
 
                 <div className="Block">
                     <label>전용면적</label>
-                    <input placeholder="00m^2"></input>
+                    <input 
+                        type="number"
+                        value={area}
+                        onChange={(e) => setArea(e.target.value)}
+                        placeholder="00m^2"
+                    />
                 </div>
 
                 <div className="Block">
                     <label>사용승인일</label>
-                    <input placeholder="2100.01.01"></input>
+                    <input 
+                        type="date"
+                        value={approvalDate}
+                        onChange={(e) => setApprovalDate(e.target.value)}
+                    />
                 </div>
 
                 <div className="Block">
                     <label>해당층/총층</label>
-                    <div className = "S_input">
-                        <input placeholder="해당층"></input>
-                        <input placeholder="건물 총 층수"></input>
+                    <div className="S_input">
+                        <input 
+                            type="number"
+                            value={currentFloor}
+                            onChange={(e) => setCurrentFloor(e.target.value)}
+                            placeholder="해당층"
+                        />
+                        <input 
+                            type="number"
+                            value={totalFloors}
+                            onChange={(e) => setTotalFloors(e.target.value)}
+                            placeholder="건물 총 층수"
+                        />
                     </div>
                 </div>
 
                 <div className="Block">
                     <label>도로명 주소</label>
-                    <input placeholder="00도 00시 00로 00(00동, 0000)"></input>
+                    <AddressSearch 
+                        onSelect={(address) => {
+                            setSelectedAddress(address);
+                            setAddress(address.fullAddress);
+                        }} 
+                    />
+                    {selectedAddress && (
+                        <input 
+                            value={address}
+                            readOnly
+                            className="selected-address"
+                        />
+                    )}
                 </div>
-
             </div>
 
             <div className="Registration_input">
-                {/* 매물 등록 입력 필드 */}
                 <div className="Block">
-                    <label onClick={toggleOptions} className="toggle-label"> 옵션 {optionsVisible ? '▲' : '▼'}</label>
+                    <label onClick={toggleOptions}>
+                        옵션 {optionsVisible ? '▲' : '▼'}
+                    </label>
                     {optionsVisible && (
                         <div className="Options">
                             {optionsList.map((option, index) => (
@@ -122,13 +235,12 @@ const Registration = () => {
                     )}
                 </div>
 
-                {/* 매물 등록 버튼 */}
-                <Registration_Button onClick={handleRegister}>매물 등록</Registration_Button >
-
+                <Registration_Button onClick={handleRegister}>
+                    매물 등록
+                </Registration_Button>
             </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default Registration
+export default Registration;
