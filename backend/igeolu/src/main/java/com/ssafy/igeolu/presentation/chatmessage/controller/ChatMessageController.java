@@ -16,6 +16,9 @@ import com.ssafy.igeolu.facade.chatmessage.dto.request.ChatMessagePostRequestDto
 import com.ssafy.igeolu.facade.chatmessage.dto.response.ChatMessageGetResponseDto;
 import com.ssafy.igeolu.facade.chatmessage.service.ChatMessageFacadeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -52,6 +55,10 @@ public class ChatMessageController {
 	/**
 	 * 사용자가 메시지를 읽었을 때 호출
 	 */
+	@Operation(summary = "메세지 마크", description = "사용자 id 와 방 id 를 이용해 사용자 읽음을 체크합니다..")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
 	@PostMapping("/rooms/{roomId}/user/{userId}")
 	public Mono<ResponseEntity<Void>> markMessagesAsRead(@PathVariable Integer roomId, @PathVariable Integer userId) {
 		return chatMessageFacadeService.markMessagesAsRead(userId, roomId)
