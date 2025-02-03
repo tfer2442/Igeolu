@@ -62,7 +62,7 @@ public class ChatMessageController {
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
-	@PostMapping("/rooms/{roomId}/user/{userId}")
+	@PostMapping("/api/rooms/{roomId}/user/{userId}")
 	public Mono<ResponseEntity<Void>> markMessagesAsRead(@PathVariable Integer roomId, @PathVariable Integer userId) {
 		return chatMessageFacadeService.markMessagesAsRead(userId, roomId)
 			.then(Mono.just(ResponseEntity.ok().build()));
