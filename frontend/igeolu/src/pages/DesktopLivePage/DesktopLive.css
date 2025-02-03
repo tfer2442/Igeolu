@@ -19,6 +19,11 @@
     width: 100%;
     height: 70%;
     border: 1px solid #E2E1E1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #000;
 }
 .desktop-live-page__left-content__bottom-content {
     display: flex;
@@ -26,7 +31,7 @@
     align-items: center;
     width: 100%;
     height: 30%;
-    gap: 40px;
+    gap: 20px;
 }
 .desktop-live-page__left-content__bottom-content__ai-checklist {
     width: 100%;
@@ -56,5 +61,127 @@
 .desktop-live-page__right-content__my-cam {
     width: 100%;
     height: 40%;
-    border: 1px solid #E2E1E1;
+    overflow: hidden;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.desktop-live-page__right-content__my-cam video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.subscriber-video, .host-video, .my-video, .participant-video {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.video-overlay {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.user-label {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.subscriber-controls {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.subscriber-controls button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.subscriber-controls button:hover {
+    opacity: 0.8;
+}
+
+.subscriber-controls span {
+    color: white;
+    font-size: 14px;
+}
+
+.subscriber-video video, .host-video video, .my-video video, .participant-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.publisher-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.publisher-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.desktop-live-page__toolbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transform: none;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    opacity: 0.8;
+    border-radius: 8px;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.desktop-live-page__toolbar button {
+    padding: 8px;
+    border: none;
+    border-radius: 50%;
+    background: #4a90e2;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+}
+
+.desktop-live-page__toolbar button:hover {
+    background: #357abd;
+    transform: scale(1.1);
+}
+
+.desktop-live-page__toolbar button svg {
+    width: 16px;
+    height: 16px;
 }
