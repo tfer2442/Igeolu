@@ -16,49 +16,31 @@ class BaseWebSocket {
 
     return new Promise((resolve, reject) => {
       try {
-        console.log('Connecting to WebSocket at:', this.SOCKET_URL);
-      const socket = new WebSocket(this.SOCKET_URL);
-      
-      socket.onopen = () => {
-        console.log('WebSocket connection opened');
-      };
-
-      socket.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-      };
-
-      socket.onclose = (event) => {
-        console.log('WebSocket closed:', event.code, event.reason);
-      };
-
         this.stompClient = new Client({
-          brokerURL: this.SOCKET_URL,
+          webSocketFactory: () => new WebSocket(this.SOCKET_URL),
           reconnectDelay: this.reconnectDelay,
           onConnect: () => {
-            console.log('WebSocket Connected Successfully');
             this.isConnected = true;
             this.subscribe();
             resolve();
           },
           onDisconnect: () => {
-            console.log('WebSocket Disconnected');
             this.isConnected = false;
             this.handleReconnect();
           },
           onStompError: (error) => {
-            console.error('Stomp Error:', error);
             reject(error);
           }
         });
 
         this.stompClient.activate();
       } catch (error) {
-        console.error('WebSocket Setup Error:', error);
         reject(error);
       }
     });
   }
 
+  
   setupDisconnectHandler() {
     if (this.stompClient) {
       this.stompClient.onDisconnect = () => {

@@ -7,7 +7,7 @@ import ChatRoomList from '../ChatRoomList/ChatRoomList';
 import './ChatModal.css';
 
 /* 📌 테스트용 사용자 ID (실제 로그인 기능으로 대체 예정) */
-const TEST_USER_ID = 1;
+const TEST_USER_ID = 5;
 
 /**
  * 📌 ChatModal 컴포넌트

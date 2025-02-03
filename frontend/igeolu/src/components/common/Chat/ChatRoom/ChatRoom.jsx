@@ -7,7 +7,7 @@ import ChatMessage from '../ChatMessage/ChatMessage';
 import './ChatRoom.css';
 
 /* 📌 임시 사용자 ID (나중에 로그인 시스템으로 대체 예정) */
-const CURRENT_USER_ID = 1;
+const CURRENT_USER_ID = 5;
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -42,11 +42,6 @@ const ChatRoom = ({ room, onBack, isMobile }) => {
     setMessages(prev => [...prev, message]);
   }, []);
 
-  const handleInitialMessages = useCallback((initialMessages) => {
-    setMessages(initialMessages);
-    setIsLoading(false);
-  }, []);
-
 
   /* 📌 기존 메시지 불러오기 */
   console.log('room 정보:', room);
@@ -77,27 +72,31 @@ const fetchMessages = useCallback(async () => {
   /* 📌 채팅방 초기화 및 WebSocket 연결 */
   useEffect(() => {
     const initializeChat = async () => {
-      if (!chatSocketRef.current || !chatSocketRef.current.isConnected) {
-        chatSocketRef.current = new ChatWebSocket(
-          room.roomId,
-          handleNewMessage,
-          handleInitialMessages
-        );
-        await chatSocketRef.current.connect();
-        chatSocketRef.current.subscribeToMessages();
+      try {
+        if (!chatSocketRef.current || !chatSocketRef.current.isConnected) {
+          chatSocketRef.current = new ChatWebSocket(
+            room.roomId,
+            handleNewMessage
+          );
+          await chatSocketRef.current.connect();
+          // WebSocket 연결 후 메시지 가져오기
+          await fetchMessages();
+        }
+      } catch (error) {
+        console.error('Chat initialization failed:', error);
+        setError('채팅 초기화에 실패했습니다.');
       }
     };
-
+  
     initializeChat();
-
-    /* 📌 컴포넌트 언마운트 시 WebSocket 해제 */
+  
     return () => {
       if (chatSocketRef.current) {
         chatSocketRef.current.disconnect();
         chatSocketRef.current = null;
       }
     };
-  }, [room.roomId]);
+  }, [room.roomId, fetchMessages]);
 
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {

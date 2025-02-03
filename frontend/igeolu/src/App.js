@@ -17,7 +17,7 @@ import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 import chatApi from './services/chatApi';
 
 // Constants (나중에 constants 파일로 분리)
-const TEST_USER_ID = 1;
+const TEST_USER_ID = 5;
 
 function App() {
   // State

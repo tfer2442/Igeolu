@@ -12,7 +12,7 @@ class ChatRoomsWebSocket extends BaseWebSocket {
     if (!this.stompClient || !this.isConnected) return;
 
     // userId를 포함한 topic으로 구독
-    this.stompClient.subscribe(`/sub/chats/${this.userId}`, (message) => {
+    this.stompClient.subscribe(`/api/sub/chats/${this.userId}`, (message) => {
       try {
         const updatedRooms = JSON.parse(message.body);
         this.onUpdateCallback(updatedRooms);
