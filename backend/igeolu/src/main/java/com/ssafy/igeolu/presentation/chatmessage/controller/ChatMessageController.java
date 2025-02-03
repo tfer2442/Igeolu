@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.facade.chatmessage.dto.request.ChatMessagePostRequestDto;
@@ -31,6 +30,10 @@ public class ChatMessageController {
 	private final ChatMessageFacadeService chatMessageFacadeService;
 
 	// 이전 채팅 내용 조회
+	@Operation(summary = "채팅 메세지 조회", description = "채팅 메세지 리스트를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
 	@GetMapping("/api/chats/messages/room/{roomId}")
 	public Mono<ResponseEntity<List<ChatMessageGetResponseDto>>> getMessages(@PathVariable("roomId") Integer roomId) {
 		Flux<ChatMessageGetResponseDto> response = chatMessageFacadeService.getChatMessageList(roomId);
@@ -39,9 +42,9 @@ public class ChatMessageController {
 
 	/**
 	 * 메세지 송신 및 수신
-	 * 1. front 에서 /chats 으로 websocket handshake(api 는 WebSocketConfig 에서 설정)
-	 * 2. front 에서 /pub/chats/messages 로 해당 메서드 호출
-	 * 3. front 에서 /sub/chats/{roomId} 로 보냄
+	 * 1. front 에서 /api/chats/ws 으로 websocket handshake(api 는 WebSocketConfig 에서 설정)
+	 * 2. front 에서 /api/pub/chats/messages 로 해당 메서드 호출
+	 * 3. front 에서 /api/sub/chats/{roomId} 로 보냄
 	 */
 	@MessageMapping("/chats/messages")
 	public Mono<ResponseEntity<Void>> receiveMessage(@RequestBody ChatMessagePostRequestDto request) {
@@ -55,11 +58,11 @@ public class ChatMessageController {
 	/**
 	 * 사용자가 메시지를 읽었을 때 호출
 	 */
-	@Operation(summary = "메세지 마크", description = "사용자 id 와 방 id 를 이용해 사용자 읽음을 체크합니다..")
+	@Operation(summary = "메세지 마크", description = "사용자 id 와 방 id 를 이용해 사용자 읽음을 체크합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
-	@PostMapping("/rooms/{roomId}/user/{userId}")
+	@PostMapping("/api/rooms/{roomId}/user/{userId}")
 	public Mono<ResponseEntity<Void>> markMessagesAsRead(@PathVariable Integer roomId, @PathVariable Integer userId) {
 		return chatMessageFacadeService.markMessagesAsRead(userId, roomId)
 			.then(Mono.just(ResponseEntity.ok().build()));
