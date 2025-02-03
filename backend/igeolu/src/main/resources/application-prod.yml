@@ -8,6 +8,25 @@ spring:
     mongodb:
       uri: ENC(2TFSKUX5qxvJmH/3Mp4GVd28hTZr132l0dMzBmhqV7/VpcCTlcmNs8t2IgZR4U3FnzreQ2rGpuc7AABGoSJN+H9I72ZGLwGporjrOD+rS2lWJXoqJ1eE7Q==)
 
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: ENC(Az1s8b/I1VHwhQwHPYVI7cQ8LXqTFNc05y+UuAOAJHhEeen0mlMcRaR4aCXnEVLa)
+            client-secret: ENC(0sdaWwUcVxpf01vWS1xN72CAq3s3KUYOVLSVhGEpWeFG9Eg9NC+k8jiZBtA0m3Un)
+            redirect-uri: "https://i12d205.p.ssafy.io/api/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: "https://kauth.kakao.com/oauth/authorize"
+            token-uri: "https://kauth.kakao.com/oauth/token"
+            user-info-uri: "https://kapi.kakao.com/v2/user/me"
+            user-name-attribute: id
+
   jpa:
     show-sql: true
     hibernate:
