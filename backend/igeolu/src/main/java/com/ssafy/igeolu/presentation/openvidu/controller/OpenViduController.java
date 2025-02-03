@@ -43,7 +43,7 @@ public class OpenViduController {
 			// 4. 연결 속성 설정 (퍼블리셔 역할로 설정, 데이터는 리얼터 ID를 String으로 변환)
 			ConnectionProperties connectionProps = new ConnectionProperties.Builder()
 				.type(ConnectionType.WEBRTC)
-				.role(OpenViduRole.PUBLISHER)
+				.role(OpenViduRole.MODERATOR) // host 설정
 				.data(String.valueOf(request.getRealtorId())) // Integer를 String으로 변환
 				.build();
 
@@ -70,7 +70,7 @@ public class OpenViduController {
 	public ResponseEntity<JoinLivePostResponseDto> joinLive(@RequestBody @Valid JoinLivePostRequestDto request) {
 		try {
 			Session session = openVidu.getActiveSession(request.getSessionId());
-			
+
 			if (session == null) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(null);
@@ -78,9 +78,10 @@ public class OpenViduController {
 
 			ConnectionProperties connectionProps = new ConnectionProperties.Builder()
 				.type(ConnectionType.WEBRTC)
-				.role(OpenViduRole.SUBSCRIBER)
+				.role(OpenViduRole.PUBLISHER)
 				.data("Customer")
 				.build();
+
 			Connection connection = session.createConnection(connectionProps);
 			String token = connection.getToken();
 			JoinLivePostResponseDto responseDto = JoinLivePostResponseDto.builder()

@@ -11,7 +11,7 @@ public class ProdWebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins("https://i12d205.p.ssafy.io")
+			.allowedOrigins("https://i12d205.p.ssafy.io", "http://localhost:3000")
 			.allowCredentials(true)
 			.allowedHeaders("Authorization", "Content-Type")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
