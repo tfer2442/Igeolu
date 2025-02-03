@@ -6,7 +6,7 @@ spring:
     password: ENC(LJz0MQqtLrZhbORaBA0Mdg==)
   data:
     mongodb:
-      uri: ENC(4dBjLRLi5wDQqcsAQmlrYRnMoRYLXc+LcjpdD5VoK4MckP8JYGLatgGvpb6W+3WVBkcLcKw1XqZVDzCJNXz/jg==)
+      uri: ENC(2TFSKUX5qxvJmH/3Mp4GVd28hTZr132l0dMzBmhqV7/VpcCTlcmNs8t2IgZR4U3FnzreQ2rGpuc7AABGoSJN+H9I72ZGLwGporjrOD+rS2lWJXoqJ1eE7Q==)
 
   jpa:
     show-sql: true

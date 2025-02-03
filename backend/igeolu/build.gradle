@@ -54,6 +54,9 @@ dependencies {
     // Webflux, mongoDB for chat
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+    // websocket for chat
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
