@@ -42,9 +42,9 @@ public class ChatMessageController {
 
 	/**
 	 * 메세지 송신 및 수신
-	 * 1. front 에서 /chats 으로 websocket handshake(api 는 WebSocketConfig 에서 설정)
-	 * 2. front 에서 /pub/chats/messages 로 해당 메서드 호출
-	 * 3. front 에서 /sub/chats/{roomId} 로 보냄
+	 * 1. front 에서 /api/chats/ws 으로 websocket handshake(api 는 WebSocketConfig 에서 설정)
+	 * 2. front 에서 /api/pub/chats/messages 로 해당 메서드 호출
+	 * 3. front 에서 /api/sub/chats/{roomId} 로 보냄
 	 */
 	@MessageMapping("/chats/messages")
 	public Mono<ResponseEntity<Void>> receiveMessage(@RequestBody ChatMessagePostRequestDto request) {
