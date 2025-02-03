@@ -9,7 +9,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 */
 
-const ChatRoomList = ({ rooms, onSelectRoom, isMobile  }) => {
+const ChatRoomList = ({ rooms, onSelectRoom, isMobile = false  }) => {
 
   // "약 N시간 전" 같은 형식
   // const formatDate = (dateString) => {
@@ -44,7 +44,7 @@ const ChatRoomList = ({ rooms, onSelectRoom, isMobile  }) => {
             <div className="chat-content">
               <div className="user-name-row">
                 <span className="user-name">{room.userName}님</span>
-                <span className="chat-time">{formatChatTime(room.createdAt)}</span>
+                <span className="chat-time">{formatChatTime(room.updatedAt)}</span>
               </div>
               <div className="message-row">
                 <p className="last-message">{room.lastMessage}</p>
@@ -64,12 +64,12 @@ const ChatRoomList = ({ rooms, onSelectRoom, isMobile  }) => {
 ChatRoomList.propTypes = {
   rooms: PropTypes.arrayOf(
     PropTypes.shape({
-      userId: PropTypes.number.isRequired,
       roomId: PropTypes.number.isRequired,
+      userId: PropTypes.number.isRequired,
       userName: PropTypes.string.isRequired,
       userProfileUrl: PropTypes.string,
       unreadCount: PropTypes.number.isRequired,
-      createdAt: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
       lastMessage: PropTypes.string
     })
   ).isRequired,
@@ -77,8 +77,5 @@ ChatRoomList.propTypes = {
   isMobile: PropTypes.bool
 };
 
-ChatRoomList.defaultProps = {
-  isMobile: false
-};
 
 export default ChatRoomList;

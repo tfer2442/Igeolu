@@ -1,12 +1,14 @@
 // services/websocket/baseWebSocket.js
-import { Stomp } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 
 class BaseWebSocket {
   constructor() {
     this.stompClient = null;
     this.isConnected = false;
-    this.SOCKET_URL = 'ws://localhost:8080/ws';
+    this.SOCKET_URL = 'wss://i12d205.p.ssafy.io/api/chats/ws';
     this.reconnectDelay = 3000;
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 5;
   }
 
   async connect() {
@@ -14,26 +16,42 @@ class BaseWebSocket {
 
     return new Promise((resolve, reject) => {
       try {
-        const socket = new WebSocket(this.SOCKET_URL);
-        this.stompClient = Stomp.over(socket);
+        console.log('Connecting to WebSocket at:', this.SOCKET_URL);
+      const socket = new WebSocket(this.SOCKET_URL);
+      
+      socket.onopen = () => {
+        console.log('WebSocket connection opened');
+      };
 
-        this.stompClient.connect(
-          {},
-          () => {
-            console.log('WebSocket Connected');
+      socket.onerror = (error) => {
+        console.error('WebSocket Error:', error);
+      };
+
+      socket.onclose = (event) => {
+        console.log('WebSocket closed:', event.code, event.reason);
+      };
+
+        this.stompClient = new Client({
+          brokerURL: this.SOCKET_URL,
+          reconnectDelay: this.reconnectDelay,
+          onConnect: () => {
+            console.log('WebSocket Connected Successfully');
             this.isConnected = true;
             this.subscribe();
             resolve();
           },
-          (error) => {
-            console.error('WebSocket Connection Error:', error);
+          onDisconnect: () => {
+            console.log('WebSocket Disconnected');
             this.isConnected = false;
             this.handleReconnect();
+          },
+          onStompError: (error) => {
+            console.error('Stomp Error:', error);
             reject(error);
           }
-        );
+        });
 
-        this.setupDisconnectHandler();
+        this.stompClient.activate();
       } catch (error) {
         console.error('WebSocket Setup Error:', error);
         reject(error);
@@ -52,16 +70,36 @@ class BaseWebSocket {
   }
 
   handleReconnect() {
-    setTimeout(() => {
-      console.log('Attempting to reconnect...');
-      this.connect();
-    }, this.reconnectDelay);
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      setTimeout(() => {
+        console.log(`Attempting to reconnect... (${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
+        this.reconnectAttempts++;  // 순서 변경: 증가를 먼저
+        this.connect().catch(error => {
+          console.error('Reconnection failed:', error);
+          if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+            console.error('Max reconnection attempts reached. Please refresh the page.');
+          }
+        });
+      }, this.reconnectDelay);
+    } else {
+      console.error('Max reconnection attempts reached');
+      // 여기서 사용자에게 알림을 주는 콜백을 호출할 수 있음
+    }
   }
 
   disconnect() {
-    if (this.stompClient && this.isConnected) {
-      this.stompClient.disconnect();
-      this.isConnected = false;
+    if (this.stompClient) {
+      try {
+        if (this.stompClient.disconnect && typeof this.stompClient.disconnect === 'function') {
+          this.stompClient.disconnect();
+        } else if (this.stompClient.close && typeof this.stompClient.close === 'function') {
+          this.stompClient.close();
+        }
+        this.isConnected = false;
+        console.log('WebSocket 연결 해제 완료');
+      } catch (error) {
+        console.error('WebSocket 연결 해제 중 에러:', error);
+      }
     }
   }
 

@@ -1,69 +1,149 @@
-// src/pages/Home/Home.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import chatApi from '../../services/chatApi';
+import ChatRoomsWebSocket from '../../services/webSocket/chatRoomsWebSocket';
+import { formatChatTime } from '../../utils/dateFormat';  // 이 라인 추가
 import './Home.css';
 
 const Home = () => {
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRealtor, setSelectedRealtor] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [chatRooms, setChatRooms] = useState([]);
+
+  // WebSocket 연결 설정
+  // useEffect(() => {
+  //   const chatRoomsWS = new ChatRoomsWebSocket((updatedRooms) => {
+  //     setChatRooms(prev => {
+  //       // 중복 방지를 위한 병합 로직 추가
+  //       const mergedRooms = [...prev];
+  //       updatedRooms.forEach(newRoom => {
+  //         const index = mergedRooms.findIndex(r => r.roomId === newRoom.roomId);
+  //         if (index > -1) {
+  //           mergedRooms[index] = newRoom;
+  //         } else {
+  //           mergedRooms.unshift(newRoom);
+  //         }
+  //       });
+  //       return mergedRooms;
+  //     });
+  //   });
+  
+  //   chatRoomsWS.connect();
+  //   return () => chatRoomsWS.disconnect();
+  // }, []);
+
+  // 임시 데이터
+  const users = [
+    { id: 1, name: "User 1" },
+    { id: 2, name: "User 2" },
+    { id: 3, name: "User 3" },
+    { id: 4, name: "User 4" },
+    { id: 5, name: "User 5" }
+  ];
+
+  const realtors = [
+    { id: 1, name: "Realtor 1" },
+    { id: 2, name: "Realtor 2" },
+    { id: 3, name: "Realtor 3" },
+    { id: 4, name: "Realtor 4" },
+    { id: 5, name: "Realtor 5" }
+  ];
+
+  const handleCreateChat = async () => {
+    if (!selectedUser || !selectedRealtor) {
+      alert('사용자와 중개사를 모두 선택해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await chatApi.createChatRoom(selectedUser.id, selectedRealtor.id);
+      console.log('채팅방 생성 성공:', response);
+      alert(`채팅방이 생성되었습니다. (Room ID: ${response.roomId})`);
+      
+      // 채팅방 생성 후 업데이트된 목록은 WebSocket을 통해 자동으로 받게 됨
+      
+      // 선택 초기화
+      setSelectedUser(null);
+      setSelectedRealtor(null);
+    } catch (error) {
+      console.error('채팅방 생성 실패:', error);
+      setError('채팅방 생성에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="home-container">
-      {/* 네비게이션 바 */}
-      <nav className="nav-bar">
-        <div className="logo">이걸루</div>
-        <div className="nav-links">
-          <button className="nav-button">방찾기</button>
-          <button className="nav-button">공인중개사</button>
-          <button className="nav-button">라이브</button>
-        </div>
-        <div className="auth-buttons">
-          <button className="login-btn">로그인</button>
-          <button className="register-btn">회원가입</button>
-        </div>
-      </nav>
-
-      {/* 메인 콘텐츠 */}
-      <main className="main-content">
-        <div className="left-content">
-          {/* 메인 이미지 */}
-          <div className="main-image">
-            <img src="https://picsum.photos/800/600" alt="메인 이미지" />
+      <h1>채팅방 생성 테스트</h1>
+      
+      <div className="selection-container">
+        <div className="selection-box">
+          <h2>사용자 선택</h2>
+          <div className="user-list">
+            {users.map(user => (
+              <button
+                key={user.id}
+                className={`select-button ${selectedUser?.id === user.id ? 'selected' : ''}`}
+                onClick={() => setSelectedUser(user)}
+                disabled={isLoading}
+              >
+                {user.name}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* 오른쪽 정보 카드들 */}
-        <div className="right-cards">
-          {/* 라이브 매물구경 카드 */}
-          <div className="info-card live-card">
-            <h2>라이브 매물구경</h2>
-            <ul>
-            <li>✓ 허위 매물 Check!</li>
-              <li>✓ 독소 조항 Check!</li>
-              <li>✓ 거짓 정보 Check!</li>
-              </ul>
-              <div className="youtube-icon">▶</div>
-          </div>
-
-          {/* AI 체크리스트 카드 */}
-          <div className="info-card ai-card">
-            <h2>AI 체크리스트</h2>
-            <ul>
-            <li>✓ 허위 매물 Check!</li>
-              <li>✓ 독소 조항 Check!</li>
-              <li>✓ 거짓 정보 Check!</li>
-              </ul>
-              <div className="ai-icon">🤖</div>
-          </div>
-
-          {/* 3 Check 시스템 카드 */}
-          <div className="info-card check-card">
-            <h2>3 Check 시스템</h2>
-            <ul>
-              <li>✓ 허위 매물 Check!</li>
-              <li>✓ 독소 조항 Check!</li>
-              <li>✓ 거짓 정보 Check!</li>
-            </ul>
-            <div className="check-icon">✓</div>
+        <div className="selection-box">
+          <h2>중개사 선택</h2>
+          <div className="realtor-list">
+            {realtors.map(realtor => (
+              <button
+                key={realtor.id}
+                className={`select-button ${selectedRealtor?.id === realtor.id ? 'selected' : ''}`}
+                onClick={() => setSelectedRealtor(realtor)}
+                disabled={isLoading}
+              >
+                {realtor.name}
+              </button>
+            ))}
           </div>
         </div>
-      </main>
+      </div>
+
+      <div className="selected-info">
+        <p>선택된 사용자: {selectedUser?.name || '없음'}</p>
+        <p>선택된 중개사: {selectedRealtor?.name || '없음'}</p>
+      </div>
+
+      {error && <p className="error-message">{error}</p>}
+
+      <button 
+        className="create-chat-button"
+        onClick={handleCreateChat}
+        disabled={!selectedUser || !selectedRealtor || isLoading}
+      >
+        {isLoading ? '생성 중...' : '채팅방 생성'}
+      </button>
+
+      {chatRooms.length > 0 && (
+        <div className="chat-rooms-list">
+        <h2>현재 채팅방 목록</h2>
+        <ul>
+          {chatRooms.map(room => (
+            <li key={room.roomId} className="chat-room-item">
+              {/* 백엔드 응답 구조에 맞게 수정 */}
+              {room.userName} - {formatChatTime(room.updatedAt)}
+              {room.lastMessage && <p className="last-message">{room.lastMessage}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+      )}
     </div>
   );
 };

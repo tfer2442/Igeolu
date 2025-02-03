@@ -7,7 +7,7 @@ import ChatRoomList from '../ChatRoomList/ChatRoomList';
 import './ChatModal.css';
 
 /* 📌 테스트용 사용자 ID (실제 로그인 기능으로 대체 예정) */
-const TEST_USER_ID = 123456;
+const TEST_USER_ID = 1;
 
 /**
  * 📌 ChatModal 컴포넌트
@@ -24,7 +24,19 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose }) => {
 
   /* 📌 실시간 채팅방 목록 업데이트 핸들러 */
   const handleRoomsUpdate = (updatedRooms) => {
-    setChatRooms(updatedRooms);
+    setChatRooms(prev => {
+      // 기존 목록과 업데이트된 목록 병합
+      const mergedRooms = [...prev];
+      updatedRooms.forEach(newRoom => {
+        const index = mergedRooms.findIndex(r => r.roomId === newRoom.roomId);
+        if (index > -1) {
+          mergedRooms[index] = { ...mergedRooms[index], ...newRoom };
+        } else {
+          mergedRooms.unshift(newRoom);
+        }
+      });
+      return mergedRooms;
+    });
   };
 
   /* 📌 채팅방 목록 불러오기 */
@@ -42,21 +54,63 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose }) => {
     }
   };
 
+  /* 📌 재연결 로직 */
+  // const reconnectWebSocket = async () => {
+  //   try {
+  //     if (roomsSocketRef.current) {
+  //       await roomsSocketRef.current.connect();
+  //       await fetchChatRooms(); // 재연결 후 데이터 새로 로드
+  //     }
+  //     setError(null);
+  //   } catch (error) {
+  //     setError('채팅 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+  //   }
+  // };
+
   /* 📌 모달이 열릴 때 WebSocket 연결 및 데이터 로드 */
   useEffect(() => {
     const initializeRoomsSocket = async () => {
       if (isModalOpen) {
-        await fetchChatRooms();
-
-        /* WebSocket이 없는 경우 새로 생성 */
-        if (!roomsSocketRef.current) {
-          roomsSocketRef.current = new ChatRoomsWebSocket(handleRoomsUpdate);
-          try {
-            await roomsSocketRef.current.connect();
-          } catch (error) {
-            setError('실시간 업데이트 연결에 실패했습니다.');
+        try {
+          console.log('채팅방 목록 로드 시작');
+          await fetchChatRooms();
+          console.log('채팅방 목록 로드 완료');
+  
+          console.log('WebSocket 연결 상태 확인:', {
+            hasSocket: !!roomsSocketRef.current,
+            isConnected: roomsSocketRef.current?.isConnected
+          });
+  
+          if (!roomsSocketRef.current || !roomsSocketRef.current.isConnected) {
+            console.log('새 WebSocket 연결 시도 - userId:', TEST_USER_ID);
+            roomsSocketRef.current = new ChatRoomsWebSocket(
+              TEST_USER_ID,
+              handleRoomsUpdate
+            );
+  
+            try {
+              await roomsSocketRef.current.connect();
+              console.log('WebSocket 연결 성공');
+            } catch (wsError) {
+              console.error('WebSocket 연결 실패:', {
+                error: wsError,
+                socketState: roomsSocketRef.current?.stompClient?.connected,
+                socketUrl: roomsSocketRef.current?.SOCKET_URL
+              });
+              throw wsError;
+            }
           }
+        } catch (error) {
+          console.error('초기화 실패 상세 정보:', {
+            error,
+            type: error.type,
+            message: error.message,
+            stack: error.stack
+          });
+          setError('실시간 업데이트 연결에 실패했습니다.');
         }
+      } else {
+        console.log('모달이 닫혀있어 초기화 생략');
       }
     };
 
@@ -65,6 +119,7 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose }) => {
     /* 📌 모달이 닫힐 때 WebSocket 연결 해제 */
     return () => {
       if (roomsSocketRef.current) {
+        console.log('WebSocket 연결 해제');
         roomsSocketRef.current.disconnect();
         roomsSocketRef.current = null;
       }

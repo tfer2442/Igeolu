@@ -9,6 +9,6 @@ export const WEBSOCKET = {
   };
   
   export const USER = {
-    CURRENT_USER_ID: 123456,
-    TEST_USER_ID: 123456
+    CURRENT_USER_ID: 1,
+    TEST_USER_ID: 1
   };

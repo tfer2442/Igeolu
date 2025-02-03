@@ -2,15 +2,17 @@
 import BaseWebSocket from '../../services/webSocket/baseWebSocket';
 
 class ChatRoomsWebSocket extends BaseWebSocket {
-  constructor(onUpdateCallback) {
+  constructor(userId, onUpdateCallback) {  // userId 매개변수 추가
     super();
+    this.userId = userId;  // userId 저장
     this.onUpdateCallback = onUpdateCallback;
   }
 
   subscribe() {
     if (!this.stompClient || !this.isConnected) return;
 
-    this.stompClient.subscribe('/sub/chatRooms', (message) => {
+    // userId를 포함한 topic으로 구독
+    this.stompClient.subscribe(`/sub/chats/${this.userId}`, (message) => {
       try {
         const updatedRooms = JSON.parse(message.body);
         this.onUpdateCallback(updatedRooms);

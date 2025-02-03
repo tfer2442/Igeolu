@@ -4,7 +4,14 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import './ChatMessage.css';
 
-const ChatMessage = ({ message, isCurrentUser, userProfile }) => {
+const ChatMessage = ({
+  message,
+  isCurrentUser,
+  userProfile = {  // 여기에서 기본값을 직접 지정
+    userName: '',
+    profileUrl: ''
+  }
+}) => {
   const messageTime = format(new Date(message.createdAt), 'HH:mm');
 
   return (
@@ -37,7 +44,7 @@ const ChatMessage = ({ message, isCurrentUser, userProfile }) => {
 // ChatMessage.jsx
 ChatMessage.propTypes = {
   message: PropTypes.shape({
-    messageId: PropTypes.number.isRequired,
+    userId: PropTypes.number.isRequired,  // writerId에서 매핑됨
     content: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired
   }).isRequired,
@@ -46,14 +53,6 @@ ChatMessage.propTypes = {
     userName: PropTypes.string,
     profileUrl: PropTypes.string
   })
-};
-
-// 기본값 설정
-ChatMessage.defaultProps = {
-  userProfile: {
-    userName: '',
-    profileUrl: ''
-  }
 };
 
 export default ChatMessage;

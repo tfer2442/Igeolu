@@ -50,7 +50,7 @@ MobileChatList.propTypes = {
       userName: PropTypes.string.isRequired,
       userProfileUrl: PropTypes.string,
       unreadCount: PropTypes.number.isRequired,
-      createdAt: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
       lastMessage: PropTypes.string
     })
   ).isRequired,
