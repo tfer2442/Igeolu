@@ -9,6 +9,25 @@ spring:
       # username = local, password = local, dbname = igeolu
       uri: mongodb://local:local@mongodb:27017/igeolu?authSource=admin
 
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: ENC(Az1s8b/I1VHwhQwHPYVI7cQ8LXqTFNc05y+UuAOAJHhEeen0mlMcRaR4aCXnEVLa)
+            client-secret: ENC(0sdaWwUcVxpf01vWS1xN72CAq3s3KUYOVLSVhGEpWeFG9Eg9NC+k8jiZBtA0m3Un)
+            redirect-uri: "http://localhost:8080/api/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: "https://kauth.kakao.com/oauth/authorize"
+            token-uri: "https://kauth.kakao.com/oauth/token"
+            user-info-uri: "https://kapi.kakao.com/v2/user/me"
+            user-name-attribute: id
+
   jpa:
     show-sql: true
     hibernate:
