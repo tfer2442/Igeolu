@@ -17,5 +17,5 @@ spring:
         format_sql: true
 
 openvidu:
-  url: ENC(0HffXy655yIdz8f4EZiOvO4fveBOFrSnMba10RDrFJs=)
+  url: ENC(dHcH9uvYd42Efm/FQf80vH9Q/1a6pRNBZX4YRNISN+t15bmSVSWCGA==)
   secret: ENC(ETKG8ZovYz+lEMiK+WFfilJ9+JrZK5NO)
