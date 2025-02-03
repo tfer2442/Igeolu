@@ -207,9 +207,6 @@ function MobileLivePage() {
                                     ref={(video) => video && subscribers[currentSubscriberIndex].addVideoElement(video)}
                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
-                                <div className="subscriber-name-overlay">
-                                    캠 {currentSubscriberIndex + 1}
-                                </div>
                                 {subscribers.length > 1 && (
                                     <>
                                         <button 
