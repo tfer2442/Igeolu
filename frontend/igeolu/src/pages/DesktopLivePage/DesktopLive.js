@@ -24,8 +24,6 @@ function DesktopLive() {
   const OV = useRef(new OpenVidu());
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
-  const [role, setRole] = useState(null);
-  const [currentSubscriberIndex, setCurrentSubscriberIndex] = useState(0);
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -90,7 +88,6 @@ function DesktopLive() {
             // 사용자에게 권한 없음을 알림
             return;
           }
-          setRole(tokenInfo.role);
         }
 
         const newSession = OV.current.initSession();
@@ -170,46 +167,20 @@ function DesktopLive() {
     };
   }, [token, sessionId]);
 
-  const handlePrevSubscriber = () => {
-    setCurrentSubscriberIndex((prevIndex) =>
-      prevIndex === 0 ? subscribers.length - 1 : prevIndex - 1
-    );
-  };
-
-  const handleNextSubscriber = () => {
-    setCurrentSubscriberIndex((prevIndex) =>
-      prevIndex === subscribers.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
   return (
     <div className='desktop-live-page'>
       <DesktopLiveAndMyPage />
       <div className='desktop-live-page__content'>
         <div className='desktop-live-page__left-content'>
           <div className='desktop-live-page__left-content__live-video'>
-            {role === 'host' ? (
-              // 호스트인 경우 모든 참가자의 비디오를 표시
-              subscribers.map((sub, i) => (
-                <div key={i} className="subscriber-video">
-                  <video
-                    autoPlay
-                    ref={(video) => video && sub.addVideoElement(video)}
-                  />
-                </div>
-              ))
-            ) : (
-              // 참가자인 경우 호스트의 비디오만 표시
-              <div className="host-video">
-                {subscribers.length > 0 && (
-                  <video
-                    autoPlay
-                    ref={(video) => video && subscribers[0].addVideoElement(video)}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                )}
+            {subscribers.map((sub, i) => (
+              <div key={i} className="subscriber-video">
+                <video
+                  autoPlay
+                  ref={(video) => video && sub.addVideoElement(video)}
+                />
               </div>
-            )}
+            ))}
           </div>
           <div className='desktop-live-page__left-content__bottom-content'>
             <div className='desktop-live-page__left-content__bottom-content__ai-checklist'></div>
@@ -223,30 +194,10 @@ function DesktopLive() {
           <div className='desktop-live-page__right-content__my-cam'>
             {publisher && (
               <div className="publisher-container">
-                {role === 'host' ? (
-                  // 호스트인 경우 자신의 비디오
-                  <video
-                    autoPlay
-                    ref={(video) => video && publisher.addVideoElement(video)}
-                  />
-                ) : (
-                  // 참가자인 경우 다른 참가자들의 비디오를 전환 가능하게
-                  <>
-                    {subscribers.length > 1 && (
-                      <div className="participant-video">
-                        <video
-                          autoPlay
-                          ref={(video) => video && subscribers[currentSubscriberIndex].addVideoElement(video)}
-                        />
-                        <div className="subscriber-controls">
-                          <button onClick={handlePrevSubscriber}>&#8249;</button>
-                          <span>참가자 {currentSubscriberIndex + 1} / {subscribers.length - 1}</span>
-                          <button onClick={handleNextSubscriber}>&#8250;</button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
+                <video
+                  autoPlay
+                  ref={(video) => video && publisher.addVideoElement(video)}
+                />
                 <div className="desktop-live-page__toolbar">
                   <button onClick={toggleMicrophone}>
                     {isMicOn ? <BsMicFill /> : <BsMicMuteFill />}
