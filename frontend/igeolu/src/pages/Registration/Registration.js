@@ -25,8 +25,9 @@ const Registration = () => {
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [address, setAddress] = useState('');
 
+    // 옵션 상태
     const toggleOptions = () => setOptionsVisible(!optionsVisible);
-    
+
     const toggleOption = (option) => {
         if (selectedOptions.includes(option)) {
             setSelectedOptions(selectedOptions.filter(item => item !== option));
@@ -35,6 +36,7 @@ const Registration = () => {
         }
     };
 
+    // 뒤로가기 버튼
     const handleBack = () => {
         window.history.back();
     };
@@ -73,7 +75,7 @@ const Registration = () => {
                 longitude: selectedAddress.longitude,
                 dongCode: selectedAddress.dongCode,
                 propertyOption: {
-                    name: selectedOptions
+                    name: selectedOptions.map(option => OPTIONS_MAP[option])
                 },
                 images: ["image1.jpg", "image2.jpg"]
             };
@@ -112,10 +114,33 @@ const Registration = () => {
         }
     };
 
+    // 옵션 아이디 매핑
+    const OPTIONS_MAP = {
+        '침대': 1,
+        '에어컨': 2,
+        'TV': 3,
+        '책상': 4,
+        '옷장': 5,
+        '주차장': 6,
+        '전자렌지': 7,
+        '샤워부스': 8,
+        'CCTV': 9,
+        '현관보안': 10,
+        '냉장고': 11,
+        '건조기': 12,
+        '무인택배함': 13,
+        '인덕션': 14,
+        '가스레인지': 15,
+        '베란다': 16,
+        '오븐': 17,
+        '세탁기': 18
+    };
+
     const optionsList = [
-        '무인택배함', '에어컨', '침대', 'TV', '책상', '전자레인지', '샤워부스', '주차장',
-        '세탁기', '옷장', '가스레인지', '현관보안', '냉장고', '건조기', '오븐',
-        '엘리베이터', 'CCTV', '베란다', '인덕션'
+        '침대', '에어컨', 'TV', '책상', '옷장', '주차장', 
+        '전자렌지', '샤워부스', 'CCTV', '현관보안', '냉장고', 
+        '건조기', '무인택배함', '인덕션', '가스레인지', '베란다', 
+        '오븐', '세탁기'
     ];
 
     return (

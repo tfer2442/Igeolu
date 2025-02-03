@@ -1,4 +1,3 @@
-// components/AddressSearch/AddressSearch.js
 import { useState } from 'react';
 
 const AddressSearch = ({ onSelect }) => {
@@ -8,7 +7,10 @@ const AddressSearch = ({ onSelect }) => {
     const [error, setError] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     
-    const API_KEY = 'U01TX0FVVEgyMDI1MDIwMzE1MTIyOTExNTQ0MDQ=';
+    // 도로명주소api
+    const JUSO_KEY = 'U01TX0FVVEgyMDI1MDIwMzE1MTIyOTExNTQ0MDQ=';
+    // 좌표정보api
+    const COORD_KEY = '';
 
     const searchAddress = async () => {
         if (!keyword.trim()) return;
@@ -18,7 +20,7 @@ const AddressSearch = ({ onSelect }) => {
         
         try {
             const response = await fetch(
-                `https://business.juso.go.kr/addrlink/addrLinkApi.do?currentPage=1&countPerPage=10&keyword=${encodeURIComponent(keyword)}&confmKey=${API_KEY}&resultType=json`
+                `https://business.juso.go.kr/addrlink/addrLinkApi.do?currentPage=1&countPerPage=10&keyword=${encodeURIComponent(keyword)}&confmKey=${JUSO_KEY}&resultType=json`
             );
             
             const data = await response.json();
@@ -37,15 +39,56 @@ const AddressSearch = ({ onSelect }) => {
         }
     };
 
-    const handleSelect = (result) => {
-        onSelect({
-            fullAddress: result.roadAddr,
-            latitude: 0,
-            longitude: 0,
-            dongCode: result.admCd
-        });
-        setIsVisible(false);
-        setKeyword('');
+    const getCoordinates = async (admCd, rnMgtSn, udrtYn, buldMnnm, buldSlno) => {
+        try {
+            const response = await fetch(
+                `https://business.juso.go.kr/addrlink/addrCoordApi.do?admCd=${admCd}&rnMgtSn=${rnMgtSn}&udrtYn=${udrtYn}&buldMnnm=${buldMnnm}&buldSlno=${buldSlno}&confmKey=${COORD_KEY}&resultType=json`
+            );
+            
+            const data = await response.json();
+            
+            if (data.results?.common?.errorCode === '0') {
+                const coordInfo = data.results.juso[0];
+                return {
+                    entX: coordInfo.entX,
+                    entY: coordInfo.entY
+                };
+            }
+            throw new Error('좌표를 찾을 수 없습니다.');
+        } catch (error) {
+            console.error('좌표 변환 실패:', error);
+            return null;
+        }
+    };
+
+    const handleSelect = async (result) => {
+        try {
+            const coords = await getCoordinates(
+                result.admCd,
+                result.rnMgtSn,
+                result.udrtYn,
+                result.buldMnnm,
+                result.buldSlno
+            );
+            
+            onSelect({
+                fullAddress: result.roadAddr,
+                latitude: coords?.entY || 0,
+                longitude: coords?.entX || 0,
+                dongCode: result.admCd
+            });
+            
+            setIsVisible(false);
+            setKeyword('');
+        } catch (error) {
+            console.error('주소 선택 처리 실패:', error);
+            onSelect({
+                fullAddress: result.roadAddr,
+                latitude: 0,
+                longitude: 0,
+                dongCode: result.admCd
+            });
+        }
     };
 
     return (
