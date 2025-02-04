@@ -6,16 +6,13 @@ import chatApi from '../../../../services/chatApi';
 import ChatMessage from '../ChatMessage/ChatMessage';
 import './ChatRoom.css';
 
-/* 📌 임시 사용자 ID (나중에 로그인 시스템으로 대체 예정) */
-const CURRENT_USER_ID = 5;
-
 /**
  * 📌 ChatRoom 컴포넌트
  * - 특정 채팅방의 메시지를 표시하고 실시간 메시지 송수신 처리
  * - WebSocket을 통해 실시간 업데이트 지원
  * - 메시지 입력 및 전송 기능 포함
  */
-const ChatRoom = ({ room, onBack, isMobile }) => {
+const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUserId props 
   /* 📌 상태 관리 */
   const [messages, setMessages] = useState([]); // 채팅 메시지 목록
   const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지
@@ -38,80 +35,74 @@ const ChatRoom = ({ room, onBack, isMobile }) => {
   }, []);
 
   /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 */
+  // 1. useCallback으로 함수들을 메모이제이션
   const handleNewMessage = useCallback((message) => {
-    console.log('새 메시지 수신:', message);
     setMessages(prev => {
       const isDuplicate = prev.some(m => 
         m.content === message.content && 
         m.writerId === message.writerId &&
         m.createdAt === message.createdAt
       );
+      
       if (isDuplicate) return prev;
       return [...prev, message];
     });
+
     scrollToBottom();
-  }, [scrollToBottom]); // scrollToBottom을 의존성 배열에 추가
+  }, []);  // scrollToBottom만 의존성으로 필요
 
   /* 📌 기존 메시지 불러오기 */
-  console.log('room 정보:', room);
-console.log('room.roomId:', room.roomId);
-
-
-
-const fetchMessages = useCallback(async () => {
-  try {
-    console.log('메시지 가져오기 시작:', room.roomId);
-    const response = await chatApi.getChatMessages(room.roomId);
-    console.log('전체 응답 데이터:', response);
-    
-    if (!response || !response.length) {
-      console.log('응답 데이터가 비어있음');
+  const fetchMessages = useCallback(async () => {
+    try {
+      const response = await chatApi.getChatMessages(room.roomId);
+      setMessages(response || []);
+      scrollToBottom();
+    } catch (error) {
+      setError('메시지를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setMessages(response || []);
-    scrollToBottom();
-  } catch (error) {
-    console.error('메시지 가져오기 실패:', error);
-    setError('메시지를 불러오는데 실패했습니다.');
-  } finally {
-    setIsLoading(false);
-  }
-}, [room.roomId, scrollToBottom]);
+  }, [room.roomId, scrollToBottom]);
 
 
 
   /* 📌 채팅방 초기화 및 WebSocket 연결 */
   useEffect(() => {
+    let isSubscribed = true;
+    const wsRef = chatSocketRef.current;
+
     const initializeChat = async () => {
       try {
-        if (chatSocketRef.current) {
-          chatSocketRef.current.disconnect();
+        if (wsRef) {
+          wsRef.disconnect();
         }
-        
+
         chatSocketRef.current = new ChatWebSocket(
           room.roomId,
           handleNewMessage
         );
-        
+
         await chatSocketRef.current.connect();
-        await fetchMessages();
         
-        console.log('WebSocket 연결 상태:', chatSocketRef.current.isConnected);
+        if (!isSubscribed) return;
+        
+        await fetchMessages();
       } catch (error) {
-        console.error('Chat initialization failed:', error);
+        if (!isSubscribed) return;
         setError('채팅 초기화에 실패했습니다.');
       }
     };
-  
+
     initializeChat();
-  
+
+    // cleanup 함수
     return () => {
-      if (chatSocketRef.current) {
-        chatSocketRef.current.disconnect();
-        chatSocketRef.current = null;
+      isSubscribed = false;
+      if (wsRef) {
+        wsRef.disconnect();
       }
     };
-  }, [room.roomId, handleNewMessage, fetchMessages]);
+  }, [room.roomId]); // room.roomId만 의존성으로 사용
 
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {
@@ -120,27 +111,21 @@ const fetchMessages = useCallback(async () => {
   
     const messageData = {
       roomId: room.roomId,
-      userId: CURRENT_USER_ID,
+      userId: currentUserId,
       content: trimmedMessage,
     };
   
     try {
-      // WebSocket을 사용하여 메시지 전송
+      if (!chatSocketRef.current?.isConnected) {
+        console.log('WebSocket 재연결 시도');
+        await chatSocketRef.current?.connect();
+      }
+      
       const sent = chatSocketRef.current?.sendMessage(messageData);
       if (sent) {
         console.log('메시지 전송 성공');
-        
-        // 즉시 UI에 메시지 추가
-        const newMessageObj = {
-          writerId: CURRENT_USER_ID,
-          content: trimmedMessage,
-          createdAt: new Date().toISOString()
-        };
-        setMessages(prev => [...prev, newMessageObj]);
-        setNewMessage('');
-        scrollToBottom();
+        setNewMessage(''); // 입력창만 비우기
       } else {
-        console.error('메시지 전송 실패');
         setError('메시지 전송에 실패했습니다.');
       }
     } catch (error) {
@@ -187,22 +172,22 @@ const fetchMessages = useCallback(async () => {
           <>
             {messages.map((message, index) => (
               <ChatMessage
-              key={index} // messageId 대신 index 사용
-              message={{
-                userId: message.writerId, // writerId를 userId로 매핑
-                content: message.content,
-                createdAt: message.createdAt
-              }}
-              isCurrentUser={message.writerId === CURRENT_USER_ID}
-              userProfile={
-                message.writerId !== CURRENT_USER_ID
-                  ? {
-                      userName: room.userName,
-                      profileUrl: room.userProfileUrl,
-                    }
-                  : null
-              }
-            />
+                key={`${message.roomId}-${message.writerId}-${index}`}
+                message={{
+                  userId: message.writerId,  // writerId를 userId로 변환
+                  content: message.content,
+                  createdAt: message.createdAt
+                }}
+                isCurrentUser={message.writerId === currentUserId}
+                userProfile={
+                  message.writerId !== currentUserId
+                    ? {
+                        userName: room.userName,
+                        profileUrl: room.userProfileUrl,
+                      }
+                    : null
+                }
+              />
             ))}
             <div ref={messagesEndRef} />
           </>
@@ -264,6 +249,7 @@ ChatRoom.propTypes = {
   }).isRequired,
   onBack: PropTypes.func.isRequired, // 뒤로 가기 버튼 핸들러
   isMobile: PropTypes.bool, // 모바일 여부
+  currentUserId: PropTypes.number.isRequired, // PropTypes 추가
 };
 
 export default ChatRoom;

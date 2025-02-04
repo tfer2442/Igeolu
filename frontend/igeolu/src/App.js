@@ -16,9 +16,6 @@ import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 // Services
 import chatApi from './services/chatApi';
 
-// Constants (나중에 constants 파일로 분리)
-const TEST_USER_ID = 5;
-
 function App() {
   // State
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +23,15 @@ function App() {
   const [chatRooms, setChatRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
   const [error, setError] = useState(null);          // 에러 상태 추가
+
+  // TEST_USER_ID를 props나 context로 관리하도록 변경
+  const [currentUserId, setCurrentUserId] = useState(5); // 기본값 5
+
+  // 유저 전환을 위한 토글 버튼 추가
+  const toggleUser = () => {
+    setCurrentUserId(prevId => prevId === 5 ? 1 : 5);
+  };
+
 
   // Hooks
   const location = useLocation();
@@ -36,7 +42,7 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await chatApi.getChatRooms(TEST_USER_ID);
+      const response = await chatApi.getChatRooms(currentUserId);
       setChatRooms(response);
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
@@ -86,9 +92,10 @@ function App() {
               onSelectChatRoom={handleSelectRoom}
               onClose={handleClose}
               isModalOpen={isOpen}
+              currentUserId={currentUserId} // props 추가
             />
           ) : (
-            <ChatRoom room={selectedRoom} onBack={handleBack} />
+            <ChatRoom room={selectedRoom} onBack={handleBack} currentUserId={currentUserId} />  // props 추가
           )}
         </SlideLayout>
       </>
@@ -97,6 +104,11 @@ function App() {
 
   return (
     <div className='App'>
+      {/* 유저 전환 버튼 추가 */}
+      <button onClick={toggleUser}>
+          현재 사용자: {currentUserId === 5 ? "사용자 5" : "사용자 1"}로 전환
+      </button>
+
       <Routes>
         <Route path='/' element={<Home />} />
         <Route
@@ -107,6 +119,7 @@ function App() {
               isLoading={isLoading}
               error={error}
               onRetry={fetchChatRooms}
+              currentUserId={currentUserId} // props 추가
             />
           }
         />
