@@ -10,7 +10,7 @@ const AddressSearch = ({ onSelect }) => {
     // 도로명주소api
     const JUSO_KEY = 'U01TX0FVVEgyMDI1MDIwMzE1MTIyOTExNTQ0MDQ=';
     // 좌표정보api
-    const COORD_KEY = '';
+    const COORD_KEY = 'U01TX0FVVEgyMDI1MDIwMzE1MTExNTExNTQ0MDM= ';
 
     const searchAddress = async () => {
         if (!keyword.trim()) return;
