@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.repository.PropertyRepository;
 import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,5 +28,8 @@ public class PropertyServiceImpl implements PropertyService {
 		return propertyRepository.findByUser(user);
 	}
 
-
+	@Override
+	public Property getProperty(Integer propertyId) {
+		return propertyRepository.findById(propertyId).orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
+	}
 }
