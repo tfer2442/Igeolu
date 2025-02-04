@@ -3,12 +3,14 @@ package com.ssafy.igeolu.global.config;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.mongodb.config.EnableReactiveMongoAuditing;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
+@EnableReactiveMongoAuditing
 @RequiredArgsConstructor
 public class MongodbConfig implements InitializingBean {
 
