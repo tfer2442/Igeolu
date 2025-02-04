@@ -1,7 +1,7 @@
 package com.ssafy.igeolu.facade.chatroom.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +61,14 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 
 					// lastMessage가 null인 경우를 걸러냄
 					// 대화방을 만들었지만 메세지를 시작하지 않은 경우임
+					String message;
+					LocalDateTime createdAt;
 					if (lastMessage == null) {
-						return null;
+						message = "메세지를 시작해주세요!";
+						createdAt = LocalDateTime.now();
+					} else {
+						message = lastMessage.getContent();
+						createdAt = lastMessage.getCreatedAt();
 					}
 
 					return ChatRoomListGetResponseDto.builder()
@@ -71,12 +77,11 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 						.userName(opponentUser.getUsername())
 						.userProfileUrl(opponentUser.getProfileFilePath())
 						.unreadCount(unreadCount)
-						.lastMessage(lastMessage.getContent())
-						.updatedAt(lastMessage.getCreatedAt())
+						.lastMessage(message)
+						.updatedAt(createdAt)
 						.build();
 				}
 			)
-			.filter(Objects::nonNull) // null인 항목들을 걸러냄
 			.sorted((o1, o2) -> o2.getUpdatedAt().compareTo(o1.getUpdatedAt()))
 			.toList();
 	}
