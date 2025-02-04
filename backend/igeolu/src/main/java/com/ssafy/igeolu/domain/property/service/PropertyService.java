@@ -12,4 +12,6 @@ public interface PropertyService {
 	void createProperty(Property property);
 
 	List<Property> getPropertyList(User user);
+
+	Property getProperty(Integer propertyId);
 }

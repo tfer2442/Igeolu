@@ -117,6 +117,12 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.build();
 	}
 
+	@Override
+	public PropertyGetResponseDto getProperty(Integer propertyId) {
+
+		Property property = propertyService.getProperty(propertyId);
+		return changeToDto(property);
+	}
 }
 
 

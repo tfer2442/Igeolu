@@ -47,5 +47,9 @@ public class PropertyController {
 		return ResponseEntity.ok(properties);
 	}
 
-
+	@GetMapping("/{propertyId}")
+	public ResponseEntity<PropertyGetResponseDto> getPropertyDetail(@PathVariable Integer propertyId) {
+		PropertyGetResponseDto property = propertyFacadeService.getProperty(propertyId);
+		return ResponseEntity.ok(property);
+	}
 }
