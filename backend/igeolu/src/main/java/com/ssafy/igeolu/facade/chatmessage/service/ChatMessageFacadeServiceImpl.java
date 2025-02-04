@@ -23,7 +23,7 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 		Flux<ChatMessage> chatMessages = chatMessageService.getChatMessageList(roomId);
 
 		return chatMessages.map(o -> ChatMessageGetResponseDto.builder()
-			.writerId(o.getWriterId())
+			.writerId(o.getUserId())
 			.content(o.getContent())
 			.createdAt(o.getCreatedAt())
 			.build());
@@ -34,14 +34,14 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 
 		ChatMessage chatMessage = ChatMessage.builder()
 			.roomId(request.getRoomId())
-			.writerId(request.getWriterId())
+			.userId(request.getWriterId())
 			.content(request.getContent())
 			.build();
 
 		return chatMessageService.saveChatMessage(chatMessage)
 			.map(m -> ChatMessagePostResponseDto.builder()
 				.messageId(m.getId())
-				.writerId(m.getWriterId())
+				.writerId(m.getUserId())
 				.content(m.getContent())
 				.createdAt(m.getCreatedAt())
 				.build());
