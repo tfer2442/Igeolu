@@ -21,4 +21,10 @@ public class PropertyServiceImpl implements PropertyService {
 
 	}
 
+	@Override
+	public List<Property> getPropertyList(User user) {
+		return propertyRepository.findByUser(user);
+	}
+
+
 }
