@@ -1,5 +1,5 @@
 import './styles/global.css'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import DesktopLive from './pages/DesktopLivePage/DesktopLive'
 import DesktopHome from './pages/DesktopHomePage/DesktopHome'
 import Make from './pages/MobileLivePage/Make'
@@ -10,7 +10,6 @@ import MobileLivePage from './pages/MobileLivePage/MobileLivePage'
 
 function App() {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<DesktopHome />} />
         <Route path="/live" element={<DesktopLive />} />
@@ -20,7 +19,6 @@ function App() {
         <Route path="/mobile-my-page" element={<MobileMyPage />} />
         <Route path="/mobile-live" element={<MobileLivePage />} />
       </Routes>
-    </BrowserRouter>
   );
 }
 export default App;
