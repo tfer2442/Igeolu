@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.ssafy.igeolu.domain.option.entity.Option;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +43,12 @@ public class PropertyGetResponseDto {
 
 	private BigDecimal longitude; // x
 
-	private List<Option> options;
+	private List<OptionDto> options;
+
+	@Getter
+	@AllArgsConstructor
+	public static class OptionDto {
+		private Integer optionId;
+	}
 
 }

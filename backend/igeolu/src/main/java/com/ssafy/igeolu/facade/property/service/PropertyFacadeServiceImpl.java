@@ -100,9 +100,11 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 	private PropertyGetResponseDto changeToDto(Property property) {
 
-		// 옵션 가져오기
-		List<Option> options = property.getPropertyOptions().stream()
+
+
+		List<PropertyGetResponseDto.OptionDto> optionDtos = property.getPropertyOptions().stream()
 			.map(PropertyOption::getOption)
+			.map(option -> new PropertyGetResponseDto.OptionDto(option.getId()))
 			.toList();
 
 		return PropertyGetResponseDto.builder()
@@ -117,7 +119,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.address(property.getAddress())
 			.latitude(property.getLatitude())
 			.longitude(property.getLongitude())
-			.options(options)
+			.options(optionDtos)
 			.build();
 	}
 
