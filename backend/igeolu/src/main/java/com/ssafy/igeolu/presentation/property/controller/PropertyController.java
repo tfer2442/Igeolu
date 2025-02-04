@@ -37,5 +37,15 @@ public class PropertyController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+	@Operation(summary = "중개인 매물 조회", description = "중개인 매물을 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("")
+	public ResponseEntity<List<PropertyGetResponseDto>> getProperties(@RequestParam("userId") Integer userId) {
+		List<PropertyGetResponseDto> properties = propertyFacadeService.getProperties(userId);
+		return ResponseEntity.ok(properties);
+	}
+
 
 }

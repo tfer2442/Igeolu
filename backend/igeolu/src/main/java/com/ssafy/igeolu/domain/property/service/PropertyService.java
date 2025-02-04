@@ -11,4 +11,5 @@ public interface PropertyService {
 	// 매물 등록
 	void createProperty(Property property);
 
+	List<Property> getPropertyList(User user);
 }

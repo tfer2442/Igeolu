@@ -9,5 +9,5 @@ public interface PropertyFacadeService {
 
 	void createProperty(PropertyPostRequestDto propertyPostRequestDto);
 
-	// List<PropertyGetResponseDto> getProperties(Integer userId);
+	List<PropertyGetResponseDto> getProperties(Integer userId);
 }

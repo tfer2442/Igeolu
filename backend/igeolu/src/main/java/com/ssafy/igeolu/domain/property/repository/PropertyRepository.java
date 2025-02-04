@@ -10,4 +10,5 @@ import com.ssafy.igeolu.domain.user.entity.User;
 
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Integer> {
+	List<Property> findByUser(User user);
 }

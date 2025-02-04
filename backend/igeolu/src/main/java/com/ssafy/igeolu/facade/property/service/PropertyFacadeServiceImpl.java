@@ -82,4 +82,43 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		propertyService.createProperty(property);
 		}
 
+	@Override
+	public List<PropertyGetResponseDto> getProperties(Integer userId) {
+		User user = userService.getUserById(userId);
+		List<Property> properties = propertyService.getPropertyList(user);
+
+		if (properties.isEmpty()) {
+			throw new CustomException(ErrorCode.PROPERTY_NOT_FOUND);
+		}
+
+		return properties.stream()
+			.map(this::changeToDto)
+			.collect(Collectors.toList());
+	}
+
+
+
+	private PropertyGetResponseDto changeToDto(Property property) {
+
+		// 옵션 가져오기
+		List<Option> options = property.getPropertyOptions().stream()
+			.map(PropertyOption::getOption)
+			.toList();
+
+		return PropertyGetResponseDto.builder()
+			.propertyId(property.getId())
+			.description(property.getDescription())
+			.deposit(property.getDeposit())
+			.monthlyRent(property.getMonthlyRent())
+			.area(property.getArea())
+			.approvalDate(property.getApprovalDate())
+			.currentFloor(property.getCurrentFloor())
+			.totalFloors(property.getTotalFloors())
+			.address(property.getAddress())
+			.latitude(property.getLatitude())
+			.longitude(property.getLongitude())
+			.options(options)
+			.build();
+	}
+
 }
