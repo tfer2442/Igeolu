@@ -50,7 +50,7 @@ public class ChatMessageController {
 	public Mono<ResponseEntity<Void>> receiveMessage(@RequestBody ChatMessagePostRequestDto request) {
 		return chatMessageFacadeService.saveChatMessage(request).flatMap(message -> {
 			// 메시지를 해당 채팅방 구독자들에게 전송
-			stompTemplate.convertAndSend("/sub/chats/" + request.getRoomId(), message);
+			stompTemplate.convertAndSend("/api/sub/chats/" + request.getRoomId(), message);
 			return Mono.just(ResponseEntity.ok().build());
 		});
 	}
