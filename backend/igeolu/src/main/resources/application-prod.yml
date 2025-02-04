@@ -38,3 +38,7 @@ spring:
 openvidu:
   url: ENC(dHcH9uvYd42Efm/FQf80vH9Q/1a6pRNBZX4YRNISN+t15bmSVSWCGA==)
   secret: ENC(ETKG8ZovYz+lEMiK+WFfilJ9+JrZK5NO)
+
+  file:
+    upload-dir: "/igeolu-file"
+    base-url: "https://i12d205.p.ssafy.io/igeolu-file"
