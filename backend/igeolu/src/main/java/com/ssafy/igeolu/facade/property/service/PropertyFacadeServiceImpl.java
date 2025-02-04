@@ -49,12 +49,10 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
 		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
 
-
 		// Dongcodes dongcode = dongcodesService.getDongcodes(request.getDongcode());
 
 		// 옵션 ID 리스트로 Option 엔티티들 조회
 		List<Option> options = optionRepository.findByIdIn(request.getOptions());
-
 
 		User user = userService.getUserById(1);
 
@@ -80,7 +78,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		});
 
 		propertyService.createProperty(property);
-		}
+	}
 
 	@Override
 	public List<PropertyGetResponseDto> getProperties(Integer userId) {
@@ -96,15 +94,11 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.collect(Collectors.toList());
 	}
 
-
-
 	private PropertyGetResponseDto changeToDto(Property property) {
-
-
 
 		List<PropertyGetResponseDto.OptionDto> optionDtos = property.getPropertyOptions().stream()
 			.map(PropertyOption::getOption)
-			.map(option -> new PropertyGetResponseDto.OptionDto(option.getId()))
+			.map(option -> new PropertyGetResponseDto.OptionDto(option.getId(), option.getName().getLabel()))
 			.toList();
 
 		return PropertyGetResponseDto.builder()
@@ -124,3 +118,5 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	}
 
 }
+
+

@@ -49,6 +49,7 @@ public class PropertyGetResponseDto {
 	@AllArgsConstructor
 	public static class OptionDto {
 		private Integer optionId;
+		private String optionName;
 	}
 
 }
