@@ -23,7 +23,7 @@ public class ChatMessage {
 	private Integer roomId;
 	private String content;
 
-	private Integer writerId;
+	private Integer userId;
 
 	@CreatedDate
 	private LocalDateTime createdAt;
