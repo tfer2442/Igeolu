@@ -55,6 +55,9 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		// 옵션 ID 리스트로 Option 엔티티들 조회
 		List<Option> options = optionRepository.findByIdIn(request.getOptions());
 
+
+		User user = userService.getUserById(1);
+
 		Property property = Property.builder()
 			.description(request.getDescription())
 			.deposit(request.getDeposit())
@@ -67,6 +70,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.latitude(latitude)
 			.longitude(longitude)
 			// .dongcode(dongcode)
+			.user(user)
 			.build();
 
 		// PropertyOption 생성 및 연관관계 설정

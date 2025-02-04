@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "property_options")
+@Table(name = "options")
 public class Option {
 	@Id
 	private Integer id;
