@@ -18,6 +18,7 @@ import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
+import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -122,6 +123,19 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		Property property = propertyService.getProperty(propertyId);
 		return changeToDto(property);
+	}
+
+	@Override
+	public List<OptionListGetResponseDto> getOptionList() {
+		List<Option> options = optionService.getOptionList();
+
+		return options.stream()
+			.map(option -> new OptionListGetResponseDto(
+				option.getId(),
+				option.getName().getLabel()
+			))
+			.collect(Collectors.toList());
+
 	}
 }
 

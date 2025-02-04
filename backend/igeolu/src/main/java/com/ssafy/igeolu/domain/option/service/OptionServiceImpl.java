@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class OptionServiceImpl implements OptionService {
 
 	private final PropertyRepository propertyRepository;
+	private final OptionRepository optionRepository;
 
 
 	@Override
@@ -27,5 +28,10 @@ public class OptionServiceImpl implements OptionService {
 			.map(PropertyOption::getOption)
 			.collect(Collectors.toList());
 
+	}
+
+	@Override
+	public List<Option> getOptionList() {
+		return optionRepository.findAll();
 	}
 }
