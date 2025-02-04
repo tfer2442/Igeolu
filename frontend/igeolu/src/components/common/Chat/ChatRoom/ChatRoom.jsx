@@ -31,21 +31,32 @@ const ChatRoom = ({ room, onBack, isMobile }) => {
   };
 
   /* 📌 메시지 목록 스크롤을 최하단으로 이동 */
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 50);
-  };
+  }, []);
 
   /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 */
   const handleNewMessage = useCallback((message) => {
-    setMessages(prev => [...prev, message]);
-  }, []);
-
+    console.log('새 메시지 수신:', message);
+    setMessages(prev => {
+      const isDuplicate = prev.some(m => 
+        m.content === message.content && 
+        m.writerId === message.writerId &&
+        m.createdAt === message.createdAt
+      );
+      if (isDuplicate) return prev;
+      return [...prev, message];
+    });
+    scrollToBottom();
+  }, [scrollToBottom]); // scrollToBottom을 의존성 배열에 추가
 
   /* 📌 기존 메시지 불러오기 */
   console.log('room 정보:', room);
 console.log('room.roomId:', room.roomId);
+
+
 
 const fetchMessages = useCallback(async () => {
   try {
@@ -65,7 +76,7 @@ const fetchMessages = useCallback(async () => {
   } finally {
     setIsLoading(false);
   }
-}, [room.roomId]);
+}, [room.roomId, scrollToBottom]);
 
 
 
@@ -73,15 +84,19 @@ const fetchMessages = useCallback(async () => {
   useEffect(() => {
     const initializeChat = async () => {
       try {
-        if (!chatSocketRef.current || !chatSocketRef.current.isConnected) {
-          chatSocketRef.current = new ChatWebSocket(
-            room.roomId,
-            handleNewMessage
-          );
-          await chatSocketRef.current.connect();
-          // WebSocket 연결 후 메시지 가져오기
-          await fetchMessages();
+        if (chatSocketRef.current) {
+          chatSocketRef.current.disconnect();
         }
+        
+        chatSocketRef.current = new ChatWebSocket(
+          room.roomId,
+          handleNewMessage
+        );
+        
+        await chatSocketRef.current.connect();
+        await fetchMessages();
+        
+        console.log('WebSocket 연결 상태:', chatSocketRef.current.isConnected);
       } catch (error) {
         console.error('Chat initialization failed:', error);
         setError('채팅 초기화에 실패했습니다.');
@@ -96,7 +111,7 @@ const fetchMessages = useCallback(async () => {
         chatSocketRef.current = null;
       }
     };
-  }, [room.roomId, fetchMessages]);
+  }, [room.roomId, handleNewMessage, fetchMessages]);
 
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {
@@ -113,8 +128,17 @@ const fetchMessages = useCallback(async () => {
       // WebSocket을 사용하여 메시지 전송
       const sent = chatSocketRef.current?.sendMessage(messageData);
       if (sent) {
-        console.log('메시지가 성공적으로 전송됐습니다.');
+        console.log('메시지 전송 성공');
+        
+        // 즉시 UI에 메시지 추가
+        const newMessageObj = {
+          writerId: CURRENT_USER_ID,
+          content: trimmedMessage,
+          createdAt: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, newMessageObj]);
         setNewMessage('');
+        scrollToBottom();
       } else {
         console.error('메시지 전송 실패');
         setError('메시지 전송에 실패했습니다.');

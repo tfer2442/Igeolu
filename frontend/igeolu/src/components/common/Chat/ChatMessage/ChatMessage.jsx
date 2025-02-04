@@ -1,13 +1,13 @@
-// src/components/common/ChatMessage/ChatMessage.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import defaultProfile from '../../../../assets/images/testprofile.jpg';
 import './ChatMessage.css';
 
 const ChatMessage = ({
   message,
   isCurrentUser,
-  userProfile = {  // 여기에서 기본값을 직접 지정
+  userProfile = {
     userName: '',
     profileUrl: ''
   }
@@ -23,6 +23,10 @@ const ChatMessage = ({
               src={userProfile.profileUrl} 
               alt={`${userProfile.userName} 프로필`} 
               className="profile-image"
+              onError={(e) => {
+                e.target.onerror = null; // 무한 루프 방지
+                e.target.src = defaultProfile;
+              }}
             />
           ) : (
             <div className="profile-placeholder">
@@ -41,10 +45,10 @@ const ChatMessage = ({
   );
 };
 
-// ChatMessage.jsx
+// PropTypes는 그대로 유지
 ChatMessage.propTypes = {
   message: PropTypes.shape({
-    userId: PropTypes.number.isRequired,  // writerId에서 매핑됨
+    userId: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired
   }).isRequired,

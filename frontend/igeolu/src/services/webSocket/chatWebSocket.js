@@ -49,20 +49,24 @@ class ChatWebSocket extends BaseWebSocket {
     }
   
     try {
+      const messageBody = {
+        roomId: this.roomId,
+        writerId: messageData.userId,
+        content: messageData.content
+      };
+      
+      console.log('Sending message:', messageBody); // 메시지 전송 정보 출력
+      
       this.stompClient.publish({
         destination: '/api/pub/chats/messages',
-        body: JSON.stringify({
-          roomId: this.roomId,
-          userId: messageData.userId,
-          content: messageData.content
-        })
+        body: JSON.stringify(messageBody)
       });
       return true;
     } catch (error) {
       console.error('Message sending failed:', error);
       return false;
     }
-  }
+}
 
   disconnect() {
     if (this.subscription) {
