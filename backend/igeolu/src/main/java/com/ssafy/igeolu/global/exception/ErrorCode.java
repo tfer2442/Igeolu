@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 @Schema(description = "에러 코드 Enum")
 public enum ErrorCode {
+	PROPERTY_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "매물을 찾을 수 없습니다."),
+	DONGCODE_NOT_FOUND(HttpStatus.NOT_FOUND, "D001", "동코드를 찾을 수 없습니다."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "C001", "사용자를 찾을 수 없습니다."),
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C002", "잘못된 파라미터가 전달되었습니다."),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C999", "서버 에러가 발생했습니다.");
