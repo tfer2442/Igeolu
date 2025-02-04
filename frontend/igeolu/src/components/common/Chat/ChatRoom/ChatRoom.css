@@ -14,6 +14,16 @@
   background-color: #272626;
 }
 
+/* 모바일에서 메시지 입력창 텍스트 색상 설정 */
+.chat-room.mobile .message-input {
+  color: #FFFFFF;
+}
+
+/* 플레이스홀더 색상도 함께 변경 */
+.chat-room.mobile .message-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* 📌 헤더 스타일 */
 .chat-room-header {
   position: relative; /* 💡 고정되지 않고 정상적으로 보이도록 조정 */

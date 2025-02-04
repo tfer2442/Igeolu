@@ -125,7 +125,7 @@ function App() {
         />
         <Route 
           path="/m/chat/:roomId" 
-          element={<MobileChatRoom />} 
+          element={<MobileChatRoom currentUserId={currentUserId} />} 
         />
       </Routes>
       {!isMobileChatRoute && renderChatInterface()}
