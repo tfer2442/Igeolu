@@ -1,0 +1,38 @@
+/* pages/Mobile/MobileChatRoom.css */
+.mobile-chat-room {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #272626;
+}
+
+.mobile-chat-room .chat-room {
+  flex: 1;
+  background-color: #272626;
+}
+
+.mobile-chat-room .chat-room-header {
+  padding: 16px;
+  background-color: #272626;
+  border-bottom: 1px solid #343434;
+}
+
+.mobile-chat-room .back-button {
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.mobile-chat-room .chat-room-title {
+  color: #FFFFFF; /* 채팅방 제목 색상 흰색으로 */
+}
+
+.mobile-chat-room .messages-container {
+  flex: 1;
+  padding: 16px;
+}
+
+.mobile-chat-room .message-input-container {
+  padding: 16px;
+  
+  /* border-top: 1px solid #e9ecef; */
+}
