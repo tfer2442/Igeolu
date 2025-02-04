@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import ChatRoomList from '../../components/common/Chat/ChatRoomList/ChatRoomList';
-import './MobileChatList.css';
+import './MobileChatListPage.css';
 
 const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
   const navigate = useNavigate();

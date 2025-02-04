@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ChatRoom from '../../components/common/Chat/ChatRoom/ChatRoom';
 import chatApi from '../../services/chatApi';
-import './MobileChatRoom.css';
+import './MobileChatRoomPage.css';
 
 const MobileChatRoom = ({ currentUserId }) => {
   const { roomId } = useParams();

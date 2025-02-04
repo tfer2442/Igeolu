@@ -3,9 +3,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 // Page Components
-import Home from './pages/Home/Home';
-import MobileChatList from './pages/Mobile/MobileChatList';
-import MobileChatRoom from './pages/Mobile/MobileChatRoom';
+import Home from './pages/DesktopHomePage/DesktopHome';
+import MobileChatList from './pages/MobileChatListPage/MobileChatListPage';
+import MobileChatRoom from './pages/MobileChatRoomPage/MobileChatRoomPage';
 
 // Common Components
 import ChatButton from './components/common/Button/ChatButton/ChatButton';

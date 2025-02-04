@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import chatApi from '../../services/chatApi';
 import ChatRoomsWebSocket from '../../services/webSocket/chatRoomsWebSocket';
 import { formatChatTime } from '../../utils/dateFormat';  // 이 라인 추가
-import './Home.css';
+import './TempCreateChatRoom.css';
 
 const Home = () => {
   const [selectedUser, setSelectedUser] = useState(null);
