@@ -22,7 +22,7 @@ public class FileController {
 	}
 
 	@Operation(summary = "파일 저장 예제 컨트롤러", description = "파일 저장 경로를 반환합니다.")
-	@PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
 		produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> uploadFile(MultipartFile file) {
 		String fileUrl = fileService.saveFile(file);
