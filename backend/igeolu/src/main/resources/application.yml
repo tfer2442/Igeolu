@@ -13,6 +13,12 @@ spring:
     include:
       - key
 
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+
 springdoc:
   swagger-ui:
     path: /api/swagger-ui.html
+
