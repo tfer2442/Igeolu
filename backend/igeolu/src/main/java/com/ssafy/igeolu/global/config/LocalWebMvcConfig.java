@@ -14,7 +14,7 @@ public class LocalWebMvcConfig implements WebMvcConfigurer {
 			.allowedOrigins("http://localhost:3000")
 			.allowCredentials(true)
 			.allowedHeaders("Authorization", "Content-Type")
-			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
+			.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
 			.maxAge(3600);
 	}
 }
