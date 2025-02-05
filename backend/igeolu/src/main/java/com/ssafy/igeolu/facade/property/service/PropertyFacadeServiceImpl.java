@@ -6,13 +6,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.option.entity.Option;
 import com.ssafy.igeolu.domain.option.repository.OptionRepository;
 import com.ssafy.igeolu.domain.option.service.OptionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
+import com.ssafy.igeolu.domain.property.entity.PropertyImage;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
 import com.ssafy.igeolu.domain.user.entity.User;
@@ -20,9 +21,11 @@ import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.file.service.FileService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.util.CoordinateConverter;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,9 +39,10 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	private final CoordinateConverter coordinateConverter;
 	private final OptionRepository optionRepository;
 	private final UserService userService;
+	private final FileService fileService;
 
 	@Override
-	public void createProperty(PropertyPostRequestDto request) {
+	public void createProperty(PropertyPostRequestDto request, List<MultipartFile> images) {
 
 		// 좌표 변환
 		double[] latLon = coordinateConverter.convertToLatLon(
@@ -78,6 +82,15 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			property.addPropertyOption(propertyOption);
 		});
 
+		// 이미지 저장
+		images.forEach(i -> {
+			String filePath = fileService.saveFile(i);
+			PropertyImage propertyImage = PropertyImage.builder()
+				.filePath(filePath)
+				.build();
+			property.addPropertyImage(propertyImage);
+		});
+
 		propertyService.createProperty(property);
 	}
 
@@ -102,6 +115,10 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.map(option -> new PropertyGetResponseDto.OptionDto(option.getId(), option.getName().getLabel()))
 			.toList();
 
+		List<String> images = property.getPropertyImages().stream()
+			.map(PropertyImage::getFilePath)
+			.toList();
+
 		return PropertyGetResponseDto.builder()
 			.propertyId(property.getId())
 			.description(property.getDescription())
@@ -115,6 +132,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.latitude(property.getLatitude())
 			.longitude(property.getLongitude())
 			.options(optionDtos)
+			.images(images)
 			.build();
 	}
 

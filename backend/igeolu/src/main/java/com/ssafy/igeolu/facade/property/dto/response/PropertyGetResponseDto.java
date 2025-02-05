@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.ssafy.igeolu.domain.option.entity.Option;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +41,8 @@ public class PropertyGetResponseDto {
 	private BigDecimal longitude; // x
 
 	private List<OptionDto> options;
+
+	private List<String> images;
 
 	@Getter
 	@AllArgsConstructor
