@@ -7,6 +7,8 @@ import com.ssafy.igeolu.domain.user.entity.User;
 
 public interface ChatRoomService {
 
+	ChatRoom getChatRoom(Integer id);
+
 	ChatRoom createChatRoom(User member, User realtor);
 
 	List<ChatRoom> getChatRoomList(User user);
