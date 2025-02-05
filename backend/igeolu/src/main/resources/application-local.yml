@@ -47,3 +47,7 @@ kakao:
 openvidu:
   url: http://openvidu:4443
   secret: MY_SECRET
+
+file:
+  upload-dir: "/igeolu-file"
+  base-url: "http://localhost:8080/igeolu-file"
