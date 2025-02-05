@@ -34,7 +34,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	private Long kakaoId;
+	private String kakaoId;
 
 	private String username;
 

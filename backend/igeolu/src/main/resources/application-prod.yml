@@ -18,6 +18,7 @@ spring:
             client-secret: ENC(0sdaWwUcVxpf01vWS1xN72CAq3s3KUYOVLSVhGEpWeFG9Eg9NC+k8jiZBtA0m3Un)
             redirect-uri: "https://i12d205.p.ssafy.io/api/login/oauth2/code/kakao"
             authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
             scope:
               - profile_nickname
         provider:
@@ -26,6 +27,8 @@ spring:
             token-uri: "https://kauth.kakao.com/oauth/token"
             user-info-uri: "https://kapi.kakao.com/v2/user/me"
             user-name-attribute: id
+  jwt:
+    secret: ENC(YhXaPtb4YUm4v8gEuw1crFdZyWG0nrDAjwXvb/L3yhdZRguDrPUNUdRTaOs3LM7UqXQFdybjqNryhIkHMVu6+g==)
 
   jpa:
     show-sql: true
@@ -34,6 +37,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+kakao:
+  logout:
+    redirect:
+      uri: "https://i12d205.p.ssafy.io/api/logout"
 
 openvidu:
   url: ENC(dHcH9uvYd42Efm/FQf80vH9Q/1a6pRNBZX4YRNISN+t15bmSVSWCGA==)
