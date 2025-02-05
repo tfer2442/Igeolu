@@ -14,7 +14,7 @@ public interface AppointmentService {
 
 	Appointment createAppointment(Appointment appointment);
 
-	Appointment updateAppointment(Appointment appointment,
+	void updateAppointment(Appointment appointment,
 		LocalDateTime scheduledAt,
 		String title,
 		User user);

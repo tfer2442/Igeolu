@@ -33,7 +33,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public Appointment updateAppointment(Appointment appointment,
+	public void updateAppointment(Appointment appointment,
 		LocalDateTime scheduledAt,
 		String title,
 		User user) {
@@ -41,8 +41,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 		appointment.setScheduledAt(scheduledAt);
 		appointment.setTitle(title);
 		appointment.setUser(user);
-
-		return appointment;
 	}
 
 	@Override
