@@ -23,7 +23,7 @@ import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
-import com.ssafy.igeolu.file.service.FileService;
+import com.ssafy.igeolu.domain.service.FileService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.util.CoordinateConverter;
@@ -173,13 +173,15 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
 		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
 
-
 		// 옵션 리스트로 엔티티 조회
 		List<Option> options = optionRepository.findByIdIn(requestDto.getOptions());
 
 		// 비우고 다시 저장
 		propertyOptionService.savePropertyOptions(property, options);
 
+		// 기존 파일 삭제하고
+
+		// 파일 새로 저장
 
 		// 매물 정보 업데이트
 		property.setDescription(requestDto.getDescription());
@@ -195,7 +197,6 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		propertyService.updateProperty(property);
 	}
-
 
 }
 

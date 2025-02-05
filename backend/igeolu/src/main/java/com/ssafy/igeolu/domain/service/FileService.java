@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.file.service;
+package com.ssafy.igeolu.domain.service;
 
 import java.io.File;
 import java.io.IOException;
