@@ -2,7 +2,7 @@ package com.ssafy.igeolu.facade.appointment.service;
 
 import java.util.List;
 
-import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentDeleteRequestDto;
+import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentListGetRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPostRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPutRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentListGetResponseDto;
@@ -10,11 +10,11 @@ import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentPostResponseD
 
 public interface AppointmentFacadeService {
 
-	List<AppointmentListGetResponseDto> getAppointmentList(AppointmentListGetResponseDto request);
+	List<AppointmentListGetResponseDto> getAppointmentList(AppointmentListGetRequestDto request);
 
 	AppointmentPostResponseDto createAppointment(AppointmentPostRequestDto request);
 
-	AppointmentPutRequestDto updateAppointment(AppointmentPutRequestDto request);
+	void updateAppointment(Integer appointmentId, AppointmentPutRequestDto request);
 
-	void deleteAppointment(AppointmentDeleteRequestDto request);
+	void deleteAppointment(Integer appointmentId);
 }

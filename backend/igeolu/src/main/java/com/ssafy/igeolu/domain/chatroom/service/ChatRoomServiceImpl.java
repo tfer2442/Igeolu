@@ -18,6 +18,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	private final ChatRoomRepository chatRoomRepository;
 
 	@Override
+	public ChatRoom getChatRoom(Integer id) {
+		return chatRoomRepository.findById(id).orElseThrow();
+	}
+
+	@Override
 	public ChatRoom createChatRoom(User member, User realtor) {
 
 		ChatRoom chatRoom = ChatRoom.builder()

@@ -39,11 +39,14 @@ public class Appointment {
 
 	private LocalDateTime scheduledAt;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	private User member;
+	// 예약 정보
+	private String title;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User realtor;
+	private User user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User opponentUser;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ChatRoom chatRoom;
