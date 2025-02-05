@@ -12,7 +12,6 @@ import MobileMyPage from './pages/MobileMyPage/MobileMyPage'
 import MobileLivePage from './pages/MobileLivePage/MobileLivePage'
 
 // Page Components
-import Home from './pages/DesktopHomePage/DesktopHome';
 import MobileChatList from './pages/MobileChatListPage/MobileChatListPage';
 import MobileChatRoom from './pages/MobileChatRoomPage/MobileChatRoomPage';
 
@@ -44,7 +43,11 @@ function App() {
 
   // Hooks
   const location = useLocation();
-  const isMobileChatRoute = location.pathname.startsWith('/m/chat');
+  const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
+  const isMobileMainRoute = location.pathname.startsWith('/mobile-main');
+  const isMobileCalendarRoute = location.pathname.startsWith('/mobile-calendar');
+  const isMobileMyPageRoute = location.pathname.startsWith('/mobile-my-page');
+  const isMobileLiveRoute = location.pathname.startsWith('/mobile-live');
 
   // API Calls
   const fetchChatRooms = useCallback(async () => {
@@ -90,6 +93,10 @@ function App() {
   // Render Methods
   const renderChatInterface = () => {
     if (isMobileChatRoute) return null;
+    if (isMobileMainRoute) return null;
+    if (isMobileCalendarRoute) return null;
+    if (isMobileMyPageRoute) return null;
+    if (isMobileLiveRoute) return null;
 
     return (
       <>
@@ -113,11 +120,6 @@ function App() {
 
   return (
     <div className='App'>
-      {/* 유저 전환 버튼 추가 */}
-      <button onClick={toggleUser}>
-          현재 사용자: {currentUserId === 5 ? "사용자 5" : "사용자 1"}로 전환
-      </button>
-
       <Routes>
         <Route path="/" element={<DesktopHome />} />
         <Route path="/live" element={<DesktopLive />} />
@@ -127,7 +129,7 @@ function App() {
         <Route path="/mobile-my-page" element={<MobileMyPage />} />
         <Route path="/mobile-live" element={<MobileLivePage />} />
         <Route
-          path='/m/chat'
+          path='/mobile-chat'
           element={
             <MobileChatList 
               chatRooms={chatRooms} 
@@ -139,7 +141,7 @@ function App() {
           }
         />
         <Route 
-          path="/m/chat/:roomId" 
+          path="/mobile-chat/:roomId" 
           element={<MobileChatRoom currentUserId={currentUserId} />} 
         />
       </Routes>

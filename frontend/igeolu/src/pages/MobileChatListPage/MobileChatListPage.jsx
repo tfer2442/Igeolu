@@ -1,18 +1,20 @@
-// pages/Mobile/MobileChatList.jsx
+// pages/MobileChatListPage/MobileChatListPage.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import ChatRoomList from '../../components/common/Chat/ChatRoomList/ChatRoomList';
 import './MobileChatListPage.css';
+import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab'
 
 const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
   const navigate = useNavigate();
 
   const handleSelectRoom = (room) => {
-    navigate(`/m/chat/${room.roomId}`);
+    navigate(`/mobile-chat/${room.roomId}`);
   };
 
   return (
+    <div className="mobile-chat-list-page-container">
     <div className="mobile-chat-list">
       <header className="mobile-header">
         <h1 className="mobile-title">채팅</h1>
@@ -38,6 +40,8 @@ const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
           <ChatRoomList rooms={chatRooms} onSelectRoom={handleSelectRoom} isMobile={true} />
         )}
       </div>
+      <MobileBottomTab/>
+    </div>
     </div>
   );
 };

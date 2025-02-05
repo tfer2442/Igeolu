@@ -37,7 +37,7 @@ const MobileChatRoom = ({ currentUserId }) => {
   }, [roomId, currentUserId]);
 
   const handleBack = () => {
-    navigate('/m/chat');
+    navigate('/mobile-chat');
   };
 
   if (isLoading) return <div className="loading-message">로딩 중...</div>;
@@ -45,6 +45,7 @@ const MobileChatRoom = ({ currentUserId }) => {
   if (!room) return null;
 
   return (
+    <div className="mobile-chat-room-page-container">
     <div className="mobile-chat-room">
       <ChatRoom 
         room={room} 
@@ -52,6 +53,7 @@ const MobileChatRoom = ({ currentUserId }) => {
         isMobile={true}
         currentUserId={currentUserId}
       />
+      </div>
     </div>
   );
 };

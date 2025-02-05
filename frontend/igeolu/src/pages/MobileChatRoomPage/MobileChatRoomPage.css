@@ -1,9 +1,24 @@
 /* pages/Mobile/MobileChatRoom.css */
-.mobile-chat-room {
-  height: 100vh;
+.mobile-chat-room-page-container {
   display: flex;
-  flex-direction: column;
-  background-color: #272626;
+  justify-content: center;
+  align-items: center;
+  background: #1E1D1D;
+  width: 100%;
+}
+
+.mobile-chat-room {
+  border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;  /* 전체 스크롤 적용 */
+    padding-bottom: calc(70px + env(safe-area-inset-bottom)); /* 바텀바 높이 + safe area 고려 */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .mobile-chat-room .chat-room {

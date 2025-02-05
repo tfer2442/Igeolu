@@ -3,24 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-<<<<<<< HEAD
-    "axios": "^1.7.9",
-    "cra-template": "1.2.0",
-    "openvidu-browser": "^2.31.0",
-=======
     "@stomp/stompjs": "^7.0.0",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "date-fns": "^4.1.0",
+    "openvidu-browser": "^2.31.0",
     "prop-types": "^15.8.1",
->>>>>>> feature/S12P11D205-174-chatting
     "react": "^18.2.0",
     "react-calendar": "^5.1.0",
     "react-dom": "^18.2.0",
-<<<<<<< HEAD
     "react-icons": "^5.4.0",
-=======
->>>>>>> feature/S12P11D205-174-chatting
     "react-router-dom": "^6.28.2",
     "react-scripts": "5.0.1",
     "web-vitals": "^4.2.4"
@@ -49,9 +41,7 @@
       "last 1 safari version"
     ]
   },
-<<<<<<< HEAD
-  "proxy": "https://i12d205.p.ssafy.io"
-=======
+  "proxy": "https://i12d205.p.ssafy.io",
   "devDependencies": {
     "eslint": "^9.19.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -60,5 +50,4 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "prettier": "^3.4.2"
   }
->>>>>>> feature/S12P11D205-174-chatting
 }
