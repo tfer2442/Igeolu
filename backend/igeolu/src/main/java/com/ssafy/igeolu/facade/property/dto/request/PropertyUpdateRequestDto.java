@@ -37,5 +37,4 @@ public class PropertyUpdateRequestDto {
 	// private String dongcode;
 
 	private List<Integer> options;
-
 }

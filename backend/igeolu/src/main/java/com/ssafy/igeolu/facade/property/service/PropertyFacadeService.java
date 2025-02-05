@@ -19,5 +19,5 @@ public interface PropertyFacadeService {
 
 	List<OptionListGetResponseDto> getOptionList();
 
-	void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto);
+	void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto, List<MultipartFile> images);
 }

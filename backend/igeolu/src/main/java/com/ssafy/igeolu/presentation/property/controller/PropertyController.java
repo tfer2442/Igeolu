@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -70,9 +69,11 @@ public class PropertyController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 		@ApiResponse(responseCode = "404", description = "매물을 찾을 수 없습니다.")
 	})
-	@PutMapping("/{propertyId}")
-	public ResponseEntity<Void> updateProperty(@PathVariable Integer propertyId, @RequestBody PropertyUpdateRequestDto requestDto) {
-		propertyFacadeService.updateProperty(propertyId, requestDto);
+	@PutMapping(value = "/{propertyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Void> updateProperty(@PathVariable Integer propertyId,
+		@RequestPart PropertyUpdateRequestDto requestDto,
+		@RequestPart(required = false) List<MultipartFile> images) {
+		propertyFacadeService.updateProperty(propertyId, requestDto, images);
 		return ResponseEntity.ok().build();
 	}
 }

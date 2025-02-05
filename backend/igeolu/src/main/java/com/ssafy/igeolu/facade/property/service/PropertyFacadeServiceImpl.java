@@ -1,6 +1,7 @@
 package com.ssafy.igeolu.facade.property.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
+import com.ssafy.igeolu.domain.file.service.FileService;
 import com.ssafy.igeolu.domain.option.entity.Option;
 import com.ssafy.igeolu.domain.option.repository.OptionRepository;
 import com.ssafy.igeolu.domain.option.service.OptionService;
@@ -23,7 +25,6 @@ import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
-import com.ssafy.igeolu.domain.file.service.FileService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.util.CoordinateConverter;
@@ -86,14 +87,15 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		});
 
 		// 이미지 저장
-		images.forEach(i -> {
-			String filePath = fileService.saveFile(i);
-			PropertyImage propertyImage = PropertyImage.builder()
-				.filePath(filePath)
-				.build();
-			property.addPropertyImage(propertyImage);
-		});
-
+		if (images != null && !images.isEmpty()) {
+			images.forEach(i -> {
+				String filePath = fileService.saveFile(i);
+				PropertyImage propertyImage = PropertyImage.builder()
+					.filePath(filePath)
+					.build();
+				property.addPropertyImage(propertyImage);
+			});
+		}
 		propertyService.createProperty(property);
 	}
 
@@ -160,7 +162,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	}
 
 	@Override
-	public void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto) {
+	public void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto, List<MultipartFile> images) {
 		Property property = propertyService.getProperty(propertyId);
 
 		// 좌표 변환
@@ -179,10 +181,6 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		// 비우고 다시 저장
 		propertyOptionService.savePropertyOptions(property, options);
 
-		// 기존 파일 삭제하고
-
-		// 파일 새로 저장
-
 		// 매물 정보 업데이트
 		property.setDescription(requestDto.getDescription());
 		property.setDeposit(requestDto.getDeposit());
@@ -194,6 +192,20 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		property.setAddress(requestDto.getAddress());
 		property.setLatitude(latitude);
 		property.setLongitude(longitude);
+
+		// 기존 파일 삭제하고
+		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
+		property.setPropertyImages(new ArrayList<>());
+		// 이미지 저장
+		if (images != null && !images.isEmpty()) {
+			images.forEach(i -> {
+				String filePath = fileService.saveFile(i);
+				PropertyImage propertyImage = PropertyImage.builder()
+					.filePath(filePath)
+					.build();
+				property.addPropertyImage(propertyImage);
+			});
+		}
 
 		propertyService.updateProperty(property);
 	}
