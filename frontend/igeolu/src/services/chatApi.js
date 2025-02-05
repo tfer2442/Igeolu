@@ -92,6 +92,7 @@ getChatMessages: async (roomId) => {
   // 메시지 읽음 처리
   markMessagesAsRead: async (roomId, userId) => {
   try {
+    console.log("메시지 읽음 처리 전송");
     await axios.post(`${API_BASE_URL}/api/rooms/${roomId}/user/${userId}`);
   } catch (error) {
     console.error('메시지 읽음 처리 실패:', error);

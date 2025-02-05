@@ -56,6 +56,16 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
     try {
       const response = await chatApi.getChatMessages(room.roomId);
       setMessages(response || []);
+
+      // 2. 메시지를 성공적으로 불러온 후 읽음 처리를 합니다
+    try {
+      await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+    } catch (markError) {
+      // 읽음 처리 실패는 사용자 경험에 크게 영향을 주지 않으므로
+      // 조용히 에러 로깅만 합니다
+      console.error('메시지 읽음 처리 실패:', markError);
+    }
+
       scrollToBottom();
     } catch (error) {
       setError('메시지를 불러오는데 실패했습니다.');
