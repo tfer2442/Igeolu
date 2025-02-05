@@ -1,18 +1,21 @@
 package com.ssafy.igeolu.facade.property.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
+import com.ssafy.igeolu.domain.file.service.FileService;
 import com.ssafy.igeolu.domain.option.entity.Option;
 import com.ssafy.igeolu.domain.option.repository.OptionRepository;
 import com.ssafy.igeolu.domain.option.service.OptionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
+import com.ssafy.igeolu.domain.property.entity.PropertyImage;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
 import com.ssafy.igeolu.domain.propertyOption.service.PropertyOptionService;
@@ -25,6 +28,7 @@ import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.util.CoordinateConverter;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,10 +42,11 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	private final CoordinateConverter coordinateConverter;
 	private final OptionRepository optionRepository;
 	private final UserService userService;
+	private final FileService fileService;
 	private final PropertyOptionService propertyOptionService;
 
 	@Override
-	public void createProperty(PropertyPostRequestDto request) {
+	public void createProperty(PropertyPostRequestDto request, List<MultipartFile> images) {
 
 		// 좌표 변환
 		double[] latLon = coordinateConverter.convertToLatLon(
@@ -81,6 +86,16 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			property.addPropertyOption(propertyOption);
 		});
 
+		// 이미지 저장
+		if (images != null && !images.isEmpty()) {
+			images.forEach(i -> {
+				String filePath = fileService.saveFile(i);
+				PropertyImage propertyImage = PropertyImage.builder()
+					.filePath(filePath)
+					.build();
+				property.addPropertyImage(propertyImage);
+			});
+		}
 		propertyService.createProperty(property);
 	}
 
@@ -105,6 +120,10 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.map(option -> new PropertyGetResponseDto.OptionDto(option.getId(), option.getName().getLabel()))
 			.toList();
 
+		List<String> images = property.getPropertyImages().stream()
+			.map(PropertyImage::getFilePath)
+			.toList();
+
 		return PropertyGetResponseDto.builder()
 			.propertyId(property.getId())
 			.description(property.getDescription())
@@ -118,6 +137,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.latitude(property.getLatitude())
 			.longitude(property.getLongitude())
 			.options(optionDtos)
+			.images(images)
 			.build();
 	}
 
@@ -142,7 +162,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	}
 
 	@Override
-	public void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto) {
+	public void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto, List<MultipartFile> images) {
 		Property property = propertyService.getProperty(propertyId);
 
 		// 좌표 변환
@@ -155,13 +175,11 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
 		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
 
-
 		// 옵션 리스트로 엔티티 조회
 		List<Option> options = optionRepository.findByIdIn(requestDto.getOptions());
 
 		// 비우고 다시 저장
 		propertyOptionService.savePropertyOptions(property, options);
-
 
 		// 매물 정보 업데이트
 		property.setDescription(requestDto.getDescription());
@@ -175,9 +193,22 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		property.setLatitude(latitude);
 		property.setLongitude(longitude);
 
+		// 기존 파일 삭제하고
+		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
+		property.setPropertyImages(new ArrayList<>());
+		// 이미지 저장
+		if (images != null && !images.isEmpty()) {
+			images.forEach(i -> {
+				String filePath = fileService.saveFile(i);
+				PropertyImage propertyImage = PropertyImage.builder()
+					.filePath(filePath)
+					.build();
+				property.addPropertyImage(propertyImage);
+			});
+		}
+
 		propertyService.updateProperty(property);
 	}
-
 
 }
 

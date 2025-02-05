@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.igeolu.file.service.FileService;
+import com.ssafy.igeolu.domain.file.service.FileService;
 
 import io.swagger.v3.oas.annotations.Operation;
 

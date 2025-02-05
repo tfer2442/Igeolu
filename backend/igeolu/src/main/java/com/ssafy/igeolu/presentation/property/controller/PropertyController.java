@@ -3,15 +3,17 @@ package com.ssafy.igeolu.presentation.property.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
@@ -33,9 +35,11 @@ public class PropertyController {
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
-	@PostMapping("")
-	public ResponseEntity<Void> createProperty(@RequestBody PropertyPostRequestDto propertyPostRequestDto) {
-		propertyFacadeService.createProperty(propertyPostRequestDto);
+	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Void> createProperty(
+		@RequestPart PropertyPostRequestDto propertyPostRequestDto,
+		@RequestPart(required = false) List<MultipartFile> images) {
+		propertyFacadeService.createProperty(propertyPostRequestDto, images);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
@@ -65,9 +69,11 @@ public class PropertyController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 		@ApiResponse(responseCode = "404", description = "매물을 찾을 수 없습니다.")
 	})
-	@PutMapping("/{propertyId}")
-	public ResponseEntity<Void> updateProperty(@PathVariable Integer propertyId, @RequestBody PropertyUpdateRequestDto requestDto) {
-		propertyFacadeService.updateProperty(propertyId, requestDto);
+	@PutMapping(value = "/{propertyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Void> updateProperty(@PathVariable Integer propertyId,
+		@RequestPart PropertyUpdateRequestDto requestDto,
+		@RequestPart(required = false) List<MultipartFile> images) {
+		propertyFacadeService.updateProperty(propertyId, requestDto, images);
 		return ResponseEntity.ok().build();
 	}
 }

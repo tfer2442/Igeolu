@@ -9,10 +9,8 @@ import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
-import com.ssafy.igeolu.domain.option.entity.Option;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
 import com.ssafy.igeolu.domain.user.entity.User;
 
@@ -25,10 +23,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -91,6 +87,10 @@ public class Property {
 	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
 	private List<PropertyOption> propertyOptions = new ArrayList<>();
 
+	@Builder.Default
+	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+	private List<PropertyImage> propertyImages = new ArrayList<>();
+
 	public void addPropertyOption(PropertyOption propertyOption) {
 		propertyOptions.add(propertyOption);
 		propertyOption.setProperty(this);
@@ -99,6 +99,11 @@ public class Property {
 	public void removePropertyOption(PropertyOption propertyOption) {
 		propertyOptions.remove(propertyOption);
 		propertyOption.setProperty(null);
+	}
+
+	public void addPropertyImage(PropertyImage propertyImage) {
+		propertyImages.add(propertyImage);
+		propertyImage.setProperty(this);
 	}
 }
 

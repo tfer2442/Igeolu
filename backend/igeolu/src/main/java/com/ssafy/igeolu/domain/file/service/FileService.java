@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.file.service;
+package com.ssafy.igeolu.domain.file.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,5 +43,24 @@ public class FileService {
 
 		// 접근 가능한 URL 반환
 		return baseUrl + "/" + storedFilename;
+	}
+
+	// 파일 삭제 기능
+	public void deleteFile(String fileUrl) {
+
+		// 파일 URL에서 마지막 부분을 추출 (파일명)
+		String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
+		// 삭제할 파일 경로 생성
+		Path filePath = Paths.get(uploadDir, filename);
+
+		// 파일 존재 여부 확인 후 삭제
+		File fileToDelete = filePath.toFile();
+		if (fileToDelete.exists() && fileToDelete.isFile()) {
+			if (!fileToDelete.delete()) {
+				// 파일 삭제 실패시 에러 반환
+				throw new RuntimeException("파일 삭제에 실패했습니다!");
+			}
+		}
 	}
 }

@@ -2,7 +2,8 @@ package com.ssafy.igeolu.facade.property.service;
 
 import java.util.List;
 
-import com.ssafy.igeolu.domain.property.entity.Property;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
@@ -10,7 +11,7 @@ import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 
 public interface PropertyFacadeService {
 
-	void createProperty(PropertyPostRequestDto propertyPostRequestDto);
+	void createProperty(PropertyPostRequestDto propertyPostRequestDto, List<MultipartFile> images);
 
 	List<PropertyGetResponseDto> getProperties(Integer userId);
 
@@ -18,5 +19,5 @@ public interface PropertyFacadeService {
 
 	List<OptionListGetResponseDto> getOptionList();
 
-	void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto);
+	void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto, List<MultipartFile> images);
 }
