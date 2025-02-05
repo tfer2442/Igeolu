@@ -23,7 +23,7 @@ import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
-import com.ssafy.igeolu.domain.service.FileService;
+import com.ssafy.igeolu.domain.file.service.FileService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.util.CoordinateConverter;
