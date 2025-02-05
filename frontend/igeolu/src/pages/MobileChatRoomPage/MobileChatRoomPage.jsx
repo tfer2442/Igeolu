@@ -40,7 +40,13 @@ const MobileChatRoom = ({ currentUserId }) => {
     navigate('/mobile-chat');
   };
 
-  if (isLoading) return <div className="loading-message">로딩 중...</div>;
+  if (isLoading) return (
+    <div className="mobile-chat-room-page-container">
+      <div className="mobile-chat-room">
+        <div className="loading-message">로딩 중...</div>
+      </div>
+    </div>
+  );
   if (error) return <div className="error-message">{error}</div>;
   if (!room) return null;
 

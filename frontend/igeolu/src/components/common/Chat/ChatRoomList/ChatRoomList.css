@@ -6,6 +6,8 @@
   margin: 0;
 }
 
+
+
 /* 📌 개별 채팅방 아이템 */
 .chat-room-item {
   overflow-y: auto;
@@ -34,6 +36,10 @@
 /* 📌 채팅방 버튼 Hover 효과 */
 .chat-room-button:hover {
   background-color: #f8f9fa;
+}
+
+.chat-room-list.mobile .chat-room-button:hover {
+  background-color: #1e1d1d;
 }
 
 /* 📌 프로필 이미지 컨테이너 */
