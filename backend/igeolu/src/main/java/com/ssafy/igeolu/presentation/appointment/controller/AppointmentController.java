@@ -55,7 +55,7 @@ public class AppointmentController {
 
 	@Operation(summary = "약속 수정", description = "기존 약속을 수정합니다.")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "정상 처리"),
+		@ApiResponse(responseCode = "204", description = "정상 처리"),
 		@ApiResponse(responseCode = "404", description = "해당 ID의 약속이 존재하지 않음")
 	})
 	@PutMapping("/{appointmentId}")
