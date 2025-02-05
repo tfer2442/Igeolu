@@ -46,7 +46,11 @@ public class FileService {
 	}
 
 	// 파일 삭제 기능
-	public void deleteFile(String filename) {
+	public void deleteFile(String fileUrl) {
+
+		// 파일 URL에서 마지막 부분을 추출 (파일명)
+		String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
 		// 삭제할 파일 경로 생성
 		Path filePath = Paths.get(uploadDir, filename);
 
