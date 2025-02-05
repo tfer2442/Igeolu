@@ -15,9 +15,11 @@ import com.ssafy.igeolu.domain.option.service.OptionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
+import com.ssafy.igeolu.domain.propertyOption.service.PropertyOptionService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
@@ -36,6 +38,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	private final CoordinateConverter coordinateConverter;
 	private final OptionRepository optionRepository;
 	private final UserService userService;
+	private final PropertyOptionService propertyOptionService;
 
 	@Override
 	public void createProperty(PropertyPostRequestDto request) {
@@ -137,6 +140,45 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.collect(Collectors.toList());
 
 	}
+
+	@Override
+	public void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto) {
+		Property property = propertyService.getProperty(propertyId);
+
+		// 좌표 변환
+		double[] latLon = coordinateConverter.convertToLatLon(
+			Double.parseDouble(requestDto.getX()),
+			Double.parseDouble(requestDto.getY())
+		);
+
+		// 타입 변환
+		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
+		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
+
+
+		// 옵션 리스트로 엔티티 조회
+		List<Option> options = optionRepository.findByIdIn(requestDto.getOptions());
+
+		// 비우고 다시 저장
+		propertyOptionService.savePropertyOptions(property, options);
+
+
+		// 매물 정보 업데이트
+		property.setDescription(requestDto.getDescription());
+		property.setDeposit(requestDto.getDeposit());
+		property.setMonthlyRent(requestDto.getMonthlyRent());
+		property.setArea(requestDto.getArea());
+		property.setApprovalDate(requestDto.getApprovalDate());
+		property.setCurrentFloor(requestDto.getCurrentFloor());
+		property.setTotalFloors(requestDto.getTotalFloors());
+		property.setAddress(requestDto.getAddress());
+		property.setLatitude(latitude);
+		property.setLongitude(longitude);
+
+		propertyService.updateProperty(property);
+	}
+
+
 }
 
 

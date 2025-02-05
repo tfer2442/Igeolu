@@ -32,4 +32,9 @@ public class PropertyServiceImpl implements PropertyService {
 	public Property getProperty(Integer propertyId) {
 		return propertyRepository.findById(propertyId).orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
 	}
+
+	@Override
+	public void updateProperty(Property property) {
+		propertyRepository.save(property);
+	}
 }
