@@ -14,4 +14,6 @@ public interface PropertyService {
 	List<Property> getPropertyList(User user);
 
 	Property getProperty(Integer propertyId);
+
+	void updateProperty(Property property);
 }
