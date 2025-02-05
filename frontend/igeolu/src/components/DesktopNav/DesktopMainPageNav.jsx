@@ -1,6 +1,5 @@
 import logo from '../../assets/images/logo.png'
 import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types';
 import './DesktopMainPageNav.css'
 
 const NAV_ITEMS = [
@@ -9,7 +8,7 @@ const NAV_ITEMS = [
     { id: 3, title: '라이브', path: '/make' },
 ]
 
-function DesktopMainPageNav({onLoginSigninClick}) {
+function DesktopMainPageNav() {
   return (
     <nav className='desktop-main-nav'>
       <div className='desktop-main-nav__left-logo'>
@@ -25,16 +24,12 @@ function DesktopMainPageNav({onLoginSigninClick}) {
         ))}
       </div>
       <div className='desktop-main-nav__right-login'>
-        <button onClick={onLoginSigninClick} className='desktop-main-nav__login-signin-btn'> 
-            로그인 | 회원가입
-            </button>
+      <Link to="/login" className='desktop-main-nav__login-signin-btn'>
+          로그인
+        </Link>
       </div>
     </nav>
   );
-}
-
-DesktopMainPageNav.propTypes = {
-    onLoginSigninClick: PropTypes.func.isRequired,
 }
 
 export default DesktopMainPageNav;

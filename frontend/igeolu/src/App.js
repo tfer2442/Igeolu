@@ -5,6 +5,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 
 import DesktopLive from './pages/DesktopLivePage/DesktopLive'
 import DesktopHome from './pages/DesktopHomePage/DesktopHome'
+import DesktopLogin from './pages/DesktopLoginPage/DesktopLoginPage'
 import Make from './pages/MobileLivePage/Make'
 import MobileMainPage from './pages/MobileMainPage/MobileMainPage'
 import MobileCalendarPage from './pages/MobileCalendarPage/MobileCalendarPage'
@@ -32,6 +33,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
   const [error, setError] = useState(null);          // 에러 상태 추가
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   // TEST_USER_ID를 props나 context로 관리하도록 변경
   const [currentUserId, setCurrentUserId] = useState(5); // 기본값 5
 
@@ -48,6 +51,14 @@ function App() {
   const isMobileCalendarRoute = location.pathname.startsWith('/mobile-calendar');
   const isMobileMyPageRoute = location.pathname.startsWith('/mobile-my-page');
   const isMobileLiveRoute = location.pathname.startsWith('/mobile-live');
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   // API Calls
   const fetchChatRooms = useCallback(async () => {
@@ -122,6 +133,7 @@ function App() {
     <div className='App'>
       <Routes>
         <Route path="/" element={<DesktopHome />} />
+        <Route path="/login" element={<DesktopLogin />} />
         <Route path="/live" element={<DesktopLive />} />
         <Route path="/make" element={<Make />} />
         <Route path="/mobile-main" element={<MobileMainPage />} />
