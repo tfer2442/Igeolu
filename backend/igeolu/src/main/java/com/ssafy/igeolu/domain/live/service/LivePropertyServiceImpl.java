@@ -27,4 +27,9 @@ public class LivePropertyServiceImpl implements LivePropertyService {
 			livePropertyRepository.save(liveProperty);
 		}
 	}
+
+	@Override
+	public List<LiveProperty> getLiveProperties(LiveSession liveSession) {
+		return livePropertyRepository.findByLiveSession(liveSession);
+	}
 }
