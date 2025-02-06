@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
-	
+
 	@Operation(summary = "자신 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
@@ -44,4 +44,3 @@ public class UserController {
 		return ResponseEntity.ok(meGetResponseDto);
 	}
 }
-\
