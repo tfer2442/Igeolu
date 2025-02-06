@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
+import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 
@@ -20,4 +21,13 @@ public interface PropertyFacadeService {
 	List<OptionListGetResponseDto> getOptionList();
 
 	void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto, List<MultipartFile> images);
+
+	List<PropertyGetResponseDto> getPropertiesByDongcode(String dongcode);
+
+	List<String> getSidoList();
+
+	List<String> getGugunList(String sidoName);
+
+	List<DongResponseDto> getDongList(String sidoName, String gugunName);
+
 }

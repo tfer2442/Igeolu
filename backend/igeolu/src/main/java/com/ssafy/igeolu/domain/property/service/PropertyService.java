@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 
 public interface PropertyService {
 
@@ -18,4 +19,7 @@ public interface PropertyService {
 	Property getProperty(Integer propertyId);
 
 	void updateProperty(Property property);
+
+	List<Property> getPropertiesByDongcode(String dongcode);
+
 }

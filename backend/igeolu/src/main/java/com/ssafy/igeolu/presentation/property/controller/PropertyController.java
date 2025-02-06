@@ -17,10 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
+import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.service.PropertyFacadeService;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -43,15 +47,29 @@ public class PropertyController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	@Operation(summary = "중개인 매물 조회", description = "중개인 매물을 조회합니다.")
+	@Operation(summary = "중개인 매물 조회 or 동 매물 조회", description = "중개인 매물을 조회하거나 동 매물을 조회합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
 	@GetMapping("")
-	public ResponseEntity<List<PropertyGetResponseDto>> getProperties(@RequestParam("userId") Integer userId) {
-		List<PropertyGetResponseDto> properties = propertyFacadeService.getProperties(userId);
+	public ResponseEntity<List<PropertyGetResponseDto>> getProperties(
+		@Schema(type = "string", example = "1111010100")
+		@RequestParam(required = false) String dongcode,
+		@RequestParam(required = false) Integer userId
+	) {
+		List<PropertyGetResponseDto> properties;
+
+		if (dongcode != null) {
+			properties = propertyFacadeService.getPropertiesByDongcode(dongcode);
+		} else if (userId != null) {
+			properties = propertyFacadeService.getProperties(userId);
+		} else {
+			throw new CustomException(ErrorCode.INVALID_PARAMETER);
+		}
+
 		return ResponseEntity.ok(properties);
 	}
+
 
 	@Operation(summary = "매물 상세 조회", description = "매물 ID로 상세 정보를 조회합니다.")
 	@ApiResponses(value = {
@@ -76,4 +94,6 @@ public class PropertyController {
 		propertyFacadeService.updateProperty(propertyId, requestDto, images);
 		return ResponseEntity.ok().build();
 	}
+
+
 }

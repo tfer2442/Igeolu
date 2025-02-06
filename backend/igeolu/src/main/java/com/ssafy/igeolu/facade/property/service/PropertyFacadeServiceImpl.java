@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.file.service.FileService;
 import com.ssafy.igeolu.domain.option.entity.Option;
@@ -24,6 +25,7 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
+import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
@@ -59,7 +61,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
 		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
 
-		// Dongcodes dongcode = dongcodesService.getDongcodes(request.getDongcode());
+		Dongcodes dongcode = dongcodesService.getDongcodes(request.getDongcode());
 
 		// 옵션 ID 리스트로 Option 엔티티들 조회
 		List<Option> options = optionRepository.findByIdIn(request.getOptions());
@@ -77,7 +79,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.address(request.getAddress())
 			.latitude(latitude)
 			.longitude(longitude)
-			// .dongcode(dongcode)
+			.dongcode(dongcode)
 			.user(user)
 			.build();
 
@@ -183,6 +185,31 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		propertyService.updateProperty(property);
 	}
 
+	@Override
+	public List<PropertyGetResponseDto> getPropertiesByDongcode(String dongcode) {
+
+		List<Property> properties = propertyService.getPropertiesByDongcode(dongcode);
+
+		return properties.stream()
+			.map(PropertyMapper::toDto)
+			.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<String> getSidoList() {
+		return dongcodesService.getSidoName();
+	}
+
+	@Override
+	public List<String> getGugunList(String sidoName) {
+		return dongcodesService.getGugunName(sidoName);
+	}
+
+	@Override
+	public List<DongResponseDto> getDongList(String sidoName, String gugunName) {
+
+		return  dongcodesService.getDongList(sidoName, gugunName);
+	}
 }
 
 
