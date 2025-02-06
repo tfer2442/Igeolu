@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import ChatWebSocket from '../../../../services/webSocket/chatWebSocket';
 import chatApi from '../../../../services/chatApi';
 import ChatMessage from '../ChatMessage/ChatMessage';
+import ChatExtras from '../ChatExtras/ChatExtras';
 import './ChatRoom.css';
 
 /**
@@ -230,21 +231,11 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
         </div>
 
         {/* 📌 추가 기능 패널 */}
-        {isExtrasOpen && (
-          <div className="chat-extras">
-            <div className="chat-extras-content">
-              <button className="extra-button">
-                <span>파일첨부</span>
-              </button>
-              <button className="extra-button">
-                <span>녹음하기</span>
-              </button>
-              <button className="extra-button">
-                <span>파일첨부</span>
-              </button>
-            </div>
-          </div>
-        )}
+        <ChatExtras 
+          isOpen={isExtrasOpen} 
+          room={room}
+          currentUserId={currentUserId}
+        />
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
+// src/pages/MobileCalendarPage/MobileCalenderPage.js
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './MobileCalendarPage.css';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
 import { appointmentAPI } from '../../services/Axios';
+import EditAppointmentModal from '../../components/common/Chat/EditAppointmentModal/EditAppointmentModal';
 
 function MobileCalendarPage() {
   const [value, setValue] = useState(new Date());
@@ -12,6 +14,20 @@ function MobileCalendarPage() {
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [slideStates, setSlideStates] = useState({});
+  const [editingAppointment, setEditingAppointment] = useState(null);
+
+  const handleEdit = (appointment) => {
+    setEditingAppointment(appointment);
+  };
+
+  const handleDelete = async (appointmentId) => {
+    try {
+      await appointmentAPI.deleteAppointment(appointmentId);
+      fetchAppointments();
+    } catch (error) {
+      console.error('Failed to delete appointment:', error);
+    }
+  };
 
   const handleTouchStart = (id, e) => {
     const touch = e.touches[0];
@@ -21,36 +37,17 @@ function MobileCalendarPage() {
     }));
   };
 
-  // 삭제와 수정 함수 추가
-const handleEdit = async (appointmentId) => {
-    try {
-      // 수정 페이지로 이동 또는 수정 모달 표시
-      navigate(`/calendar/edit/${appointmentId}`);
-    } catch (error) {
-      console.error('Failed to edit appointment:', error);
-    }
-   };
-   
-   const handleDelete = async (appointmentId) => {
-    try {
-      await appointmentAPI.deleteAppointment(appointmentId);
-      fetchAppointments(); // 목록 새로고침
-    } catch (error) {
-      console.error('Failed to delete appointment:', error);
-    }
-   };
-
   const handleTouchMove = (id, e) => {
     const startX = slideStates[id]?.startX;
     if (!startX) return;
-  
+
     const diff = startX - e.touches[0].clientX;
     const slideX = Math.max(Math.min(diff, 160), 0);
-  
+
     const container = e.currentTarget.parentElement;
     const scheduleItem = e.currentTarget;
     const actions = container.querySelector('.schedule-actions');
-  
+
     scheduleItem.style.transform = `translateX(-${slideX}px)`;
     actions.style.transform = `translateX(-${slideX}px)`;
   };
@@ -59,20 +56,21 @@ const handleEdit = async (appointmentId) => {
     const container = e.currentTarget.parentElement;
     const scheduleItem = e.currentTarget;
     const actions = container.querySelector('.schedule-actions');
-    const currentX = parseInt(scheduleItem.style.transform.replace('translateX(-', ''));
-  
-    const finalTransform = currentX > 80 ? 'translateX(-160px)' : 'translateX(0)';
+    const currentX = parseInt(
+      scheduleItem.style.transform.replace('translateX(-', '')
+    );
+
+    const finalTransform =
+      currentX > 80 ? 'translateX(-160px)' : 'translateX(0)';
     scheduleItem.style.transform = finalTransform;
     actions.style.transform = finalTransform;
-  
+
     setSlideStates((prev) => ({
       ...prev,
       [id]: { startX: null },
     }));
   };
 
-  // 임시 로그인 아이디디
-  const userId = 1;
 
   useEffect(() => {
     fetchAppointments();
@@ -81,12 +79,13 @@ const handleEdit = async (appointmentId) => {
   const fetchAppointments = async () => {
     try {
       const response = await appointmentAPI.getAppointments(userId);
+      
       console.log(
         'Response type:',
         typeof response.data,
         Array.isArray(response.data)
       );
-      console.log('Raw response:', response.data);
+      console.log('Appointments data:', response.data); // 각 appointment 객체의 구조 확인
       setAppointments(response.data);
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
@@ -187,8 +186,18 @@ const handleEdit = async (appointmentId) => {
                       </span>
                     </div>
                     <div className='schedule-actions'>
-                      <button className='edit-btn'>수정</button>
-                      <button className='delete-btn'>삭제</button>
+                      <button
+                        className='edit-btn'
+                        onClick={() => handleEdit(appointment)}
+                      >
+                        수정
+                      </button>
+                      <button
+                        className='delete-btn'
+                        onClick={() => handleDelete(appointment.appointmentId)}
+                      >
+                        삭제
+                      </button>
                     </div>
                   </div>
                 ))
@@ -200,6 +209,13 @@ const handleEdit = async (appointmentId) => {
         </div>
         <MobileBottomTab />
       </div>
+      {editingAppointment && (
+        <EditAppointmentModal
+          appointment={editingAppointment}
+          onClose={() => setEditingAppointment(null)}
+          onUpdate={fetchAppointments}
+        />
+      )}
     </div>
   );
 }

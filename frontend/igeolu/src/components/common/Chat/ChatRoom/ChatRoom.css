@@ -92,11 +92,6 @@
   transition: margin-bottom 0.3s ease;
 }
 
-/* 📌 추가 기능이 열렸을 때 입력창 이동 */
-.input-wrapper.extras-open {
-  margin-bottom: 80px; /* transform 대신 margin을 이용 */
-}
-
 /* 📌 메시지 입력 영역 스타일 */
 .message-input-container {
   display: flex;
