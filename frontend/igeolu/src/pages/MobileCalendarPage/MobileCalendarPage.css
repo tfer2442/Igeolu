@@ -99,28 +99,85 @@
     background-color: #272626;
 }
 
+.schedule-item-container {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
 .schedule-list {
     width: 100%;
+    margin-top: 15px;
 }
 
 .schedule-item {
     display: flex;
     align-items: center;
-    padding: 10px;
-    margin-bottom: 8px;
+    padding: 15px;
     background-color: #2F2E2E;
-    border-radius: 5px;
+    border-radius: 8px;
+    position: relative;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+    touch-action: pan-x;
+  }
+
+.schedule-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 70%;
+    background-color: #01ADFF;
+    border-radius: 2px;
+}
+
+.schedule-opponent {
+    color: white;
+    margin-left: 15px;
 }
 
 .schedule-time {
-    font-weight: bold;
-    margin-right: 15px;
-    color: white;
+    margin-left: auto;
+    color: #9F9F9F;
+    font-size: 14px;
 }
 
 .schedule-title {
     color: #E2E1E1;
 }
+
+.schedule-actions {
+    position: absolute;
+    top: 0;
+    right: -170px;
+    height: 100%;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-right: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .edit-btn, .delete-btn {
+    height: 100%;
+    width: 70px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .edit-btn {
+    background-color: #01ADFF;
+  }
+  
+  .delete-btn {
+    background-color: #FF6B6B;
+  }
 
 .no-schedule {
     text-align: center;

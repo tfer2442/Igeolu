@@ -8,13 +8,71 @@ import { appointmentAPI } from '../../services/Axios';
 function MobileCalendarPage() {
   const [value, setValue] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
-  const userId = 1; // 임시 나중에 로그인으로 대체
-  // 상태 추가
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedTime, setSelectedTime] = useState({
-    hour: '12',
-    minute: '00',
-  });
+
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const [slideStates, setSlideStates] = useState({});
+
+  const handleTouchStart = (id, e) => {
+    const touch = e.touches[0];
+    setSlideStates((prev) => ({
+      ...prev,
+      [id]: { startX: touch.clientX },
+    }));
+  };
+
+  // 삭제와 수정 함수 추가
+const handleEdit = async (appointmentId) => {
+    try {
+      // 수정 페이지로 이동 또는 수정 모달 표시
+      navigate(`/calendar/edit/${appointmentId}`);
+    } catch (error) {
+      console.error('Failed to edit appointment:', error);
+    }
+   };
+   
+   const handleDelete = async (appointmentId) => {
+    try {
+      await appointmentAPI.deleteAppointment(appointmentId);
+      fetchAppointments(); // 목록 새로고침
+    } catch (error) {
+      console.error('Failed to delete appointment:', error);
+    }
+   };
+
+  const handleTouchMove = (id, e) => {
+    const startX = slideStates[id]?.startX;
+    if (!startX) return;
+  
+    const diff = startX - e.touches[0].clientX;
+    const slideX = Math.max(Math.min(diff, 160), 0);
+  
+    const container = e.currentTarget.parentElement;
+    const scheduleItem = e.currentTarget;
+    const actions = container.querySelector('.schedule-actions');
+  
+    scheduleItem.style.transform = `translateX(-${slideX}px)`;
+    actions.style.transform = `translateX(-${slideX}px)`;
+  };
+
+  const handleTouchEnd = (id, e) => {
+    const container = e.currentTarget.parentElement;
+    const scheduleItem = e.currentTarget;
+    const actions = container.querySelector('.schedule-actions');
+    const currentX = parseInt(scheduleItem.style.transform.replace('translateX(-', ''));
+  
+    const finalTransform = currentX > 80 ? 'translateX(-160px)' : 'translateX(0)';
+    scheduleItem.style.transform = finalTransform;
+    actions.style.transform = finalTransform;
+  
+    setSlideStates((prev) => ({
+      ...prev,
+      [id]: { startX: null },
+    }));
+  };
+
+  // 임시 로그인 아이디디
+  const userId = 1;
 
   useEffect(() => {
     fetchAppointments();
@@ -71,35 +129,6 @@ function MobileCalendarPage() {
     return date.getDate().toString();
   };
 
-  const handleCreateAppointment = async () => {
-    try {
-        const scheduledAt = new Date(
-            value.getFullYear(),
-            value.getMonth(),
-            value.getDate(),
-            parseInt(selectedTime.hour),
-            parseInt(selectedTime.minute)
-        ).toISOString();
- 
-        const appointmentData = {
-            scheduledAt,
-            title: "새 약속", // 나중에 입력받을 수 있도록 수정 가능
-            userId: userId,
-            opponentUserId: 0, // 필요한 값으로 수정
-            chatRoomId: 0 // 필요한 값으로 수정
-        };
- 
-        const response = await appointmentAPI.createAppointment(appointmentData);
-        
-        if (response.data.appointmentId) {
-            fetchAppointments(); // 목록 갱신
-            setShowTimePicker(false);
-        }
-    } catch (error) {
-        console.error('Failed to create appointment:', error);
-    }
- };
-
   return (
     <div className='mobile-calendar-page-container'>
       <div className='mobile-calendar-page'>
@@ -124,69 +153,43 @@ function MobileCalendarPage() {
               <p id='schedule-date'>
                 {value.getMonth() + 1}월 {value.getDate()}일
               </p>
-              <button
-                className='add-schedule-btn'
-                onClick={() => setShowTimePicker(true)}
-              >
-                +
-              </button>
             </div>
-
-            {showTimePicker && (
-              <div className='time-picker-modal'>
-                <div className='time-picker'>
-                  <input
-                    type='number'
-                    min='0'
-                    max='23'
-                    value={selectedTime.hour}
-                    onChange={(e) =>
-                      setSelectedTime({
-                        ...selectedTime,
-                        hour: e.target.value.padStart(2, '0'),
-                      })
-                    }
-                  />
-                  <span>:</span>
-                  <input
-                    type='number'
-                    min='0'
-                    max='59'
-                    value={selectedTime.minute}
-                    onChange={(e) =>
-                      setSelectedTime({
-                        ...selectedTime,
-                        minute: e.target.value.padStart(2, '0'),
-                      })
-                    }
-                  />
-                </div>
-                <div className='time-picker-buttons'>
-                  <button onClick={() => setShowTimePicker(false)}>취소</button>
-                  <button onClick={handleCreateAppointment}>확인</button>
-                </div>
-              </div>
-            )}
             <div className='schedule-list'>
               {getAppointmentsForDate(value).length > 0 ? (
                 getAppointmentsForDate(value).map((appointment) => (
                   <div
                     key={appointment.appointmentId}
-                    className='schedule-item'
+                    className='schedule-item-container'
                   >
-                    <span className='schedule-time'>
-                      {new Date(appointment.scheduledAt).toLocaleTimeString(
-                        'ko-KR',
-                        {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        }
-                      )}
-                    </span>
-                    <span className='schedule-title'>{appointment.title}</span>
-                    <span className='schedule-opponent'>
-                      {appointment.opponentName}
-                    </span>
+                    <div
+                      className='schedule-item'
+                      onTouchStart={(e) =>
+                        handleTouchStart(appointment.appointmentId, e)
+                      }
+                      onTouchMove={(e) =>
+                        handleTouchMove(appointment.appointmentId, e)
+                      }
+                      onTouchEnd={(e) =>
+                        handleTouchEnd(appointment.appointmentId, e)
+                      }
+                    >
+                      <span className='schedule-opponent'>
+                        {appointment.opponentName}님
+                      </span>
+                      <span className='schedule-time'>
+                        {new Date(appointment.scheduledAt).toLocaleTimeString(
+                          'ko-KR',
+                          {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }
+                        )}
+                      </span>
+                    </div>
+                    <div className='schedule-actions'>
+                      <button className='edit-btn'>수정</button>
+                      <button className='delete-btn'>삭제</button>
+                    </div>
                   </div>
                 ))
               ) : (
