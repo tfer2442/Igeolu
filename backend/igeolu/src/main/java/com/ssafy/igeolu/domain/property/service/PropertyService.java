@@ -13,6 +13,8 @@ public interface PropertyService {
 
 	List<Property> getPropertyList(User user);
 
+	List<Property> getPropertyListIds(List<Integer> propertyIds);
+
 	Property getProperty(Integer propertyId);
 
 	void updateProperty(Property property);
