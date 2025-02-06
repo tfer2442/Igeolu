@@ -3,6 +3,7 @@ package com.ssafy.igeolu.facade.live.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.igeolu.domain.live.entity.LiveSession;
 import com.ssafy.igeolu.domain.live.service.LivePropertyService;
@@ -13,6 +14,7 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -25,7 +27,6 @@ import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -59,8 +60,8 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		return createHostSessionAndToken();
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public LivePostResponseDto joinLive(JoinLivePostRequestDto requestDto) {
 		Integer userId = securityService.getCurrentUser().getUserId();
 		User user = userService.getUserById(userId);
@@ -69,6 +70,26 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		liveSession.setMember(user);
 
 		return createMemberToken(requestDto.getSessionId());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<LiveGetResponseDto> getLives() {
+		Integer userId = securityService.getCurrentUser().getUserId();
+		User user = userService.getUserById(userId);
+
+		List<LiveSession> liveSessions = liveSessionService.getLiveSessionsByMember(user);
+
+		return liveSessions.stream()
+			.map(liveSession -> LiveGetResponseDto.builder()
+				.liveId(liveSession.getId())
+				.realtorId(
+					liveSession.getRealtor().getId()
+				)
+				.createdAt(liveSession.getCreatedAt())
+				.build()
+			)
+			.toList();
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {
