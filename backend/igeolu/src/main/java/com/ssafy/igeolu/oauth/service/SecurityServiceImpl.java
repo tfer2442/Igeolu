@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.dto.CustomOAuth2User;
 
 @Service
@@ -20,7 +22,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 		if (authentication == null || authentication.getPrincipal() == null
 			|| "anonymousUser".equals(authentication.getPrincipal())) {
-			return null;
+			throw new CustomException(ErrorCode.UNAUTHORIZED);
 		}
 
 		if (authentication.getPrincipal() instanceof CustomOAuth2User principal) {
@@ -35,6 +37,6 @@ public class SecurityServiceImpl implements SecurityService {
 				.build();
 		}
 
-		return null;
+		throw new CustomException(ErrorCode.UNAUTHORIZED);
 	}
 }
