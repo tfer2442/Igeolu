@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.presentation.Option;
+package com.ssafy.igeolu.presentation.option.controller;
 
 import java.util.List;
 
