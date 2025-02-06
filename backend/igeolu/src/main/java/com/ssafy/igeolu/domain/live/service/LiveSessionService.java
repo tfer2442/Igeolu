@@ -12,4 +12,6 @@ public interface LiveSessionService {
 	List<LiveSession> getLiveSessionsByMember(User member);
 
 	List<LiveSession> getLiveSessionsByRealtor(User realtor);
+	
+	LiveSession getLiveSession(String liveSessionId);
 }

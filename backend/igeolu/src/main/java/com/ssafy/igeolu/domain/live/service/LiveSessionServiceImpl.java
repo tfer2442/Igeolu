@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.ssafy.igeolu.domain.live.entity.LiveSession;
 import com.ssafy.igeolu.domain.live.repository.LiveSessionRepository;
 import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,5 +30,11 @@ public class LiveSessionServiceImpl implements LiveSessionService {
 	@Override
 	public List<LiveSession> getLiveSessionsByRealtor(User realtor) {
 		return liveSessionRepository.findLiveSessionByRealtor(realtor);
+	}
+
+	@Override
+	public LiveSession getLiveSession(String liveSessionId) {
+		return liveSessionRepository.findById(liveSessionId)
+			.orElseThrow(() -> new CustomException(ErrorCode.LIVE_SESSION_NOT_FOUND));
 	}
 }

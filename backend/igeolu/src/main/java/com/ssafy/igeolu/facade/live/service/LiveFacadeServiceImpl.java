@@ -11,6 +11,7 @@ import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
+import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
@@ -58,6 +59,18 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		return createHostSessionAndToken();
 	}
 
+	@Transactional
+	@Override
+	public LivePostResponseDto joinLive(JoinLivePostRequestDto requestDto) {
+		Integer userId = securityService.getCurrentUser().getUserId();
+		User user = userService.getUserById(userId);
+
+		LiveSession liveSession = liveSessionService.getLiveSession(requestDto.getSessionId());
+		liveSession.setMember(user);
+
+		return createMemberToken(requestDto.getSessionId());
+	}
+
 	private LivePostResponseDto createHostSessionAndToken() {
 		try {
 			// 1. 고유한 세션 ID 생성
@@ -89,4 +102,30 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 			throw new CustomException(ErrorCode.LIVE_SESSION_NOT_CREATE);
 		}
 	}
+
+	private LivePostResponseDto createMemberToken(String sessionId) {
+		try {
+			Session session = openVidu.getActiveSession(sessionId);
+
+			if (session == null) {
+				throw new CustomException(ErrorCode.LIVE_SESSION_NOT_FOUND);
+			}
+
+			ConnectionProperties connectionProps = new ConnectionProperties.Builder()
+				.type(ConnectionType.WEBRTC)
+				.role(OpenViduRole.PUBLISHER)
+				.build();
+
+			Connection connection = session.createConnection(connectionProps);
+			String token = connection.getToken();
+
+			return LivePostResponseDto.builder()
+				.sessionId(sessionId)
+				.token(token)
+				.build();
+		} catch (Exception e) {
+			throw new CustomException(ErrorCode.LIVE_SESSION_NOT_FOUND);
+		}
+	}
+
 }
