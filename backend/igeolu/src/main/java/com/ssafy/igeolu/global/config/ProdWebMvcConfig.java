@@ -12,7 +12,7 @@ public class ProdWebMvcConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOrigins("https://i12d205.p.ssafy.io", "http://localhost:3000")
-			.exposedHeaders("Set-Cookie")
+			// .exposedHeaders("Set-Cookie")
 			.allowCredentials(true)
 			.allowedHeaders("Authorization", "Content-Type")
 			.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
