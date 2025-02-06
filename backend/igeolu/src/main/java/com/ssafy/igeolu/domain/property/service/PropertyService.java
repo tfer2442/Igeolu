@@ -22,4 +22,6 @@ public interface PropertyService {
 
 	List<Property> getPropertiesByDongcode(String dongcode);
 
+	void deleteProperty(Integer propertyId);
+
 }

@@ -50,4 +50,10 @@ public class PropertyServiceImpl implements PropertyService {
 		return propertyRepository.findByDongcode(dongcode);
 	}
 
+	@Override
+	public void deleteProperty(Integer propertyId) {
+		Property property = propertyRepository.findById(propertyId).orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
+		propertyRepository.delete(property);
+	}
+
 }
