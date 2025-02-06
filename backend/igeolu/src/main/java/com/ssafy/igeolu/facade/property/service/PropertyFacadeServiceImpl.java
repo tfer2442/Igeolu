@@ -16,6 +16,7 @@ import com.ssafy.igeolu.domain.option.repository.OptionRepository;
 import com.ssafy.igeolu.domain.option.service.OptionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.entity.PropertyImage;
+import com.ssafy.igeolu.domain.property.mapper.PropertyMapper;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
 import com.ssafy.igeolu.domain.propertyOption.service.PropertyOptionService;
@@ -109,43 +110,15 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		}
 
 		return properties.stream()
-			.map(this::changeToDto)
+			.map(PropertyMapper::toDto)
 			.collect(Collectors.toList());
-	}
-
-	private PropertyGetResponseDto changeToDto(Property property) {
-
-		List<PropertyGetResponseDto.OptionDto> optionDtos = property.getPropertyOptions().stream()
-			.map(PropertyOption::getOption)
-			.map(option -> new PropertyGetResponseDto.OptionDto(option.getId(), option.getName().getLabel()))
-			.toList();
-
-		List<String> images = property.getPropertyImages().stream()
-			.map(PropertyImage::getFilePath)
-			.toList();
-
-		return PropertyGetResponseDto.builder()
-			.propertyId(property.getId())
-			.description(property.getDescription())
-			.deposit(property.getDeposit())
-			.monthlyRent(property.getMonthlyRent())
-			.area(property.getArea())
-			.approvalDate(property.getApprovalDate())
-			.currentFloor(property.getCurrentFloor())
-			.totalFloors(property.getTotalFloors())
-			.address(property.getAddress())
-			.latitude(property.getLatitude())
-			.longitude(property.getLongitude())
-			.options(optionDtos)
-			.images(images)
-			.build();
 	}
 
 	@Override
 	public PropertyGetResponseDto getProperty(Integer propertyId) {
 
 		Property property = propertyService.getProperty(propertyId);
-		return changeToDto(property);
+		return PropertyMapper.toDto(property);
 	}
 
 	@Override
