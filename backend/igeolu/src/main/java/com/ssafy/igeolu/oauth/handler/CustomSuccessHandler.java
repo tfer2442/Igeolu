@@ -44,7 +44,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String token = jwtUtil.createJwt(userId, role, 2 * 60 * 60 * 1000L); // 2시간
 
 		response.addCookie(createCookie("Authorization", token));
-		response.sendRedirect("http://localhost:3000");
+		response.sendRedirect("https://i12d205.p.ssafy.io"); // 나중에 배포 주소로 변경해야 함.
 	}
 
 	private Cookie createCookie(String key, String value) {
@@ -52,6 +52,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Cookie cookie = new Cookie(key, value);
 		cookie.setMaxAge(2 * 60 * 60); // 2시간
 		cookie.setSecure(true);
+		cookie.setAttribute("SameSite", "None");
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 
