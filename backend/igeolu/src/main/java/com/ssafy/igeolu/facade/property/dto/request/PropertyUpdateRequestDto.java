@@ -34,7 +34,7 @@ public class PropertyUpdateRequestDto {
 	// longitude
 	private String x;
 
-	// private String dongcode;
+	private String dongcode;
 
 	private List<Integer> options;
 }

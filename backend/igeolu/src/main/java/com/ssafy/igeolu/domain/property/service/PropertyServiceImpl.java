@@ -10,6 +10,7 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -43,4 +44,10 @@ public class PropertyServiceImpl implements PropertyService {
 	public void updateProperty(Property property) {
 		propertyRepository.save(property);
 	}
+
+	@Override
+	public List<Property> getPropertiesByDongcode(String dongcode) {
+		return propertyRepository.findByDongcode(dongcode);
+	}
+
 }

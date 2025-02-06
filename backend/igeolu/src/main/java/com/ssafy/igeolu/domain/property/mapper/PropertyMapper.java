@@ -2,6 +2,8 @@ package com.ssafy.igeolu.domain.property.mapper;
 
 import java.util.List;
 
+import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
+import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.entity.PropertyImage;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
@@ -14,6 +16,9 @@ public class PropertyMapper {
 		if (property == null) {
 			return null;
 		}
+
+
+
 
 		// 1) 옵션 DTO 리스트 추출
 		List<PropertyGetResponseDto.OptionDto> optionDtos = property.getPropertyOptions().stream()
@@ -40,6 +45,7 @@ public class PropertyMapper {
 			.latitude(property.getLatitude())
 			.longitude(property.getLongitude())
 			.options(optionDtos)
+			.dongcode(property.getDongcode().getDongCode())
 			.images(images)
 			.build();
 	}
