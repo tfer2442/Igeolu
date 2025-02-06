@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import com.ssafy.igeolu.oauth.filter.JWTFilter;
 import com.ssafy.igeolu.oauth.handler.CustomLogoutHandler;
 import com.ssafy.igeolu.oauth.handler.CustomSuccessHandler;
+import com.ssafy.igeolu.oauth.resolver.CustomAuthorizationRequestResolver;
 import com.ssafy.igeolu.oauth.service.CustomOAuth2UserService;
 import com.ssafy.igeolu.oauth.util.JWTUtil;
 
@@ -30,6 +32,7 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomSuccessHandler customSuccessHandler;
 	private final CustomLogoutHandler customLogoutHandler;
+	private final ClientRegistrationRepository clientRegistrationRepository;
 	private final JWTUtil jwtUtil;
 
 	@Bean
@@ -71,8 +74,9 @@ public class SecurityConfig {
 			.oauth2Login((oauth2) -> oauth2
 				.userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
 					.userService(customOAuth2UserService))
-				.authorizationEndpoint(authorization -> authorization
-					.baseUri("/api/oauth2/authorization")
+				.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+					// 커스텀 리졸버 등록: 클라이언트 쿼리 파라미터를 인증 요청에 포함시키기 위해
+					.authorizationRequestResolver(new CustomAuthorizationRequestResolver(clientRegistrationRepository))
 				)
 				// 리다이렉션 엔드포인트 변경
 				.redirectionEndpoint(redirection -> redirection
