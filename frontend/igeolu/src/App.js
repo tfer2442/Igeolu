@@ -11,6 +11,7 @@ import MobileMainPage from './pages/MobileMainPage/MobileMainPage'
 import MobileCalendarPage from './pages/MobileCalendarPage/MobileCalendarPage'
 import MobileMyPage from './pages/MobileMyPage/MobileMyPage'
 import MobileLivePage from './pages/MobileLivePage/MobileLivePage'
+import axios from 'axios';
 
 // Page Components
 import MobileChatList from './pages/MobileChatListPage/MobileChatListPage';
@@ -33,16 +34,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
   const [error, setError] = useState(null);          // 에러 상태 추가
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // TEST_USER_ID를 props나 context로 관리하도록 변경
-  const [currentUserId, setCurrentUserId] = useState(5); // 기본값 5
-
-  // 유저 전환을 위한 토글 버튼 추가
-  const toggleUser = () => {
-    setCurrentUserId(prevId => prevId === 5 ? 1 : 5);
-  };
-
+  
 
   // Hooks
   const location = useLocation();
@@ -52,13 +44,57 @@ function App() {
   const isMobileMyPageRoute = location.pathname.startsWith('/mobile-my-page');
   const isMobileLiveRoute = location.pathname.startsWith('/mobile-live');
 
+  // 유저 정보 받아오는 부분
+  const [user, setUser] = useState(null); // 로그인 상태 저장
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
+    console.log("유저 정보 받아옵니당.")
+    const cachedUser = localStorage.getItem("user");
+    if (cachedUser) {
+        setUser(JSON.parse(cachedUser)); // 캐시된 데이터로 상태 업데이트
     }
-  }, []);
+
+    if (!cachedUser || cachedUser === "null" || cachedUser === "undefined") {
+      console.warn("로그인된 사용자가 없습니다.");
+      localStorage.removeItem("user"); // 잘못된 데이터 삭제
+      return;
+  }
+  
+  const parsedUser = JSON.parse(cachedUser);
+  
+  if (!parsedUser.userId) {  // userId 값이 없으면 로그인이 되지 않은 상태
+      console.warn("유효하지 않은 사용자 데이터입니다.");
+      localStorage.removeItem("user");
+      return;
+  }
+
+    // 백엔드에서 로그인 상태 확인
+    
+    
+
+    fetch("https://i12d205.p.ssafy.io/api/users/me", {
+        method: "GET",
+        credentials: "include",
+        withCredentials: true
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        if (data.userId) {
+          console.log("니아이디", data.userID);
+            console.log("니 역할", data.role);
+            setUser({ userId: data.userId, role: data.role });
+            localStorage.setItem("user", JSON.stringify({ userId: data.userId, role: data.role })); // 캐싱
+            console.log("니아이디", data.userID);
+            console.log("니 역할", data.role);
+        } else {
+            localStorage.removeItem("user"); // 로그아웃되었으면 캐시 삭제
+            setUser(null);
+        }
+    })
+    .catch((err) => console.error("Error fetching user:", err));
+}, []);
+
+const currentUserId= user?.userId || null;
 
   // API Calls
   const fetchChatRooms = useCallback(async () => {
@@ -73,7 +109,7 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, []); // TEST_USER_ID가 상수이므로 의존성이 필요 없음
+  }, [currentUserId]);
 
   const initializeChatRooms = useCallback(() => {
     fetchChatRooms();

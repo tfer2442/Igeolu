@@ -1,5 +1,6 @@
 import logo from '../../assets/images/logo.png'
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import './DesktopMainPageNav.css'
 
 const NAV_ITEMS = [
@@ -9,6 +10,15 @@ const NAV_ITEMS = [
 ]
 
 function DesktopMainPageNav() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
   return (
     <nav className='desktop-main-nav'>
       <div className='desktop-main-nav__left-logo'>
@@ -24,9 +34,26 @@ function DesktopMainPageNav() {
         ))}
       </div>
       <div className='desktop-main-nav__right-login'>
-      <Link to="/login" className='desktop-main-nav__login-signin-btn'>
-          로그인
-        </Link>
+        {user ? (
+          <>
+            <Link to="/mypage" className='desktop-main-nav__login-signin-btn'>
+              마이페이지
+            </Link>
+            <button 
+              onClick={() => {
+                localStorage.removeItem("user");
+                setUser(null);
+              }} 
+              className='desktop-main-nav__login-signin-btn'
+            >
+              로그아웃
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className='desktop-main-nav__login-signin-btn'>
+            로그인
+          </Link>
+        )}
       </div>
     </nav>
   );

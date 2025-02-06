@@ -48,6 +48,7 @@ const chatApi = {
   // 채팅방 목록 조회
   getChatRooms: async (userId) => {
     try {
+      console.log(userId)
       const response = await axios.get(`${API_BASE_URL}/api/chats`, {
         params: { userId }
       });
