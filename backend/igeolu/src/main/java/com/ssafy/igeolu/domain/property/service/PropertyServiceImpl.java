@@ -29,8 +29,14 @@ public class PropertyServiceImpl implements PropertyService {
 	}
 
 	@Override
+	public List<Property> getPropertyListIds(List<Integer> propertyIds) {
+		return propertyRepository.findAllById(propertyIds);
+	}
+
+	@Override
 	public Property getProperty(Integer propertyId) {
-		return propertyRepository.findById(propertyId).orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
+		return propertyRepository.findById(propertyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
 	}
 
 	@Override

@@ -11,13 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class StartLivePostResponseDto {
+public class LivePostResponseDto {
 	@Schema(description = "세션 id")
 	private String sessionId;
 
 	@Schema(description = "토큰")
 	private String token;
-
-	@Schema(description = "live 링크")
-	private String liveUrl;
 }
