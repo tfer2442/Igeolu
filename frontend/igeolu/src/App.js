@@ -7,7 +7,7 @@ import MobileMainPage from './pages/MobileMainPage/MobileMainPage'
 import MobileCalendarPage from './pages/MobileCalendarPage/MobileCalendarPage'
 import MobileMyPage from './pages/MobileMyPage/MobileMyPage'
 import MobileLivePage from './pages/MobileLivePage/MobileLivePage'
-
+import LoginTestPage from './pages/LOGINTESTPAGE/LoginTest.jsx'
 function App() {
   return (
     <BrowserRouter>
@@ -19,6 +19,7 @@ function App() {
         <Route path="/mobile-calendar" element={<MobileCalendarPage />} />
         <Route path="/mobile-my-page" element={<MobileMyPage />} />
         <Route path="/mobile-live" element={<MobileLivePage />} />
+        <Route path="/testtest" element={<LoginTestPage /> } />
       </Routes>
     </BrowserRouter>
   );
