@@ -5,6 +5,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
@@ -14,6 +16,7 @@ import com.ssafy.igeolu.oauth.dto.KakaoResponse;
 import com.ssafy.igeolu.oauth.dto.OAuth2Response;
 import com.ssafy.igeolu.oauth.dto.OAuthUserDto;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,11 +39,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		String kakaoId = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 		String nickName = oAuth2Response.getName();
-
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		String state = request.getParameter("state"); // member or realtor
+		
 		User user = userRepository.findByKakaoId(kakaoId)
 			.orElseGet(() -> userRepository.save(
 				User.builder()
-					.role(Role.ROLE_MEMBER)
+					.role(state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR)
 					.kakaoId(kakaoId)
 					.username(nickName)
 					.build()
