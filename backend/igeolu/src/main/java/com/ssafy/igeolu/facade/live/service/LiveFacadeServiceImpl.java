@@ -16,6 +16,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 	@Override
 	public StartLivePostResponseDto startLive(StartLivePostRequestDto requestDto) {
 
+		return null;
 	}
 
 }
