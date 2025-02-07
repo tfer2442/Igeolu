@@ -235,6 +235,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
           isOpen={isExtrasOpen} 
           room={room}
           currentUserId={currentUserId}
+          onAppointmentCreate
         />
       </div>
     </div>

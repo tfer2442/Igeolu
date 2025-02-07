@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/Axios';
+import { useAppointment } from '../../../../contexts/AppointmentContext';
 import './AppointmentModal.css';
 
-const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
+const AppointmentModal = ({ onClose, roomInfo, currentUserId}) => {
+  const { addAppointment } = useAppointment();
   const [formData, setFormData] = useState({
     scheduledAt: '',
     title: '',
@@ -17,23 +20,30 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
       const localDate = new Date(formData.scheduledAt);
       const offset = localDate.getTimezoneOffset() * 60000;
       const isoDate = new Date(localDate.getTime() - offset).toISOString();
-   
+
       const response = await appointmentAPI.createAppointment({
         ...formData,
         scheduledAt: isoDate
       });
-   
+
+      console.log('Create appointment response:', response.data);
+
       const newAppointment = {
-        appointmentId: response.data.appointmentId,
-        ...formData,
-        scheduledAt: isoDate
+        appointmentId: response.data.appointmentId, // 이 부분이 제대로 들어오는지 확인
+        scheduledAt: isoDate,
+        title: formData.title,
+        opponentName: roomInfo.userName,
+        opponentUserId: roomInfo.userId,
+        userId: currentUserId
       };
-      onUpdate(newAppointment); // 부모 컴포넌트에서 appointments 상태 업데이트
+
+      console.log('Adding new appointment:', newAppointment);
+      addAppointment(newAppointment);
       onClose();
     } catch (error) {
       console.error('Failed to create appointment:', error);
     }
-   };
+  };
 
   return (
     <div className="appointment-modal">
@@ -41,7 +51,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
         <h2>약속 생성</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>날짜 및 시간</label>
+            <label htmlFor="scheduledAt">날짜 및 시간</label>
             <input
               type="datetime-local"
               value={formData.scheduledAt}
@@ -50,7 +60,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
             />
           </div>
           <div className="form-group">
-            <label>제목</label>
+            <label htmlFor="title">제목</label>
             <input
               type="text"
               value={formData.title}
@@ -66,6 +76,17 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
       </div>
     </div>
   );
+};
+
+AppointmentModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+  roomInfo: PropTypes.shape({
+    userId: PropTypes.number.isRequired,
+    roomId: PropTypes.number.isRequired,
+    userName: PropTypes.string.isRequired
+  }).isRequired,
+  currentUserId: PropTypes.number.isRequired
 };
 
 export default AppointmentModal;

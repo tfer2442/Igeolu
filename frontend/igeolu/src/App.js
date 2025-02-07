@@ -2,6 +2,7 @@
 import './styles/global.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { AppointmentProvider } from './contexts/AppointmentContext';
 
 // === 1. Component Imports ===
 // Desktop Pages
@@ -180,6 +181,7 @@ function App() {
 
   // === 8. Main Render ===
   return (
+    <AppointmentProvider>
     <div className='App'>
       <Routes>
         {/* Desktop Routes */}
@@ -212,6 +214,7 @@ function App() {
       </Routes>
       {!isMobileChatRoute && renderChatInterface()}
     </div>
+    </AppointmentProvider>
   );
 }
 

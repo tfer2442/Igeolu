@@ -1,5 +1,5 @@
-// components/common/Chat/ChatExtras/ChatExtras.jsx
-import React, {useState} from 'react';
+// src/components/common/Chat/ChatExtras/ChatExtras.jsx
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import liveIcon from '../../../../assets/images/liveButton.png';
 import reservationIcon from '../../../../assets/images/reservationButton.png';
@@ -9,12 +9,6 @@ import './ChatExtras.css';
 
 const ChatExtras = ({ isOpen, room, currentUserId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [appointments, setAppointments] = useState([]);
-
-  const fetchAppointments = async () => {
-    const response = await appointmentAPI.getAppointments(currentUserId);
-    setAppointments(response.data);
-  };
 
   const handleAppointmentClick = () => {
     setIsModalOpen(true);
@@ -46,7 +40,6 @@ const ChatExtras = ({ isOpen, room, currentUserId }) => {
       {isModalOpen && (
         <AppointmentModal 
           onClose={() => setIsModalOpen(false)}
-          onUpdate={fetchAppointments} // fetchAppointments 추가
           roomInfo={room}
           currentUserId={currentUserId}
         />
