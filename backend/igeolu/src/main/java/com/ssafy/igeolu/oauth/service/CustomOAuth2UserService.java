@@ -41,8 +41,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String nickName = oAuth2Response.getName();
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String state = request.getParameter("state"); // member or realtor
-		
+		System.out.println("state: " + state);
+
 		User user = userRepository.findByKakaoId(kakaoId)
+			.map(existingUser -> {
+				// 만약 기존 사용자라도 Role을 변경하고 싶다면 여기서 업데이트
+				Role newRole = state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
+				if (!existingUser.getRole().equals(newRole)) {
+					existingUser.setRole(newRole);
+					userRepository.save(existingUser);
+				}
+				return existingUser;
+			})
 			.orElseGet(() -> userRepository.save(
 				User.builder()
 					.role(state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR)
