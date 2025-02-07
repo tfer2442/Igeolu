@@ -51,4 +51,6 @@ public class PropertyGetResponseDto {
 		private String optionName;
 	}
 
+	private Integer userId;
+
 }

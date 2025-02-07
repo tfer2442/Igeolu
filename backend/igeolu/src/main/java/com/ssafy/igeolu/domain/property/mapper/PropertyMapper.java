@@ -46,6 +46,7 @@ public class PropertyMapper {
 			.longitude(property.getLongitude())
 			.options(optionDtos)
 			.dongcode(property.getDongcode().getDongCode())
+			.userId(property.getUser().getId())
 			.images(images)
 			.build();
 	}
