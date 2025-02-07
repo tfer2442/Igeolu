@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.file.service.FileService;
@@ -31,10 +30,8 @@ import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
-import com.ssafy.igeolu.oauth.service.CustomOAuth2UserService;
+import com.ssafy.igeolu.global.util.CoordinateConverter;
 import com.ssafy.igeolu.oauth.service.SecurityService;
-import com.ssafy.igeolu.oauth.service.SecurityServiceImpl;
-import com.ssafy.igeolu.util.CoordinateConverter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,7 +43,6 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	private final PropertyService propertyService;
 	private final DongcodesService dongcodesService;
 	private final OptionService optionService;
-	private final CoordinateConverter coordinateConverter;
 	private final OptionRepository optionRepository;
 	private final UserService userService;
 	private final FileService fileService;
@@ -56,9 +52,8 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	@Override
 	public void createProperty(PropertyPostRequestDto request, List<MultipartFile> images) {
 
-
 		// 좌표 변환
-		double[] latLon = coordinateConverter.convertToLatLon(
+		double[] latLon = CoordinateConverter.convertToLatLon(
 			Double.parseDouble(request.getX()),
 			Double.parseDouble(request.getY())
 		);
@@ -71,7 +66,6 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		// 옵션 ID 리스트로 Option 엔티티들 조회
 		List<Option> options = optionRepository.findByIdIn(request.getOptions());
-
 
 		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 
@@ -154,16 +148,14 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			throw new CustomException(ErrorCode.UNAUTHORIZED);
 		}
 
-
 		// dongcode 업데이트 추가
 		if (requestDto.getDongcode() != null) {
 			Dongcodes dongcode = dongcodesService.getDongcodes(requestDto.getDongcode());
 			property.setDongcode(dongcode);
 		}
 
-
 		// 좌표 변환
-		double[] latLon = coordinateConverter.convertToLatLon(
+		double[] latLon = CoordinateConverter.convertToLatLon(
 			Double.parseDouble(requestDto.getX()),
 			Double.parseDouble(requestDto.getY())
 		);
@@ -230,7 +222,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	@Override
 	public List<DongResponseDto> getDongList(String sidoName, String gugunName) {
 
-		return  dongcodesService.getDongList(sidoName, gugunName);
+		return dongcodesService.getDongList(sidoName, gugunName);
 	}
 
 	@Override
@@ -246,7 +238,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		// 이미지 파일 삭제
 		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
-		
+
 		// DB 삭제
 		propertyService.deleteProperty(propertyId);
 	}
