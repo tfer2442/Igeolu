@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
-import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.service.PropertyFacadeService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -70,7 +71,6 @@ public class PropertyController {
 		return ResponseEntity.ok(properties);
 	}
 
-
 	@Operation(summary = "매물 상세 조회", description = "매물 ID로 상세 정보를 조회합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
@@ -95,5 +95,8 @@ public class PropertyController {
 		return ResponseEntity.ok().build();
 	}
 
-
+	@GetMapping("/search")
+	public List<PropertySearchGetResponseDto> searchProperties(PropertySearchGetRequestDto request) {
+		return propertyFacadeService.searchBy(request);
+	}
 }

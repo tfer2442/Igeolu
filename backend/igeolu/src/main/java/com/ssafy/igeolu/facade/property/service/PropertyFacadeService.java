@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 
 public interface PropertyFacadeService {
 
@@ -30,4 +32,5 @@ public interface PropertyFacadeService {
 
 	List<DongResponseDto> getDongList(String sidoName, String gugunName);
 
+	List<PropertySearchGetResponseDto> searchBy(PropertySearchGetRequestDto request);
 }
