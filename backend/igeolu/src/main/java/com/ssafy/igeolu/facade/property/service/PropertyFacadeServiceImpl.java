@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.file.service.FileService;
@@ -209,6 +210,17 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	public List<DongResponseDto> getDongList(String sidoName, String gugunName) {
 
 		return  dongcodesService.getDongList(sidoName, gugunName);
+	}
+
+	@Override
+	public void deleteProperty(Integer propertyId) {
+		Property property = propertyService.getProperty(propertyId);
+
+		// 이미지 파일 삭제
+		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
+		
+		// DB 삭제
+		propertyService.deleteProperty(propertyId);
 	}
 }
 

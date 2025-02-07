@@ -30,4 +30,6 @@ public interface PropertyFacadeService {
 
 	List<DongResponseDto> getDongList(String sidoName, String gugunName);
 
+	void deleteProperty(Integer propertyId);
+
 }
