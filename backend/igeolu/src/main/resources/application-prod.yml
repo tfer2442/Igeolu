@@ -7,6 +7,11 @@ spring:
   data:
     mongodb:
       uri: ENC(2TFSKUX5qxvJmH/3Mp4GVd28hTZr132l0dMzBmhqV7/VpcCTlcmNs8t2IgZR4U3FnzreQ2rGpuc7AABGoSJN+H9I72ZGLwGporjrOD+rS2lWJXoqJ1eE7Q==)
+  elasticsearch:
+    uris:
+      - http://elasticsearch1:9200  # 클러스터 노드 중 하나와 연결
+      - http://elasticsearch2:9200
+      - http://elasticsearch3:9200
 
   security:
     oauth2:
@@ -50,3 +55,4 @@ openvidu:
 file:
   upload-dir: "/igeolu-file"
   base-url: "https://i12d205.p.ssafy.io/file"
+
