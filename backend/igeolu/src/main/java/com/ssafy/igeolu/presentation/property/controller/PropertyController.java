@@ -98,7 +98,7 @@ public class PropertyController {
 
 	@Operation(summary = "매물 삭제", description = "매물 정보를 삭제합니다.")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "정상 처리"),
+		@ApiResponse(responseCode = "204", description = "정상 처리"),
 		@ApiResponse(responseCode = "404", description = "매물을 찾을 수 없습니다.")
 	})
 	@DeleteMapping("/{propertyId}")
