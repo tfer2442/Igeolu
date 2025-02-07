@@ -1,6 +1,5 @@
-/* src/components/common/DetailPanel/DetailPanel.css */
 .detail-panel {
-    width: 375px;
+    width: 350px;
     height: 100%;
     background-color: white;
     border-radius: 12px;
@@ -50,30 +49,81 @@
     gap: 1rem;
   }
   
-  .image-placeholder {
-    width: 100%;
-    height: 200px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+  .agent-profile {
     display: flex;
-    align-items: center;
     justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .agent-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    overflow: hidden;
+  }
+  
+  .agent-detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .agent-additional-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .info-row {
+    margin-bottom: 1rem;
+  }
+  
+  .info-row h5 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
     color: #666;
   }
   
-  .info-group {
+  .info-row p {
+    margin: 0;
+    color: #333;
+  }
+  
+  .property-summary {
+    margin-top: 0.5rem;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .property-summary h5 {
+    margin: 0 0 0.8rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .property-stats {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 0.5rem;
   }
   
-  .info-group h4 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
+  .property-stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #e1e1e1;
   }
   
-  .info-group p {
-    margin: 0;
+  .property-type {
+    font-size: 0.8rem;
+    color: #666;
+  }
+  
+  .property-count {
+    font-weight: 600;
     color: #333;
+    margin-top: 0.2rem;
   }

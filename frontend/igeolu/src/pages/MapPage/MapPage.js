@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Map, MapMarker } from "react-kakao-maps-sdk";
-import DesktopMainPageNav from '../../components/common/DesktopNav/DesktopMainPageNav';
+import DesktopMapPageNav from '../../components/common/DesktopNav/DesktopMapPageNav';
 import MenuButtons from '../../components/common/MenuButtons/MenuBottons';
 import LocationFilter from '../../components/common/LocationFilter/LocationFilter';
 import ListPanel from '../../components/common/ListPanel/ListPanel';
@@ -100,7 +100,7 @@ function MapPage() {
 
     return (
         <div className='desktop-map-page'>
-            <DesktopMainPageNav onLoginSigninClick={handleLoginSigninClick} />
+            <DesktopMapPageNav onLoginSigninClick={handleLoginSigninClick} />
             <div className='desktop-map-page-content'>
                 <div className='left-menu-content'>
                     <MenuButtons 
