@@ -35,6 +35,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 
 		return appointmentService.getAppointmentList(user).stream()
 			.map(a -> AppointmentListGetResponseDto.builder()
+				.appointmentId(a.getId())
 				.scheduledAt(a.getScheduledAt())
 				.title(a.getTitle())
 				.opponentName(a.getOpponentUser().getUsername())
