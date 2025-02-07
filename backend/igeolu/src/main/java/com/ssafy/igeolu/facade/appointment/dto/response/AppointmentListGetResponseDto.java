@@ -11,6 +11,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class AppointmentListGetResponseDto {
 
+	private Integer appointmentId;
+
 	private LocalDateTime scheduledAt;
 
 	// 약속방 정보
