@@ -41,16 +41,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
 
-		String token = jwtUtil.createJwt(userId, role, 2 * 60 * 60 * 1000L); // 2시간
+		String token = jwtUtil.createJwt(userId, role, 14 * 24 * 60 * 60 * 1000L); // 14일
 
 		response.addCookie(createCookie("Authorization", token));
-		response.sendRedirect("https://i12d205.p.ssafy.io"); // 나중에 배포 주소로 변경해야 함.
+		// response.sendRedirect("https://i12d205.p.ssafy.io"); //
+		response.sendRedirect("http://localhost:3000");
 	}
 
 	private Cookie createCookie(String key, String value) {
 
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(2 * 60 * 60); // 2시간
+		cookie.setMaxAge(14 * 24 * 60 * 60); // 14일
 		cookie.setSecure(true);
 		cookie.setAttribute("SameSite", "None");
 		cookie.setPath("/");

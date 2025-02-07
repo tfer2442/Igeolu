@@ -28,7 +28,7 @@ spring:
             user-info-uri: "https://kapi.kakao.com/v2/user/me"
             user-name-attribute: id
   jwt:
-    secret: ENC(YhXaPtb4YUm4v8gEuw1crFdZyWG0nrDAjwXvb/L3yhdZRguDrPUNUdRTaOs3LM7UqXQFdybjqNryhIkHMVu6+g==)
+    secret: ENC(mUrIeioFDbdSY+cm/TPqIcN4GIqnTauE31oe2zgmn552uW6EmHqoJPovTDq6NGpmPtrlcZvY6Gdt4Iin/c/3sh7HnCMtdZNr4HPCv6o2OIE=)
 
   jpa:
     show-sql: true
