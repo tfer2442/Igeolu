@@ -1,5 +1,7 @@
+
 import './Registration.css';
-import { useState } from 'react'
+import { useState } from 'react';
+import axios from 'axios';
 
 import Registration_Button from '../../components/common/Registration_Button/Registration_Button';
 import BackButton from '../../components/common/Back_Button/Back_Button';
@@ -70,78 +72,6 @@ const Registration = () => {
         '세탁기': 18
     };
 
-    // const handleRegister = async () => {
-    //     try {
-    //         if (!selectedAddress) {
-    //             alert('주소를 선택해주세요.');
-    //             return;
-    //         }
-     
-    //         if (!description || !deposit || !monthlyRent || !area || 
-    //             !approvalDate || !currentFloor || !totalFloors) {
-    //             alert('필수 항목을 모두 입력해주세요.');
-    //             return;
-    //         }
-     
-    //         const requestData = {
-    //             userId: 12345,
-    //             description,
-    //             deposit: Number(deposit),
-    //             monthlyRent: Number(monthlyRent),
-    //             area: Number(area),
-    //             approvalDate,
-    //             currentFloor: Number(currentFloor),
-    //             totalFloors: Number(totalFloors),
-    //             address: selectedAddress.fullAddress,
-    //             latitude: selectedAddress.latitude,
-    //             longitude: selectedAddress.longitude,
-    //             dongCode: selectedAddress.dongCode,
-    //             propertyOption: {
-    //                 name: selectedOptions.map(option => OPTIONS_MAP[option])
-    //             },
-    //             images: images
-    //         };
-     
-    //         const response = await fetch('http://192.168.0.4:3000/api/properties/', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
-    //             },
-    //             body: JSON.stringify(requestData)
-    //         });
-     
-    //         const data = await response.json();
-     
-    //         if (data.statusCode === 200) {
-    //             alert("매물이 등록되었습니다!");
-    //             // 폼 초기화
-    //             setDescription('');
-    //             setDeposit('');
-    //             setMonthlyRent('');
-    //             setArea('');
-    //             setApprovalDate('');
-    //             setCurrentFloor('');
-    //             setTotalFloors('');
-    //             setAddress('');
-    //             setSelectedAddress(null);
-    //             setSelectedOptions([]);
-    //             setImages([]);
-    //             setImageFiles([]);
-    //         } else {
-    //             throw new Error('매물 등록에 실패했습니다.');
-    //         }
-     
-    //     } catch (error) {
-    //         alert('매물 등록 중 오류가 발생했습니다.');
-    //         console.error('Error:', error);
-    //     }
-    // };
-
-    
-
-
-    // 테스트용!!!!!!!!
     const handleRegister = async () => {
         try {
             if (!selectedAddress) {
@@ -171,33 +101,99 @@ const Registration = () => {
                 propertyOption: {
                     name: selectedOptions.map(option => OPTIONS_MAP[option])
                 },
-                images: images  // URL 배열 직접 전송
+                images: images
             };
+
+            const response = await axios.post('https://i12d205.p.ssafy.io/api/properties/', requestData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': ''
+                }
+            });
      
-            // API 호출 대신 콘솔에 출력
-            console.log('매물 등록 요청 데이터:', requestData);
-            console.log('이미지 URL 배열:', images);
-            alert("매물 등록 테스트 완료!");
-     
-            // 폼 초기화
-            setDescription('');
-            setDeposit('');
-            setMonthlyRent('');
-            setArea('');
-            setApprovalDate('');
-            setCurrentFloor('');
-            setTotalFloors('');
-            setAddress('');
-            setSelectedAddress(null);
-            setSelectedOptions([]);
-            setImages([]);
-            setImageFiles([]);
+            if (response.status === 200) {
+                alert("매물이 등록되었습니다!");
+                // 폼 초기화
+                setDescription('');
+                setDeposit('');
+                setMonthlyRent('');
+                setArea('');
+                setApprovalDate('');
+                setCurrentFloor('');
+                setTotalFloors('');
+                setAddress('');
+                setSelectedAddress(null);
+                setSelectedOptions([]);
+                setImages([]);
+                setImageFiles([]);
+            } else {
+                throw new Error('매물 등록에 실패했습니다.');
+            }
      
         } catch (error) {
             alert('매물 등록 중 오류가 발생했습니다.');
             console.error('Error:', error);
         }
     };
+
+    
+    // 테스트용!!!!!!!!
+    // const handleRegister = async () => {
+    //     try {
+    //         if (!selectedAddress) {
+    //             alert('주소를 선택해주세요.');
+    //             return;
+    //         }
+     
+    //         if (!description || !deposit || !monthlyRent || !area || 
+    //             !approvalDate || !currentFloor || !totalFloors) {
+    //             alert('필수 항목을 모두 입력해주세요.');
+    //             return;
+    //         }
+     
+    //         const requestData = {
+    //             userId: 12345,
+    //             description,
+    //             deposit: Number(deposit),
+    //             monthlyRent: Number(monthlyRent),
+    //             area: Number(area),
+    //             approvalDate,
+    //             currentFloor: Number(currentFloor),
+    //             totalFloors: Number(totalFloors),
+    //             address: selectedAddress.fullAddress,
+    //             latitude: selectedAddress.latitude,
+    //             longitude: selectedAddress.longitude,
+    //             dongCode: selectedAddress.dongCode,
+    //             propertyOption: {
+    //                 name: selectedOptions.map(option => OPTIONS_MAP[option])
+    //             },
+    //             images: images  // URL 배열 직접 전송
+    //         };
+     
+    //         // API 호출 대신 콘솔에 출력
+    //         console.log('매물 등록 요청 데이터:', requestData);
+    //         console.log('이미지 URL 배열:', images);
+    //         alert("매물 등록 테스트 완료!");
+     
+    //         // 폼 초기화
+    //         setDescription('');
+    //         setDeposit('');
+    //         setMonthlyRent('');
+    //         setArea('');
+    //         setApprovalDate('');
+    //         setCurrentFloor('');
+    //         setTotalFloors('');
+    //         setAddress('');
+    //         setSelectedAddress(null);
+    //         setSelectedOptions([]);
+    //         setImages([]);
+    //         setImageFiles([]);
+     
+    //     } catch (error) {
+    //         alert('매물 등록 중 오류가 발생했습니다.');
+    //         console.error('Error:', error);
+    //     }
+    // };
 
     const optionsList = [
         '침대', '에어컨', 'TV', '책상', '옷장', '주차장', 

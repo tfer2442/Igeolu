@@ -1,0 +1,79 @@
+/* src/components/common/DetailPanel/DetailPanel.css */
+.detail-panel {
+    width: 375px;
+    height: 100%;
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #e1e1e1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .detail-panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e1e1e1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .detail-panel-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  
+  .close-button:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .detail-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+  
+  .detail-panel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .image-placeholder {
+    width: 100%;
+    height: 200px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+  }
+  
+  .info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .info-group h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .info-group p {
+    margin: 0;
+    color: #333;
+  }

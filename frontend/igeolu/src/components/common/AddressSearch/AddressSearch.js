@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 const AddressSearch = ({ onSelect }) => {
     const [keyword, setKeyword] = useState('');
@@ -19,11 +20,19 @@ const AddressSearch = ({ onSelect }) => {
         setError(null);
         
         try {
-            const response = await fetch(
-                `https://business.juso.go.kr/addrlink/addrLinkApi.do?currentPage=1&countPerPage=10&keyword=${encodeURIComponent(keyword)}&confmKey=${JUSO_KEY}&resultType=json`
+            const response = await axios.get(
+                `https://business.juso.go.kr/addrlink/addrLinkApi.do`, {
+                    params: {
+                        currentPage: 1,
+                        countPerPage: 10,
+                        keyword: keyword,
+                        confmKey: JUSO_KEY,
+                        resultType: 'json'
+                    }
+                }
             );
             
-            const data = await response.json();
+            const data = response.data;
             
             if (data.results?.common?.errorCode === '0') {
                 setResults(data.results.juso || []);
@@ -41,11 +50,21 @@ const AddressSearch = ({ onSelect }) => {
 
     const getCoordinates = async (admCd, rnMgtSn, udrtYn, buldMnnm, buldSlno) => {
         try {
-            const response = await fetch(
-                `https://business.juso.go.kr/addrlink/addrCoordApi.do?admCd=${admCd}&rnMgtSn=${rnMgtSn}&udrtYn=${udrtYn}&buldMnnm=${buldMnnm}&buldSlno=${buldSlno}&confmKey=${COORD_KEY}&resultType=json`
+            const response = await axios.get(
+                'https://business.juso.go.kr/addrlink/addrCoordApi.do', {
+                    params: {
+                        admCd,
+                        rnMgtSn,
+                        udrtYn,
+                        buldMnnm,
+                        buldSlno,
+                        confmKey: COORD_KEY,
+                        resultType: 'json'
+                    }
+                }
             );
             
-            const data = await response.json();
+            const data = response.data;
             
             if (data.results?.common?.errorCode === '0') {
                 const coordInfo = data.results.juso[0];
@@ -64,7 +83,7 @@ const AddressSearch = ({ onSelect }) => {
     const handleSelect = async (result) => {
         try {
             const coords = await getCoordinates(
-                result.admCd,
+                result.admCd,      //행정동코드!!
                 result.rnMgtSn,
                 result.udrtYn,
                 result.buldMnnm,
@@ -75,7 +94,7 @@ const AddressSearch = ({ onSelect }) => {
                 fullAddress: result.roadAddr,
                 latitude: coords?.entY || 0,
                 longitude: coords?.entX || 0,
-                dongCode: result.admCd
+                dongCode: result.admCd  //행정동코드!!
             });
             
             setIsVisible(false);
@@ -86,7 +105,7 @@ const AddressSearch = ({ onSelect }) => {
                 fullAddress: result.roadAddr,
                 latitude: 0,
                 longitude: 0,
-                dongCode: result.admCd
+                dongCode: result.admCd  
             });
         }
     };

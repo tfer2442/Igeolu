@@ -1,20 +1,19 @@
+
 import './styles/global.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Registration from './pages/Registration/Registration';
 import Registration_Edit from './pages/Registration_Edit/Registration_Edit';
-import SignUp from './pages/SignUp/SignUp';
-import AddressSearch from './pages/Registration/Registration';
-
-
+import Map from './pages/MapPage/MapPage'
 
 function App() {
   return (
-    <div>
-      <Registration></Registration>
-      {/* <Registration_Edit></Registration_Edit> */}
-      {/* <SignUp></SignUp> */}
-      {/* <AddressSearch></AddressSearch> */}
-
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/registration" element={<Registration />} />
+        <Route path="/edit" element={<Registration_Edit />} />
+        <Route path="/map" element={<Map/>}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
