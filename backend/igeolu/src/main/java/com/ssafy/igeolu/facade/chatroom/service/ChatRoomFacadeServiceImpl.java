@@ -16,6 +16,7 @@ import com.ssafy.igeolu.facade.chatroom.dto.request.ChatRoomListGetRequestDto;
 import com.ssafy.igeolu.facade.chatroom.dto.request.ChatRoomPostRequestDto;
 import com.ssafy.igeolu.facade.chatroom.dto.response.ChatRoomListGetResponseDto;
 import com.ssafy.igeolu.facade.chatroom.dto.response.ChatRoomPostResponseDto;
+import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,11 +28,12 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 	private final ChatRoomService chatRoomService;
 	private final ChatMessageService chatMessageService;
 	private final UserService userService;
+	private final SecurityService securityService;
 
 	@Override
 	public ChatRoomPostResponseDto createChatRoom(ChatRoomPostRequestDto request) {
-		// TODO: memberId 는 나중에 JWT Token 에서 가져와서 검증
-		Integer memberId = request.getMemberId();
+
+		Integer memberId = securityService.getCurrentUser().getUserId();
 		Integer realtorId = request.getRealtorId();
 
 		User member = userService.getUserById(memberId);
@@ -45,10 +47,8 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 
 	@Override
 	public List<ChatRoomListGetResponseDto> getChatRoomList(ChatRoomListGetRequestDto request) {
-		// TODO: userId 는 나중에 JWT Token 에서 가져와서 검증
-		Integer userId = request.getUserId();
 
-		User user = userService.getUserById(userId);
+		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 
 		List<ChatRoom> chatRoomList = chatRoomService.getChatRoomList(user);
 

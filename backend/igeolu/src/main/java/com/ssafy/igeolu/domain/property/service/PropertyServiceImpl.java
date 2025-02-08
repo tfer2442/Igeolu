@@ -54,6 +54,13 @@ public class PropertyServiceImpl implements PropertyService {
 	}
 
 	@Override
+	public void deleteProperty(Integer propertyId) {
+		Property property = propertyRepository.findById(propertyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
+		propertyRepository.delete(property);
+	}
+
+	@Override
 	public List<EsProperty> searchBy(String keyword,
 		String sidoName,
 		String gugunName,

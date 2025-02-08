@@ -24,6 +24,8 @@ public interface PropertyService {
 
 	List<Property> getPropertiesByDongcode(String dongcode);
 
+	void deleteProperty(Integer propertyId);
+
 	List<EsProperty> searchBy(String keyword,
 		String sidoName,
 		String gugunName,

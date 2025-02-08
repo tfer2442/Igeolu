@@ -16,6 +16,7 @@ import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPostRequestDto
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPutRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentListGetResponseDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentPostResponseDto;
+import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,14 +28,15 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	private final ChatRoomService chatRoomService;
 	private final AppointmentService appointmentService;
 	private final UserService userService;
+	private final SecurityService securityService;
 
 	@Override
 	public List<AppointmentListGetResponseDto> getAppointmentList(AppointmentListGetRequestDto request) {
-		User user = userService.getUserById(request.getUserId());
-		//TODO: request.getUserId 와 토큰에서 가져온 user 가 같은지 검증 필요
+		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 
 		return appointmentService.getAppointmentList(user).stream()
 			.map(a -> AppointmentListGetResponseDto.builder()
+				.appointmentId(a.getId())
 				.scheduledAt(a.getScheduledAt())
 				.title(a.getTitle())
 				.opponentName(a.getOpponentUser().getUsername())
@@ -45,7 +47,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	@Override
 	public AppointmentPostResponseDto createAppointment(AppointmentPostRequestDto request) {
 
-		User user = userService.getUserById(request.getUserId()); // TODO: 토큰에서 가져온 user 가 같은지 검증 필요
+		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 		User opponentUser = userService.getUserById(request.getOpponentUserId());
 		ChatRoom chatRoom = chatRoomService.getChatRoom(request.getChatRoomId());
 
@@ -67,7 +69,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	@Override
 	public void updateAppointment(Integer appointmentId, AppointmentPutRequestDto request) {
 
-		User user = userService.getUserById(request.getUserId()); //TODO:  토큰에서 가져온 user 가 같은지 검증 필요
+		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 
 		Appointment appointment = appointmentService.getAppointment(appointmentId);
 		appointmentService.updateAppointment(appointment,
@@ -80,6 +82,9 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	public void deleteAppointment(Integer appointmentId) {
 		Appointment appointment = appointmentService.getAppointment(appointmentId);
 		//TODO: appointment user 랑 토큰값이랑 같은지 검증 필요
+		if (appointment.getUser().getId() != securityService.getCurrentUser().getUserId()) {
+			throw new RuntimeException("잘못된 유저의 접근입니다!");
+		}
 
 		appointmentService.deleteAppointment(appointment);
 	}

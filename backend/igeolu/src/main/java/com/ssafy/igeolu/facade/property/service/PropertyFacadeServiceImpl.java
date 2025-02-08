@@ -32,7 +32,8 @@ import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
-import com.ssafy.igeolu.util.CoordinateConverter;
+import com.ssafy.igeolu.global.util.CoordinateConverter;
+import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,17 +45,17 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	private final PropertyService propertyService;
 	private final DongcodesService dongcodesService;
 	private final OptionService optionService;
-	private final CoordinateConverter coordinateConverter;
 	private final OptionRepository optionRepository;
 	private final UserService userService;
 	private final FileService fileService;
 	private final PropertyOptionService propertyOptionService;
+	private final SecurityService securityService;
 
 	@Override
 	public void createProperty(PropertyPostRequestDto request, List<MultipartFile> images) {
 
 		// 좌표 변환
-		double[] latLon = coordinateConverter.convertToLatLon(
+		double[] latLon = CoordinateConverter.convertToLatLon(
 			Double.parseDouble(request.getX()),
 			Double.parseDouble(request.getY())
 		);
@@ -68,7 +69,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		// 옵션 ID 리스트로 Option 엔티티들 조회
 		List<Option> options = optionRepository.findByIdIn(request.getOptions());
 
-		User user = userService.getUserById(1);
+		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 
 		Property property = Property.builder()
 			.description(request.getDescription())
@@ -142,8 +143,21 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	public void updateProperty(Integer propertyId, PropertyUpdateRequestDto requestDto, List<MultipartFile> images) {
 		Property property = propertyService.getProperty(propertyId);
 
+		Integer currentUserId = securityService.getCurrentUser().getUserId();
+
+		// 매물 소유자와 현재 사용자가 다르면 예외 발생
+		if (!property.getUser().getId().equals(currentUserId)) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED);
+		}
+
+		// dongcode 업데이트 추가
+		if (requestDto.getDongcode() != null) {
+			Dongcodes dongcode = dongcodesService.getDongcodes(requestDto.getDongcode());
+			property.setDongcode(dongcode);
+		}
+
 		// 좌표 변환
-		double[] latLon = coordinateConverter.convertToLatLon(
+		double[] latLon = CoordinateConverter.convertToLatLon(
 			Double.parseDouble(requestDto.getX()),
 			Double.parseDouble(requestDto.getY())
 		);
@@ -211,6 +225,24 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	public List<DongResponseDto> getDongList(String sidoName, String gugunName) {
 
 		return dongcodesService.getDongList(sidoName, gugunName);
+	}
+
+	@Override
+	public void deleteProperty(Integer propertyId) {
+		Property property = propertyService.getProperty(propertyId);
+
+		Integer currentUserId = securityService.getCurrentUser().getUserId();
+
+		// 매물 소유자와 현재 사용자가 다르면 예외 발생
+		if (!property.getUser().getId().equals(currentUserId)) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED);
+		}
+
+		// 이미지 파일 삭제
+		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
+
+		// DB 삭제
+		propertyService.deleteProperty(propertyId);
 	}
 
 	@Override

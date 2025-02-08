@@ -49,7 +49,10 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		Integer userId = securityService.getCurrentUser().getUserId();
 		User user = userService.getUserById(userId);
 
+		LivePostResponseDto livePostResponseDto = createHostSessionAndToken();
+
 		LiveSession liveSession = LiveSession.builder()
+			.id(livePostResponseDto.getSessionId())
 			.realtor(user)
 			.build();
 
@@ -61,7 +64,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		// 라이브 매물에 등록
 		livePropertyService.registerLiveProperties(properties, liveSession);
 
-		return createHostSessionAndToken();
+		return livePostResponseDto;
 	}
 
 	@Override
@@ -104,7 +107,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		List<LiveProperty> liveProperties = livePropertyService.getLiveProperties(liveSession);
 
 		List<Property> properties = propertyService.getPropertyListIds(liveProperties.stream()
-			.map(LiveProperty::getId)
+			.map(liveProperty -> liveProperty.getProperty().getId())
 			.toList());
 
 		return properties.stream()
