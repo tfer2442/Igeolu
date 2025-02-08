@@ -41,25 +41,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String nickName = oAuth2Response.getName();
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String state = request.getParameter("state"); // member or realtor
-		System.out.println("state: " + state);
 
+		Role desiredRole = state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
+
+		// kakaoId로 사용자 조회
 		User user = userRepository.findByKakaoId(kakaoId)
 			.map(existingUser -> {
-				// 만약 기존 사용자라도 Role을 변경하고 싶다면 여기서 업데이트
-				Role newRole = state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
-				if (!existingUser.getRole().equals(newRole)) {
-					existingUser.setRole(newRole);
-					userRepository.save(existingUser);
+				// 기존 사용자의 Role이 파라미터의 Role과 다르면 로그인/회원가입 차단
+				if (!existingUser.getRole().equals(desiredRole)) {
+					throw new OAuth2AuthenticationException("Role mismatch. Login and signup are disallowed.");
 				}
 				return existingUser;
 			})
-			.orElseGet(() -> userRepository.save(
-				User.builder()
-					.role(state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR)
-					.kakaoId(kakaoId)
-					.username(nickName)
-					.build()
-			));
+			.orElseGet(() ->
+				// 사용자가 없으면 신규 회원가입 진행
+				userRepository.save(
+					User.builder()
+						.role(desiredRole)
+						.kakaoId(kakaoId)
+						.username(nickName)
+						.build()
+				)
+			);
 
 		OAuthUserDto oAuthUserDto = OAuthUserDto.builder()
 			.userId(user.getId())
