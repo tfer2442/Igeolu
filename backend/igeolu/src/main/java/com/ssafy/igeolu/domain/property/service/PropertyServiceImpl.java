@@ -2,6 +2,7 @@ package com.ssafy.igeolu.domain.property.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.property.entity.EsProperty;
@@ -59,14 +60,16 @@ public class PropertyServiceImpl implements PropertyService {
 		String dongName,
 		Integer maxDeposit,
 		Integer maxMonthlyRent,
-		List<Integer> optionIds) {
+		List<Integer> optionIds,
+		Pageable pageable) {
 		return esPropertyRepository.findBy(keyword,
 			sidoName,
 			gugunName,
 			dongName,
 			maxDeposit,
 			maxMonthlyRent,
-			optionIds);
+			optionIds,
+			pageable);
 	}
 
 }

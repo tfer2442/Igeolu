@@ -2,6 +2,8 @@ package com.ssafy.igeolu.domain.property.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import com.ssafy.igeolu.domain.property.entity.EsProperty;
 
 public interface CustomPropertyRepository {
@@ -12,5 +14,6 @@ public interface CustomPropertyRepository {
 		String dongName,
 		Integer maxDeposit,
 		Integer maxMonthlyRent,
-		List<Integer> optionIds);
+		List<Integer> optionIds,
+		Pageable pageable);
 }

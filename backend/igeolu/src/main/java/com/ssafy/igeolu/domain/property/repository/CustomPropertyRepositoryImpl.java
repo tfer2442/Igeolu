@@ -2,6 +2,7 @@ package com.ssafy.igeolu.domain.property.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -26,7 +27,8 @@ public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
 		String dongName,
 		Integer maxDeposit,
 		Integer maxMonthlyRent,
-		List<Integer> optionIds) {
+		List<Integer> optionIds,
+		Pageable pageable) {
 
 		// 동적 CriteriaQuery 생성
 		Criteria criteria = new Criteria();
@@ -57,16 +59,19 @@ public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
 
 		// 4. 옵션 ID 필터링
 		if (optionIds != null && !optionIds.isEmpty()) {
-			for (Integer optionId : optionIds) {
-				criteria = criteria.and("optionIds").contains(String.valueOf(optionId));
-			}
+			criteria = criteria.and("optionIds").in(optionIds);
 		}
 
-		// 5. 쿼리 실행
-		SearchHits<EsProperty> searchHits = elasticsearchOperations.search(new CriteriaQuery(criteria),
-			EsProperty.class);
+		// 5. 쿼리 생성
+		CriteriaQuery criteriaQuery = new CriteriaQuery(criteria);
 
-		// 6. 결과 변환 후 반환
+		// 6. 페이지네이션 적용
+		criteriaQuery.setPageable(pageable);
+
+		// 7. 쿼리 실행
+		SearchHits<EsProperty> searchHits = elasticsearchOperations.search(criteriaQuery, EsProperty.class);
+
+		// 8. 결과 변환 후 반환
 		return searchHits.stream()
 			.map(SearchHit::getContent)
 			.toList();

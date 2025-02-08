@@ -221,19 +221,25 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 				request.getDongName(),
 				request.getMaxDeposit(),
 				request.getMaxMonthlyRent(),
-				request.getOptionIds())
+				request.getOptionIds(),
+				request.toPageable())
 			.stream().map(p -> PropertySearchGetResponseDto.builder()
 				.area(p.getArea())
 				.approvalDate(p.getCreatedAt().toLocalDate()) // LocalDate 변환
+				.monthlyRent(p.getMonthlyRent())
+				.deposit(p.getDeposit())
 				.currentFloor(p.getCurrentFloor())
 				.totalFloors(p.getTotalFloors())
 				.address(p.getAddress())
+				.dongCode(p.getDongCode())
 				.sidoName(p.getSidoName())
 				.gugunName(p.getGugunName())
 				.dongName(p.getDongName())
 				.latitude(p.getLatitude())
 				.longitude(p.getLongitude())
-				.images(p.getImages())
+				.images(p.getImageUrls())
+				.createdAt(p.getCreatedAt())
+				.updatedAt(p.getUpdatedAt())
 				.build())
 			.toList();
 	}

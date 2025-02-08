@@ -2,10 +2,12 @@ package com.ssafy.igeolu.facade.property.dto.request;
 
 import java.util.List;
 
+import com.ssafy.igeolu.global.config.CommonPageRequest;
+
 import lombok.Data;
 
 @Data
-public class PropertySearchGetRequestDto {
+public class PropertySearchGetRequestDto extends CommonPageRequest {
 
 	// 들어오는 값 종류 : 집주소
 	private String keyword;
