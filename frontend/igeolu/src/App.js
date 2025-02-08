@@ -26,7 +26,7 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import chatApi from './services/chatApi';
+import chatApi from './services/ChatApi';
 
 function App() {
   // === 2. State Management ===
@@ -36,6 +36,7 @@ function App() {
   const [chatRooms, setChatRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isUserInitialized, setIsUserInitialized] = useState(false);
 
   // User States
   const [user, setUser] = useState(null);
@@ -51,11 +52,11 @@ function App() {
 
   // === 4. User Authentication (Development Mode) ===
   useEffect(() => {
-    // Development mode: Set fixed user credentials
-    const devUser = { userId: 2, role: "realtor" }; // 2번유저, 중개인
-    // const devUser = { userId: 1, role: "member"}; // 1번유저, 멤버
+    // const devUser = { userId: 33, role: 'realtor' }; // 오승우
+    const devUser = { userId: 35, role: 'member' }; // 이진형
     setUser(devUser);
-    localStorage.setItem("user", JSON.stringify(devUser));
+    localStorage.setItem('user', JSON.stringify(devUser));
+    setIsUserInitialized(true);
   }, []);
 
   const currentUserId = user?.userId || null;
@@ -127,13 +128,12 @@ function App() {
     }
   }, [currentUserId]);
 
-  const initializeChatRooms = useCallback(() => {
-    fetchChatRooms();
-  }, [fetchChatRooms]);
-
   useEffect(() => {
-    initializeChatRooms();
-  }, [initializeChatRooms]);
+    if (isUserInitialized) {
+      fetchChatRooms();
+    }
+  }, [isUserInitialized, fetchChatRooms]);
+  
 
   // === 6. Event Handlers ===
   const handleToggleChat = () => setIsOpen(!isOpen);
@@ -182,38 +182,38 @@ function App() {
   // === 8. Main Render ===
   return (
     <AppointmentProvider>
-    <div className='App'>
-      <Routes>
-        {/* Desktop Routes */}
-        <Route path='/' element={<DesktopHome />} />
-        <Route path='/login' element={<DesktopLogin />} />
-        <Route path='/live' element={<DesktopLive />} />
+      <div className='App'>
+        <Routes>
+          {/* Desktop Routes */}
+          <Route path='/' element={<DesktopHome />} />
+          <Route path='/login' element={<DesktopLogin />} />
+          <Route path='/live' element={<DesktopLive />} />
 
-        {/* Mobile Routes */}
-        <Route path='/make' element={<Make />} />
-        <Route path='/mobile-main' element={<MobileMainPage />} />
-        <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
-        <Route path='/mobile-my-page' element={<MobileMyPage />} />
-        <Route path='/mobile-live' element={<MobileLivePage />} />
-        <Route
-          path='/mobile-chat'
-          element={
-            <MobileChatList
-              chatRooms={chatRooms}
-              isLoading={isLoading}
-              error={error}
-              onRetry={fetchChatRooms}
-              currentUserId={currentUserId}
-            />
-          }
-        />
-        <Route
-          path='/mobile-chat/:roomId'
-          element={<MobileChatRoom currentUserId={currentUserId} />}
-        />
-      </Routes>
-      {!isMobileChatRoute && renderChatInterface()}
-    </div>
+          {/* Mobile Routes */}
+          <Route path='/make' element={<Make />} />
+          <Route path='/mobile-main' element={<MobileMainPage />} />
+          <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
+          <Route path='/mobile-my-page' element={<MobileMyPage />} />
+          <Route path='/mobile-live' element={<MobileLivePage />} />
+          <Route
+            path='/mobile-chat'
+            element={
+              <MobileChatList
+                chatRooms={chatRooms}
+                isLoading={isLoading}
+                error={error}
+                onRetry={fetchChatRooms}
+                currentUserId={currentUserId}
+              />
+            }
+          />
+          <Route
+            path='/mobile-chat/:roomId'
+            element={<MobileChatRoom currentUserId={currentUserId} />}
+          />
+        </Routes>
+        {!isMobileChatRoute && renderChatInterface()}
+      </div>
     </AppointmentProvider>
   );
 }

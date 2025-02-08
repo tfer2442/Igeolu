@@ -1,105 +1,99 @@
-// src/services/chatApi.js
-
-// 실제 코드
-
-// src/services/chatApi.js
+// src/services/ChatApi.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://i12d205.p.ssafy.io';
+export const instance = axios.create({
+  baseURL: 'https://i12d205.p.ssafy.io/api',
+  headers: {
+    // 오승우 userId 33, role realtor
+    // 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg',
+    // 이진형 userId 35, role member
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE',
+    'Content-Type': 'application/json',
+  },
+});
 
-const chatApi = {
-  // 채팅방 생성
+// 요청 인터셉터
+instance.interceptors.request.use(
+  (config) => {
+    console.log('📌 [Request]');
+    console.log('➡️ URL:', config.baseURL + config.url);
+    console.log('➡️ Method:', config.method);
+    console.log('➡️ Params:', config.params);
+    console.log('➡️ Data:', config.data);
+    return config;
+  },
+  (error) => {
+    console.error('❌ [Request Error]', error);
+    return Promise.reject(error);
+  }
+);
+
+// 응답 인터셉터
+instance.interceptors.response.use(
+  (response) => {
+    console.log('✅ [Response]');
+    console.log('⬅️ Status:', response.status);
+    console.log('⬅️ Data:', response.data);
+    return response.data;
+  },
+  (error) => {
+    console.error('❌ [Response Error]', error.response || error);
+    return Promise.reject(error);
+  }
+);
+
+const chatAPI = {
   createChatRoom: async (memberId, realtorId) => {
     try {
-      // 요청 데이터 로깅
-      console.log('채팅방 생성 요청 데이터:', {
-        memberId,
-        realtorId
-      });
-  
-      const response = await axios.post(`${API_BASE_URL}/api/chats`, {
-        memberId,
-        realtorId,
-      }, {
-        // 요청 헤더 추가
-        headers: {
-          'Content-Type': 'application/json',
-          // 토큰이 필요한 경우 추가
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        }
-      });
-      
-      return response.data;
+      const response = await instance.post('/chats', { memberId, realtorId });
+      return response;
     } catch (error) {
-      if (error.response) {
-        // 서버 응답 에러의 자세한 정보 출력
-        console.error('서버 응답 상태:', error.response.status);
-        console.error('서버 응답 데이터:', error.response.data);
-        console.error('서버 응답 헤더:', error.response.headers);
-      } else if (error.request) {
-        console.error('응답을 받지 못했습니다:', error.request);
-      } else {
-        console.error('요청 설정 중 에러:', error.message);
-      }
+      console.error('Error creating chat room:', error);
       throw error;
     }
   },
 
-  // 채팅방 목록 조회
   getChatRooms: async (userId) => {
     try {
-      console.log(userId)
-      const response = await axios.get(`${API_BASE_URL}/api/chats`, {
-        params: { userId }
-      });
-      console.log('채팅방 목록 응답:', response.data); // 응답 데이터 확인
-    return response.data;
+      const response = await instance.get('/chats', { params: { userId } });
+      // response가 배열인지 확인하고, 아니라면 빈 배열 반환
+      // return Array.isArray(response) ? response : [];
+      return response
     } catch (error) {
-      console.error('채팅방 목록 조회 실패:', error);
-      throw error;
+      console.error('Error getting chat rooms:', error);
+      return []; // 에러 발생 시 빈 배열 반환
     }
   },
 
-  // 채팅방 메시지 조회
-getChatMessages: async (roomId) => {
-  try {
-    const url = `${API_BASE_URL}/api/chats/messages/room/${roomId}`;
-    console.log('메시지 조회 요청 URL:', url);  // URL 로깅 추가
-    
-    const response = await axios.get(url);
-    console.log('메시지 조회 응답:', response.data);  // 응답 데이터도 함께 로깅
-    return response.data;
-  } catch (error) {
-    console.error('채팅 메시지 조회 실패:', error);
-    throw error;
-  }
-},
+  getChatMessages: async (roomId) => {
+    try {
+      const response = await instance.get(`/chats/messages/room/${roomId}`);
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      console.error('Error getting chat messages:', error);
+      return [];
+    }
+  },
 
-  // 메시지 전송
   sendMessage: async (roomId, userId, content) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/chats/messages`, {
-        roomId,
-        userId,
-        content
-      });
-      return response.data;
+      const response = await instance.post('/chats/messages', { roomId, userId, content });
+      return response;
     } catch (error) {
-      console.error('메시지 전송 실패:', error);
+      console.error('Error sending message:', error);
       throw error;
     }
   },
 
-  // 메시지 읽음 처리
   markMessagesAsRead: async (roomId, userId) => {
-  try {
-    console.log("메시지 읽음 처리 전송");
-    await axios.post(`${API_BASE_URL}/api/rooms/${roomId}/user/${userId}`);
-  } catch (error) {
-    console.error('메시지 읽음 처리 실패:', error);
-    throw error;
-  }
-}
+    try {
+      const response = await instance.post(`/rooms/${roomId}/user/${userId}`);
+      return response;
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+      throw error;
+    }
+  },
 };
 
-export default chatApi;
+export default chatAPI;

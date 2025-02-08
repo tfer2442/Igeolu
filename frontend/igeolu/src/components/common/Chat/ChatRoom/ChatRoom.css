@@ -40,12 +40,6 @@
   z-index: 10; /* 💡 다른 요소들보다 위에 있도록 설정 */
 }
 
-/* 📌 모바일에서 헤더 배경색 변경 */
-.chat-room.mobile .chat-room-header {
-  background-color: #272626;
-  border-bottom: 1px solid #343434;
-}
-
 /* 📌 뒤로 가기 버튼 스타일 */
 .back-button {
   padding: 0.5rem;
@@ -81,6 +75,11 @@
   height: calc(100vh - 120px); /* 💡 헤더 + 입력창 제외한 높이 설정 */
   min-height: 0; /* 🔹 flex 사용 시 필요 */
 }
+
+.chat-room.mobile .messages-container{
+  height: calc(100vh - (98px + 70px));
+}
+
 
 /* 📌 입력 영역 컨테이너 */
 .input-wrapper {
@@ -222,6 +221,7 @@
 .chat-room.mobile .chat-room-header {
   background-color: #272626;
   border-bottom: 1px solid #343434;
+  padding-top: 44px;
 }
 
 /* 📌 모바일에서 추가 기능 버튼 색상 변경 */
@@ -256,4 +256,8 @@
 
 .chat-room.mobile .messages-container::-webkit-scrollbar-track {
   background-color: #333;
+}
+
+.chat-room.mobile .loading-state{
+  background-color: #272626;
 }

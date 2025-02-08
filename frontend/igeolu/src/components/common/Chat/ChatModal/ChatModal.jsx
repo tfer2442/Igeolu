@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import ChatRoomsWebSocket from '../../../../services/webSocket/chatRoomsWebSocket';
-import chatApi from '../../../../services/chatApi';
+import chatApi from '../../../../services/ChatApi';
 import ChatRoomList from '../ChatRoomList/ChatRoomList';
 import './ChatModal.css';
 
@@ -12,7 +12,12 @@ import './ChatModal.css';
  * - WebSocket을 통해 채팅방 리스트 실시간 업데이트
  * - 채팅방을 선택하면 `onSelectChatRoom` 콜백 실행
  */
-const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, currentUserId  }) => {
+const ChatModal = ({
+  isModalOpen,
+  onSelectChatRoom,
+  onClose,
+  currentUserId,
+}) => {
   /* 📌 상태 관리 */
   const [chatRooms, setChatRooms] = useState([]); // 채팅방 목록
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
@@ -21,11 +26,11 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, currentUserId  }) =
 
   /* 📌 실시간 채팅방 목록 업데이트 핸들러 */
   const handleRoomsUpdate = (updatedRooms) => {
-    setChatRooms(prev => {
+    setChatRooms((prev) => {
       // 기존 목록과 업데이트된 목록 병합
       const mergedRooms = [...prev];
-      updatedRooms.forEach(newRoom => {
-        const index = mergedRooms.findIndex(r => r.roomId === newRoom.roomId);
+      updatedRooms.forEach((newRoom) => {
+        const index = mergedRooms.findIndex((r) => r.roomId === newRoom.roomId);
         if (index > -1) {
           mergedRooms[index] = { ...mergedRooms[index], ...newRoom };
         } else {
@@ -41,8 +46,11 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, currentUserId  }) =
     setIsLoading(true);
     setError(null);
     try {
+      console.log("채팅방 불러오기 시도", currentUserId)
       const response = await chatApi.getChatRooms(currentUserId);
+      console.log("채팅방 불러오기 결과", response)
       setChatRooms(response);
+
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
     } finally {
@@ -69,26 +77,26 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, currentUserId  }) =
       if (isModalOpen) {
         try {
           await fetchChatRooms();
-  
+
           console.log('WebSocket 연결 상태 확인:', {
             hasSocket: !!roomsSocketRef.current,
-            isConnected: roomsSocketRef.current?.isConnected
+            isConnected: roomsSocketRef.current?.isConnected,
           });
-  
+
           if (!roomsSocketRef.current || !roomsSocketRef.current.isConnected) {
             console.log('새 WebSocket 연결 시도 - userId:', currentUserId);
             roomsSocketRef.current = new ChatRoomsWebSocket(
               currentUserId,
               handleRoomsUpdate
             );
-  
+
             try {
               await roomsSocketRef.current.connect();
             } catch (wsError) {
               console.error('WebSocket 연결 실패:', {
                 error: wsError,
                 socketState: roomsSocketRef.current?.stompClient?.connected,
-                socketUrl: roomsSocketRef.current?.SOCKET_URL
+                socketUrl: roomsSocketRef.current?.SOCKET_URL,
               });
               throw wsError;
             }
@@ -98,7 +106,7 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, currentUserId  }) =
             error,
             type: error.type,
             message: error.message,
-            stack: error.stack
+            stack: error.stack,
           });
           setError('실시간 업데이트 연결에 실패했습니다.');
         }
@@ -122,11 +130,11 @@ const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, currentUserId  }) =
     <div className={`chat-modal ${isModalOpen ? 'active' : ''}`}>
       {/* 📌 모달 헤더 */}
       <header className='modal-header'>
-        <h1 className="modal-title">채팅방 목록</h1>
-        <button 
-          className="close-button" 
+        <h1 className='modal-title'>채팅방 목록</h1>
+        <button
+          className='close-button'
           onClick={onClose}
-          aria-label="채팅창 닫기"
+          aria-label='채팅창 닫기'
         >
           ✕
         </button>

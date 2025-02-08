@@ -1,27 +1,14 @@
 // src/components/common/ChatRoomList/ChatRoomList.jsx
-import React from 'react';
+import React, { useEffect} from 'react';
 import PropTypes from 'prop-types';
 import './ChatRoomList.css';
 import { formatChatTime } from '../../../../utils/dateFormat';
 import defaultProfile from '../../../../assets/images/testprofile.jpg';
 
-/* "약 N시간 전" 날짜 형식
-import { formatDistanceToNow } from 'date-fns';
-import { ko } from 'date-fns/locale';
-*/
-
 const ChatRoomList = ({ rooms, onSelectRoom, isMobile = false  }) => {
-
-  // "약 N시간 전" 같은 형식
-  // const formatDate = (dateString) => {
-  //   try {
-  //     const date = new Date(dateString);
-  //     return formatDistanceToNow(date, { addSuffix: true, locale: ko });
-  //   } catch (error) {
-  //     console.error('날짜 형식 변환 실패:', error);
-  //     return dateString;
-  //   }
-  // };
+  useEffect(() => {
+    console.log("rooms 데이터 확인:", rooms);
+  }, [rooms]);
 
   return (
     <ul className={`chat-room-list ${isMobile ? 'mobile' : ''}`}>

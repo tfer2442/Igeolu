@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import ChatWebSocket from '../../../../services/webSocket/chatWebSocket';
-import chatApi from '../../../../services/chatApi';
+import chatApi from '../../../../services/ChatApi';
 import ChatMessage from '../ChatMessage/ChatMessage';
 import ChatExtras from '../ChatExtras/ChatExtras';
 import './ChatRoom.css';
@@ -13,7 +13,8 @@ import './ChatRoom.css';
  * - WebSocket을 통해 실시간 업데이트 지원
  * - 메시지 입력 및 전송 기능 포함
  */
-const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUserId props 
+const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
+  // currentUserId props
   /* 📌 상태 관리 */
   const [messages, setMessages] = useState([]); // 채팅 메시지 목록
   const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지
@@ -31,26 +32,30 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
   /* 📌 메시지 목록 스크롤을 최하단으로 이동 */
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      messagesEndRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }, 50);
   }, []);
 
   /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 */
   // 1. useCallback으로 함수들을 메모이제이션
   const handleNewMessage = useCallback((message) => {
-    setMessages(prev => {
-      const isDuplicate = prev.some(m => 
-        m.content === message.content && 
-        m.writerId === message.writerId &&
-        m.createdAt === message.createdAt
+    setMessages((prev) => {
+      const isDuplicate = prev.some(
+        (m) =>
+          m.content === message.content &&
+          m.writerId === message.writerId &&
+          m.createdAt === message.createdAt
       );
-      
+
       if (isDuplicate) return prev;
       return [...prev, message];
     });
 
     scrollToBottom();
-  }, []);  // scrollToBottom만 의존성으로 필요
+  }, []); // scrollToBottom만 의존성으로 필요
 
   /* 📌 기존 메시지 불러오기 */
   const fetchMessages = useCallback(async () => {
@@ -59,13 +64,13 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
       setMessages(response || []);
 
       // 2. 메시지를 성공적으로 불러온 후 읽음 처리를 합니다
-    try {
-      await chatApi.markMessagesAsRead(room.roomId, currentUserId);
-    } catch (markError) {
-      // 읽음 처리 실패는 사용자 경험에 크게 영향을 주지 않으므로
-      // 조용히 에러 로깅만 합니다
-      console.error('메시지 읽음 처리 실패:', markError);
-    }
+      try {
+        await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+      } catch (markError) {
+        // 읽음 처리 실패는 사용자 경험에 크게 영향을 주지 않으므로
+        // 조용히 에러 로깅만 합니다
+        console.error('메시지 읽음 처리 실패:', markError);
+      }
 
       scrollToBottom();
     } catch (error) {
@@ -74,8 +79,6 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
       setIsLoading(false);
     }
   }, [room.roomId, scrollToBottom]);
-
-
 
   /* 📌 채팅방 초기화 및 WebSocket 연결 */
   useEffect(() => {
@@ -94,9 +97,9 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
         );
 
         await chatSocketRef.current.connect();
-        
+
         if (!isSubscribed) return;
-        
+
         await fetchMessages();
       } catch (error) {
         if (!isSubscribed) return;
@@ -119,19 +122,19 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
   const handleSendMessage = async () => {
     const trimmedMessage = newMessage.trim();
     if (!trimmedMessage) return;
-  
+
     const messageData = {
       roomId: room.roomId,
       userId: currentUserId,
       content: trimmedMessage,
     };
-  
+
     try {
       if (!chatSocketRef.current?.isConnected) {
         console.log('WebSocket 재연결 시도');
         await chatSocketRef.current?.connect();
       }
-      
+
       const sent = chatSocketRef.current?.sendMessage(messageData);
       if (sent) {
         console.log('메시지 전송 성공');
@@ -169,44 +172,44 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
 
       {/* 📌 메시지 목록 */}
       <div className={`input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
-      <div className='messages-container'>
-        {isLoading ? (
-          <div className='loading-state'>메시지를 불러오는 중...</div>
-        ) : error ? (
-          <div className='error-state'>
-            {error}
-            <button onClick={fetchMessages} className='retry-button'>
-              다시 시도
-            </button>
-          </div>
-        ) : (
-          <>
-            {messages.map((message, index) => (
-              <ChatMessage
-                key={`${message.roomId}-${message.writerId}-${index}`}
-                message={{
-                  userId: message.writerId,  // writerId를 userId로 변환
-                  content: message.content,
-                  createdAt: message.createdAt
-                }}
-                isCurrentUser={message.writerId === currentUserId}
-                userProfile={
-                  message.writerId !== currentUserId
-                    ? {
-                        userName: room.userName,
-                        profileUrl: room.userProfileUrl,
-                      }
-                    : null
-                }
-              />
-            ))}
-            <div ref={messagesEndRef} />
-          </>
-        )}
-      </div>
+        <div className='messages-container'>
+          {isLoading ? (
+            <div className='loading-state'>메시지를 불러오는 중...</div>
+          ) : error ? (
+            <div className='error-state'>
+              {error}
+              <button onClick={fetchMessages} className='retry-button'>
+                다시 시도
+              </button>
+            </div>
+          ) : (
+            <>
+              {messages.map((message, index) => (
+                <ChatMessage
+                  key={`${message.roomId}-${message.writerId}-${index}`}
+                  message={{
+                    userId: message.writerId, // writerId를 userId로 변환
+                    content: message.content,
+                    createdAt: message.createdAt,
+                  }}
+                  isCurrentUser={message.writerId === currentUserId}
+                  userProfile={
+                    message.writerId !== currentUserId
+                      ? {
+                          userName: room.userName,
+                          profileUrl: room.userProfileUrl,
+                        }
+                      : null
+                  }
+                />
+              ))}
+              <div ref={messagesEndRef} />
+            </>
+          )}
+        </div>
 
-      {/* 📌 메시지 입력창 및 추가 기능 */}
-      
+        {/* 📌 메시지 입력창 및 추가 기능 */}
+
         <div className='message-input-container'>
           <button
             className='extras-toggle-button'
@@ -231,8 +234,8 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => { // currentUser
         </div>
 
         {/* 📌 추가 기능 패널 */}
-        <ChatExtras 
-          isOpen={isExtrasOpen} 
+        <ChatExtras
+          isOpen={isExtrasOpen}
           room={room}
           currentUserId={currentUserId}
           onAppointmentCreate
