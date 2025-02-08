@@ -1,3 +1,4 @@
+// src/components/DesktopNav/DesktopLiveAndMyPage.jsx
 import logo from '../../assets/images/logo.png'
 import { Link } from 'react-router-dom'
 import './DesktopLiveAndMyPage.css'

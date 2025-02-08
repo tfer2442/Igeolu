@@ -165,6 +165,19 @@ function MobileCalendarPage() {
     }));
   };
 
+  const tileContent = ({ date, view }) => {
+    if (view === 'month') {
+      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const hasAppointment = groupedAppointments[dateKey]?.length > 0;
+      
+      return hasAppointment ? (
+        <div className="dot-container">
+          <div className="appointment-dot" />
+        </div>
+      ) : null;
+    }
+  };
+
   return (
     <div className="mobile-calendar-page-container">
       <div className="mobile-calendar-page">
@@ -181,6 +194,7 @@ function MobileCalendarPage() {
               showNeighboringMonth={false}
               formatShortWeekday={(locale, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
               formatDay={(locale, date) => date.getDate().toString()}
+              tileContent={tileContent}
             />
           </div>
           <div className="mobile-calendar-page__schedule">
