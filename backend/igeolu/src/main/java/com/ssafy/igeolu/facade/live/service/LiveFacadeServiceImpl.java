@@ -107,7 +107,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		List<LiveProperty> liveProperties = livePropertyService.getLiveProperties(liveSession);
 
 		List<Property> properties = propertyService.getPropertyListIds(liveProperties.stream()
-			.map(LiveProperty::getId)
+			.map(liveProperty -> liveProperty.getProperty().getId())
 			.toList());
 
 		return properties.stream()
