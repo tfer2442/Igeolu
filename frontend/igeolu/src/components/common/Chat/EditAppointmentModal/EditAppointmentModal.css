@@ -1,14 +1,63 @@
+/* src/components/common/Chat/EditAppointmentModal/EditAppointmentModal.css */
+
+/* 오버레이 스타일 추가 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal-overlay.entering {
+    animation: fadeIn 0.3s forwards;
+  }
+  
+  .modal-overlay.exiting {
+    animation: fadeOut 0.3s forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
 .appointment-modal {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    /* background: rgba(0, 0, 0, 0.5); */
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
     z-index: 1000;
-    animation: slideUp 0.3s ease-out;
+    opacity: 1;
+  }
+
+  .appointment-modal.entering {
+    animation: slideUp 0.3s ease-out forwards;
+  }
+  
+  .appointment-modal.exiting {
+    animation: slideDown 0.3s ease-in forwards;
   }
   
   @keyframes slideUp {
@@ -19,8 +68,17 @@
       transform: translateY(0);
     }
   }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
   
-  .modal-content {
+  .appointment-modal-content {
     background: #272626;
     padding: 20px;
     border-radius: 20px 20px 0 0;
@@ -28,7 +86,7 @@
     color: white;
   }
   
-  .modal-content h2 {
+  .appointment-modal-content h2 {
     color: white;
     margin: 0 0 20px 0;
     font-size: 18px;

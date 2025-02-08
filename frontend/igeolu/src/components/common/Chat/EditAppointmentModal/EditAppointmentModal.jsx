@@ -1,3 +1,4 @@
+// src/components/common/Chat/EditAppointmentModal/EditAppointmentModal.jsx
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
@@ -6,12 +7,20 @@ import './EditAppointmentModal.css';
 
 const EditAppointmentModal = ({ appointment, onClose }) => {
   const { updateAppointment } = useAppointment();
+  const [animationState, setAnimationState] = useState('entering');
   const [formData, setFormData] = useState({
     scheduledAt: appointment.scheduledAt,
     title: appointment.title,
     userId: appointment.userId,
     opponentUserId: appointment.opponentUserId,
   });
+
+  const handleClose = () => {
+    setAnimationState('exiting');
+    setTimeout(() => {
+      onClose();
+    }, 300); // Animation duration
+  };
 
   useEffect(() => {
     // 컴포넌트가 마운트되거나 appointment가 변경될 때 formData 업데이트
@@ -27,6 +36,20 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
       title: appointment.title,
       userId: appointment.userId, // userId 명시적 업데이트
     }));
+
+// Add escape key handler
+const handleEscapeKey = (e) => {
+  if (e.key === 'Escape') {
+    handleClose();
+  }
+};
+
+document.addEventListener('keydown', handleEscapeKey);
+return () => {
+  document.removeEventListener('keydown', handleEscapeKey);
+};
+
+
   }, [appointment]);
 
   const handleSubmit = async (e) => {
@@ -52,15 +75,21 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
         scheduledAt: isoDate,
       });
 
-      onClose();
+      handleClose();
     } catch (error) {
       console.error('Failed to update appointment:', error);
     }
   };
 
   return (
-    <div className='appointment-modal'>
-      <div className='modal-content'>
+<>
+      <div 
+        className={`modal-overlay ${animationState}`} 
+        onClick={handleClose}
+      />
+
+    <div className={`appointment-modal ${animationState}`}>
+      <div className='appointment-modal-content'>
         <h2>약속 수정</h2>
         <form onSubmit={handleSubmit}>
           <div className='form-group'>
@@ -89,13 +118,14 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
           </div>
           <div className='button-group'>
             <button type='submit'>수정</button>
-            <button type='button' onClick={onClose}>
+            <button type='button' onClick={handleClose}>
               취소
             </button>
           </div>
         </form>
       </div>
     </div>
+    </>
   );
 };
 

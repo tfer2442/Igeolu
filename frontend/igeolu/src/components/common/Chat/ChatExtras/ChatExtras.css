@@ -8,6 +8,18 @@
   left: 0;
   right: 0;
   border-top: 1px solid #343434;
+
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 📌 추가 기능이 열렸을 때 스타일 */
+.chat-extras.open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
 }
 
 /* 📌 추가 기능이 닫혀 있을 때 숨김 */

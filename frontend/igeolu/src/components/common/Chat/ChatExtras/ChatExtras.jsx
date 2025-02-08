@@ -1,5 +1,5 @@
 // src/components/common/Chat/ChatExtras/ChatExtras.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import liveIcon from '../../../../assets/images/liveButton.png';
 import reservationIcon from '../../../../assets/images/reservationButton.png';
@@ -9,17 +9,32 @@ import './ChatExtras.css';
 
 const ChatExtras = ({ isOpen, room, currentUserId, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAppointmentClick = () => {
-    onClose();
+    setIsAnimating(true);
+    // 애니메이션이 완료된 후 모달 열기
     setTimeout(() => {
-      setIsModalOpen(true); // 약간의 딜레이 후 모달 열기
-    }, 100);
+      onClose();
+      setTimeout(() => {
+        setIsModalOpen(true);
+      }, 100);
+    }, 300); // transition 지속 시간과 동일하게 설정
   };
+
+// isOpen이 변경될 때마다 애니메이션 상태 초기화
+useEffect(() => {
+  if (!isOpen) {
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300);
+  }
+}, [isOpen]);
+
 
   return (
     <>
-      <div className={`chat-extras ${isOpen ? 'open' : ''}`}>
+      <div className={`chat-extras ${isOpen ? 'open' : ''} ${isAnimating ? 'animating' : ''}`}>
         <div className='chat-extras-content'>
           <button className='extra-button'>
             <div className='icon-circle'>
