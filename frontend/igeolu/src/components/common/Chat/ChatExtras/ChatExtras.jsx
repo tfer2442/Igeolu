@@ -71,6 +71,7 @@ ChatExtras.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   room: PropTypes.object.isRequired,
   currentUserId: PropTypes.number.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default ChatExtras;

@@ -1,11 +1,14 @@
 import React from 'react';
-import { MessageCircle, Mail } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
+import mobileLogo from '../../assets/images/모바일로고.png';
 import './DesktopLoginPage.css';
 
 const LoginPage = () => {
   return (
       <div className="login-container">
-        <div className="login-logo">다봄</div>
+        <div className="login-logo">
+          <img src={mobileLogo} alt="다봄 로고" className="logo-image" />
+        </div>
         
         <div className="login-header">
           <h1>로그인하시고</h1>

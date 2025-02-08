@@ -18,6 +18,7 @@ import MobileMyPage from './pages/MobileMyPage/MobileMyPage';
 import MobileLivePage from './pages/MobileLivePage/MobileLivePage';
 import MobileChatList from './pages/MobileChatListPage/MobileChatListPage';
 import MobileChatRoom from './pages/MobileChatRoomPage/MobileChatRoomPage';
+import MobileLoginPage from './pages/MobileLoginPage/MobileLoginPage';
 
 // Common Components
 import ChatButton from './components/common/Button/ChatButton/ChatButton';
@@ -190,6 +191,7 @@ function App() {
           <Route path='/live' element={<DesktopLive />} />
 
           {/* Mobile Routes */}
+          <Route path='/mobile-login' element={<MobileLoginPage />} />
           <Route path='/make' element={<Make />} />
           <Route path='/mobile-main' element={<MobileMainPage />} />
           <Route path='/mobile-calendar' element={<MobileCalendarPage />} />

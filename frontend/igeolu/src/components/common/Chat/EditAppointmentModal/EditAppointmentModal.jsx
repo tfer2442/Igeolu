@@ -31,25 +31,24 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
       .toISOString()
       .slice(0, 16);
 
-    setFormData((prev) => ({
+    setFormData({
       scheduledAt: localDate,
       title: appointment.title,
-      userId: appointment.userId, // userId 명시적 업데이트
-    }));
+      userId: appointment.userId,
+      opponentUserId: appointment.opponentUserId,
+    });
 
-// Add escape key handler
-const handleEscapeKey = (e) => {
-  if (e.key === 'Escape') {
-    handleClose();
-  }
-};
+    // Add escape key handler
+    const handleEscapeKey = (e) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
 
-document.addEventListener('keydown', handleEscapeKey);
-return () => {
-  document.removeEventListener('keydown', handleEscapeKey);
-};
-
-
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
   }, [appointment]);
 
   const handleSubmit = async (e) => {
@@ -82,49 +81,53 @@ return () => {
   };
 
   return (
-<>
-      <div 
-        className={`modal-overlay ${animationState}`} 
+    <>
+      <div
+        className={`modal-overlay ${animationState}`}
         onClick={handleClose}
+        onKeyDown={handleClose}
+        role='button'
+        tabIndex={0}
+        aria-label='Close modal'
       />
 
-    <div className={`appointment-modal ${animationState}`}>
-      <div className='appointment-modal-content'>
-        <h2>약속 수정</h2>
-        <form onSubmit={handleSubmit}>
-          <div className='form-group'>
-            <label htmlFor='editScheduledAt'>날짜 및 시간</label>
-            <input
-              id='editScheduledAt'
-              type='datetime-local'
-              value={formData.scheduledAt}
-              onChange={(e) =>
-                setFormData({ ...formData, scheduledAt: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className='form-group'>
-            <label htmlFor='editTitle'>제목</label>
-            <input
-              id='editTitle'
-              type='text'
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className='button-group'>
-            <button type='submit'>수정</button>
-            <button type='button' onClick={handleClose}>
-              취소
-            </button>
-          </div>
-        </form>
+      <div className={`appointment-modal ${animationState}`}>
+        <div className='appointment-modal-content'>
+          <h2>약속 수정</h2>
+          <form onSubmit={handleSubmit}>
+            <div className='form-group'>
+              <label htmlFor='editScheduledAt'>날짜 및 시간</label>
+              <input
+                id='editScheduledAt'
+                type='datetime-local'
+                value={formData.scheduledAt}
+                onChange={(e) =>
+                  setFormData({ ...formData, scheduledAt: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='editTitle'>제목</label>
+              <input
+                id='editTitle'
+                type='text'
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className='button-group'>
+              <button type='submit'>수정</button>
+              <button type='button' onClick={handleClose}>
+                취소
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   );
 };
@@ -135,6 +138,7 @@ EditAppointmentModal.propTypes = {
     title: PropTypes.string.isRequired,
     userId: PropTypes.number.isRequired,
     scheduledAt: PropTypes.string.isRequired,
+    opponentUserId: PropTypes.number.isRequired,
   }).isRequired,
   onClose: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,

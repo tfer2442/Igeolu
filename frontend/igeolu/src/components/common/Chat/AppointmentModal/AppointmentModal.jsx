@@ -72,6 +72,10 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
       <div
         className={`modal-overlay ${animationState}`}
         onClick={handleClose}
+        onKeyDown={handleClose}
+        role='button'
+        tabIndex={0}
+        aria-label='Close modal'
       />
       <div className={`appointment-modal ${animationState}`}>
         <div className='appointment-modal-content'>
