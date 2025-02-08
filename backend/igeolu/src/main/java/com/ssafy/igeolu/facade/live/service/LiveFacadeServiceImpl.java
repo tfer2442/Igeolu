@@ -1,6 +1,7 @@
 package com.ssafy.igeolu.facade.live.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -11,7 +12,6 @@ import com.ssafy.igeolu.domain.live.entity.LiveSession;
 import com.ssafy.igeolu.domain.live.service.LivePropertyService;
 import com.ssafy.igeolu.domain.live.service.LiveSessionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
-import com.ssafy.igeolu.domain.property.mapper.PropertyMapper;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
@@ -19,7 +19,8 @@ import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
+import com.ssafy.igeolu.facade.live.mapper.LivePropertyMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.service.SecurityService;
@@ -101,18 +102,28 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<PropertyGetResponseDto> getProperties(String liveId) {
+	public List<LivePropertyGetResponseDto> getProperties(String liveId) {
 		// todo: 자신이 본 매물인지 확인해야 함.
 		LiveSession liveSession = liveSessionService.getLiveSession(liveId);
 		List<LiveProperty> liveProperties = livePropertyService.getLiveProperties(liveSession);
+
+		// 각 liveProperty에서 Property id와 liveProperty의 id를 매핑 (두 값 모두 Integer)
+		Map<Integer, Integer> propertyIdToLivePropertyId = liveProperties.stream()
+			.collect(Collectors.toMap(
+				lp -> lp.getProperty().getId(),
+				lp -> lp.getId()
+			));
 
 		List<Property> properties = propertyService.getPropertyListIds(liveProperties.stream()
 			.map(liveProperty -> liveProperty.getProperty().getId())
 			.toList());
 
 		return properties.stream()
-			.map(PropertyMapper::toDto)
-			.collect(Collectors.toList());
+			.map(property -> LivePropertyMapper.toDto(
+				property,
+				propertyIdToLivePropertyId.get(property.getId())
+			))
+			.toList();
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {
