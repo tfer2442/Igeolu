@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -17,6 +18,7 @@ import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
 import com.ssafy.igeolu.facade.live.service.LiveFacadeService;
 
 import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.Recording;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LiveController {
 	private final LiveFacadeService liveFacadeService;
-	private final OpenViduService openviduService;
 	private final OpenVidu openVidu;
 
 	@Operation(summary = "라이브 생성", description = "라이브를 생성합니다.")
@@ -50,29 +51,17 @@ public class LiveController {
 		return ResponseEntity.ok(liveFacadeService.joinLive(request));
 	}
 
-	// @PostMapping("/api/lives/recording/start")
-	// public ResponseEntity<?> startPropertyRecording(
-	// 	@RequestBody Map<String, String> params,
-	// 	@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) {
-	//
-	// 	JSONObject json = (JSONObject)
-	//
-	// 	String sessionId = (String) json.get("session");
-	// 	Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) json.get("outputMode"));
-	// 	boolean hasAudio = (boolean) json.get("hasAudio");
-	// 	boolean hasVideo = (boolean) json.get("hasVideo");
-	//
-	// 	RecordingProperties properties = new RecordingProperties.Builder().outputMode(outputMode).hasAudio(hasAudio)
-	// 		.hasVideo(hasVideo).build();
-	//
-	// 	try {
-	// 		Recording recording = this.openVidu.startRecording(sessionId, properties);
-	// 		this.sessionRecordings.put(sessionId, true);
-	// 		return new ResponseEntity<>(recording, HttpStatus.OK);
-	// 	} catch (OpenViduJavaClientException | OpenViduHttpException e) {
-	// 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-	// 	}
-	// }
+	@Operation(summary = "라이브 매물 시작", description = "해당 매물 소개를 시작합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+		@ApiResponse(responseCode = "400", description = "라이브 매물을 시작할 수 없습니다.")
+	})
+	@PostMapping("/api/liveProperties/{livePropertyId}/start")
+	public ResponseEntity<Recording> startLiveProperty(@PathVariable Integer livePropertyId,
+		@RequestBody LivePropertyStartPostRequestDto requestDto) {
+
+		return ResponseEntity.ok(liveFacadeService.startLiveProperty(livePropertyId, requestDto));
+	}
 
 	@Operation(summary = "내가 본 라이브 목록", description = "내가 본 라이브 목록")
 	@ApiResponses(value = {

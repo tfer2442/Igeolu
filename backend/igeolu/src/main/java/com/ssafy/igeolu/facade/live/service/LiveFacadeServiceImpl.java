@@ -16,6 +16,7 @@ import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -29,7 +30,11 @@ import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.OpenViduHttpException;
+import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
+import io.openvidu.java.client.Recording;
+import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 import lombok.RequiredArgsConstructor;
@@ -124,6 +129,28 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 				propertyIdToLivePropertyId.get(property.getId())
 			))
 			.toList();
+	}
+
+	@Override
+	public Recording startLiveProperty(Integer livePropertyId, LivePropertyStartPostRequestDto requestDto) {
+		String sessionId = requestDto.getSessionId();
+
+		Recording.OutputMode outputMode;
+
+		outputMode = Recording.OutputMode.valueOf("COMPOSED");
+
+		// 빌더를 통해 녹화 속성 객체 생성
+		RecordingProperties properties = new RecordingProperties.Builder()
+			.name(livePropertyId.toString())
+			.outputMode(outputMode)
+			.build();
+
+		try {
+			// 새 녹화 시작
+			return openVidu.startRecording(sessionId, properties);
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			throw new CustomException(ErrorCode.LIVE_PROPERTY_BAD_REQUEST);
+		}
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {
