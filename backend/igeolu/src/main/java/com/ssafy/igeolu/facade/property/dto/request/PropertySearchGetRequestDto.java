@@ -5,7 +5,9 @@ import java.util.List;
 import com.ssafy.igeolu.global.config.CommonPageRequest;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class PropertySearchGetRequestDto extends CommonPageRequest {
 

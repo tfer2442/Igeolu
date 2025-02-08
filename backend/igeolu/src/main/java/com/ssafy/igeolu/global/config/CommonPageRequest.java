@@ -38,6 +38,10 @@ public class CommonPageRequest {
 		return PageRequest.of(this.page, this.size, sortDirection, sortCriteria);
 	}
 
+	public Pageable toPageableWithCriteria(String sortCriteria) {
+		return PageRequest.of(this.page, this.size, sortDirection, sortCriteria);
+	}
+
 	public Pageable toPageableWithSort(Sort sort) {
 		return PageRequest.of(this.page, this.size, sort);
 	}

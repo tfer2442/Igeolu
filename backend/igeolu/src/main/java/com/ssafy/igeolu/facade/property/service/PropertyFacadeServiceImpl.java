@@ -222,10 +222,11 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 				request.getMaxDeposit(),
 				request.getMaxMonthlyRent(),
 				request.getOptionIds(),
-				request.toPageable())
+				request.toPageableWithCriteria("created_at")) // elasticsearch 컬럼명으로 넣어줘야함
 			.stream().map(p -> PropertySearchGetResponseDto.builder()
 				.area(p.getArea())
-				.approvalDate(p.getCreatedAt().toLocalDate()) // LocalDate 변환
+				.propertyId(p.getPropertyId())
+				.approvalDate(p.getApprovalDate()) // LocalDate 변환
 				.monthlyRent(p.getMonthlyRent())
 				.deposit(p.getDeposit())
 				.currentFloor(p.getCurrentFloor())
@@ -240,7 +241,9 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 				.images(p.getImageUrls())
 				.createdAt(p.getCreatedAt())
 				.updatedAt(p.getUpdatedAt())
-				.build())
+				.options(p.getOptionIds())
+				.build()
+			)
 			.toList();
 	}
 }

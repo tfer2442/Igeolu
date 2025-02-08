@@ -1,16 +1,14 @@
 package com.ssafy.igeolu.domain.property.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -19,7 +17,10 @@ import lombok.Data;
 public class EsProperty {
 
 	@Id
-	private Long id;
+	private String id; // Elasticsearch의 _id 필드와 매핑
+
+	@Field(type = FieldType.Integer, name = "id")
+	private Integer propertyId; // property_id
 
 	@Field(type = FieldType.Text)
 	private String description;
@@ -60,17 +61,14 @@ public class EsProperty {
 	@Field(type = FieldType.Double)
 	private BigDecimal longitude;
 
-	@Field(type = FieldType.Date, name = "approval_date", format = DateFormat.date_optional_time)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-	private LocalDateTime approvalDate;
+	@Field(type = FieldType.Date, name = "approval_date")
+	private String approvalDate;
 
-	@Field(type = FieldType.Date, name = "created_at", format = DateFormat.date_optional_time)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-	private LocalDateTime createdAt;
+	@Field(type = FieldType.Date, name = "created_at")
+	private String createdAt;
 
-	@Field(type = FieldType.Date, name = "updated_at", format = DateFormat.date_optional_time)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-	private LocalDateTime updatedAt;
+	@Field(type = FieldType.Date, name = "updated_at")
+	private String updatedAt;
 
 	@Field(type = FieldType.Long, name = "user_id")
 	private Long userId;
@@ -80,4 +78,19 @@ public class EsProperty {
 
 	@Field(type = FieldType.Integer, name = "option_ids")
 	private List<Integer> optionIds;
+
+	public LocalDate getApprovalDate() {
+		return approvalDate != null ?
+			LocalDate.parse(approvalDate.substring(0, 10)) : null;  // 날짜 부분만 추출하여 변환
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt != null ?
+			LocalDateTime.parse(createdAt.substring(0, 19)) : null;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt != null ?
+			LocalDateTime.parse(updatedAt.substring(0, 19)) : null;
+	}
 }

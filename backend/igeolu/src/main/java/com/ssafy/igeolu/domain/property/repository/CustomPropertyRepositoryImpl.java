@@ -59,7 +59,9 @@ public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
 
 		// 4. 옵션 ID 필터링
 		if (optionIds != null && !optionIds.isEmpty()) {
-			criteria = criteria.and("optionIds").in(optionIds);
+			for (Integer optionId : optionIds) {
+				criteria = criteria.and("optionIds").in(optionId);
+			}
 		}
 
 		// 5. 쿼리 생성

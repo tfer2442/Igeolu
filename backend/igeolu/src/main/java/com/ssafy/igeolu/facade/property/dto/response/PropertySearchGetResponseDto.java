@@ -14,6 +14,8 @@ import lombok.Data;
 @Data
 public class PropertySearchGetResponseDto {
 
+	private Integer propertyId;
+
 	private BigDecimal area;
 
 	private Integer monthlyRent;
