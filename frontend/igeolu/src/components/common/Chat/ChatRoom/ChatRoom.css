@@ -115,7 +115,9 @@
   background-color: #01adff;  /* 파란색 배경 */
   color: white;              /* 흰색 아이콘 */
   border-radius: 50%;        /* 원형 모양 */
+
 }
+
 
 .input-box {
   flex: 1;

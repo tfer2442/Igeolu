@@ -1,3 +1,4 @@
+// src/components/common/Chat/AppointmentModal.jsx
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
@@ -47,7 +48,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
 
   return (
     <div className='appointment-modal'>
-      <div className='modal-content'>
+      <div className='appointment-modal-content'>
         <h2>약속 생성</h2>
         <form onSubmit={handleSubmit}>
           <div className='form-group'>
@@ -86,7 +87,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
 
 AppointmentModal.propTypes = {
   onClose: PropTypes.func.isRequired,
-  onUpdate: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func,
   roomInfo: PropTypes.shape({
     userId: PropTypes.number.isRequired,
     roomId: PropTypes.number.isRequired,

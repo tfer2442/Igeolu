@@ -7,51 +7,55 @@ import attachIcon from '../../../../assets/images/fileAttatchButton.png';
 import AppointmentModal from '../AppointmentModal/AppointmentModal';
 import './ChatExtras.css';
 
-const ChatExtras = ({ isOpen, room, currentUserId }) => {
+const ChatExtras = ({ isOpen, room, currentUserId, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAppointmentClick = () => {
-    setIsModalOpen(true);
+    onClose();
+    setTimeout(() => {
+      setIsModalOpen(true); // 약간의 딜레이 후 모달 열기
+    }, 100);
   };
 
   return (
-    <div className={`chat-extras ${isOpen ? 'open' : ''}`}>
-      <div className="chat-extras-content">
-        <button className="extra-button">
-          <div className="icon-circle">
-            <img src={liveIcon} alt="라이브" />
-          </div>
-          <span>라이브</span>
-        </button>
-        <button className="extra-button" onClick={handleAppointmentClick}>
-          <div className="icon-circle">
-            <img src={reservationIcon} alt="예약" />
-          </div>
-          <span>예약</span>
-        </button>
-        <button className="extra-button">
-          <div className="icon-circle">
-            <img src={attachIcon} alt="첨부" />
-          </div>
-          <span>첨부</span>
-        </button>
+    <>
+      <div className={`chat-extras ${isOpen ? 'open' : ''}`}>
+        <div className='chat-extras-content'>
+          <button className='extra-button'>
+            <div className='icon-circle'>
+              <img src={liveIcon} alt='라이브' />
+            </div>
+            <span>라이브</span>
+          </button>
+          <button className='extra-button' onClick={handleAppointmentClick}>
+            <div className='icon-circle'>
+              <img src={reservationIcon} alt='예약' />
+            </div>
+            <span>예약</span>
+          </button>
+          <button className='extra-button'>
+            <div className='icon-circle'>
+              <img src={attachIcon} alt='첨부' />
+            </div>
+            <span>첨부</span>
+          </button>
+        </div>
       </div>
-
       {isModalOpen && (
-        <AppointmentModal 
+        <AppointmentModal
           onClose={() => setIsModalOpen(false)}
           roomInfo={room}
           currentUserId={currentUserId}
         />
       )}
-    </div>
+    </>
   );
 };
 
 ChatExtras.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   room: PropTypes.object.isRequired,
-  currentUserId: PropTypes.number.isRequired
+  currentUserId: PropTypes.number.isRequired,
 };
 
 export default ChatExtras;

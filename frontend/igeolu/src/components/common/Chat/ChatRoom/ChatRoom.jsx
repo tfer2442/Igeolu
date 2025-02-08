@@ -238,6 +238,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
           isOpen={isExtrasOpen}
           room={room}
           currentUserId={currentUserId}
+          onClose={() => setIsExtrasOpen(false)}
           onAppointmentCreate
         />
       </div>

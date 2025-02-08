@@ -131,6 +131,7 @@
   overflow: hidden;
   background-color: white;
   min-height: 0;
+  padding: 0px;
 }
 
 /* 📌 로딩 상태 스타일 */
