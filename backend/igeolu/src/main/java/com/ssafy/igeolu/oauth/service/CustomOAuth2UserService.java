@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
-import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
 import com.ssafy.igeolu.oauth.dto.CustomOAuth2User;
 import com.ssafy.igeolu.oauth.dto.KakaoResponse;
 import com.ssafy.igeolu.oauth.dto.OAuth2Response;
@@ -22,8 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-
-	private final UserRepository userRepository;
+	private final SecurityService securityService;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -41,25 +38,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String nickName = oAuth2Response.getName();
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String state = request.getParameter("state"); // member or realtor
-		System.out.println("state: " + state);
 
-		User user = userRepository.findByKakaoId(kakaoId)
-			.map(existingUser -> {
-				// 만약 기존 사용자라도 Role을 변경하고 싶다면 여기서 업데이트
-				Role newRole = state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
-				if (!existingUser.getRole().equals(newRole)) {
-					existingUser.setRole(newRole);
-					userRepository.save(existingUser);
-				}
-				return existingUser;
-			})
-			.orElseGet(() -> userRepository.save(
-				User.builder()
-					.role(state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR)
-					.kakaoId(kakaoId)
-					.username(nickName)
-					.build()
-			));
+		// state 파라미터 검증
+		if (!"member".equals(state) && !"realtor".equals(state)) {
+			throw new IllegalArgumentException("Invalid state parameter");
+		}
+
+		User user = securityService.processOAuth2User(kakaoId, nickName, state);
 
 		OAuthUserDto oAuthUserDto = OAuthUserDto.builder()
 			.userId(user.getId())
