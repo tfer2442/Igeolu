@@ -107,6 +107,13 @@ public class PropertyController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Operation(summary = "매물 검색",
+		description = "매물 정보를 검색합니다. "
+			+ "swagger 에서 options list 값이 string 으로 변경되는 버그가 있습니다."
+			+ "swagger 에서 options 값에 대한 테스트는 할 수 없으며 postman 으로는 가능합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
 	@GetMapping("/search")
 	public List<PropertySearchGetResponseDto> searchProperties(PropertySearchGetRequestDto request) {
 		return propertyFacadeService.searchBy(request);
