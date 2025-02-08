@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
-import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
 import com.ssafy.igeolu.oauth.dto.CustomOAuth2User;
 import com.ssafy.igeolu.oauth.dto.KakaoResponse;
 import com.ssafy.igeolu.oauth.dto.OAuth2Response;
@@ -22,8 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-
-	private final UserRepository userRepository;
+	private final SecurityService securityService;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -42,27 +39,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String state = request.getParameter("state"); // member or realtor
 
-		Role desiredRole = state.equals("member") ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
+		// state 파라미터 검증
+		if (!"member".equals(state) && !"realtor".equals(state)) {
+			throw new IllegalArgumentException("Invalid state parameter");
+		}
 
-		// kakaoId로 사용자 조회
-		User user = userRepository.findByKakaoId(kakaoId)
-			.map(existingUser -> {
-				// 기존 사용자의 Role이 파라미터의 Role과 다르면 로그인/회원가입 차단
-				if (!existingUser.getRole().equals(desiredRole)) {
-					throw new OAuth2AuthenticationException("Role mismatch. Login and signup are disallowed.");
-				}
-				return existingUser;
-			})
-			.orElseGet(() ->
-				// 사용자가 없으면 신규 회원가입 진행
-				userRepository.save(
-					User.builder()
-						.role(desiredRole)
-						.kakaoId(kakaoId)
-						.username(nickName)
-						.build()
-				)
-			);
+		User user = securityService.processOAuth2User(kakaoId, nickName, state);
 
 		OAuthUserDto oAuthUserDto = OAuthUserDto.builder()
 			.userId(user.getId())
