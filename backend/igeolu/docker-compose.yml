@@ -51,8 +51,14 @@ services:
       - "4443:4443"
     environment:
       - OPENVIDU_SECRET=MY_SECRET
+      - OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings
+      - OPENVIDU_RECORDING=true
+    volumes:
+      - openvidu_recordings:/opt/openvidu/recordings
+      - /var/run/docker.sock:/var/run/docker.sock  # 호스트 Docker 소켓 마운트
 
 volumes:
   igeolu-mysql:  # MySQL 데이터 저장소
   mongodb_data:
   mongodb_config:
+  openvidu_recordings:
