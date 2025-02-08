@@ -115,7 +115,11 @@
   background-color: #01adff;  /* 파란색 배경 */
   color: white;              /* 흰색 아이콘 */
   border-radius: 50%;        /* 원형 모양 */
+  display: none;
+}
 
+.chat-room.mobile .extras-toggle-button {
+  display: flex; /* 모바일에서는 버튼 표시 */
 }
 
 
@@ -186,7 +190,6 @@
   background-color: #e2e1e1;
   border-top: 1px solid #dee2e6;
 }
-
 /* 📌 추가 기능이 열렸을 때 표시 */
 .chat-extras.show {
   display: block;
