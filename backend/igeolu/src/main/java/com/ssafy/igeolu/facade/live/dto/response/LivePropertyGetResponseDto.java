@@ -14,8 +14,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class LivePropertyGetResponseDto extends PropertyGetResponseDto {
 	private Integer livePropertyId;
+	private String recordingId;
 
-	public static LivePropertyGetResponseDto from(PropertyGetResponseDto baseDto, Integer livePropertyId) {
+	public static LivePropertyGetResponseDto from(PropertyGetResponseDto baseDto, Integer livePropertyId,
+		String recordingId) {
 		return LivePropertyGetResponseDto.builder()
 			.propertyId(baseDto.getPropertyId())
 			.description(baseDto.getDescription())
@@ -33,6 +35,7 @@ public class LivePropertyGetResponseDto extends PropertyGetResponseDto {
 			.images(baseDto.getImages())
 			.userId(baseDto.getUserId())
 			.livePropertyId(livePropertyId)
+			.recordingId(recordingId)
 			.build();
 	}
 }

@@ -2,6 +2,7 @@ package com.ssafy.igeolu.facade.live.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -116,22 +117,27 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		LiveSession liveSession = liveSessionService.getLiveSession(liveId);
 		List<LiveProperty> liveProperties = livePropertyService.getLiveProperties(liveSession);
 
-		// 각 liveProperty에서 Property id와 liveProperty의 id를 매핑 (두 값 모두 Integer)
-		Map<Integer, Integer> propertyIdToLivePropertyId = liveProperties.stream()
+		// Property id를 key로 하여 LiveProperty 전체를 매핑
+		Map<Integer, LiveProperty> propertyIdToLiveProperty = liveProperties.stream()
 			.collect(Collectors.toMap(
 				lp -> lp.getProperty().getId(),
-				lp -> lp.getId()
+				Function.identity()
 			));
 
 		List<Property> properties = propertyService.getPropertyListIds(liveProperties.stream()
 			.map(liveProperty -> liveProperty.getProperty().getId())
 			.toList());
 
+		// LiveProperty 객체를 통해 liveProperty id와 recordingId 모두를 전달
 		return properties.stream()
-			.map(property -> LivePropertyMapper.toDto(
-				property,
-				propertyIdToLivePropertyId.get(property.getId())
-			))
+			.map(property -> {
+				LiveProperty liveProperty = propertyIdToLiveProperty.get(property.getId());
+				return LivePropertyMapper.toDto(
+					property,
+					liveProperty.getId(),
+					liveProperty.getRecordingId()
+				);
+			})
 			.toList();
 	}
 
