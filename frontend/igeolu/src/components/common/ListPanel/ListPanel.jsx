@@ -1,4 +1,4 @@
-// src/components/common/ListPanel/ListPanel.jsx
+
 import React from 'react';
 import './ListPanel.css';
 

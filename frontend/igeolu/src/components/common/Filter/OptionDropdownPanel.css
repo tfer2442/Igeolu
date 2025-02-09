@@ -8,24 +8,24 @@
     z-index: 1000;
   }
   
-  .option-content {
+.option-content {
     padding: 1rem;
-  }
+}
   
-  .option-header {
+.option-header {
     font-size: 0.875rem;
     font-weight: 600;
     color: #333;
     margin-bottom: 1rem;
-  }
+}
   
-  .option-grid {
+.option-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
-  }
+}
   
-  .option-item {
+.option-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -34,52 +34,52 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
+}
   
-  .option-item:hover {
+.option-item:hover {
     border-color: #0066ff;
     background-color: #f0f7ff;
-  }
+}
   
-  .option-item.selected {
+.option-item.selected {
     background-color: #f0f7ff;
     border-color: #0066ff;
     color: #0066ff;
-  }
+}
   
-  .option-actions {
+.option-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
     padding-top: 1rem;
     border-top: 1px solid #eee;
     margin-top: 1rem;
-  }
+}
   
-  .option-action-button {
+.option-action-button {
     padding: 0.5rem 1rem;
     border-radius: 6px;
     font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
+}
   
-  .option-action-button.reset {
+.option-action-button.reset {
     background: none;
     border: 1px solid #e1e1e1;
     color: #666;
-  }
+}
   
-  .option-action-button.reset:hover {
+.option-action-button.reset:hover {
     background-color: #f5f5f5;
-  }
+}
   
-  .option-action-button.apply {
+.option-action-button.apply {
     background-color: #0066ff;
     border: 1px solid #0066ff;
     color: white;
-  }
+}
   
-  .option-action-button.apply:hover {
+.option-action-button.apply:hover {
     background-color: #0052cc;
-  }
+}
