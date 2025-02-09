@@ -1,0 +1,199 @@
+.mobile-live-setting-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1E1D1D;
+    width: 100%;
+}
+.mobile-live-setting-page {
+    border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;  /* 전체 스크롤 적용 */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.mobile-live-setting-page-header {
+    width: calc(100% - 40px); 
+    margin-top: max(44px, env(safe-area-inset-top));  /* iOS 상태바 고려 */
+    display: flex;
+    align-items: center;
+    margin-bottom: 45px;
+}
+.mobile-live-setting-page-header p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-live-setting-page-content {
+    width: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+}
+.mobile-live-setting-page-content-my-estate {   
+    display: flex;
+    flex-direction: column;
+}
+#my-estate-title {
+    font-size: 16px;
+    color: white;
+    margin: 0;
+    margin-bottom: 10px;
+}
+#select-estate-title {
+    font-size: 16px;
+    color: white; 
+    margin: 10px 0px;
+}
+.mobile-live-setting-page-content-my-estate p {
+    font-size: 16px;
+    color: white;
+    margin: 0;
+}
+.mobile-live-setting-page-content-my-estate-list {
+    max-height: 300px;
+
+    overflow-y: auto;
+    -ms-overflow-style: none;  /* IE, Edge 스크롤바 숨기기 */
+    scrollbar-width: none;  /* Firefox 스크롤바 숨기기 */
+}
+
+/* Chrome, Safari, Opera 스크롤바 스타일링 */
+.mobile-live-setting-page-content-my-estate-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mobile-live-setting-page-content-my-estate-list::-webkit-scrollbar-track {
+    background: #2F2E2E;
+    border-radius: 3px;
+}
+
+.mobile-live-setting-page-content-my-estate-list::-webkit-scrollbar-thumb {
+    background: #535252;
+    border-radius: 3px;
+}
+
+.mobile-live-setting-page-content-my-estate-list::-webkit-scrollbar-thumb:hover {
+    background: #E2E1E1;
+}
+
+.mobile-live-setting-page-content-my-estate-list img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+}
+.mobile-live-setting-page-content-my-estate-list-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border: 1px solid #403F3F;
+    border-radius: 10px;
+}
+.mobile-live-setting-page-content-my-estate-list-item.selected {
+    background-color: rgba(1, 173, 255, 0.1);
+    border: 1px solid #01ADFF;
+    border-radius: 10px;
+}
+.mobile-live-setting-page-content-my-estate-list-item-info {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    width: 50%;
+    padding-right: 10px;
+    padding-top: 10px;
+    justify-content: center;
+    gap: 10px;
+}
+#estate-type {
+    font-size: 14px;
+    color: white;
+}
+#estate-description {
+    font-size: 12px;
+    color: #E2E1E1;
+}
+
+.mobile-live-setting-page-content-select-estate-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.mobile-live-setting-page-content-select-estate-list-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #2F2E2E;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.order-number {
+    background-color: #01ADFF;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.selected-property-info {
+    flex: 1;
+    color: white;
+    text-align: right;
+}
+
+.selected-property-info p:first-child {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.selected-property-info p:last-child {
+    font-size: 12px;
+    color: #E2E1E1;
+}
+
+.mobile-live-setting-page-content-button {
+    padding: 20px;
+    margin-bottom: 80px;  /* BottomTab 높이만큼 여백 추가 */
+    text-align: center;
+}
+
+.mobile-live-setting-page-content-button p {
+    color: #E2E1E1;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.mobile-live-setting-page-content-button input {
+    width: 100%;
+    height: 50px;
+    background-color: #01ADFF;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.mobile-live-setting-page-content-button input:hover {
+    background-color: #0095dd;
+}
+
+.mobile-live-setting-page-content-button input:active {
+    background-color: #0082c4;
+}
+

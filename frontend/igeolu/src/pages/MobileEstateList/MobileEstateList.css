@@ -1,0 +1,92 @@
+.mobile-estate-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1E1D1D;
+    width: 100%;
+}
+.mobile-estate-list-page {
+    border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;  /* 전체 스크롤 적용 */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;  /* Firefox */
+    padding-bottom: 120px; /* 더 큰 패딩값으로 수정 */
+    min-height: calc(100vh - 70px); /* 바텀탭 높이만큼 제외 */
+}
+.mobile-estate-list-page__top {
+    width: calc(100% - 40px); 
+    margin-top: max(44px, env(safe-area-inset-top));  /* iOS 상태바 고려 */
+    display: flex;
+    align-items: center;
+    margin-bottom: 45px;
+}
+.mobile-estate-list-page__top p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-estate-list-page__content-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 40px);
+}
+.mobile-estate-list-page__content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #333333;
+    gap: 20px;
+}
+.mobile-estate-list-page__content img {
+    width: 30%;
+    height: 100px;
+    border-radius: 10px;
+    border: 1px solid #333333;
+}
+.mobile-estate-list-page__content-info {
+    display: flex;
+    width: 70%;
+    justify-content: space-between;
+    gap: 10px;
+}
+.mobile-estate-list-page__content-info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.mobile-estate-list-page__content-info p {
+    margin: 0;
+    color: white;
+    font-size: 15px;
+}
+.mobile-estate-list-page__content-info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.mobile-estate-list-page__content-info-icon:hover {
+    color: #01ADFF;
+    transform: scale(1.1);
+}
+#deposit-and-monthly-rent {
+    font-weight: bold;
+    font-size: 24px;
+}
+#address {
+    font-size: 15px;
+    color: #E2E1E1;
+}
+
