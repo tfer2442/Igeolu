@@ -2,13 +2,14 @@ package com.ssafy.igeolu.facade.user.service;
 
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
-import com.ssafy.igeolu.domain.user.entity.RealtorInfo;
+import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
+
 import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
@@ -31,7 +32,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 
 	@Transactional
 	@Override
-	public void addInfo(RealtorInfoPostRequestDto request) {
+	public User addInfo(RealtorInfoPostRequestDto request) {
 		Integer userId = securityService.getCurrentUser().getUserId();
 		User user = userService.getUserById(userId);
 
@@ -41,7 +42,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 
 		Dongcodes dongcodes = dongcodesService.getDongcodes(request.getDongcode());
 
-		RealtorInfo newRealtorInfo = RealtorInfo.createNewRealtorInfo(
+		Realtor newRealtor = userService.createNewRealtorInfo(
 				request.getTitle(),
 				request.getContent(),
 				request.getRegistrationNumber(),
@@ -53,6 +54,11 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 				dongcodes
 		);
 
-		userService.saveRealtorInfo(newRealtorInfo);
+		// 기존 토큰 로그아웃, 토큰 (REALTOR)로 재발급 필요 -> 논의 필요
+		user.changeRole(Role.ROLE_REALTOR);
+
+		userService.saveRealtorInfo(newRealtor);
+		return user;
 	}
+
 }

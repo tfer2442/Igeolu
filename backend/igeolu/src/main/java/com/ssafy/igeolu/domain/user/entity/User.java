@@ -50,4 +50,7 @@ public class User {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
+	public void changeRole(Role role) {
+		this.role = role;
+	}
 }

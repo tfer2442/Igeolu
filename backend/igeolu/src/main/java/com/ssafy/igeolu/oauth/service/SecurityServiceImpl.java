@@ -1,7 +1,10 @@
 package com.ssafy.igeolu.oauth.service;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,29 +59,36 @@ public class SecurityServiceImpl implements SecurityService {
 	@Transactional
 	@Override
 	public User processOAuth2User(String kakaoId, String nickName, String state) {
-		Role desiredRole = getDesiredRole(state);
 
 		return userRepository.findByKakaoId(kakaoId)
 			.map(existingUser -> {
-				if (!existingUser.getRole().equals(desiredRole)) {
-					throw new OAuth2AuthenticationException("Role mismatch. Login and signup are disallowed.");
-				}
+				validateRole(existingUser);
 				return existingUser;
 			})
 			.orElseGet(() -> userRepository.save(
 				User.builder()
-					.role(desiredRole)
+					.role(getSignupRole(state))
 					.kakaoId(kakaoId)
 					.username(nickName)
 					.build()
 			));
 	}
 
+	private static void validateRole(User existingUser) {
+		List<Role> matchRoles = Arrays.stream(Role.values())
+			.filter(role -> role.equals(existingUser.getRole()))
+			.toList();
+
+		if (matchRoles.isEmpty()) {
+			throw new OAuth2AuthenticationException("Role mismatch. Login and signup are disallowed.");
+		}
+	}
+
 	/**
 	 * state 파라미터에 따른 Role을 반환합니다.
 	 *
 	 */
-	private Role getDesiredRole(String state) {
+	private Role getSignupRole(String state) {
 		return "member".equals(state) ? Role.ROLE_MEMBER : Role.ROLE_INCOMPLETE_REALTOR;
 	}
 
