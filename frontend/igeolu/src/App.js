@@ -32,7 +32,7 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import chatAPI from './services/ChatApi'; 
+import ChatAPI from './services/ChatApi'; 
 
 
     
@@ -133,8 +133,9 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await chatAPI.getChatRooms(currentUserId);
+      const response = await ChatAPI.getChatRooms(currentUserId);
       setChatRooms(response);
+
 
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
