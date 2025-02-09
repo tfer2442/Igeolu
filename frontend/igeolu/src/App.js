@@ -9,6 +9,7 @@ import { AppointmentProvider } from './contexts/AppointmentContext';
 import DesktopLive from './pages/DesktopLivePage/DesktopLive';
 import DesktopHome from './pages/DesktopHomePage/DesktopHome';
 import DesktopLogin from './pages/DesktopLoginPage/DesktopLoginPage';
+import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSearchPage'
 
 // Mobile Pages
 import Make from './pages/MobileLivePage/Make';
@@ -19,6 +20,10 @@ import MobileLivePage from './pages/MobileLivePage/MobileLivePage';
 import MobileChatList from './pages/MobileChatListPage/MobileChatListPage';
 import MobileChatRoom from './pages/MobileChatRoomPage/MobileChatRoomPage';
 import MobileLoginPage from './pages/MobileLoginPage/MobileLoginPage';
+import MobileRegisterPage from './pages/MobileRegisterPage/MobileRegisterPage'
+import MobileEditPage from './pages/MobileEditPage/MobileEditPage'
+import MobileEstateList from './pages/MobileEstateList/MobileEstateList'
+import MobileLiveSettingPage from './pages/MobileLiveSettingPage/MobileLiveSettingPage'
 
 // Common Components
 import ChatButton from './components/common/Button/ChatButton/ChatButton';
@@ -27,10 +32,13 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import chatAPI from './services/ChatApi'; 
+import ChatAPI from './services/ChatApi'; 
 
 
     
+
+
+
 
 
 
@@ -125,8 +133,9 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await chatAPI.getChatRooms(currentUserId);
+      const response = await ChatAPI.getChatRooms(currentUserId);
       setChatRooms(response);
+
 
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
@@ -196,6 +205,7 @@ function App() {
           <Route path='/' element={<DesktopHome />} />
           <Route path='/login' element={<DesktopLogin />} />
           <Route path='/live' element={<DesktopLive />} />
+          <Route path="/desktop-room-search" element={<DesktopRoomSearchPage />} />
 
           {/* Mobile Routes */}
           <Route path='/mobile-login' element={<MobileLoginPage />} />
@@ -204,6 +214,10 @@ function App() {
           <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
           <Route path='/mobile-my-page' element={<MobileMyPage />} />
           <Route path='/mobile-live' element={<MobileLivePage />} />
+          <Route path="/mobile-register" element={<MobileRegisterPage />} />
+          <Route path="/mobile-edit" element={<MobileEditPage />} />
+          <Route path="/mobile-estate-list" element={<MobileEstateList />} />
+          <Route path="/mobile-live-setting" element={<MobileLiveSettingPage />} />
           <Route
             path='/mobile-chat'
             element={

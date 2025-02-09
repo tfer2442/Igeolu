@@ -42,7 +42,7 @@ instance.interceptors.response.use(
   }
 );
 
-const chatAPI = {
+const ChatAPI = {
   createChatRoom: async (memberId, realtorId) => {
     try {
       const response = await instance.post('/chats', { memberId, realtorId });
@@ -96,4 +96,4 @@ const chatAPI = {
   },
 };
 
-export default chatAPI;
+export default ChatAPI;
