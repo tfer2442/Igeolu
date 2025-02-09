@@ -17,4 +17,119 @@
     -ms-overflow-style: none;  /* IE, Edge */
     scrollbar-width: none;  /* Firefox */
 }
+.mobile-my-page__top {
+    width: calc(100% - 40px); 
+    margin-top: max(44px, env(safe-area-inset-top));  /* iOS 상태바 고려 */
+    display: flex;
+    align-items: center;
+    margin-bottom: 45px;
+}
+.mobile-my-page__top p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-my-page__my-info {
+    width: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+}
+.mobile-my-page__my-info p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-my-page__my-info__profile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    height: 140px;
+    border: 1px solid #403F3F;
+    border-radius: 15px;
+    padding: 10px;
+}
+.mobile-my-page__my-info__profile img {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    border: 1px solid #403F3F;
+}
+.mobile-my-page__my-info__profile__name {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+    width: 60%;
+}
+.mobile-my-page__my-info__profile__edit-icon {
+    display: flex;
+    justify-content: flex-end;
+}
+.mobile-my-page__my-info__profile__name-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+.mobile-my-page__my-info__profile__name-text p {
+    font-size: 13px;
+    color: #808080;
+}
+#name {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
 
+.mobile-my-page__my-live-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;  
+    margin-top: 30px;
+    border-bottom: 1px solid #403F3F;
+    padding-bottom: 10px;
+}
+#live-count {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
+#live-count-number {
+    font-size: 16px;
+    color: #01ADFF;
+    font-weight: normal;
+}
+.mobile-my-page__my-real-estate {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    gap: 10px;
+}
+.mobile-my-page__my-real-estate p {
+    font-size: 20px;
+    color: white;
+    font-weight: normal;
+    margin: 0;
+}
+.mobile-my-page__my-real-estate-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+#real-estate-count {
+    font-size: 16px;
+    color: #01ADFF;
+    font-weight: normal;
+}
+.mobile-my-page__component-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+    width:100%;
+    align-items: center;
+}

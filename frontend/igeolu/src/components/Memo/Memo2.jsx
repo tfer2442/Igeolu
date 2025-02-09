@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Memo2.css';
 import { BiBold, BiUnderline } from "react-icons/bi";
 import { BsListUl } from "react-icons/bs";
+import axios from 'axios';
 
 function Memo2() {
     const [inputText, setInputText] = useState('');
@@ -10,25 +11,51 @@ function Memo2() {
     const [isUnderline, setIsUnderline] = useState(false);
     const [isList, setIsList] = useState(false);
 
-    const handleKeyPress = (e) => {
+    // 메모 내용 불러오기
+    useEffect(() => {
+        const fetchMemo = async () => {
+            try {
+                const response = await axios.get('/api/memos');
+                setContents(response.data.contents);
+            } catch (error) {
+                console.error('메모 불러오기 실패:', error);
+            }
+        };
+
+        fetchMemo();
+    }, []);
+
+    const handleKeyPress = async (e) => {
         if (e.key === 'Enter') {
             const newContent = {
                 text: inputText,
-                bold: isBold,
-                underline: isUnderline,
-                list: isList
+                styles: {
+                    bold: isBold,
+                    underline: isUnderline,
+                    list: isList
+                }
             };
-            setContents([...contents, newContent]);
-            setInputText('');
+
+            try {
+                // 새로운 메모 내용 저장
+                await axios.post('/api/memos', {
+                    contents: [...contents, newContent]
+                });
+
+                setContents([...contents, newContent]);
+                setInputText('');
+            } catch (error) {
+                console.error('메모 저장 실패:', error);
+            }
         }
     };
 
     const renderContent = (content, index) => {
         let style = {};
-        if (content.bold) style.fontWeight = 'bold';
-        if (content.underline) style.textDecoration = 'underline';
+        if (content.styles.bold) style.fontWeight = 'bold';
+        if (content.styles.underline) style.textDecoration = 'underline';
         
-        return content.list ? (
+        return content.styles.list ? (
             <li key={index} style={style}>{content.text}</li>
         ) : (
             <div key={index} style={style}>{content.text}</div>

@@ -4,6 +4,7 @@ import { OpenVidu } from 'openvidu-browser';
 import { BsMicFill, BsMicMuteFill, BsCameraVideoFill, BsCameraVideoOffFill, BsStopCircleFill, BsRecordCircleFill } from 'react-icons/bs';
 import { BiExit } from 'react-icons/bi';
 import { MdFlipCameraIos } from 'react-icons/md';
+import axios from 'axios';
 
 import './MobileLivePage.css';
 
@@ -20,10 +21,30 @@ function MobileLivePage() {
     const [devices, setDevices] = useState([]);
     const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
     const [currentSubscriberIndex, setCurrentSubscriberIndex] = useState(0);
+    const [liveList, setLiveList] = useState([]);
+    const [propertyList, setPropertyList] = useState({});  // liveId를 key로 사용
 
     useEffect(() => {
+        const getVideoDevices = async () => {
+            try {
+                // 먼저 사용자에게 카메라 권한을 요청
+                await navigator.mediaDevices.getUserMedia({ video: true });
+                
+                // 권한을 받은 후 디바이스 목록을 가져옴
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                console.log('Available video devices:', videoDevices); // 디버깅용
+                
+                setDevices(videoDevices);
+                setCurrentVideoDevice(videoDevices[0]);
+            } catch (error) {
+                console.error('Error getting video devices:', error);
+            }
+        };
+
         const initializeSession = async () => {
             try {
+                await getVideoDevices(); // getVideoDevices를 먼저 실행
                 const newSession = OV.current.initSession();
                 setSession(newSession);
 
@@ -63,17 +84,41 @@ function MobileLivePage() {
             }
         };
 
-        const getVideoDevices = async () => {
-            const devices = await OV.current.getDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            setDevices(videoDevices);
-            setCurrentVideoDevice(videoDevices[0]); // 기본값으로 첫 번째 카메라 설정
+        const fetchLiveList = async () => {
+            try {
+                const response = await axios.get('/api/lives', {
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
+                        'userId': '32'
+                    }
+                });
+                console.log('Fetched Live List:', response.data);  // 라이브 목록 로그
+                setLiveList(response.data);
+                
+                // 각 라이브에 대한 매물 정보 가져오기
+                response.data.forEach(async (live) => {
+                    console.log(`Fetching properties for liveId: ${live.liveId}`);  // 각 liveId 로그
+                    const propertyResponse = await axios.get(`/api/lives/${live.liveId}/properties`, {
+                        headers: {
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
+                            'userId': '32'
+                        }
+                    });
+                    console.log(`Properties for liveId ${live.liveId}:`, propertyResponse.data);  // 매물 정보 로그
+                    setPropertyList(prev => ({
+                        ...prev,
+                        [live.liveId]: propertyResponse.data
+                    }));
+                });
+            } catch (error) {
+                console.error('Error fetching live list:', error);
+            }
         };
 
         if (token && sessionId) {
             initializeSession();
+            fetchLiveList();
         }
-        getVideoDevices();
 
         return () => {
             if (session) {
@@ -126,7 +171,7 @@ function MobileLivePage() {
     const leaveSession = () => {
         if (session) {
             session.disconnect();
-            window.location.href = '/';
+            window.location.href = '/mobile-main';
         }
     };
 
@@ -196,6 +241,23 @@ function MobileLivePage() {
                         )}
                     </div>
                     <div className="mobile-live-page__right-content__live-list">
+                        {liveList.map((live) => (
+                            <div key={live.liveId} className="live-item">
+                                {propertyList[live.liveId]?.map((property, index) => (
+                                    <div key={property.propertyId} className="property-item">
+                                        <img 
+                                            src={property.images[0]} 
+                                            alt="Property" 
+                                            className="property-image"
+                                        />
+                                        <div className="property-info">
+                                            <p>{property.deposit.toLocaleString()}/{property.monthlyRent.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+
+                                ))}
+                            </div>
+                        ))}
                     </div>
                     <div className="mobile-live-page__right-content__live-option">
                         <div className="toolbar">

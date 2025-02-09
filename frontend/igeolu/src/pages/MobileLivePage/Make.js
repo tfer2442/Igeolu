@@ -9,7 +9,9 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'accept': '*/*',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE',
+    'userId': '35'
   }
 });
 
@@ -67,7 +69,8 @@ function Make() {
       console.log('Join response:', response.data);
       
       const { token, liveUrl, role, hostId } = response.data;
-      
+      console.log('Join response:', { token, liveUrl, role, hostId });
+
       if (!token) {
         throw new Error('Token not received from server');
       }

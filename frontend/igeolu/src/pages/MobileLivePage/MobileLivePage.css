@@ -158,3 +158,17 @@
     font-size: 14px;
     z-index: 1;
 }
+.property-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.property-item img{
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
