@@ -1,0 +1,154 @@
+/* src/components/common/Chat/AppointmentModal/AppointmentModal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.entering {
+  animation: fadeIn 0.3s forwards;
+}
+
+.modal-overlay.exiting {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.appointment-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  /* background: rgba(0, 0, 0, 0.5); */
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  z-index: 1000;
+  opacity: 1;
+}
+
+.appointment-modal.entering {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.appointment-modal.exiting {
+  animation: slideDown 0.3s ease-in forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.appointment-modal-content {
+  background: #272626;
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  color: white;
+}
+
+.appointment-modal-content h2 {
+  color: white;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  background: #333333;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: white;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #01adff;
+}
+
+/* 날짜 선택 캘린더 아이콘 커스텀 */
+.form-group input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.button-group button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.button-group button[type='submit'] {
+  background: #01adff;
+  color: white;
+}
+
+.button-group button[type='button'] {
+  background: #444444;
+  color: white;
+}
+
+.button-group button:hover {
+  opacity: 0.9;
+}

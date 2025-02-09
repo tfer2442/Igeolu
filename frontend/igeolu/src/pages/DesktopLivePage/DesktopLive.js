@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import { BsMicFill, BsMicMuteFill } from 'react-icons/bs';
 import { BsCameraVideoFill, BsCameraVideoOffFill } from 'react-icons/bs';
@@ -175,6 +174,7 @@ function DesktopLive() {
           <div className='desktop-live-page__left-content__live-video'>
             {subscribers.map((sub, i) => (
               <div key={i} className="subscriber-video">
+                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                 <video
                   autoPlay
                   ref={(video) => video && sub.addVideoElement(video)}
@@ -194,6 +194,7 @@ function DesktopLive() {
           <div className='desktop-live-page__right-content__my-cam'>
             {publisher && (
               <div className="publisher-container">
+                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                 <video
                   autoPlay
                   ref={(video) => video && publisher.addVideoElement(video)}

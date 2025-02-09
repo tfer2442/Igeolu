@@ -1,0 +1,157 @@
+/* ChatRoomList.css */
+/* 📌 채팅방 목록 컨테이너 */
+.chat-room-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+
+/* 📌 개별 채팅방 아이템 */
+.chat-room-item {
+  overflow-y: auto;
+  -ms-overflow-style: none;  /* IE 및 Edge에서 스크롤바 숨기기 */
+  scrollbar-width: none;  /* Firefox에서 스크롤바 숨기기 */
+}
+
+/* 📌 Chrome, Safari 및 Opera에서 스크롤바 숨기기 */
+.chat-room-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* 📌 채팅방 선택 버튼 */
+.chat-room-button {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* 📌 채팅방 버튼 Hover 효과 */
+.chat-room-button:hover {
+  background-color: #f8f9fa;
+}
+
+.chat-room-list.mobile .chat-room-button:hover {
+  background-color: #1e1d1d;
+}
+
+/* 📌 프로필 이미지 컨테이너 */
+.user-profile {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+}
+
+/* 📌 프로필 이미지 스타일 */
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px; /* 둥근 모서리 */
+  object-fit: cover; /* 이미지 비율 유지 */
+}
+
+/* 📌 기본 프로필 이미지 (이미지 없음) */
+.profile-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-color: #e9ecef; /* 회색 배경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #495057; /* 짙은 회색 */
+}
+
+/* 📌 채팅 내용 영역 */
+.chat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 📌 사용자 정보 컨테이너 */
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+/* 📌 사용자 이름 스타일 */
+.user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #272626;
+}
+
+/* 📌 사용자 이름 및 시간 표시 행 */
+.user-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* 📌 마지막 메시지 및 읽지 않은 메시지 개수 행 */
+.message-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 📌 시간 정보 컨테이너 */
+.time-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* 📌 채팅방 마지막 메시지 시간 */
+.chat-time {
+  font-size: 12px;
+  color: #868e96;
+}
+
+/* 📌 읽지 않은 메시지 개수 표시 */
+.unread-count {
+  flex-shrink: 0;
+  background-color: #01adff; /* 파란색 배경 */
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%; /* 원형 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* 📌 마지막 메시지 스타일 */
+.last-message {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  color: #8d8d8d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 📌 모바일 스타일 - 사용자 이름 색상 */
+.chat-room-list.mobile .user-name {
+  color: #FFFFFF;
+}
+
+/* 📌 모바일 스타일 - 마지막 메시지 색상 */
+.chat-room-list.mobile .last-message {
+  color: #FFFFFF;
+}

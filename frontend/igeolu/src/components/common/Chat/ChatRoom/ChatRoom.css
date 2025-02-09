@@ -1,0 +1,268 @@
+/* src/components/common/Chat/ChatRoom/ChatRoom.css */
+/* 📌 채팅방 전체 스타일 */
+.chat-room {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 💡 전체 화면 차지 */
+  background-color: #FFFFFF;
+  position: relative; /* 입력창의 위치 조정 */
+  overflow: hidden; /* 스크롤 문제 방지 */
+}
+
+/* 📌 모바일에서 채팅방 배경색 변경 */
+.chat-room.mobile {
+  background-color: #272626;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 모바일에서 메시지 입력창 텍스트 색상 설정 */
+.chat-room.mobile .message-input {
+  color: #FFFFFF;
+}
+
+/* 플레이스홀더 색상도 함께 변경 */
+.chat-room.mobile .message-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 📌 헤더 스타일 */
+.chat-room-header {
+  position: relative; /* 💡 고정되지 않고 정상적으로 보이도록 조정 */
+  padding: 1rem;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #343434;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10; /* 💡 다른 요소들보다 위에 있도록 설정 */
+}
+
+/* 📌 뒤로 가기 버튼 스타일 */
+.back-button {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #000000;
+}
+
+/* 📌 채팅방 제목 스타일 */
+.chat-room-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #000000;
+  flex-grow: 1;
+}
+
+/* 📌 모바일에서 헤더 텍스트 색상 변경 */
+.chat-room.mobile .chat-room-title,
+.chat-room.mobile .back-button {
+  color: white;
+}
+
+/* 📌 메시지 목록 컨테이너 */
+.messages-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: calc(100vh - 120px); /* 💡 헤더 + 입력창 제외한 높이 설정 */
+  min-height: 0; /* 🔹 flex 사용 시 필요 */
+}
+
+.chat-room.mobile .messages-container{
+  height: calc(100vh - (98px + 70px));
+}
+
+
+/* 📌 입력 영역 컨테이너 */
+.input-wrapper {
+  position: absolute; /* 💡 fixed → absolute */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: inherit;
+  transition: margin-bottom 0.3s ease;
+}
+
+/* 📌 메시지 입력 영역 스타일 */
+.message-input-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 8px;
+  position: relative; /* 변경 */
+}
+
+/* 📌 추가 기능 버튼 스타일 (+ 버튼) */
+.extras-toggle-button {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  font-size: 24px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #01adff;  /* 파란색 배경 */
+  color: white;              /* 흰색 아이콘 */
+  border-radius: 50%;        /* 원형 모양 */
+  display: none;
+}
+
+.chat-room.mobile .extras-toggle-button {
+  display: flex; /* 모바일에서는 버튼 표시 */
+}
+
+
+.input-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* 📌 입력창 스타일 */
+.message-input {
+  width: 100%;
+  padding: 12px 48px 12px 16px;
+  border: 1px solid #7aa5f5;
+  border-radius: 20px;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  background: transparent;
+}
+
+/* 📌 입력창 플레이스홀더 색상 */
+.message-input::placeholder {
+  color: #999;
+}
+
+/* 📌 메시지 전송 버튼 스타일 (↑ 버튼) */
+.send-button {
+  position: absolute;
+  right: 20px; /* 조정 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  background-color: #01adff;
+  color: white;
+  border-radius: 50%;
+}
+
+/* 📌 버튼 hover 효과 */
+.extras-toggle-button:hover,
+.send-button:hover {
+  opacity: 0.9;
+}
+
+/* 📌 모바일에서 버튼 색상 반전 */
+.chat-room.mobile .extras-toggle-button,
+.chat-room.mobile .send-button {
+  background-color: white;   /* 흰색 배경 */
+  color: #01adff;           /* 파란색 아이콘 */
+}
+
+/* 📌 전송 버튼 아이콘 스타일 */
+.send-button::before {
+  content: "↑";
+  font-size: 18px;
+}
+
+/* 📌 추가 기능 섹션 스타일 */
+.chat-extras {
+  padding: 0; /* 전체 패딩 제거 */
+  background-color: #e2e1e1;
+  border-top: 1px solid #dee2e6;
+}
+/* 📌 추가 기능이 열렸을 때 표시 */
+.chat-extras.show {
+  display: block;
+}
+
+/* 📌 추가 기능 내부 버튼 컨테이너 */
+.chat-extras-content {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 16px;
+}
+
+/* 📌 추가 기능 버튼 스타일 */
+.extra-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #000000;  /* 검은색 글씨 */
+}
+
+/* 📌 모바일에서 추가 기능 색상 변경 */
+.chat-room.mobile .chat-extras {
+  background-color: #2f2e2e;  /* 어두운 회색 배경 */
+  border-top: 1px solid #343434;
+}
+
+/* 📌 모바일 버전의 헤더 스타일 변경 */
+.chat-room.mobile .chat-room-header {
+  background-color: #272626;
+  border-bottom: 1px solid #343434;
+  padding-top: 44px;
+}
+
+/* 📌 모바일에서 추가 기능 버튼 색상 변경 */
+.chat-room.mobile .extra-button {
+  color: #ffffff;  /* 흰색 글씨 */
+}
+
+/* 📌 모바일에서 채팅방 제목 및 뒤로가기 버튼 색상 변경 */
+.chat-room.mobile .chat-room-title,
+.chat-room.mobile .back-button {
+  color: white;
+}
+
+/* 📌 메시지 컨테이너 스크롤 스타일 */
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0;
+  border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+/* 📌 모바일에서 스크롤바 스타일 변경 */
+.chat-room.mobile .messages-container::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+.chat-room.mobile .messages-container::-webkit-scrollbar-track {
+  background-color: #333;
+}
+
+.chat-room.mobile .loading-state{
+  background-color: #272626;
+}

@@ -6,7 +6,7 @@ import leftBottomBlock from '../../assets/images/좌측하단.png'
 
 function DesktopHome() {
   const handleLoginSigninClick = () => {
-    console.log('로그인 |회원가입');
+    console.log('로그인');
   };
     return (
       <div className='desktop-home-page'>

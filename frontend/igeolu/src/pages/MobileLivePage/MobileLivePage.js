@@ -151,6 +151,7 @@ function MobileLivePage() {
                     </div>
                     {publisher && role === 'host' && (
                         <>
+                        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                             <video
                                 autoPlay
                                 ref={(video) => video && publisher.addVideoElement(video)}
@@ -171,6 +172,7 @@ function MobileLivePage() {
                     <div className="mobile-live-page__right-content__my-cam">
                         {subscribers.length > 0 && (
                             <>
+                            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                                 <video
                                     autoPlay
                                     ref={(video) => video && subscribers[currentSubscriberIndex].addVideoElement(video)}

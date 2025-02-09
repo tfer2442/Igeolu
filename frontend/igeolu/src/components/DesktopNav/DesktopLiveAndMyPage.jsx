@@ -1,6 +1,8 @@
+// src/components/DesktopNav/DesktopLiveAndMyPage.jsx
 import logo from '../../assets/images/logo.png'
 import { Link } from 'react-router-dom'
 import './DesktopLiveAndMyPage.css'
+import PropTypes from 'prop-types';
 
 const NAV_ITEMS = [
     { id: 1, title: '방찾기', path: '/room' },
@@ -26,12 +28,16 @@ function DesktopLiveAndMyPage({onLoginSigninClick}) {
             </div>
             <div className='desktop-live-and-my-nav__right-login'>
                 <button onClick={onLoginSigninClick} className='desktop-live-and-my-nav__login-signin-btn'> 
-                    로그인 | 회원가입
+                    로그인
                 </button>
             </div>
             </div>
         </nav>
     )
 }
+
+DesktopLiveAndMyPage.propTypes = {
+    onLoginSigninClick: PropTypes.func.isRequired,
+  };
 
 export default DesktopLiveAndMyPage;

@@ -10,21 +10,26 @@ function MobileBottomTab() {
     const isMainPage = location.pathname === '/mobile-main';
     const isCalendarPage = location.pathname === '/mobile-calendar';
     const isMyPage = location.pathname === '/mobile-my-page';
+    const isChatPage = location.pathname === '/mobile-chat';
 
     return (
         <div className="mobile-bottom-tab">
+
             <Link to="/mobile-main" className="tab-item">
                 <AiFillHome size={24} color={isMainPage ? "#01ADFF" : "white"} />
                 <span >홈</span>
             </Link>
+
             <Link to="/mobile-calendar" className="tab-item">
                 <BsCalendarFill size={24} color={isCalendarPage ? "#01ADFF" : "white"} />
                 <span>캘린더</span>
             </Link>
-            <div className="tab-item">
-                <BsChatFill size={24} color="white" />
+            
+            <Link to="/mobile-chat" className="tab-item">
+                <BsChatFill size={24} color={isChatPage ? "#01ADFF" : "white"} />
                 <span>챗</span>
-            </div>
+            </Link>
+
             <Link to="/mobile-my-page" className="tab-item">
                 <FaUserCircle size={24} color={isMyPage ? "#01ADFF" : "white"} />
                 <span>프로필</span>

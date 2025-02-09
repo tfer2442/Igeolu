@@ -1,0 +1,48 @@
+/* src/components/common/SlideLayout.css */
+
+/* Layout */
+.slide-layout {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+}
+
+.slide-layout-open {
+  visibility: visible;
+  z-index: 1050;
+}
+  
+  /* Overlay */
+  .slide-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .slide-layout-open .slide-overlay {
+    opacity: 1;
+  }
+  
+  /* Container */
+  .slide-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 390px;
+    background-color: white;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .slide-layout-open .slide-container {
+    transform: translateX(0);
+  }

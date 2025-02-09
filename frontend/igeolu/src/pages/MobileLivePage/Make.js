@@ -66,7 +66,7 @@ function Make() {
       
       console.log('Join response:', response.data);
       
-      const { token, liveUrl, role, hostId } = response.data;
+      const { token, liveUrl, hostId } = response.data;
       
       if (!token) {
         throw new Error('Token not received from server');
