@@ -79,6 +79,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 *
 	 */
 	private Role getDesiredRole(String state) {
-		return "member".equals(state) ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
+		return "member".equals(state) ? Role.ROLE_MEMBER : Role.ROLE_INCOMPLETE_REALTOR;
 	}
+
 }
