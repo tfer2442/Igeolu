@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class CheckRoleAdvice {
 
-	private static final String ADD_ADDITIONAL_INFO_URL = "/realtor/information";
+	public static final String ADD_ADDITIONAL_INFO_URL = "/me/info";
 
 	@ModelAttribute
 	public void checkUserRole(HttpServletRequest httpServletRequest) {

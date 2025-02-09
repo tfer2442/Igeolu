@@ -1,7 +1,11 @@
 package com.ssafy.igeolu.presentation.user.controller;
 
+import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
+import com.ssafy.igeolu.global.exception.CheckRoleAdvice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,5 +30,11 @@ public class UserController {
 	@GetMapping("/me")
 	public ResponseEntity<MeGetResponseDto> getMe() {
 		return ResponseEntity.ok(userFacadeService.getMe());
+	}
+
+	@PostMapping(CheckRoleAdvice.ADD_ADDITIONAL_INFO_URL)
+	public ResponseEntity<Void> addInfo(@RequestBody RealtorInfoPostRequestDto request) {
+		userFacadeService.addInfo(request);
+		return ResponseEntity.ok().build();
 	}
 }
