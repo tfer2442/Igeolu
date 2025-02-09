@@ -1,7 +1,5 @@
-
-import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, ChevronDown } from 'lucide-react';
-import './LocationFilter.css';
+import React from 'react';
+import './LocationDropdownPanel.css';
 
 const LocationDropdownPanel = ({
   isOpen,
@@ -75,72 +73,4 @@ const LocationDropdownPanel = ({
   );
 };
 
-const LocationFilter = ({
-  selectedCity,
-  selectedDistrict,
-  selectedNeighborhood,
-  cities,
-  districts,
-  neighborhoods,
-  onCityChange,
-  onDistrictChange,
-  onNeighborhoodChange,
-  onReset
-}) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  const getDisplayLocation = () => {
-    if (selectedNeighborhood) return selectedNeighborhood;
-    if (selectedDistrict) return selectedDistrict;
-    if (selectedCity) return selectedCity;
-    return '지역을 선택하세요';
-  };
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  return (
-    <div className="filter-content" ref={dropdownRef}>
-      <div className="filter-wrapper">
-        <button 
-          className={`location-filter-button ${isDropdownOpen ? 'active' : ''}`}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-          <MapPin size={18} />
-          <span className="location-text">{getDisplayLocation()}</span>
-          <ChevronDown 
-            size={18} 
-            className={`chevron-icon ${isDropdownOpen ? 'rotate' : ''}`}
-          />
-        </button>
-
-        <LocationDropdownPanel
-          isOpen={isDropdownOpen}
-          onClose={() => setIsDropdownOpen(false)}
-          selectedCity={selectedCity}
-          selectedDistrict={selectedDistrict}
-          selectedNeighborhood={selectedNeighborhood}
-          cities={cities}
-          districts={districts}
-          neighborhoods={neighborhoods}
-          onCityChange={onCityChange}
-          onDistrictChange={onDistrictChange}
-          onNeighborhoodChange={onNeighborhoodChange}
-          onReset={onReset}
-        />
-      </div>
-    </div>
-  );
-};
-
-export default LocationFilter;
+export default LocationDropdownPanel;

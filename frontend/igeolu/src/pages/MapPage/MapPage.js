@@ -4,7 +4,7 @@ import { Map, MapMarker } from "react-kakao-maps-sdk";
 import axios from 'axios';
 import DesktopMapPageNav from '../../components/common/DesktopNav/DesktopMapPageNav';
 import MenuButtons from '../../components/common/MenuButtons/MenuBottons';
-import LocationFilter from '../../components/common/LocationFilter/LocationFilter';
+import Filter from '../../components/common/Filter/Filter';
 import ListPanel from '../../components/common/ListPanel/ListPanel';
 import DetailPanel from '../../components/common/DetailPanel/DetailPanel';
 
@@ -149,7 +149,7 @@ function MapPage() {
                 </div>
                 
                 <div className='right-content'>
-                    <LocationFilter 
+                    <Filter 
                         selectedCity={selectedCity}
                         selectedDistrict={selectedDistrict}
                         selectedNeighborhood={selectedNeighborhood}
