@@ -24,10 +24,12 @@ import com.ssafy.igeolu.domain.propertyOption.service.PropertyOptionService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.global.util.CoordinateConverter;
@@ -241,6 +243,40 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		// DB 삭제
 		propertyService.deleteProperty(propertyId);
+	}
+
+	@Override
+	public List<PropertySearchGetResponseDto> searchBy(PropertySearchGetRequestDto request) {
+		return propertyService.searchBy(request.getKeyword(),
+				request.getSidoName(),
+				request.getGugunName(),
+				request.getDongName(),
+				request.getMaxDeposit(),
+				request.getMaxMonthlyRent(),
+				request.getOptionIds(),
+				request.toPageableWithCriteria("created_at")) // elasticsearch 컬럼명으로 넣어줘야함
+			.stream().map(p -> PropertySearchGetResponseDto.builder()
+				.area(p.getArea())
+				.propertyId(p.getPropertyId())
+				.approvalDate(p.getApprovalDate()) // LocalDate 변환
+				.monthlyRent(p.getMonthlyRent())
+				.deposit(p.getDeposit())
+				.currentFloor(p.getCurrentFloor())
+				.totalFloors(p.getTotalFloors())
+				.address(p.getAddress())
+				.dongCode(p.getDongCode())
+				.sidoName(p.getSidoName())
+				.gugunName(p.getGugunName())
+				.dongName(p.getDongName())
+				.latitude(p.getLatitude())
+				.longitude(p.getLongitude())
+				.images(p.getImageUrls())
+				.createdAt(p.getCreatedAt())
+				.updatedAt(p.getUpdatedAt())
+				.options(p.getOptionIds())
+				.build()
+			)
+			.toList();
 	}
 }
 
