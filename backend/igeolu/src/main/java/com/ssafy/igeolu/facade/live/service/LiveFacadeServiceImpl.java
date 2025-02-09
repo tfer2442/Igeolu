@@ -160,6 +160,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 	}
 
 	@Override
+	@Transactional
 	public void stopLiveProperty(Integer livePropertyId, LivePropertyStopPostRequestDto requestDto) {
 		Recording recording = null;
 		try {
@@ -171,6 +172,15 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
 		liveProperty.setRecordingId(recording.getId());
+	}
+
+	@Override
+	public Recording getRecording(String recordingId) {
+		try {
+			return this.openVidu.getRecording(recordingId);
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			throw new CustomException(ErrorCode.RECORDING_NOT_FOUND);
+		}
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {

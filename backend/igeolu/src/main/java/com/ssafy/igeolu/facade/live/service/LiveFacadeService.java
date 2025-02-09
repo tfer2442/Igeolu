@@ -24,4 +24,6 @@ public interface LiveFacadeService {
 	Recording startLiveProperty(Integer livePropertyId, LivePropertyStartPostRequestDto requestDto);
 
 	void stopLiveProperty(Integer livePropertyId, LivePropertyStopPostRequestDto requestDto);
+
+	Recording getRecording(String recordingId);
 }

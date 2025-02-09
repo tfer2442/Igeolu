@@ -72,7 +72,7 @@ public class LiveController {
 	@PostMapping("/api/liveProperties/{livePropertyId}/stop")
 	public ResponseEntity<String> stopLiveProperty(@PathVariable Integer livePropertyId,
 		@RequestBody LivePropertyStopPostRequestDto requestDto) {
-		
+
 		liveFacadeService.stopLiveProperty(livePropertyId, requestDto);
 		return ResponseEntity.ok().build();
 	}
@@ -93,5 +93,11 @@ public class LiveController {
 	@GetMapping("/api/lives/{liveId}/properties")
 	public ResponseEntity<List<LivePropertyGetResponseDto>> getLiveProperties(@PathVariable String liveId) {
 		return ResponseEntity.ok(liveFacadeService.getProperties(liveId));
+	}
+
+	@Operation(summary = "라이브 매물 녹화 단일 조회", description = "라이브에서 본 매물의 녹화 정보")
+	@GetMapping("/api/recordings/{recordingId}")
+	public ResponseEntity<Recording> getRecording(@PathVariable String recordingId) {
+		return ResponseEntity.ok(liveFacadeService.getRecording(recordingId));
 	}
 }
