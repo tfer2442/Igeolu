@@ -16,7 +16,8 @@ public enum ErrorCode {
 
 	LIVE_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "L001", "라이브 세션을 찾을 수 없습니다."),
 	LIVE_SESSION_NOT_CREATE(HttpStatus.INTERNAL_SERVER_ERROR, "L002", "라이브 세션을 생성할 수 없습니다."),
-	LIVE_PROPERTY_BAD_REQUEST(HttpStatus.BAD_REQUEST, "L003", "라이브 매물을 소개할 수 없습니다."),
+	LIVE_PROPERTY_BAD_REQUEST(HttpStatus.BAD_REQUEST, "L003", "라이브 매물 관련 요청이 올바르지 않습니다."),
+	LIVE_PROPERTY_NOT_FOUND(HttpStatus.NOT_FOUND, "L004", "라이브 매물을 찾을 수 없습니다."),
 
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C002", "잘못된 파라미터가 전달되었습니다."),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C999", "서버 에러가 발생했습니다.");

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -21,4 +22,6 @@ public interface LiveFacadeService {
 	List<LivePropertyGetResponseDto> getProperties(String liveId);
 
 	Recording startLiveProperty(Integer livePropertyId, LivePropertyStartPostRequestDto requestDto);
+
+	void stopLiveProperty(Integer livePropertyId, LivePropertyStopPostRequestDto requestDto);
 }

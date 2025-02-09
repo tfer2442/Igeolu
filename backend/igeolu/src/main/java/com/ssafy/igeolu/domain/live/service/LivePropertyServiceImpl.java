@@ -8,6 +8,8 @@ import com.ssafy.igeolu.domain.live.entity.LiveProperty;
 import com.ssafy.igeolu.domain.live.entity.LiveSession;
 import com.ssafy.igeolu.domain.live.repository.LivePropertyRepository;
 import com.ssafy.igeolu.domain.property.entity.Property;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,5 +33,11 @@ public class LivePropertyServiceImpl implements LivePropertyService {
 	@Override
 	public List<LiveProperty> getLiveProperties(LiveSession liveSession) {
 		return livePropertyRepository.findByLiveSession(liveSession);
+	}
+
+	@Override
+	public LiveProperty getLiveProperty(Integer livePropertyId) {
+		return livePropertyRepository.findById(livePropertyId)
+			.orElseThrow(() -> new CustomException(ErrorCode.LIVE_PROPERTY_NOT_FOUND));
 	}
 }

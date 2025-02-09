@@ -10,4 +10,6 @@ public interface LivePropertyService {
 	void registerLiveProperties(List<Property> properties, LiveSession liveSession);
 
 	List<LiveProperty> getLiveProperties(LiveSession liveSession);
+
+	LiveProperty getLiveProperty(Integer livePropertyId);
 }

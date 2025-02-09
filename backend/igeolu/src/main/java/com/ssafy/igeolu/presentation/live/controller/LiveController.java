@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -61,6 +62,19 @@ public class LiveController {
 		@RequestBody LivePropertyStartPostRequestDto requestDto) {
 
 		return ResponseEntity.ok(liveFacadeService.startLiveProperty(livePropertyId, requestDto));
+	}
+
+	@Operation(summary = "라이브 매물 종료", description = "해당 매물 소개를 종료합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+		// @ApiResponse(responseCode = "400", description = "라이브 매물을 시작할 수 없습니다.")
+	})
+	@PostMapping("/api/liveProperties/{livePropertyId}/stop")
+	public ResponseEntity<String> stopLiveProperty(@PathVariable Integer livePropertyId,
+		@RequestBody LivePropertyStopPostRequestDto requestDto) {
+		
+		liveFacadeService.stopLiveProperty(livePropertyId, requestDto);
+		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "내가 본 라이브 목록", description = "내가 본 라이브 목록")

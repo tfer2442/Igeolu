@@ -17,6 +17,7 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -34,11 +35,14 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Recording;
+import io.openvidu.java.client.RecordingMode;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LiveFacadeServiceImpl implements LiveFacadeService {
@@ -135,31 +139,49 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 	public Recording startLiveProperty(Integer livePropertyId, LivePropertyStartPostRequestDto requestDto) {
 		String sessionId = requestDto.getSessionId();
 
-		Recording.OutputMode outputMode;
-
-		outputMode = Recording.OutputMode.valueOf("COMPOSED");
-
 		// 빌더를 통해 녹화 속성 객체 생성
 		RecordingProperties properties = new RecordingProperties.Builder()
 			.name(livePropertyId.toString())
-			.outputMode(outputMode)
 			.build();
 
 		try {
 			// 새 녹화 시작
 			return openVidu.startRecording(sessionId, properties);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			log.debug("Error starting recording", e);
 			throw new CustomException(ErrorCode.LIVE_PROPERTY_BAD_REQUEST);
 		}
 	}
 
+	@Override
+	public void stopLiveProperty(Integer livePropertyId, LivePropertyStopPostRequestDto requestDto) {
+		Recording recording = null;
+		try {
+			recording = openVidu.stopRecording(requestDto.getRecordingId());
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			log.debug("Error stopping recording", e);
+			throw new CustomException(ErrorCode.LIVE_PROPERTY_BAD_REQUEST);
+		}
+
+		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
+		liveProperty.setRecordingId(recording.getId());
+	}
+
 	private LivePostResponseDto createHostSessionAndToken() {
 		try {
+
+			RecordingProperties recordingProperties = new RecordingProperties.Builder()
+				.outputMode(Recording.OutputMode.COMPOSED)
+				.frameRate(24)
+				.build();
+
 			// 1. 고유한 세션 ID 생성
 			String sessionId = "igeolu-" + System.currentTimeMillis();
 
 			// 2. 세션 속성 설정 (커스텀 세션 ID 사용)
 			SessionProperties properties = new SessionProperties.Builder()
+				.recordingMode(RecordingMode.MANUAL)
+				.defaultRecordingProperties(recordingProperties)
 				.customSessionId(sessionId)
 				.build();
 

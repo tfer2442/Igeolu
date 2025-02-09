@@ -30,7 +30,7 @@ public class LiveProperty {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	private String liveVideoPath;
+	private String recordingId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Property property;
