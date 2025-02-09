@@ -19,8 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.SigunguSearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.service.PropertyFacadeService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -117,5 +119,16 @@ public class PropertyController {
 	@GetMapping("/search")
 	public List<PropertySearchGetResponseDto> searchProperties(PropertySearchGetRequestDto request) {
 		return propertyFacadeService.searchBy(request);
+	}
+
+	@Operation(summary = "시군구 검색어 자동 완성",
+		description = "시군구에 대한 검색어 자동 완성 리스트를 반환합니다."
+			+ "가중치를 부여하여 가장 적합한 시군구를 우선으로 정렬해서 반환합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/sigungu/search")
+	public List<SigunguSearchGetResponseDto> searchProperties(SigunguSearchGetRequestDto request) {
+		return propertyFacadeService.searchSigunguBy(request);
 	}
 }

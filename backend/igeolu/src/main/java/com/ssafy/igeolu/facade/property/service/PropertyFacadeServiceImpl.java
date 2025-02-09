@@ -26,10 +26,12 @@ import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.SigunguSearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.global.util.CoordinateConverter;
@@ -276,6 +278,15 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 				.options(p.getOptionIds())
 				.build()
 			)
+			.toList();
+	}
+
+	@Override
+	public List<SigunguSearchGetResponseDto> searchSigunguBy(SigunguSearchGetRequestDto request) {
+		return dongcodesService.searchSigungu(request.getKeyword(), request.toPageableOnlyPageAndSize()).stream()
+			.map(d -> SigunguSearchGetResponseDto.builder()
+				.sigungu(d.getSigungu())
+				.build())
 			.toList();
 	}
 }
