@@ -27,6 +27,7 @@ import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
 import com.ssafy.igeolu.facade.live.mapper.LivePropertyMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
+import com.ssafy.igeolu.infra.naver.ClovaSpeechClient;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import io.openvidu.java.client.Connection;
@@ -50,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LiveFacadeServiceImpl implements LiveFacadeService {
 	private final PropertyService propertyService;
 	private final SecurityService securityService;
+	private final ClovaSpeechClient clovaSpeechClient;
 	private final UserService userService;
 	private final LiveSessionService liveSessionService;
 	private final LivePropertyService livePropertyService;
@@ -200,6 +202,28 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 	public void editMemo(Integer livePropertyId, MemoPutRequestDto memoPutRequestDto) {
 		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
 		liveProperty.setMemo(memoPutRequestDto.getMemo());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public String getLivePropertySummary(Integer livePropertyId) {
+		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
+
+		// 필요에 따라 NestRequestEntity의 옵션을 설정할 수 있습니다.
+		ClovaSpeechClient.NestRequestEntity requestEntity = new ClovaSpeechClient.NestRequestEntity();
+		Recording recording = null;
+
+		try {
+			recording = this.openVidu.getRecording(liveProperty.getRecordingId());
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			throw new CustomException(ErrorCode.RECORDING_NOT_FOUND);
+		}
+
+		// 예: 콜백 URL이나 기타 옵션 지정
+		// requestEntity.setCallback("https://your-callback-url.com");
+		String result = clovaSpeechClient.url(recording.getUrl(), requestEntity);
+
+		return result;
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {
