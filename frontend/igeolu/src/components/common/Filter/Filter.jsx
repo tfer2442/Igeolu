@@ -24,22 +24,18 @@ const Filter = ({
   monthlyRent,
   selectedOptions
 }) => {
-  // 드롭다운 패널 상태
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   
-  // 임시 상태 관리
   const [tempDeposit, setTempDeposit] = useState(deposit);
   const [tempMonthlyRent, setTempMonthlyRent] = useState(monthlyRent);
   const [tempOptions, setTempOptions] = useState(selectedOptions);
   
-  // 옵션 데이터 상태
   const [options, setOptions] = useState([]);
   
   const dropdownRef = useRef(null);
 
-  // 옵션 데이터 로드
   useEffect(() => {
     const fetchOptions = async () => {
       try {
@@ -52,7 +48,6 @@ const Filter = ({
     fetchOptions();
   }, []);
 
-  // props가 변경될 때 임시 상태 업데이트
   useEffect(() => {
     setTempDeposit(deposit);
     setTempMonthlyRent(monthlyRent);
@@ -62,14 +57,12 @@ const Filter = ({
     setTempOptions(selectedOptions);
   }, [selectedOptions]);
 
-  // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsLocationDropdownOpen(false);
         setIsPriceDropdownOpen(false);
         setIsOptionDropdownOpen(false);
-        // 패널이 닫힐 때 임시 상태를 원래대로 복구
         setTempDeposit(deposit);
         setTempMonthlyRent(monthlyRent);
         setTempOptions(selectedOptions);
@@ -101,7 +94,6 @@ const Filter = ({
     return `${selectedOptions.length}개 선택됨`;
   };
 
-  // 가격 필터 핸들러
   const handlePriceReset = () => {
     setTempDeposit(null);
     setTempMonthlyRent(null);
@@ -112,7 +104,6 @@ const Filter = ({
     setIsPriceDropdownOpen(false);
   };
 
-  // 옵션 필터 핸들러
   const handleOptionToggle = (optionId) => {
     setTempOptions(prev => 
       prev.includes(optionId)
@@ -130,7 +121,6 @@ const Filter = ({
     setIsOptionDropdownOpen(false);
   };
 
-  // 전체 초기화 핸들러
   const handleAllReset = () => {
     onReset();
     setTempDeposit(null);
@@ -204,6 +194,7 @@ const Filter = ({
           onNeighborhoodChange={onNeighborhoodChange}
           onReset={handleAllReset}
           onClose={() => setIsLocationDropdownOpen(false)}
+          setIsLocationDropdownOpen={setIsLocationDropdownOpen}
         />
 
         <PriceDropdownPanel
@@ -218,7 +209,7 @@ const Filter = ({
 
         <OptionDropdownPanel
           isOpen={isOptionDropdownOpen}
-          options={options}  // 여기에 options 데이터 전달
+          options={options}
           selectedOptions={tempOptions}
           onOptionToggle={handleOptionToggle}
           onApply={handleOptionApply}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './LocationDropdownPanel.css';
 
@@ -13,7 +14,8 @@ const LocationDropdownPanel = ({
   onCityChange,
   onDistrictChange,
   onNeighborhoodChange,
-  onReset
+  onReset,
+  setIsLocationDropdownOpen
 }) => {
   if (!isOpen) return null;
 
@@ -59,7 +61,10 @@ const LocationDropdownPanel = ({
                 <button
                   key={index}
                   className={`location-option ${selectedNeighborhood === (neighborhood.dongName || neighborhood) ? 'selected' : ''}`}
-                  onClick={() => onNeighborhoodChange({ target: { value: neighborhood.dongName || neighborhood } })}
+                  onClick={() => {
+                    onNeighborhoodChange({ target: { value: neighborhood.dongName || neighborhood } });
+                    setIsLocationDropdownOpen(false);
+                  }}
                   disabled={!selectedDistrict}
                 >
                   {neighborhood.dongName || neighborhood}
