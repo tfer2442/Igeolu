@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.MemoPutRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -57,7 +59,7 @@ public class LiveController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 		@ApiResponse(responseCode = "400", description = "라이브 매물을 시작할 수 없습니다.")
 	})
-	@PostMapping("/api/liveProperties/{livePropertyId}/start")
+	@PostMapping("/api/live-properties/{livePropertyId}/start")
 	public ResponseEntity<Recording> startLiveProperty(@PathVariable Integer livePropertyId,
 		@RequestBody LivePropertyStartPostRequestDto requestDto) {
 
@@ -69,11 +71,23 @@ public class LiveController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 		// @ApiResponse(responseCode = "400", description = "라이브 매물을 시작할 수 없습니다.")
 	})
-	@PostMapping("/api/liveProperties/{livePropertyId}/stop")
+	@PostMapping("/api/live-properties/{livePropertyId}/stop")
 	public ResponseEntity<String> stopLiveProperty(@PathVariable Integer livePropertyId,
 		@RequestBody LivePropertyStopPostRequestDto requestDto) {
 
 		liveFacadeService.stopLiveProperty(livePropertyId, requestDto);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "라이브 매물 메모 작성", description = "라이브 매물 메모 작성")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@PutMapping("/api/live-properties/{livePropertyId}/memo")
+	public ResponseEntity<String> editMemo(@PathVariable Integer livePropertyId,
+		@RequestBody @Valid MemoPutRequestDto memoPutRequestDto) {
+		liveFacadeService.editMemo(livePropertyId, memoPutRequestDto);
+
 		return ResponseEntity.ok().build();
 	}
 
