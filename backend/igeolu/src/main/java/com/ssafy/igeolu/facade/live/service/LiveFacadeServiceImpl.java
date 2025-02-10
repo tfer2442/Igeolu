@@ -19,6 +19,7 @@ import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.MemoPutRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
@@ -192,6 +193,13 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			throw new CustomException(ErrorCode.RECORDING_NOT_FOUND);
 		}
+	}
+
+	@Override
+	@Transactional
+	public void editMemo(Integer livePropertyId, MemoPutRequestDto memoPutRequestDto) {
+		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
+		liveProperty.setMemo(memoPutRequestDto.getMemo());
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {
