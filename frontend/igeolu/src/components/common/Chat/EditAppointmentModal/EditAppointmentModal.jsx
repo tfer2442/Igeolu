@@ -1,12 +1,10 @@
 // src/components/common/Chat/EditAppointmentModal/EditAppointmentModal.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
-import { useAppointment } from '../../../../contexts/AppointmentContext';
 import './EditAppointmentModal.css';
 
-const EditAppointmentModal = ({ appointment, onClose }) => {
-  const { updateAppointment } = useAppointment();
+const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
   const [animationState, setAnimationState] = useState('entering');
   const [formData, setFormData] = useState({
     scheduledAt: appointment.scheduledAt,
@@ -15,12 +13,12 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
     opponentUserId: appointment.opponentUserId,
   });
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnimationState('exiting');
     setTimeout(() => {
       onClose();
-    }, 300); // Animation duration
-  };
+    }, 300);
+  }, [onClose]);
 
   useEffect(() => {
     // 컴포넌트가 마운트되거나 appointment가 변경될 때 formData 업데이트
@@ -49,7 +47,7 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
-  }, [appointment]);
+  }, [appointment, handleClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,22 +56,13 @@ const EditAppointmentModal = ({ appointment, onClose }) => {
       const offset = localDate.getTimezoneOffset() * 60000;
       const isoDate = new Date(localDate.getTime() - offset).toISOString();
 
-      console.log('Updating appointment with data:', {
-        // 디버깅용 로그
-        ...formData,
-        scheduledAt: isoDate,
-      });
-
       await appointmentAPI.updateAppointment(appointment.appointmentId, {
         ...formData,
         scheduledAt: isoDate,
       });
-
-      updateAppointment(appointment.appointmentId, {
-        ...formData,
-        scheduledAt: isoDate,
-      });
-
+  
+      // 여기서 onUpdate 콜백을 호출하여 MobileCalendarPage의 fetchAppointments를 실행
+      onUpdate();
       handleClose();
     } catch (error) {
       console.error('Failed to update appointment:', error);

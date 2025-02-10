@@ -5,11 +5,9 @@ import './MobileCalendarPage.css';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
 import { appointmentAPI } from '../../services/AppointmentApi';
 import EditAppointmentModal from '../../components/common/Chat/EditAppointmentModal/EditAppointmentModal';
-import { useAppointment } from '../../contexts/AppointmentContext';
 
 function MobileCalendarPage() {
   const [value, setValue] = useState(new Date());
-  const {setAppointments, deleteAppointment } = useAppointment();
   const [slideStates, setSlideStates] = useState({});
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [groupedAppointments, setGroupedAppointments] = useState({});
@@ -56,13 +54,11 @@ function MobileCalendarPage() {
         opponentName: appointment.opponentName,
         title: appointment.title,
       }));
-
-      setAppointments(formattedAppointments);
       setGroupedAppointments(groupAppointmentsByDate(formattedAppointments));
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
     }
-  }, [userId, setAppointments, groupAppointmentsByDate]);
+  }, [userId, groupAppointmentsByDate]);
 
   useEffect(() => {
     if (userId) {
@@ -117,7 +113,6 @@ function MobileCalendarPage() {
 
     try {
       await appointmentAPI.deleteAppointment(appointmentId);
-      deleteAppointment(appointmentId);
       fetchAppointments();
     } catch (error) {
       console.error('Failed to delete appointment:', error);
