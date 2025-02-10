@@ -1,6 +1,8 @@
 package com.ssafy.igeolu.facade.live.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -11,15 +13,17 @@ import com.ssafy.igeolu.domain.live.entity.LiveSession;
 import com.ssafy.igeolu.domain.live.service.LivePropertyService;
 import com.ssafy.igeolu.domain.live.service.LiveSessionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
-import com.ssafy.igeolu.domain.property.mapper.PropertyMapper;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
+import com.ssafy.igeolu.facade.live.mapper.LivePropertyMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.service.SecurityService;
@@ -28,11 +32,18 @@ import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.OpenViduHttpException;
+import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
+import io.openvidu.java.client.Recording;
+import io.openvidu.java.client.RecordingMode;
+import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LiveFacadeServiceImpl implements LiveFacadeService {
@@ -59,10 +70,20 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		// 라이브 세션 등록
 		liveSessionService.registerLiveSession(liveSession);
 
-		List<Property> properties = propertyService.getPropertyListIds(requestDto.getPropertyIds());
+		// 클라이언트가 전달한 propertyId 목록 순서를 가져옵니다.
+		List<Integer> propertyIds = requestDto.getPropertyIds();
+		// propertyId 목록으로 Property 리스트 조회
+		List<Property> properties = propertyService.getPropertyListIds(propertyIds);
 
-		// 라이브 매물에 등록
-		livePropertyService.registerLiveProperties(properties, liveSession);
+		// 조회된 properties를 클라이언트의 propertyIds 순서대로 재정렬합니다.
+		Map<Integer, Property> propertyMap = properties.stream()
+			.collect(Collectors.toMap(Property::getId, Function.identity()));
+		List<Property> orderedProperties = propertyIds.stream()
+			.map(propertyMap::get)
+			.collect(Collectors.toList());
+
+		// 재정렬된 orderedProperties를 라이브 매물로 등록
+		livePropertyService.registerLiveProperties(orderedProperties, liveSession);
 
 		return livePostResponseDto;
 	}
@@ -101,27 +122,92 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<PropertyGetResponseDto> getProperties(String liveId) {
+	public List<LivePropertyGetResponseDto> getProperties(String liveId) {
 		// todo: 자신이 본 매물인지 확인해야 함.
 		LiveSession liveSession = liveSessionService.getLiveSession(liveId);
 		List<LiveProperty> liveProperties = livePropertyService.getLiveProperties(liveSession);
+
+		// Property id를 key로 하여 LiveProperty 전체를 매핑
+		Map<Integer, LiveProperty> propertyIdToLiveProperty = liveProperties.stream()
+			.collect(Collectors.toMap(
+				lp -> lp.getProperty().getId(),
+				Function.identity()
+			));
 
 		List<Property> properties = propertyService.getPropertyListIds(liveProperties.stream()
 			.map(liveProperty -> liveProperty.getProperty().getId())
 			.toList());
 
+		// LiveProperty 객체를 통해 liveProperty id와 recordingId 모두를 전달
 		return properties.stream()
-			.map(PropertyMapper::toDto)
-			.collect(Collectors.toList());
+			.map(property -> {
+				LiveProperty liveProperty = propertyIdToLiveProperty.get(property.getId());
+				return LivePropertyMapper.toDto(
+					property,
+					liveProperty.getId(),
+					liveProperty.getRecordingId()
+				);
+			})
+			.toList();
+	}
+
+	@Override
+	public Recording startLiveProperty(Integer livePropertyId, LivePropertyStartPostRequestDto requestDto) {
+		String sessionId = requestDto.getSessionId();
+
+		// 빌더를 통해 녹화 속성 객체 생성
+		RecordingProperties properties = new RecordingProperties.Builder()
+			.name(livePropertyId.toString())
+			.build();
+
+		try {
+			// 새 녹화 시작
+			return openVidu.startRecording(sessionId, properties);
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			log.debug("Error starting recording", e);
+			throw new CustomException(ErrorCode.LIVE_PROPERTY_BAD_REQUEST);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void stopLiveProperty(Integer livePropertyId, LivePropertyStopPostRequestDto requestDto) {
+		Recording recording = null;
+		try {
+			recording = openVidu.stopRecording(requestDto.getRecordingId());
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			log.debug("Error stopping recording", e);
+			throw new CustomException(ErrorCode.LIVE_PROPERTY_BAD_REQUEST);
+		}
+
+		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
+		liveProperty.setRecordingId(recording.getId());
+	}
+
+	@Override
+	public Recording getRecording(String recordingId) {
+		try {
+			return this.openVidu.getRecording(recordingId);
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+			throw new CustomException(ErrorCode.RECORDING_NOT_FOUND);
+		}
 	}
 
 	private LivePostResponseDto createHostSessionAndToken() {
 		try {
+
+			RecordingProperties recordingProperties = new RecordingProperties.Builder()
+				.outputMode(Recording.OutputMode.COMPOSED)
+				.frameRate(24)
+				.build();
+
 			// 1. 고유한 세션 ID 생성
 			String sessionId = "igeolu-" + System.currentTimeMillis();
 
 			// 2. 세션 속성 설정 (커스텀 세션 ID 사용)
 			SessionProperties properties = new SessionProperties.Builder()
+				.recordingMode(RecordingMode.MANUAL)
+				.defaultRecordingProperties(recordingProperties)
 				.customSessionId(sessionId)
 				.build();
 

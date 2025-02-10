@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,11 +31,13 @@ public class LiveProperty {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	private String liveVideoPath;
+	private String recordingId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "property_id")
 	private Property property;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "live_session_id")
 	private LiveSession liveSession;
 }
