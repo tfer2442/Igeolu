@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import axios from 'axios';
 import DesktopMapPageNav from '../../components/common/DesktopNav/DesktopMapPageNav';
@@ -25,7 +25,9 @@ function MapPage() {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
 
-    // 지도 중심 좌표 상태
+    // 지도 관련 상태
+    const [map, setMap] = useState(null);
+    const [isMapReady, setIsMapReady] = useState(false);
     const [mapCenter, setMapCenter] = useState({
         lat: 37.566826,
         lng: 126.978656
@@ -40,6 +42,40 @@ function MapPage() {
     const [cities, setCities] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [neighborhoods, setNeighborhoods] = useState([]);
+
+    // 지도 초기화 핸들러
+    const handleMapCreate = (map) => {
+        console.log("Map created");
+        setMap(map);
+        setIsMapReady(true);
+    };
+
+    // 지도 상태 업데이트 함수
+    const updateMapState = useCallback(() => {
+        if (map) {
+            console.log("Updating map state");
+            map.relayout();
+            if (searchResults.length > 0) {
+                const bounds = new window.kakao.maps.LatLngBounds();
+                searchResults.forEach(item => {
+                    if (item.latitude && item.longitude) {
+                        bounds.extend(new window.kakao.maps.LatLng(
+                            parseFloat(item.latitude),
+                            parseFloat(item.longitude)
+                        ));
+                    }
+                });
+                map.setBounds(bounds);
+            }
+        }
+    }, [map, searchResults]);
+
+    // 검색 결과가 변경될 때마다 지도 상태 업데이트
+    useEffect(() => {
+        if (isMapReady) {
+            updateMapState();
+        }
+    }, [isMapReady, searchResults, updateMapState]);
 
     // 시도 데이터 로드
     useEffect(() => {
@@ -93,7 +129,6 @@ function MapPage() {
 
     // 통합 검색 함수
     const fetchSearchResults = async () => {
-        // 시도, 구군, 동이 모두 선택되었는지 확인
         if (!selectedCity || !selectedDistrict || !selectedNeighborhood) {
             setSearchResults([]);
             return;
@@ -113,20 +148,20 @@ function MapPage() {
             const response = await axios.get('https://i12d205.p.ssafy.io/api/properties/search', { params });
             console.log('Search response:', response.data);
             
+            // 모든 결과를 유효한 결과로 처리
             const validResults = response.data.filter(item => 
-                item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
+                item && item.latitude && item.longitude
             );
 
-            setSearchResults(validResults);
-
-            // 검색 결과가 있을 때만 지도 중심 이동
             if (validResults.length > 0) {
-                const newCenter = {
+                // 검색 결과가 있을 경우 첫 번째 결과를 중심점으로 설정
+                setMapCenter({
                     lat: parseFloat(validResults[0].latitude),
                     lng: parseFloat(validResults[0].longitude)
-                };
-                setMapCenter(newCenter);
+                });
             }
+
+            setSearchResults(validResults);
         } catch (error) {
             console.error('Error fetching search results:', error);
             setSearchResults([]);
@@ -246,6 +281,7 @@ function MapPage() {
                                         border: '1px solid #e1e1e1'
                                     }}
                                     level={3}
+                                    onCreate={handleMapCreate}
                                 >
                                     {searchResults.map((item, index) => {
                                         if (!item || !item.latitude || !item.longitude) return null;
