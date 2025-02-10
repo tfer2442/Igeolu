@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
-import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.service.PropertyFacadeService;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -71,7 +72,6 @@ public class PropertyController {
 		return ResponseEntity.ok(properties);
 	}
 
-
 	@Operation(summary = "매물 상세 조회", description = "매물 ID로 상세 정보를 조회합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
@@ -107,5 +107,15 @@ public class PropertyController {
 		return ResponseEntity.noContent().build();
 	}
 
-
+	@Operation(summary = "매물 검색",
+		description = "매물 정보를 검색합니다. "
+			+ "swagger 에서 options list 값이 string 으로 변경되는 버그가 있습니다."
+			+ "swagger 에서 options 값에 대한 테스트는 할 수 없으며 postman 으로는 가능합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/search")
+	public List<PropertySearchGetResponseDto> searchProperties(PropertySearchGetRequestDto request) {
+		return propertyFacadeService.searchBy(request);
+	}
 }

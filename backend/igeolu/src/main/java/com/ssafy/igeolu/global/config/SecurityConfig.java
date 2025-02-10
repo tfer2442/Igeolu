@@ -57,11 +57,14 @@ public class SecurityConfig {
 				}
 			}));
 
-		//경로별 인가 작업
+		//경로별 인가 작업/v3/api-docs
+		// 이걸루 백엔드 API
+		//
+		// Servers
 		http
 			.authorizeHttpRequests((auth) -> auth
 				.requestMatchers("/api/my").authenticated()
-				.requestMatchers("/api/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/api/**", "/v3/api-docs/**").permitAll() // swagger open
 				.anyRequest().authenticated());
 
 		//csrf disable

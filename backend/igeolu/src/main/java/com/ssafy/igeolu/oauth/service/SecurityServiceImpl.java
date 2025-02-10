@@ -1,7 +1,9 @@
 package com.ssafy.igeolu.oauth.service;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
-import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.dto.CustomOAuth2User;
+import com.ssafy.igeolu.oauth.dto.MyInfoDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +28,7 @@ public class SecurityServiceImpl implements SecurityService {
 	private final UserRepository userRepository;
 
 	@Override
-	public MeGetResponseDto getCurrentUser() {
+	public MyInfoDto getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication == null || authentication.getPrincipal() == null
@@ -40,7 +42,7 @@ public class SecurityServiceImpl implements SecurityService {
 			GrantedAuthority auth = iterator.next();
 			String role = auth.getAuthority();
 
-			return MeGetResponseDto.builder()
+			return MyInfoDto.builder()
 				.userId(principal.getUserId())
 				.role(role)
 				.build();
@@ -56,23 +58,30 @@ public class SecurityServiceImpl implements SecurityService {
 	@Transactional
 	@Override
 	public User processOAuth2User(String kakaoId, String nickName, String state) {
-		Role desiredRole = getDesiredRole(state);
 
 		return userRepository.findByKakaoId(kakaoId)
 			.map(existingUser -> {
-				if (!existingUser.getRole().equals(desiredRole)) {
-					throw new OAuth2AuthenticationException("Role mismatch. Login and signup are disallowed.");
-				}
+				validateRole(existingUser);
 				return existingUser;
 			})
 			.orElseGet(() -> userRepository.save(
 				User.builder()
-					.role(desiredRole)
+					.role(getSignupRole(state))
 					.kakaoId(kakaoId)
 					.username(nickName)
-					.profileFilePath(desiredRole == Role.ROLE_MEMBER ? "/igeolu/member" : "/igeolu/realtor")
+					.profileFilePath(getSignupRole(state) == Role.ROLE_MEMBER ? "/igeolu/member" : "/igeolu/realtor")
 					.build()
 			));
+	}
+
+	private static void validateRole(User existingUser) {
+		List<Role> matchRoles = Arrays.stream(Role.values())
+			.filter(role -> role.equals(existingUser.getRole()))
+			.toList();
+
+		if (matchRoles.isEmpty()) {
+			throw new OAuth2AuthenticationException("Role mismatch. Login and signup are disallowed.");
+		}
 	}
 
 	public User getUserEntity() {
@@ -95,7 +104,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 * state 파라미터에 따른 Role을 반환합니다.
 	 *
 	 */
-	private Role getDesiredRole(String state) {
-		return "member".equals(state) ? Role.ROLE_MEMBER : Role.ROLE_REALTOR;
+	private Role getSignupRole(String state) {
+		return "member".equals(state) ? Role.ROLE_MEMBER : Role.ROLE_INCOMPLETE_REALTOR;
 	}
 }
