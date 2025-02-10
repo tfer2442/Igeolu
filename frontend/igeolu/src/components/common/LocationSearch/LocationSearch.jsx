@@ -47,7 +47,7 @@ const LocationSearch = ({ onSearch }) => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setSearchTerm(suggestion.sigungu);
+    setSearchTerm('');
     setIsOpen(false);
 
     const [sidoName, gugunName, dongName] = suggestion.sigungu.split(' ');
