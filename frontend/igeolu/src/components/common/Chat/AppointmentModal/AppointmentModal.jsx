@@ -1,5 +1,5 @@
 // src/components/common/Chat/AppointmentModal/AppointmentModal.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
 import './AppointmentModal.css';
@@ -14,12 +14,12 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
     chatRoomId: roomInfo.roomId,
   });
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnimationState('exiting');
     setTimeout(() => {
       onClose();
-    }, 300); // 애니메이션 지속 시간과 동일하게 설정
-  };
+    }, 300);
+  }, [onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +62,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
-  }, []);
+  }, [handleClose]);
 
   return (
     <>

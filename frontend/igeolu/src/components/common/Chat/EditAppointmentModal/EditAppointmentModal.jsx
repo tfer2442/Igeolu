@@ -1,5 +1,5 @@
 // src/components/common/Chat/EditAppointmentModal/EditAppointmentModal.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
 import './EditAppointmentModal.css';
@@ -13,12 +13,12 @@ const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
     opponentUserId: appointment.opponentUserId,
   });
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnimationState('exiting');
     setTimeout(() => {
       onClose();
-    }, 300); // Animation duration
-  };
+    }, 300);
+  }, [onClose]);
 
   useEffect(() => {
     // 컴포넌트가 마운트되거나 appointment가 변경될 때 formData 업데이트
@@ -47,7 +47,7 @@ const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
-  }, [appointment]);
+  }, [appointment, handleClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
