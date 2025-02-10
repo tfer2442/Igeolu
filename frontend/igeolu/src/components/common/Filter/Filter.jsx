@@ -1,7 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, ChevronDown, Wallet, Settings } from 'lucide-react';
-import axios from 'axios';
 import LocationDropdownPanel from './LocationDropdownPanel';
 import PriceDropdownPanel from './PriceDropdownPanel';
 import OptionDropdownPanel from './OptionDropdownPanel';
@@ -17,50 +16,22 @@ const Filter = ({
   onCityChange,
   onDistrictChange,
   onNeighborhoodChange,
-  onReset: onLocationReset
+  onReset,
+  onPriceChange,
+  onOptionsChange,
+  deposit,
+  monthlyRent,
+  selectedOptions
 }) => {
+
+  // 필터 드롭다운 상태
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
-  const [deposit, setDeposit] = useState(null);
-  const [monthlyRent, setMonthlyRent] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [options, setOptions] = useState([]);
+  
   const dropdownRef = useRef(null);
 
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const response = await axios.get('https://i12d205.p.ssafy.io/api/options');
-        setOptions(response.data);
-      } catch (error) {
-        console.error('Error fetching options:', error);
-      }
-    };
-    fetchOptions();
-  }, []);
-
-  const getDisplayLocation = () => {
-    if (selectedNeighborhood) return selectedNeighborhood;
-    if (selectedDistrict) return selectedDistrict;
-    if (selectedCity) return selectedCity;
-    return '지역을 선택하세요';
-  };
-
-  const getDisplayPrice = () => {
-    if (!deposit && !monthlyRent) return '보증금/월세';
-    
-    const depositText = deposit ? `${deposit.toLocaleString()}만원` : '무제한';
-    const monthlyRentText = monthlyRent ? `${monthlyRent}만원` : '무제한';
-    
-    return `보증금 ${depositText} / 월세 ${monthlyRentText}`;
-  };
-
-  const getDisplayOptions = () => {
-    if (selectedOptions.length === 0) return '옵션 선택';
-    return `${selectedOptions.length}개 선택됨`;
-  };
-
+  // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -74,33 +45,53 @@ const Filter = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 화면 표시용 문자열 생성 함수들
+  const getDisplayLocation = () => {
+    if (selectedNeighborhood) return selectedNeighborhood;
+    if (selectedDistrict) return selectedDistrict;
+    if (selectedCity) return selectedCity;
+    return '지역을 선택하세요';
+  };
+
+  // 가격필터 버튼에 보증금/월세 나타냄
+  const getDisplayPrice = () => {
+    if (!deposit && !monthlyRent) return '보증금/월세';
+    
+    const depositText = deposit ? `${deposit.toLocaleString()}만원` : '무제한';
+    const monthlyRentText = monthlyRent ? `${monthlyRent}만원` : '무제한';
+    
+    return `보증금 ${depositText} / 월세 ${monthlyRentText}`;
+  };
+
+  // 옵션필터 버튼에 몇개 선택 됬는지 나타냄
+  const getDisplayOptions = () => {
+    if (!selectedOptions || selectedOptions.length === 0) return '옵션 선택';
+    return `${selectedOptions.length}개 선택됨`;
+  };
+
+  // 가격 필터 핸들러
   const handlePriceReset = () => {
-    setDeposit(null);
-    setMonthlyRent(null);
+    onPriceChange(null, null);
   };
 
   const handlePriceApply = () => {
     setIsPriceDropdownOpen(false);
-    // 여기에 필터링 로직 추가
   };
 
+  // 옵션 필터 핸들러
   const handleOptionToggle = (optionId) => {
-    setSelectedOptions(prev =>
-      prev.includes(optionId)
-        ? prev.filter(id => id !== optionId)
-        : [...prev, optionId]
-    );
-    // 콘솔에 현재 선택된 옵션들 출력 (디버깅용)
-    console.log('Selected options:', selectedOptions);
+    const newOptions = selectedOptions.includes(optionId)
+      ? selectedOptions.filter(id => id !== optionId)
+      : [...selectedOptions, optionId];
+    onOptionsChange(newOptions);
   };
 
   const handleOptionReset = () => {
-    setSelectedOptions([]);
+    onOptionsChange([]);
   };
 
   const handleOptionApply = () => {
     setIsOptionDropdownOpen(false);
-    // 여기에 필터링 로직 추가
   };
 
   return (
@@ -158,7 +149,6 @@ const Filter = ({
 
         <LocationDropdownPanel
           isOpen={isLocationDropdownOpen}
-          onClose={() => setIsLocationDropdownOpen(false)}
           selectedCity={selectedCity}
           selectedDistrict={selectedDistrict}
           selectedNeighborhood={selectedNeighborhood}
@@ -168,22 +158,22 @@ const Filter = ({
           onCityChange={onCityChange}
           onDistrictChange={onDistrictChange}
           onNeighborhoodChange={onNeighborhoodChange}
-          onReset={onLocationReset}
+          onReset={onReset}
+          onClose={() => setIsLocationDropdownOpen(false)}
         />
 
         <PriceDropdownPanel
           isOpen={isPriceDropdownOpen}
           deposit={deposit}
           monthlyRent={monthlyRent}
-          onDepositChange={setDeposit}
-          onMonthlyRentChange={setMonthlyRent}
+          onDepositChange={(newDeposit) => onPriceChange(newDeposit, monthlyRent)}
+          onMonthlyRentChange={(newMonthlyRent) => onPriceChange(deposit, newMonthlyRent)}
           onApply={handlePriceApply}
           onReset={handlePriceReset}
         />
 
         <OptionDropdownPanel
           isOpen={isOptionDropdownOpen}
-          options={options}
           selectedOptions={selectedOptions}
           onOptionToggle={handleOptionToggle}
           onApply={handleOptionApply}
