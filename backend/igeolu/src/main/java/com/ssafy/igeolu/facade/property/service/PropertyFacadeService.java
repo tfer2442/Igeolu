@@ -7,10 +7,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
+import com.ssafy.igeolu.facade.property.dto.request.SigunguSearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
 
 public interface PropertyFacadeService {
 
@@ -35,4 +37,6 @@ public interface PropertyFacadeService {
 	void deleteProperty(Integer propertyId);
 
 	List<PropertySearchGetResponseDto> searchBy(PropertySearchGetRequestDto request);
+
+	List<SigunguSearchGetResponseDto> searchSigunguBy(SigunguSearchGetRequestDto request);
 }
