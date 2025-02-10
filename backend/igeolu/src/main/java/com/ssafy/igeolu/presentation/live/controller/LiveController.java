@@ -117,9 +117,14 @@ public class LiveController {
 		return ResponseEntity.ok(liveFacadeService.getRecording(recordingId));
 	}
 
-	@Operation(summary = "라이브 매물 요약", description = "라이브 매물 요약")
-	@PostMapping("/api/live-properties/{livePropertyId}/summary")
-	public ResponseEntity<String> getLivePropertySummary(@PathVariable Integer livePropertyId) {
-		return ResponseEntity.ok(liveFacadeService.getLivePropertySummary(livePropertyId));
-	}
+	// @Operation(summary = "라이브 매물 요약", description = "라이브 매물 요약")
+	// @PostMapping("/api/live-properties/{livePropertyId}/summary")
+	// public ResponseEntity<String> getLivePropertySummary(@PathVariable Integer livePropertyId) {
+	// 	return ResponseEntity.ok(liveFacadeService.getLivePropertySummary(livePropertyId));
+	// }
+
+	// @PostMapping("/api/live-proierties/summary/example")
+	// public ResponseEntity<String> getExample(String text) {
+	// 	return ResponseEntity.ok(liveFacadeService.createLivePropertySummary(text));
+	// }
 }

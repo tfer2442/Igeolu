@@ -18,11 +18,25 @@ spring:
       max-file-size: 9000MB
       max-request-size: 9000MB
 
+  # openai summary
+  ai:
+    openai:
+      api-key: ENC(uBDSmOPg1tTonPfuaJyCP6yEV0niOAQns3exvyyQ7ZK2ai1qrARYiLh7+hm3IqnzGLb6GSQoL+PPAz13jSYu/BCNBrTv1ITZb7cxh/mfNMkzb+joOJuFMg/Nd1MHHm0H7tMHj1BjOcLidOk5cuhRKtPaA1HTv//OcnJBls0ofpLalYobd7sPPSaQOZTCCX+nu76Sk4EJG/gNvSYWAAleTwZtxP83w6rxrfEggwgFd3Q=)
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.5
+    template:
+      path: classpath:prompts/
+      cache: true
+
 springdoc:
   swagger-ui:
     path: /api/swagger-ui.html
 
+# clova stt
 clova:
   api:
     secret: ENC(omNrA/rg1eXtEsMdx6rAi7IDhZO2Dk2k4RRlWpWLblm0Q4+Q7/PfvDkkM8589G8d)
     invokeUrl: ENC(gE4m6z0zThSjvOIc74HFrV/+fp56WJ9cVcN0IdLMNVCr6PZmuPrSPlxnk6mBHoVlrc59TlTFpFdZ0ZTQXxFKomjZf9m7+t+6UT3mkk98tCIevsMRDCqT+qaskQmn2w88yDkzx7zU5hkje+7o09CppU7kWH3THLVW9ca5Si5IfQg=)
+

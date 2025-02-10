@@ -56,6 +56,8 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 	private final LiveSessionService liveSessionService;
 	private final LivePropertyService livePropertyService;
 	private final OpenVidu openVidu;
+	// private final ChatModel chatModel;
+	// private final PromptTemplateLoader promptLoader;
 
 	@Override
 	@Transactional
@@ -203,28 +205,56 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
 		liveProperty.setMemo(memoPutRequestDto.getMemo());
 	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public String getLivePropertySummary(Integer livePropertyId) {
-		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
-
-		// 필요에 따라 NestRequestEntity의 옵션을 설정할 수 있습니다.
-		ClovaSpeechClient.NestRequestEntity requestEntity = new ClovaSpeechClient.NestRequestEntity();
-		Recording recording = null;
-
-		try {
-			recording = this.openVidu.getRecording(liveProperty.getRecordingId());
-		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
-			throw new CustomException(ErrorCode.RECORDING_NOT_FOUND);
-		}
-
-		// 예: 콜백 URL이나 기타 옵션 지정
-		// requestEntity.setCallback("https://your-callback-url.com");
-		String result = clovaSpeechClient.url(recording.getUrl(), requestEntity);
-
-		return result;
-	}
+	//
+	// @Override
+	// @Transactional(readOnly = true)
+	// public String getLivePropertySummary(Integer livePropertyId) {
+	// 	LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
+	//
+	// 	// 필요에 따라 NestRequestEntity의 옵션을 설정할 수 있습니다.
+	// 	ClovaSpeechClient.NestRequestEntity requestEntity = new ClovaSpeechClient.NestRequestEntity();
+	// 	Recording recording = null;
+	//
+	// 	try {
+	// 		recording = this.openVidu.getRecording(liveProperty.getRecordingId());
+	// 	} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+	// 		throw new CustomException(ErrorCode.RECORDING_NOT_FOUND);
+	// 	}
+	//
+	// 	// 예: 콜백 URL이나 기타 옵션 지정
+	// 	// requestEntity.setCallback("https://your-callback-url.com");
+	// 	String result = clovaSpeechClient.url(recording.getUrl(), requestEntity);
+	//
+	// 	return result;
+	// }
+	//
+	// @Override
+	// public String createLivePropertySummary(String stt) {
+	// 	try {
+	// 		// 유저 프롬프트 템플릿 로드 및 변수 설정
+	// 		String userPromptTemplate = promptLoader.loadUserPrompt();
+	// 		PromptTemplate userTemplate = new PromptTemplate(userPromptTemplate);
+	// 		userTemplate.add("stt_text", stt);
+	// 		String userCommand = userTemplate.render();
+	//
+	// 		// 시스템 프롬프트 로드
+	// 		String systemPromptTemplate = promptLoader.loadSystemPrompt();
+	// 		PromptTemplate systemTemplate = new PromptTemplate(systemPromptTemplate);
+	// 		String systemCommand = systemTemplate.render();
+	//
+	// 		// 메시지 생성
+	// 		Message userMessage = new UserMessage(userCommand);
+	// 		Message systemMessage = new SystemMessage(systemCommand);
+	//
+	// 		// AI 모델 호출
+	// 		String response = chatModel.call(userMessage, systemMessage);
+	//
+	// 		return response;
+	//
+	// 	} catch (Exception e) {
+	// 		throw new CustomException(ErrorCode.OPENAI_INTERNAL_SERVER_ERROR);
+	// 	}
+	// }
 
 	private LivePostResponseDto createHostSessionAndToken() {
 		try {
