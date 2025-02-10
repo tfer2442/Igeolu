@@ -1,3 +1,4 @@
+
 // import logo from '../../../assets/images/logo.png'
 // import { Link } from 'react-router-dom'
 // import './DesktopMapPageNav.css'
@@ -9,7 +10,7 @@
 //     { id: 3, title: '라이브', path: '/live' },
 // ]
 
-// function DesktopMapPageNav({onLoginSigninClick}) {
+// function DesktopMapPageNav({ onLoginSigninClick, onSearchComplete, onSearchChange, searchKeyword }) {
 //     return (
 //         <nav className='desktop-map-nav'>
 //             <div className='desktop-map-nav__left'>
@@ -17,22 +18,25 @@
 //                     <img src={logo} alt='logo' />
 //                 </Link>
 
-//                 <LocationSearch></LocationSearch>
-
+//                 <LocationSearch 
+//                     onSearchComplete={onSearchComplete}
+//                     onSearchChange={onSearchChange}
+//                     searchKeyword={searchKeyword}
+//                 />
 //             </div>
 //             <div className='desktop-map-nav__right'>
-//             <div className='desktop-map-nav__right-links'>
-//                 {NAV_ITEMS.map((item) => (
-//                     <Link to={item.path} key={item.id}>
-//                         {item.title}
-//                     </Link>
-//                 ))}
-//             </div>
-//             <div className='desktop-map-nav__right-login'>
-//                 <button onClick={onLoginSigninClick} className='desktop-live-and-my-nav__login-signin-btn'> 
-//                     로그인 | 회원가입
-//                 </button>
-//             </div>
+//                 <div className='desktop-map-nav__right-links'>
+//                     {NAV_ITEMS.map((item) => (
+//                         <Link to={item.path} key={item.id}>
+//                             {item.title}
+//                         </Link>
+//                     ))}
+//                 </div>
+//                 <div className='desktop-map-nav__right-login'>
+//                     <button onClick={onLoginSigninClick} className='desktop-map-nav__login-signin-btn'> 
+//                         로그인 | 회원가입
+//                     </button>
+//                 </div>
 //             </div>
 //         </nav>
 //     )
@@ -43,7 +47,6 @@
 import logo from '../../../assets/images/logo.png'
 import { Link } from 'react-router-dom'
 import './DesktopMapPageNav.css'
-import LocationSearch from '../LocationSearch/LocationSearch'
 
 const NAV_ITEMS = [
     { id: 1, title: '방찾기', path: '/room' },
@@ -51,19 +54,14 @@ const NAV_ITEMS = [
     { id: 3, title: '라이브', path: '/live' },
 ]
 
-function DesktopMapPageNav({ onLoginSigninClick, onSearchComplete, onSearchChange, searchKeyword }) {
+function DesktopMapPageNav({onLoginSigninClick, children}) {
     return (
         <nav className='desktop-map-nav'>
             <div className='desktop-map-nav__left'>
                 <Link to='/'>
                     <img src={logo} alt='logo' />
                 </Link>
-
-                <LocationSearch 
-                    onSearchComplete={onSearchComplete}
-                    onSearchChange={onSearchChange}
-                    searchKeyword={searchKeyword}
-                />
+                {children}
             </div>
             <div className='desktop-map-nav__right'>
                 <div className='desktop-map-nav__right-links'>
