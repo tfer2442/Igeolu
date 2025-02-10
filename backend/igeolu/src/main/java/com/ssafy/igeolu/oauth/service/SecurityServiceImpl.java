@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
-import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.dto.CustomOAuth2User;
+import com.ssafy.igeolu.oauth.dto.MyInfoDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +29,7 @@ public class SecurityServiceImpl implements SecurityService {
 	private final UserRepository userRepository;
 
 	@Override
-	public MeGetResponseDto getCurrentUser() {
+	public MyInfoDto getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication == null || authentication.getPrincipal() == null
@@ -43,7 +43,7 @@ public class SecurityServiceImpl implements SecurityService {
 			GrantedAuthority auth = iterator.next();
 			String role = auth.getAuthority();
 
-			return MeGetResponseDto.builder()
+			return MyInfoDto.builder()
 				.userId(principal.getUserId())
 				.role(role)
 				.build();
