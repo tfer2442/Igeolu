@@ -12,6 +12,7 @@ public enum ErrorCode {
 	DONGCODE_NOT_FOUND(HttpStatus.NOT_FOUND, "D001", "동코드를 찾을 수 없습니다."),
 
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "U001", "인증되지 않은 사용자입니다."),
+	INCOMPLETE_REALTOR(HttpStatus.BAD_REQUEST, "U002", "정보 입력이 필요한 공인중개사입니다."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "C001", "사용자를 찾을 수 없습니다."),
 
 	LIVE_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "L001", "라이브 세션을 찾을 수 없습니다."),
