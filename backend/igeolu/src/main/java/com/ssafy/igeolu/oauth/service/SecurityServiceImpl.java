@@ -65,12 +65,12 @@ public class SecurityServiceImpl implements SecurityService {
 				return existingUser;
 			})
 			.orElseGet(() -> userRepository.save(
-				User.builder()
-					.role(getSignupRole(state))
-					.kakaoId(kakaoId)
-					.username(nickName)
-					.profileFilePath(getSignupRole(state) == Role.ROLE_MEMBER ? "/igeolu-file/member.jpg" : "/igeolu-files/realtor.jpg")
-					.build()
+					User.builder()
+						.role(getSignupRole(state))
+						.kakaoId(kakaoId)
+						.username(nickName)
+						.build()
+
 			));
 	}
 

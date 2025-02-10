@@ -52,4 +52,4 @@ CALL_RECORDING: ENABLED
 
 file:
   upload-dir: "${user.home}/igeolu-file"
-  base-url: "http://localhost:8080/igeolu-file"
+  base-url: "http://localhost:8080/file"

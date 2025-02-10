@@ -48,5 +48,5 @@ openvidu:
   secret: ENC(ETKG8ZovYz+lEMiK+WFfilJ9+JrZK5NO)
 
 file:
-  upload-dir: "/igeolu-file"
+  upload-dir: "/app/igeolu-file" # 절대 경로 사용을 통한 명확한 파일 위치 지정
   base-url: "https://i12d205.p.ssafy.io/file"
