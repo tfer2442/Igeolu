@@ -45,4 +45,8 @@ public class CommonPageRequest {
 	public Pageable toPageableWithSort(Sort sort) {
 		return PageRequest.of(this.page, this.size, sort);
 	}
+
+	public Pageable toPageableOnlyPageAndSize() {
+		return PageRequest.of(this.page, this.size);
+	}
 }
