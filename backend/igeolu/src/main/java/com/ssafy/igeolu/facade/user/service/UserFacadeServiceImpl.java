@@ -68,4 +68,8 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 		return user;
 	}
 
+	@Override
+	public RealtorInfoPostRequestDto getRealtorInfo(Integer userId) {
+		return ;
+	}
 }

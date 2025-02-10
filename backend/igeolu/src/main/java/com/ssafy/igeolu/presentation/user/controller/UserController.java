@@ -2,6 +2,7 @@ package com.ssafy.igeolu.presentation.user.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
+import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.service.UserFacadeService;
 import com.ssafy.igeolu.oauth.util.JWTUtil;
 
@@ -46,6 +48,11 @@ public class UserController {
 		User user = userFacadeService.addInfo(request);
 		setNewAccessTokenCookie(user, httpServletResponse);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{userId}/realtor")
+	public ResponseEntity<RealtorInfoGetResponseDto> getRealtorInfo(@PathVariable Integer userId) {
+		return ResponseEntity.ok(userFacadeService.getRealtorInfo(userId));
 	}
 
 	public void setNewAccessTokenCookie(User user, HttpServletResponse httpServletResponse) {

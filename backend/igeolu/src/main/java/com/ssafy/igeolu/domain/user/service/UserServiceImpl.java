@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
+import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 
@@ -55,6 +56,33 @@ public class UserServiceImpl implements UserService {
 			.build();
 
 		return realtorRepository.save(realtor);
+	}
+
+	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+		Realtor realtor = realtorRepository.findByMember(user)
+			.orElseThrow(() -> new CustomException(ErrorCode.REALTOR_NOT_FOUND));
+
+		return mapToRealtorInfoDto(user, realtor);
+	}
+
+	private RealtorInfoGetResponseDto mapToRealtorInfoDto(User user, Realtor realtor) {
+		return RealtorInfoGetResponseDto.builder()
+			.userId(user.getId())
+			.username(user.getUsername())
+			.profileImage(user.getProfileFilePath())
+			.title(realtor.getTitle())
+			.content(realtor.getContent())
+			.registrationNumber(realtor.getRegistrationNumber())
+			.tel(realtor.getTel())
+			.address(realtor.getAddress())
+			.latitude(realtor.getLatitude())
+			.longitude(realtor.getLongitude())
+			.liveCount(realtor.getLiveCount())
+			.dongCode(realtor.getDongcodes().getDongCode())
+			.build();
 	}
 }
 

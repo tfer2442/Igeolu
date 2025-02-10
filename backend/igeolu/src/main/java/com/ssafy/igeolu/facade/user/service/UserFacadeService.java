@@ -7,5 +7,8 @@ import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
 public interface UserFacadeService {
 	MeGetResponseDto getMe();
 
-  	User addInfo(RealtorInfoPostRequestDto request);
+	RealtorInfoPostRequestDto getRealtorInfo(Integer userId);
+
+	User addInfo(RealtorInfoPostRequestDto request);
+
 }
