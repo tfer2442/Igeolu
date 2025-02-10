@@ -1,16 +1,15 @@
 package com.ssafy.igeolu.domain.user.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
-import com.ssafy.igeolu.domain.user.entity.Role;
+import com.ssafy.igeolu.domain.file.service.FileService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
-import com.ssafy.igeolu.facade.user.service.UserFacadeService;
+import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -18,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
+	public final FileService fileService;
 
 	@Override
 	public User getUserById(Integer id) {
@@ -26,10 +26,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserInfoGetResponseDto getUserInfo(Integer userId) {
+
 		User user = getUserById(userId);
-		return ;
+
+		return UserInfoGetResponseDto.builder()
+			.userId(user.getId())
+			.username(user.getUsername())
+			.role(user.getRole())
+			.imageUrl(user.getProfileFilePath())
+			.build();
+	}
+
+	public void updateUserProfileImage(User user, MultipartFile file) {
+		String newImageUrl = fileService.saveFile(file);
+
+		if (user.getProfileFilePath() != null && !user.getProfileFilePath().startsWith("/igeolu/")) {
+			fileService.deleteFile(user.getProfileFilePath());
+		}
+
+		user.setProfileFilePath(newImageUrl);
 	}
 }
+
 
 
 
