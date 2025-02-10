@@ -69,7 +69,7 @@ public class SecurityServiceImpl implements SecurityService {
 					.role(getSignupRole(state))
 					.kakaoId(kakaoId)
 					.username(nickName)
-					.profileFilePath(getSignupRole(state) == Role.ROLE_MEMBER ? "/igeolu/member" : "/igeolu/realtor")
+					.profileFilePath(getSignupRole(state) == Role.ROLE_MEMBER ? "/igeolu-file/member.jpg" : "/igeolu-files/realtor.jpg")
 					.build()
 			));
 	}

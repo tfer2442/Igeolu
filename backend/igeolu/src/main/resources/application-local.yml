@@ -51,5 +51,5 @@ openvidu:
 CALL_RECORDING: ENABLED
 
 file:
-  upload-dir: "/igeolu-file"
+  upload-dir: "${user.home}/igeolu-file"
   base-url: "http://localhost:8080/igeolu-file"

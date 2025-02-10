@@ -53,15 +53,15 @@ public class User {
 	public String getProfileFilePath() {
 		if(profileFilePath == null || profileFilePath.isEmpty()) {
 			if (this.role == Role.ROLE_MEMBER) {
-				return "/igeolu/member";
+				return "/igeolu-file/member.jpg";
 			}
 
 			if (this.role == Role.ROLE_REALTOR){
-				return "/igeolu/realtor";
+				return "/igeolu-file/realtor.jpg";
 			}
 		}
 
-			return profileFilePath;
+		return profileFilePath;
 		}
 	public void changeRole(Role role) {
 		this.role = role;
