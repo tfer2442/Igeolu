@@ -97,6 +97,8 @@ const Filter = ({
   const handlePriceReset = () => {
     setTempDeposit(null);
     setTempMonthlyRent(null);
+    onPriceChange(null, null);
+    setIsPriceDropdownOpen(false);
   };
 
   const handlePriceApply = () => {
@@ -114,6 +116,8 @@ const Filter = ({
 
   const handleOptionReset = () => {
     setTempOptions([]);
+    onOptionsChange([]);
+    setIsOptionDropdownOpen(false);
   };
 
   const handleOptionApply = () => {
@@ -205,6 +209,7 @@ const Filter = ({
           onMonthlyRentChange={setTempMonthlyRent}
           onApply={handlePriceApply}
           onReset={handlePriceReset}
+          setIsPriceDropdownOpen={setIsPriceDropdownOpen}
         />
 
         <OptionDropdownPanel
@@ -214,6 +219,7 @@ const Filter = ({
           onOptionToggle={handleOptionToggle}
           onApply={handleOptionApply}
           onReset={handleOptionReset}
+          setIsOptionDropdownOpen={setIsOptionDropdownOpen}
         />
       </div>
     </div>
