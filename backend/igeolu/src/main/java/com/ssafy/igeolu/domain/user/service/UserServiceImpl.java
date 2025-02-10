@@ -14,7 +14,6 @@ import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -83,6 +82,7 @@ public class UserServiceImpl implements UserService {
 
 		user.setProfileFilePath(newImageUrl);
 	}
+
 }
 
 
