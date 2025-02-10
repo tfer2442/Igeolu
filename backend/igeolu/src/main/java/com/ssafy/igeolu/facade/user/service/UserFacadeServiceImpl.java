@@ -6,6 +6,7 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
+import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;

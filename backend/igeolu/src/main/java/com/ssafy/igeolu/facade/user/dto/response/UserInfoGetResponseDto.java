@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserInfoGetResponseDto {
 
-	private Integer id;
+	private Integer userId;
 
 	private String username;
 

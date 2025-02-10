@@ -70,8 +70,25 @@ public class SecurityServiceImpl implements SecurityService {
 					.role(desiredRole)
 					.kakaoId(kakaoId)
 					.username(nickName)
+					.profileFilePath(desiredRole == Role.ROLE_MEMBER ? "/igeolu/member" : "/igeolu/realtor")
 					.build()
 			));
+	}
+
+	public User getUserEntity() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null || authentication.getPrincipal() == null
+			|| "anonymousUser".equals(authentication.getPrincipal())) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED);
+		}
+
+		if (authentication.getPrincipal() instanceof CustomOAuth2User principal) {
+			return userRepository.findById(principal.getUserId())
+				.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+		}
+
+		throw new CustomException(ErrorCode.UNAUTHORIZED);
 	}
 
 	/**
