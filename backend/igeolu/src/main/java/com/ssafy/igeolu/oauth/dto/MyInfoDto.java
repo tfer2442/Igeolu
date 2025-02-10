@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.facade.user.dto.response;
+package com.ssafy.igeolu.oauth.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -11,12 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MeGetResponseDto {
+public class MyInfoDto {
 	@Schema(description = "유저 id")
 	private Integer userId;
-
-	@Schema(description = "유저 이름")
-	private String userName;
 
 	@Schema(description = "(ROLE_REALTOR, ROLE_MEMBER)")
 	private String role;

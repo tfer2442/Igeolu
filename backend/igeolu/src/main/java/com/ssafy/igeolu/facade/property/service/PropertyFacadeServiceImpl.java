@@ -12,12 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.file.service.FileService;
+import com.ssafy.igeolu.domain.live.service.LivePropertyService;
 import com.ssafy.igeolu.domain.option.entity.Option;
 import com.ssafy.igeolu.domain.option.repository.OptionRepository;
 import com.ssafy.igeolu.domain.option.service.OptionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.entity.PropertyImage;
-import com.ssafy.igeolu.domain.property.mapper.PropertyMapper;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
 import com.ssafy.igeolu.domain.propertyOption.entity.PropertyOption;
 import com.ssafy.igeolu.domain.propertyOption.service.PropertyOptionService;
@@ -32,6 +32,7 @@ import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
+import com.ssafy.igeolu.facade.property.mapper.PropertyMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.global.util.CoordinateConverter;
@@ -52,6 +53,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	private final FileService fileService;
 	private final PropertyOptionService propertyOptionService;
 	private final SecurityService securityService;
+	private final LivePropertyService livePropertyService;
 
 	@Override
 	public void createProperty(PropertyPostRequestDto request, List<MultipartFile> images) {
@@ -230,7 +232,9 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteProperty(Integer propertyId) {
+		// 삭제할 Property 조회
 		Property property = propertyService.getProperty(propertyId);
 
 		Integer currentUserId = securityService.getCurrentUser().getUserId();
@@ -240,11 +244,18 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			throw new CustomException(ErrorCode.UNAUTHORIZED);
 		}
 
-		// 이미지 파일 삭제
-		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
+		// 이미지 파일의 경로들을 미리 저장 (DB 삭제 후 파일 시스템에서 삭제하기 위함)
+		List<String> filePaths = property.getPropertyImages().stream()
+			.map(PropertyImage::getFilePath)
+			.toList();
 
-		// DB 삭제
+		// DB 상의 연관 LiveProperty 삭제
+		livePropertyService.deleteLivePropertyByPropertyId(propertyId);
+		// DB 상의 Property 삭제
 		propertyService.deleteProperty(propertyId);
+
+		// DB 삭제 후 파일 시스템 상의 이미지 파일 삭제
+		filePaths.forEach(fileService::deleteFile);
 	}
 
 	@Override

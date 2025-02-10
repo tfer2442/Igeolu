@@ -50,4 +50,3 @@ openvidu:
 file:
   upload-dir: "/igeolu-file"
   base-url: "https://i12d205.p.ssafy.io/file"
-
