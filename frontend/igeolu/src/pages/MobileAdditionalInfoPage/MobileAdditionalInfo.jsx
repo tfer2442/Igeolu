@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import './MobileAdditionalInfo.css';
 import AdditionalInfoAPI from '../../services/AdditionalInfoApi';
+import PropTypes from 'prop-types'
 import { 
   Dialog, 
   DialogContent, 
@@ -124,10 +125,20 @@ const MobileAdditionalInfo = () => {
 
   const handleAddressSelect = async (selectedAddress) => {
     try {
-      // Get coordinates for the selected address
-      const coordResponse = await AdditionalInfoAPI.getCoordinates(selectedAddress);
+      const coordResponse = await AdditionalInfoAPI.getCoordinates({
+        admCd: selectedAddress.admCd,
+        rnMgtSn: selectedAddress.rnMgtSn,
+        udrtYn: selectedAddress.udrtYn,
+        buldMnnm: selectedAddress.buldMnnm,
+        buldSlno: selectedAddress.buldSlno
+      });
+  
+      if (!coordResponse?.results?.juso?.[0]) {
+        throw new Error('좌표 정보를 찾을 수 없습니다.');
+      }
+  
       const coords = coordResponse.results.juso[0];
-
+  
       setFormData(prev => ({
         ...prev,
         address: selectedAddress.roadAddrPart1,
@@ -135,12 +146,14 @@ const MobileAdditionalInfo = () => {
         longitude: parseFloat(coords.entY),
         dongcode: selectedAddress.admCd
       }));
-
+  
       setIsAddressDialogOpen(false);
       setAddressKeyword('');
       setAddressResults([]);
+  
     } catch (error) {
       console.error('주소 좌표 변환 실패:', error);
+      alert('주소 좌표 변환에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -294,5 +307,19 @@ const MobileAdditionalInfo = () => {
     </div>
   );
 };
+
+AddressSearchDialog.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onOpenChange: PropTypes.func.isRequired,
+  keyword: PropTypes.string.isRequired,
+  onKeywordChange: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  isSearching: PropTypes.bool.isRequired,
+  results: PropTypes.arrayOf(PropTypes.shape({
+    roadAddrPart1: PropTypes.string.isRequired,
+    jibunAddr: PropTypes.string.isRequired
+  })).isRequired,
+  onSelect: PropTypes.func.isRequired
+}
 
 export default MobileAdditionalInfo;

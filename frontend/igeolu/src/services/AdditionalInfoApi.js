@@ -45,16 +45,22 @@ instance.interceptors.response.use(
 );
 
 const AdditionalInfoAPI = {
-  submitAdditionalInfo: async (additionalInfo) => {
+  submitAdditionalInfo: async (data) => {
     try {
-      const response = await instance.post('/users/me/info', additionalInfo);
-      return response;
+      const response = await axios.post('https://i12d205.p.ssafy.io/api/users/me/info', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          // 오승우 userId 33, role realtor
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg'
+        }
+      });
+      return response.data;
     } catch (error) {
-      console.error('Error submitting additional info:', error);
+      console.error('추가 정보 저장 실패:', error);
       throw error;
     }
   },
-  
+
   searchAddress: async (keyword) => {
     try {
       const params = new URLSearchParams({
@@ -65,35 +71,34 @@ const AdditionalInfoAPI = {
         resultType: 'json'
       });
 
-      const response = await axios.get(
+      const response = await instance.get(
         `https://business.juso.go.kr/addrlink/addrLinkApi.do?${params.toString()}`
       );
       
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error searching address:', error);
       throw error;
     }
   },
   
-  // 좌표변환 API
   getCoordinates: async (address) => {
     try {
-      const response = await axios.get('https://business.juso.go.kr/addrlink/addrCoordApi.do', {
+      const response = await instance.get('https://business.juso.go.kr/addrlink/addrCoordApi.do', {
         params: {
-          confmKey: 'U01TX0FVVEgyMDI1MDIwMzE1MTExNTExNTQ0MDM=', // 실제 발급받은 키로 교체 필요
-          admCd: '', // 행정구역코드
-          rnMgtSn: '', // 도로명코드
-          udrtYn: '', // 지하여부
-          buldMnnm: '', // 건물본번
-          buldSlno: '', // 건물부번
+          confmKey: 'U01TX0FVVEgyMDI1MDIwMzE1MTExNTExNTQ0MDM=',
+          admCd: address.admCd,
+          rnMgtSn: address.rnMgtSn,
+          udrtYn: address.udrtYn,
+          buldMnnm: address.buldMnnm,
+          buldSlno: address.buldSlno,
           resultType: 'json'
         }
       });
       
-      return response.data;
+      return response;
     } catch (error) {
-      console.error('Error getting coordinates:', error);
+      console.error('좌표 변환 에러:', error);
       throw error;
     }
   }
