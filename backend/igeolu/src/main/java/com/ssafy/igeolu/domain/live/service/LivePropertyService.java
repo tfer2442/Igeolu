@@ -12,4 +12,6 @@ public interface LivePropertyService {
 	List<LiveProperty> getLiveProperties(LiveSession liveSession);
 
 	LiveProperty getLiveProperty(Integer livePropertyId);
+
+	void deleteLivePropertyByPropertyId(Integer propertyId);
 }

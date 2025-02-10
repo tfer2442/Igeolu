@@ -40,4 +40,9 @@ public class LivePropertyServiceImpl implements LivePropertyService {
 		return livePropertyRepository.findById(livePropertyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.LIVE_PROPERTY_NOT_FOUND));
 	}
+
+	@Override
+	public void deleteLivePropertyByPropertyId(Integer propertyId) {
+		livePropertyRepository.deleteAllByProperty_Id(propertyId);
+	}
 }
