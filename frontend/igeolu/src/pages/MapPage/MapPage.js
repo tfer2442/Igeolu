@@ -404,23 +404,27 @@ function MapPage() {
 
     // 통합 검색 함수
     const fetchSearchResults = async () => {
-        if (!selectedCity || !selectedDistrict || !selectedNeighborhood) {
-            setSearchResults([]);
-            return;
-        }
-
         try {
             const params = new URLSearchParams();
-            params.append('sidoName', selectedCity);
-            params.append('gugunName', selectedDistrict);
-            params.append('dongName', selectedNeighborhood);
 
+            // 지역 필터가 설정된 경우에만 추가
+            if (selectedCity) params.append('sidoName', selectedCity);
+            if (selectedDistrict) params.append('gugunName', selectedDistrict);
+            if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
+
+            // 가격 필터
             if (deposit) params.append('maxDeposit', deposit);
             if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
 
-            // options를 optionIds로 변경
+            // 옵션 필터
             if (selectedOptions?.length > 0) {
                 params.append('optionIds', selectedOptions.join(','));
+            }
+
+            // 아무 필터도 설정되지 않은 경우 검색하지 않음
+            if (params.toString() === '') {
+                setSearchResults([]);
+                return;
             }
 
             console.log('Search parameters:', Object.fromEntries(params));
