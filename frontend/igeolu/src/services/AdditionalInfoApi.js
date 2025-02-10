@@ -30,6 +30,42 @@ instance.interceptors.request.use(
   }
 );
 
+// 백엔드 API 요청
+const submitInstance = axios.create({
+  baseURL: 'https://i12d205.p.ssafy.io/api',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg'
+  }
+});
+
+submitInstance.interceptors.request.use(
+  (config) => {
+    console.log('📌 [Submit Request]');
+    console.log('➡️ URL:', config.baseURL + config.url);
+    console.log('➡️ Method:', config.method);
+    console.log('➡️ Data:', config.data);
+    return config;
+  },
+  (error) => {
+    console.error('❌ [Submit Request Error]', error);
+    return Promise.reject(error);
+  }
+);
+
+submitInstance.interceptors.response.use(
+  (response) => {
+    console.log('✅ [Submit Response]');
+    console.log('⬅️ Status:', response.status);
+    console.log('⬅️ Data:', response.data);
+    return response.data;
+  },
+  (error) => {
+    console.error('❌ [Submit Response Error]', error.response || error);
+    return Promise.reject(error);
+  }
+);
+
 // 응답 인터셉터
 instance.interceptors.response.use(
   (response) => {
@@ -47,14 +83,8 @@ instance.interceptors.response.use(
 const AdditionalInfoAPI = {
   submitAdditionalInfo: async (data) => {
     try {
-      const response = await axios.post('https://i12d205.p.ssafy.io/api/users/me/info', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          // 오승우 userId 33, role realtor
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg'
-        }
-      });
-      return response.data;
+      const response = await submitInstance.post('/users/me/info', data);
+      return response;
     } catch (error) {
       console.error('추가 정보 저장 실패:', error);
       throw error;

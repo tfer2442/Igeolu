@@ -191,12 +191,10 @@ const MobileAdditionalInfo = () => {
   return (
     <div className="additional-info-container">
       <div className="additional-info-wrapper">
-        <h1 className="form-title">추가 정보 입력</h1>
-
         <form onSubmit={handleSubmit} className="info-form">
           <div className="form-group">
             <label className="form-label">
-              제목
+              중개사무소이름
             </label>
             <input
               type="text"
@@ -204,7 +202,7 @@ const MobileAdditionalInfo = () => {
               value={formData.title}
               onChange={handleInputChange}
               className="form-input"
-              placeholder="매물 제목을 입력하세요"
+              placeholder="이걸루중개사무소"
             />
             {errors.title && (
               <p className="error-message">{errors.title}</p>
@@ -213,14 +211,14 @@ const MobileAdditionalInfo = () => {
 
           <div className="form-group">
             <label className="form-label">
-              내용
+              중개사무소소개
             </label>
             <textarea
               name="content"
               value={formData.content}
               onChange={handleInputChange}
               className="form-textarea"
-              placeholder="매물 상세 설명을 입력하세요"
+              placeholder="중개사무소를 소개해주세요!"
             />
             {errors.content && (
               <p className="error-message">{errors.content}</p>
