@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -66,11 +65,12 @@ public class SecurityServiceImpl implements SecurityService {
 				return existingUser;
 			})
 			.orElseGet(() -> userRepository.save(
-				User.builder()
-					.role(getSignupRole(state))
-					.kakaoId(kakaoId)
-					.username(nickName)
-					.build()
+					User.builder()
+						.role(getSignupRole(state))
+						.kakaoId(kakaoId)
+						.username(nickName)
+						.build()
+
 			));
 	}
 
@@ -84,6 +84,22 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 	}
 
+	public User getUserEntity() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null || authentication.getPrincipal() == null
+			|| "anonymousUser".equals(authentication.getPrincipal())) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED);
+		}
+
+		if (authentication.getPrincipal() instanceof CustomOAuth2User principal) {
+			return userRepository.findById(principal.getUserId())
+				.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+		}
+
+		throw new CustomException(ErrorCode.UNAUTHORIZED);
+	}
+
 	/**
 	 * state 파라미터에 따른 Role을 반환합니다.
 	 *
@@ -91,5 +107,4 @@ public class SecurityServiceImpl implements SecurityService {
 	private Role getSignupRole(String state) {
 		return "member".equals(state) ? Role.ROLE_MEMBER : Role.ROLE_INCOMPLETE_REALTOR;
 	}
-
 }

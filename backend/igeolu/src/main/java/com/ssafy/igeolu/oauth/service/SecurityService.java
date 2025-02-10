@@ -7,4 +7,6 @@ public interface SecurityService {
 	MyInfoDto getCurrentUser();
 
 	User processOAuth2User(String kakaoId, String nickName, String state);
+
+	User getUserEntity();
 }
