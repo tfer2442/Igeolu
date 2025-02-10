@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 	private final UserFacadeService userFacadeService;
 
-	@Operation(summary = "자신 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
+	@Operation(summary = "자신 로그인 정보 조회", description = "로그인한 사용자의 정보를 조회합니다. (프로필 X, 기본정보만)")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
