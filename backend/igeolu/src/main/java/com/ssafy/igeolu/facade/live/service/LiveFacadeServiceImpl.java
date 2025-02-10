@@ -70,10 +70,20 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		// 라이브 세션 등록
 		liveSessionService.registerLiveSession(liveSession);
 
-		List<Property> properties = propertyService.getPropertyListIds(requestDto.getPropertyIds());
+		// 클라이언트가 전달한 propertyId 목록 순서를 가져옵니다.
+		List<Integer> propertyIds = requestDto.getPropertyIds();
+		// propertyId 목록으로 Property 리스트 조회
+		List<Property> properties = propertyService.getPropertyListIds(propertyIds);
 
-		// 라이브 매물에 등록
-		livePropertyService.registerLiveProperties(properties, liveSession);
+		// 조회된 properties를 클라이언트의 propertyIds 순서대로 재정렬합니다.
+		Map<Integer, Property> propertyMap = properties.stream()
+			.collect(Collectors.toMap(Property::getId, Function.identity()));
+		List<Property> orderedProperties = propertyIds.stream()
+			.map(propertyMap::get)
+			.collect(Collectors.toList());
+
+		// 재정렬된 orderedProperties를 라이브 매물로 등록
+		livePropertyService.registerLiveProperties(orderedProperties, liveSession);
 
 		return livePostResponseDto;
 	}
