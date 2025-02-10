@@ -2,6 +2,7 @@ package com.ssafy.igeolu.domain.user.entity;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,7 +51,25 @@ public class User {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
+
+	@Value("${file.base-rul}")
+	private String baseUrl;
+
+	public String getProfileFilePath() {
+		if(profileFilePath == null || profileFilePath.isEmpty()) {
+			if (this.role == Role.ROLE_MEMBER) {
+				return baseUrl + "/member.jpg";
+			}
+
+			if (this.role == Role.ROLE_REALTOR){
+				return baseUrl + "/realtor.jpg";
+			}
+		}
+
+		return profileFilePath;
+		}
 	public void changeRole(Role role) {
 		this.role = role;
 	}
+
 }

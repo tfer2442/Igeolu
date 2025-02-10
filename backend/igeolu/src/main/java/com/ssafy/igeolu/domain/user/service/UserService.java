@@ -1,14 +1,22 @@
 package com.ssafy.igeolu.domain.user.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.math.BigDecimal;
 
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.user.entity.Realtor;
+
 import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 
 public interface UserService {
 
 	User getUserById(Integer id);
+
+	UserInfoGetResponseDto getUserInfo(Integer userId);
+
+	void updateUserProfileImage(User user, MultipartFile file);
 
 	void saveRealtorInfo(Realtor realtor);
 

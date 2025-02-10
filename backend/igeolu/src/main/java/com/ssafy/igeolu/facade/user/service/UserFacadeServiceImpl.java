@@ -3,14 +3,15 @@ package com.ssafy.igeolu.facade.user.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.Role;
-import com.ssafy.igeolu.domain.user.entity.User;
-import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
+import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.service.SecurityService;
@@ -35,6 +36,11 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 			.role(user.getRole().name())
 			.userName(user.getUsername())
 			.build();
+	}
+
+	@Override
+	public UserInfoGetResponseDto getUserInfo(Integer userId) {
+		return userService.getUserInfo(userId);
 	}
 
 	@Transactional
