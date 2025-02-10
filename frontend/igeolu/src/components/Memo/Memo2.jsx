@@ -1,110 +1,106 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './Memo2.css';
-import { BiBold, BiUnderline } from "react-icons/bi";
-import { BsListUl } from "react-icons/bs";
 import axios from 'axios';
 
-function Memo2() {
-    const [inputText, setInputText] = useState('');
-    const [contents, setContents] = useState([]);
-    const [isBold, setIsBold] = useState(false);
-    const [isUnderline, setIsUnderline] = useState(false);
-    const [isList, setIsList] = useState(false);
+function Memo2({ sessionId }) {
+    const [properties, setProperties] = useState([]);
+    const [selectedProperty, setSelectedProperty] = useState(null);
+    const [memoText, setMemoText] = useState('');
+    const [memosByProperty, setMemosByProperty] = useState({});
 
-    // 메모 내용 불러오기
+    // 매물 목록 불러오기
     useEffect(() => {
-        const fetchMemo = async () => {
+        const fetchProperties = async () => {
             try {
-                const response = await axios.get('/api/memos');
-                setContents(response.data.contents);
+                const response = await axios.get(`/api/lives/${sessionId}/properties`);
+                // livePropertyId 기준으로 정렬
+                const sortedProperties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
+                setProperties(sortedProperties);
+                if (sortedProperties.length > 0) {
+                    setSelectedProperty(sortedProperties[0]);  // 첫 번째 매물 자동 선택
+                }
             } catch (error) {
-                console.error('메모 불러오기 실패:', error);
+                console.error('매물 목록 불러오기 실패:', error);
             }
         };
 
-        fetchMemo();
-    }, []);
+        if (sessionId) {
+            fetchProperties();
+        }
+    }, [sessionId]);
 
-    const handleKeyPress = async (e) => {
-        if (e.key === 'Enter') {
-            const newContent = {
-                text: inputText,
-                styles: {
-                    bold: isBold,
-                    underline: isUnderline,
-                    list: isList
+    // 메모 저장 핸들러
+    const handleSaveMemo = async () => {
+        if (!selectedProperty) {
+            alert('매물을 선택해주세요.');
+            return;
+        }
+
+        setMemosByProperty(prev => ({
+            ...prev,
+            [selectedProperty.livePropertyId]: memoText
+        }));
+
+        try {
+            await axios.put(`/api/live-properties/${selectedProperty.livePropertyId}/memo`, {
+                memo: memoText
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
                 }
-            };
-
-            try {
-                // 새로운 메모 내용 저장
-                await axios.post('/api/memos', {
-                    contents: [...contents, newContent]
-                });
-
-                setContents([...contents, newContent]);
-                setInputText('');
-            } catch (error) {
-                console.error('메모 저장 실패:', error);
-            }
+            });
+            console.log('메모가 저장되었습니다.');
+        } catch (error) {
+            console.error('메모 저장 실패:', error);
+            alert('메모 저장에 실패했습니다.');
         }
     };
 
-    const renderContent = (content, index) => {
-        let style = {};
-        if (content.styles.bold) style.fontWeight = 'bold';
-        if (content.styles.underline) style.textDecoration = 'underline';
+    // 매물 선택 변경 핸들러
+    const handlePropertyChange = (e) => {
+        const selectedId = e.target.value;
+        const property = properties.find(p => p.livePropertyId === parseInt(selectedId));
+        setSelectedProperty(property);
         
-        return content.styles.list ? (
-            <li key={index} style={style}>{content.text}</li>
-        ) : (
-            <div key={index} style={style}>{content.text}</div>
-        );
+        setMemoText(memosByProperty[selectedId] || '');
     };
 
     return (
-      <div className='memo-container'>
-        <div className='memo-title'></div>
-        <div className='memo-content'>
-            {isList ? (
-                <ul>
-                    {contents.map((content, index) => renderContent(content, index))}
-                </ul>
-            ) : (
-                contents.map((content, index) => renderContent(content, index))
-            )}
+        <div className='memo-container'>
+            <div className='memo-title'>
+                <select 
+                    value={selectedProperty?.livePropertyId || ''} 
+                    onChange={handlePropertyChange}
+                    className='property-select'
+                >
+                    {properties.map(property => (
+                        <option key={property.livePropertyId} value={property.livePropertyId}>
+                            {property.deposit?.toLocaleString()}/{property.monthlyRent?.toLocaleString()}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className='memo-content'>
+                <textarea
+                    value={memoText}
+                    onChange={(e) => setMemoText(e.target.value)}
+                    placeholder="메모를 입력하세요"
+                    className='memo-textarea'
+                />
+            </div>
+            <div className='memo-footer'>
+                <button onClick={handleSaveMemo} className='save-button'>
+                    저장
+                </button>
+            </div>
         </div>
-        <div className='memo-toolbar'>
-            <button 
-                onClick={() => setIsBold(!isBold)}
-                className={isBold ? 'active' : ''}
-            >
-                <BiBold />
-            </button>
-            <button 
-                onClick={() => setIsUnderline(!isUnderline)}
-                className={isUnderline ? 'active' : ''}
-            >
-                <BiUnderline />
-            </button>
-            <button 
-                onClick={() => setIsList(!isList)}
-                className={isList ? 'active' : ''}
-            >
-                <BsListUl />
-            </button>
-        </div>
-        <div className='memo-input'>
-            <input 
-                type="text" 
-                placeholder="내용을 입력하세요"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={handleKeyPress}
-            />
-        </div>
-      </div>
     );
 }
+
+Memo2.propTypes = {
+    sessionId: PropTypes.string.isRequired
+};
 
 export default Memo2;

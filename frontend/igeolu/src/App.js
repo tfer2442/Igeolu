@@ -10,7 +10,7 @@ import DesktopLive from './pages/DesktopLivePage/DesktopLive';
 import DesktopHome from './pages/DesktopHomePage/DesktopHome';
 import DesktopLogin from './pages/DesktopLoginPage/DesktopLoginPage';
 import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSearchPage'
-
+import DesktopMyPage from './pages/DesktopMyPage/DesktopMyPage';
 // Mobile Pages
 import Make from './pages/MobileLivePage/Make';
 import MobileMainPage from './pages/MobileMainPage/MobileMainPage';
@@ -206,7 +206,7 @@ function App() {
           <Route path='/login' element={<DesktopLogin />} />
           <Route path='/live' element={<DesktopLive />} />
           <Route path="/desktop-room-search" element={<DesktopRoomSearchPage />} />
-
+          <Route path="/desktop-my-page" element={<DesktopMyPage />} />
           {/* Mobile Routes */}
           <Route path='/mobile-login' element={<MobileLoginPage />} />
           <Route path='/make' element={<Make />} />

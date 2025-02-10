@@ -44,6 +44,10 @@
     height: 100%;
     border: 1px solid #01ADFF;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-around;
 }
 .desktop-live-page__right-content {
     width: 30%;
@@ -184,4 +188,61 @@
 .desktop-live-page__toolbar button svg {
     width: 16px;
     height: 16px;
+}
+
+.property-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.property-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.property-list::-webkit-scrollbar-track {
+    background: #e8f7ff;
+    border-radius: 3px;
+}
+
+.property-list::-webkit-scrollbar-thumb {
+    background: #01ADFF;
+    border-radius: 3px;
+}
+
+.property-list::-webkit-scrollbar-thumb:hover {
+    background: #0088cc;
+}
+.desktop-live-page__left-content__bottom-content__live-order-list p{
+    font-size: 24px;
+    font-weight: 600;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+.property-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+.property-price {
+    font-size: 16px !important;
+    font-weight: normal !important;
+    color: #959595;
+    margin-top: 0px !important;
+    margin-left: 0px !important;
+}
+.property-description {
+    font-size: 14px !important;
+    font-weight: normal !important;
+    color: #959595;
+    margin-left: 0px !important;
+    margin-top: 0px !important;
+}
+
+.property-left-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }

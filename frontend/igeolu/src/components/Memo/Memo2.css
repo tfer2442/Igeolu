@@ -1,51 +1,132 @@
+/* Container Layout */
 .memo-container {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 15px;
+}
 
-
-}   
+/* Title Section */
 .memo-title {
     width: 100%;
     height: 10%;
+    margin-bottom: 15px;
     border-bottom: 1px solid #01ADFF;
     border-top-left-radius: 5px;    
     border-top-right-radius: 5px; 
 }
+
+/* Content Section */
 .memo-content {
-    width: 96%;
+    width: 100%;
     height: 70%;
-    overflow-y: auto;
+    flex: 1;
+    margin: 10px 0 15px 0;
+}
+
+
+/* Content Elements */
+.memo-content ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* Input Elements */
+.property-select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #01ADFF;
+    border-radius: 8px;
+    font-size: 15px;
+    color: black;
+    background-color: #fff;
+    cursor: pointer;
+    appearance: none;
+
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2301ADFF'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.property-select:hover {
+    border-color: #0088cc;
+    box-shadow: 0 2px 8px rgba(1, 173, 255, 0.1);
+}
+
+.property-select:focus {
+    outline: none;
+    border-color: #0088cc;
+    box-shadow: 0 2px 8px rgba(1, 173, 255, 0.2);
+}
+
+.property-select option {
+    padding: 10px;
+    font-size: 14px;
+    background-color: white;
+    color: #333;
+}
+
+.memo-textarea {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    border: 2px solid #01ADFF;
+    border-radius: 8px;
+    resize: none;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.memo-textarea:hover {
+    border-color: #0088cc;
+    box-shadow: 0 2px 8px rgba(1, 173, 255, 0.1);
+}
+
+.memo-textarea:focus {
+    outline: none;
+    border-color: #0088cc;
+    box-shadow: 0 2px 8px rgba(1, 173, 255, 0.2);
+}
+
+.memo-textarea::placeholder {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.memo-input {
+    width: 90%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #01ADFF;
+    border-radius: 100px;
+    margin-bottom: 15px;
+}
+
+.memo-input input {
+    width: 100%;
+    height: 80%;
+    border-radius: 50px;
     padding-left: 16px;
-    margin-top: 10px;
+    border: none;
+    outline: none;
 }
 
-.memo-content::-webkit-scrollbar {
-    width: 8px;
+/* Focus States */
+.memo-textarea:focus {
+    outline: none;
+    border-color: #0088cc;
 }
 
-.memo-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.memo-content::-webkit-scrollbar-thumb {
-    background-color: rgba(1, 173, 255, 0.5);  /* #01ADFF with opacity */
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-
-.memo-content::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(1, 173, 255, 0.8);
-}
-
-.memo-content {
-    scrollbar-width: thin;  /* Firefox */
-    scrollbar-color: rgba(1, 173, 255, 0.5) transparent;  /* Firefox */
-}
-
+/* Toolbar Styles */
 .memo-toolbar {
     display: flex;
     gap: 10px;
@@ -54,17 +135,16 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
-    
 }
 
 .memo-toolbar button {
-    padding: 5px 5px;
+    padding: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    border:none;
+    border: none;
     background: none;
 }
 
@@ -76,32 +156,53 @@
     color: #01ADFF;
 }
 
-.memo-content ul {
-    margin: 0;
-    padding-left: 20px;
-}
-
-.memo-input {
-    width: 90%;
-    height: 10%;
-    border: 1px solid #01ADFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100px;
-    margin-bottom: 15px;
-}
-.memo-input input {
-    width: 100%;
-    height: 80%;
-    border-radius: 50px;
-    padding-left: 16px;
-    border: none;
-    outline: none;
-}
-
 .memo-toolbar button svg {
-    font-size: 1.5rem;  /* 아이콘 크기 조절 */
+    font-size: 1.5rem;
+}
+
+/* Footer & Buttons */
+.memo-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.save-button {
+    padding: 8px 20px;
+    background-color: #01ADFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.save-button:hover {
+    background-color: #0088cc;
+}
+
+/* Textarea Scrollbar Styles */
+.memo-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+.memo-textarea::-webkit-scrollbar-track {
+    background: #e8f7ff;
+    border-radius: 3px;
+}
+
+.memo-textarea::-webkit-scrollbar-thumb {
+    background: #01ADFF;
+    border-radius: 3px;
+}
+
+.memo-textarea::-webkit-scrollbar-thumb:hover {
+    background: #0088cc;
+}
+
+/* Firefox Scrollbar */
+.memo-textarea {
+    scrollbar-width: thin;
+    scrollbar-color: #01ADFF #e8f7ff;
 }
 
 
