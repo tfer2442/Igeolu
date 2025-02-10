@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,9 @@ public class LiveProperty {
 	private Integer id;
 
 	private String recordingId;
+
+	@Lob
+	private String memo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "property_id")

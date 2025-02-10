@@ -145,7 +145,8 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 				return LivePropertyMapper.toDto(
 					property,
 					liveProperty.getId(),
-					liveProperty.getRecordingId()
+					liveProperty.getRecordingId(),
+					liveProperty.getMemo()
 				);
 			})
 			.toList();

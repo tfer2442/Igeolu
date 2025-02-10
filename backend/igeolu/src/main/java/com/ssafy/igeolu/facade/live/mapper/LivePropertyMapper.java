@@ -10,10 +10,11 @@ public class LivePropertyMapper {
 	 * Property 엔티티를 LivePropertyGetResponseDto로 변환합니다.
 	 * 추가 값은 매개변수 additionalValue로 전달합니다.
 	 */
-	public static LivePropertyGetResponseDto toDto(Property property, Integer livePropertyId, String recordingId) {
+	public static LivePropertyGetResponseDto toDto(Property property, Integer livePropertyId, String recordingId,
+		String memo) {
 		// 기존 PropertyMapper를 재사용하여 기본 DTO를 생성
 		PropertyGetResponseDto baseDto = PropertyMapper.toDto(property);
 		// 기본 DTO를 기반으로 추가 컬럼을 넣어 Live DTO 생성
-		return LivePropertyGetResponseDto.from(baseDto, livePropertyId, recordingId);
+		return LivePropertyGetResponseDto.from(baseDto, livePropertyId, recordingId, memo);
 	}
 }
