@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.global.exception;
+package com.ssafy.igeolu.global.aop;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ssafy.igeolu.domain.user.entity.Role;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.dto.CustomOAuth2User;
 
 import jakarta.servlet.http.HttpServletRequest;

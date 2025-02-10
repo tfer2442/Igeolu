@@ -37,6 +37,11 @@ public class UserController {
 		return ResponseEntity.ok(userFacadeService.getMe());
 	}
 
+
+	@Operation(summary = "추가 정보 기입", description = "공인중개사의 추가 정보를 기입합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
 	@PostMapping("/me/info")
 	public ResponseEntity<Void> addInfo(@RequestBody RealtorInfoPostRequestDto request, HttpServletResponse httpServletResponse) {
 		User user = userFacadeService.addInfo(request);
