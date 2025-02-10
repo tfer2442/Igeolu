@@ -29,4 +29,6 @@ public interface LiveFacadeService {
 	Recording getRecording(String recordingId);
 
 	void editMemo(Integer livePropertyId, MemoPutRequestDto memoPutRequestDto);
+
+	String getLivePropertySummary(Integer livePropertyId);
 }

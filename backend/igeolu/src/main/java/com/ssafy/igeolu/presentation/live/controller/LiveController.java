@@ -19,6 +19,7 @@ import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
 import com.ssafy.igeolu.facade.live.service.LiveFacadeService;
+import com.ssafy.igeolu.infra.naver.ClovaSpeechClient;
 
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.Recording;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LiveController {
 	private final LiveFacadeService liveFacadeService;
+	private final ClovaSpeechClient clovaSpeechClient;
 	private final OpenVidu openVidu;
 
 	@Operation(summary = "라이브 생성", description = "라이브를 생성합니다.")
@@ -113,5 +115,11 @@ public class LiveController {
 	@GetMapping("/api/recordings/{recordingId}")
 	public ResponseEntity<Recording> getRecording(@PathVariable String recordingId) {
 		return ResponseEntity.ok(liveFacadeService.getRecording(recordingId));
+	}
+
+	@Operation(summary = "라이브 매물 요약", description = "라이브 매물 요약")
+	@PostMapping("/api/live-properties/{livePropertyId}/summary")
+	public ResponseEntity<String> getLivePropertySummary(@PathVariable Integer livePropertyId) {
+		return ResponseEntity.ok(liveFacadeService.getLivePropertySummary(livePropertyId));
 	}
 }

@@ -73,6 +73,12 @@ dependencies {
 
     // elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+    // HTTP 통신 라이브러리
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.2'
+
+    // JSON 직렬화/역직렬화를 위한 Gson
+    implementation 'com.google.code.gson:gson:2.12.1'
 }
 
 tasks.named('test') {
