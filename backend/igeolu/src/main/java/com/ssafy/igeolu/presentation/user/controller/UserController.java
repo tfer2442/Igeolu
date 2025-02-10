@@ -3,6 +3,8 @@ package com.ssafy.igeolu.presentation.user.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
@@ -26,5 +28,15 @@ public class UserController {
 	@GetMapping("/me")
 	public ResponseEntity<MeGetResponseDto> getMe() {
 		return ResponseEntity.ok(userFacadeService.getMe());
+	}
+
+	@Operation(summary = "자신 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/info/{userId}")
+	@ResponseBody
+	public ResponseEntity<UserInfoGetResponseDto> getUserInfo(@RequestParam Integer userId) {
+		return ResponseEntity.ok(userFacadeService.getUserInfo);
 	}
 }
