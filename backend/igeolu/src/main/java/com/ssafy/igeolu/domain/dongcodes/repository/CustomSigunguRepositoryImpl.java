@@ -39,10 +39,11 @@ public class CustomSigunguRepositoryImpl implements CustomSigunguRepository {
 	}
 
 	private Query createSearchQuery(String keyword) {
-		Criteria criteria = new Criteria("sigungu").matches(keyword).boost(2.0f)
-			.or(new Criteria("sigungu.kor").matches(keyword)).boost(1.5f)
-			.or(new Criteria("sigungu.edge").matches(keyword)).boost(1.0f)
-			.or(new Criteria("sigungu.partial").matches(keyword)).boost(0.5f);
+		Criteria criteria = new Criteria("sigungu").matches(keyword).boost(3.0f)
+			.or(new Criteria("sigungu.kor").matches(keyword)).boost(2.5f)
+			.or(new Criteria("sigungu.edge").matches(keyword)).boost(2.0f)
+			.or(new Criteria("sigungu.partial").matches(keyword)).boost(1.5f)
+			.or(new Criteria("sigungu-jaso").matches(keyword)).boost(1.0f);
 
 		return new CriteriaQuery(criteria);
 	}
