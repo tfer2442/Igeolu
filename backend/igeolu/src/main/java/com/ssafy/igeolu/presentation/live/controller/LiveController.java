@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStartPostRequestDto;
+import com.ssafy.igeolu.facade.live.dto.request.LivePropertyStopPostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
+import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
 import com.ssafy.igeolu.facade.live.service.LiveFacadeService;
-import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 
+import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.Recording;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LiveController {
 	private final LiveFacadeService liveFacadeService;
+	private final OpenVidu openVidu;
 
 	@Operation(summary = "라이브 생성", description = "라이브를 생성합니다.")
 	@ApiResponses(value = {
@@ -47,6 +52,31 @@ public class LiveController {
 		return ResponseEntity.ok(liveFacadeService.joinLive(request));
 	}
 
+	@Operation(summary = "라이브 매물 시작", description = "해당 매물 소개를 시작합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+		@ApiResponse(responseCode = "400", description = "라이브 매물을 시작할 수 없습니다.")
+	})
+	@PostMapping("/api/liveProperties/{livePropertyId}/start")
+	public ResponseEntity<Recording> startLiveProperty(@PathVariable Integer livePropertyId,
+		@RequestBody LivePropertyStartPostRequestDto requestDto) {
+
+		return ResponseEntity.ok(liveFacadeService.startLiveProperty(livePropertyId, requestDto));
+	}
+
+	@Operation(summary = "라이브 매물 종료", description = "해당 매물 소개를 종료합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+		// @ApiResponse(responseCode = "400", description = "라이브 매물을 시작할 수 없습니다.")
+	})
+	@PostMapping("/api/liveProperties/{livePropertyId}/stop")
+	public ResponseEntity<String> stopLiveProperty(@PathVariable Integer livePropertyId,
+		@RequestBody LivePropertyStopPostRequestDto requestDto) {
+
+		liveFacadeService.stopLiveProperty(livePropertyId, requestDto);
+		return ResponseEntity.ok().build();
+	}
+
 	@Operation(summary = "내가 본 라이브 목록", description = "내가 본 라이브 목록")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리")
@@ -61,7 +91,13 @@ public class LiveController {
 		@ApiResponse(responseCode = "200", description = "정상 처리")
 	})
 	@GetMapping("/api/lives/{liveId}/properties")
-	public ResponseEntity<List<PropertyGetResponseDto>> getLiveProperties(@PathVariable String liveId) {
+	public ResponseEntity<List<LivePropertyGetResponseDto>> getLiveProperties(@PathVariable String liveId) {
 		return ResponseEntity.ok(liveFacadeService.getProperties(liveId));
+	}
+
+	@Operation(summary = "라이브 매물 녹화 단일 조회", description = "라이브에서 본 매물의 녹화 정보")
+	@GetMapping("/api/recordings/{recordingId}")
+	public ResponseEntity<Recording> getRecording(@PathVariable String recordingId) {
+		return ResponseEntity.ok(liveFacadeService.getRecording(recordingId));
 	}
 }

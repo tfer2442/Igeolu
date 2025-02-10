@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.domain.property.mapper;
+package com.ssafy.igeolu.facade.property.mapper;
 
 import java.util.List;
 
