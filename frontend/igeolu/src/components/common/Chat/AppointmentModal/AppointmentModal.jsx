@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
-import { useAppointment } from '../../../../contexts/AppointmentContext';
 import './AppointmentModal.css';
 
 const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
-  const { addAppointment } = useAppointment();
   const [animationState, setAnimationState] = useState('entering');
   const [formData, setFormData] = useState({
     scheduledAt: '',
@@ -47,7 +45,6 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
       };
 
       console.log('Adding new appointment:', newAppointment);
-      addAppointment(newAppointment);
       handleClose();
     } catch (error) {
       console.error('Failed to create appointment:', error);
