@@ -23,29 +23,44 @@ const Filter = ({
   monthlyRent,
   selectedOptions
 }) => {
-
-  // 필터 드롭다운 상태
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   
+  // 임시 상태 추가
+  const [tempDeposit, setTempDeposit] = useState(deposit);
+  const [tempMonthlyRent, setTempMonthlyRent] = useState(monthlyRent);
+  const [tempOptions, setTempOptions] = useState(selectedOptions);
+  
   const dropdownRef = useRef(null);
 
-  // 외부 클릭 감지
+  // props가 변경될 때 임시 상태 업데이트
+  useEffect(() => {
+    setTempDeposit(deposit);
+    setTempMonthlyRent(monthlyRent);
+  }, [deposit, monthlyRent]);
+
+  useEffect(() => {
+    setTempOptions(selectedOptions);
+  }, [selectedOptions]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsLocationDropdownOpen(false);
         setIsPriceDropdownOpen(false);
         setIsOptionDropdownOpen(false);
+        // 패널이 닫힐 때 임시 상태를 원래대로 복구
+        setTempDeposit(deposit);
+        setTempMonthlyRent(monthlyRent);
+        setTempOptions(selectedOptions);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [deposit, monthlyRent, selectedOptions]);
 
-  // 화면 표시용 문자열 생성 함수들
   const getDisplayLocation = () => {
     if (selectedNeighborhood) return selectedNeighborhood;
     if (selectedDistrict) return selectedDistrict;
@@ -53,7 +68,6 @@ const Filter = ({
     return '지역을 선택하세요';
   };
 
-  // 가격필터 버튼에 보증금/월세 나타냄
   const getDisplayPrice = () => {
     if (!deposit && !monthlyRent) return '보증금/월세';
     
@@ -63,7 +77,6 @@ const Filter = ({
     return `보증금 ${depositText} / 월세 ${monthlyRentText}`;
   };
 
-  // 옵션필터 버튼에 몇개 선택 됬는지 나타냄
   const getDisplayOptions = () => {
     if (!selectedOptions || selectedOptions.length === 0) return '옵션 선택';
     return `${selectedOptions.length}개 선택됨`;
@@ -71,26 +84,30 @@ const Filter = ({
 
   // 가격 필터 핸들러
   const handlePriceReset = () => {
-    onPriceChange(null, null);
+    setTempDeposit(null);
+    setTempMonthlyRent(null);
   };
 
   const handlePriceApply = () => {
+    onPriceChange(tempDeposit, tempMonthlyRent);
     setIsPriceDropdownOpen(false);
   };
 
   // 옵션 필터 핸들러
   const handleOptionToggle = (optionId) => {
-    const newOptions = selectedOptions.includes(optionId)
-      ? selectedOptions.filter(id => id !== optionId)
-      : [...selectedOptions, optionId];
-    onOptionsChange(newOptions);
+    setTempOptions(prev => 
+      prev.includes(optionId)
+        ? prev.filter(id => id !== optionId)
+        : [...prev, optionId]
+    );
   };
 
   const handleOptionReset = () => {
-    onOptionsChange([]);
+    setTempOptions([]);
   };
 
   const handleOptionApply = () => {
+    onOptionsChange(tempOptions);
     setIsOptionDropdownOpen(false);
   };
 
@@ -164,17 +181,17 @@ const Filter = ({
 
         <PriceDropdownPanel
           isOpen={isPriceDropdownOpen}
-          deposit={deposit}
-          monthlyRent={monthlyRent}
-          onDepositChange={(newDeposit) => onPriceChange(newDeposit, monthlyRent)}
-          onMonthlyRentChange={(newMonthlyRent) => onPriceChange(deposit, newMonthlyRent)}
+          deposit={tempDeposit}
+          monthlyRent={tempMonthlyRent}
+          onDepositChange={setTempDeposit}
+          onMonthlyRentChange={setTempMonthlyRent}
           onApply={handlePriceApply}
           onReset={handlePriceReset}
         />
 
         <OptionDropdownPanel
           isOpen={isOptionDropdownOpen}
-          selectedOptions={selectedOptions}
+          selectedOptions={tempOptions}
           onOptionToggle={handleOptionToggle}
           onApply={handleOptionApply}
           onReset={handleOptionReset}

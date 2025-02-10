@@ -104,8 +104,8 @@ function MapPage() {
                 sidoName: selectedCity,
                 gugunName: selectedDistrict,
                 dongName: selectedNeighborhood,
-                deposit: deposit || null,
-                monthlyRent: monthlyRent || null,
+                maxDeposit: deposit || null,
+                maxMonthlyRent: monthlyRent || null,
                 options: selectedOptions?.length > 0 ? selectedOptions : null
             };
 
