@@ -1,0 +1,114 @@
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;  /* 높은 z-index 값으로 수정 */
+    background: transparent;
+  }
+  
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .dialog-container {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+  }
+  
+  .dialog-wrapper {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  
+  .dialog-content {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    background-color: #272626;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  .dialog-header {
+    margin-bottom: 16px;
+  }
+  
+  .dialog-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+  }
+  
+  .dialog-description {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #9CA3AF;
+  }
+  
+  /* 다이얼로그 내부 검색 관련 스타일 */
+  .search-form-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .search-input {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    background-color: #374151;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .search-button {
+    padding: 0 16px;
+    height: 40px;
+    background-color: #01ADFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .search-results {
+    margin-top: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .result-item {
+    width: 100%;
+    padding: 12px;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s;
+  }
+  
+  .result-item:hover {
+    background-color: #374151;
+  }
+  
+  .result-road {
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  
+  .result-jibun {
+    font-size: 12px;
+    color: #9CA3AF;
+  }
