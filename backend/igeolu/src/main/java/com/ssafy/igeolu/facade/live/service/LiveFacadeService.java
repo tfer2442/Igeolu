@@ -30,7 +30,7 @@ public interface LiveFacadeService {
 
 	void editMemo(Integer livePropertyId, MemoPutRequestDto memoPutRequestDto);
 
-	// String getLivePropertySummary(Integer livePropertyId);
-	//
-	// String createLivePropertySummary(String stt);
+	String getLivePropertySummary(Integer livePropertyId);
+
+	String createLivePropertySummary(String stt);
 }

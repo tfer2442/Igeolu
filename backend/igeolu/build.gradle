@@ -6,7 +6,7 @@ plugins {
 }
 
 ext {
-    springAiVersion = "1.0.0-M5"
+    set('springAiVersion', "1.0.0-M5")
 }
 
 sonarqube {
@@ -39,9 +39,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // Spring AI 추가
     implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -52,7 +51,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // Swagger 추가
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.28'
 
     // openvidu 추가
     implementation 'io.openvidu:openvidu-java-client:2.31.0'
@@ -92,7 +92,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:$springAiVersion"
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
     }
 }
 
