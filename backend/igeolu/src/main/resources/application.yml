@@ -22,7 +22,3 @@ springdoc:
   swagger-ui:
     path: /api/swagger-ui.html
 
-file:
-  upload-dir: ${user.home}/igeolu-file
-  base-url: http://localhost:8080/files
-
