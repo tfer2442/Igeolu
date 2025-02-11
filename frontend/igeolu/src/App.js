@@ -33,7 +33,7 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import ChatAPI from './services/chatApi';
+import ChatAPI from './services/ChatAPI';
 import Map from './pages/MapPage/MapPage'
 
 function App() {
@@ -199,6 +199,7 @@ function App() {
           <Route path='/live' element={<DesktopLive />} />
           <Route path="/desktop-room-search" element={<DesktopRoomSearchPage />} />
           <Route path="/map" element={<Map/>}></Route>
+
           <Route path="/desktop-my-page" element={<DesktopMyPage />} />
           {/* Mobile Routes */}
           <Route path='/mobile-login' element={<MobileLoginPage />} />
