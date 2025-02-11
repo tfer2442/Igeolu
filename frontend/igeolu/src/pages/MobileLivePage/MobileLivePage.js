@@ -33,22 +33,59 @@ function MobileLivePage() {
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                const frontCamera = videoDevices.find(device => 
+                
+                console.log('All video devices:', videoDevices);
+                
+                // 먼저 일반적인 키워드로 시도
+                let frontCamera = videoDevices.find(device => 
                     device.label.toLowerCase().includes('front') ||
                     device.label.toLowerCase().includes('전면') ||
                     device.label.toLowerCase().includes('user')
                 );
-                const backCamera = videoDevices.find(device => 
+                let backCamera = videoDevices.find(device => 
                     device.label.toLowerCase().includes('back') ||
                     device.label.toLowerCase().includes('후면') ||
                     device.label.toLowerCase().includes('environment')
                 );
+
+                // 키워드로 찾지 못한 경우, facingMode 제약 조건을 사용하여 재시도
+                if (!frontCamera || !backCamera) {
+                    try {
+                        const frontStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'user' }
+                        });
+                        const frontTrack = frontStream.getVideoTracks()[0];
+                        frontCamera = videoDevices.find(device => device.deviceId === frontTrack.getSettings().deviceId);
+                        frontTrack.stop();
+
+                        const backStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment' }
+                        });
+                        const backTrack = backStream.getVideoTracks()[0];
+                        backCamera = videoDevices.find(device => device.deviceId === backTrack.getSettings().deviceId);
+                        backTrack.stop();
+                    } catch (e) {
+                        console.log('Error trying to identify cameras by facingMode:', e);
+                    }
+                }
+
+                // 여전히 찾지 못한 경우, 첫 번째 카메라를 후면 카메라로 가정
+                if (!backCamera && videoDevices.length > 0) {
+                    backCamera = videoDevices[0];
+                }
+                if (!frontCamera && videoDevices.length > 1) {
+                    frontCamera = videoDevices[1];
+                } else if (!frontCamera && videoDevices.length === 1) {
+                    frontCamera = videoDevices[0];
+                }
                 
+                console.log('Available cameras:');
                 console.log('Front camera:', frontCamera);
                 console.log('Back camera:', backCamera);
+                console.log('Current role:', role);
+                console.log('Selected camera:', role === 'host' ? 'Back camera' : 'Front camera');
                 
                 setDevices(videoDevices);
-                // role이 host인 경우 후면 카메라를, 아닌 경우 전면 카메라를 기본으로 설정
                 if (role === 'host') {
                     setCurrentVideoDevice(backCamera || videoDevices[0]);
                 } else {
@@ -58,6 +95,9 @@ function MobileLivePage() {
                 console.error('Error getting video devices:', error);
             }
         };
+
+        // getVideoDevices 함수 호출 추가
+        getVideoDevices();
 
         const initializeSession = async () => {
             try {
@@ -164,7 +204,7 @@ function MobileLivePage() {
                 }
             }
         };
-    }, [sessionId, token]);
+    }, [sessionId, token, role]);
 
     const toggleMicrophone = () => {
         if (publisher) {

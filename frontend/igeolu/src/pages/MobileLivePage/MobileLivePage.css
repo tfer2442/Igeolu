@@ -199,12 +199,14 @@
 
 .property-info .price {
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 20px !important;
+    color: #FFFFFF !important;
+    margin-bottom: 0px;
 }
 
 .property-info .description {
-    font-size: 12px;
-    color: #E2E1E1;
+    font-size: 12px !important;
+    color: #E2E1E1 !important;
     /* 긴 설명을 위한 처리 */
     overflow: hidden;
     text-overflow: ellipsis;
