@@ -1,25 +1,25 @@
 package com.ssafy.igeolu.facade.user.service;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.igeolu.domain.user.entity.User;
-import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.Role;
+import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoUpdateRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
+import com.ssafy.igeolu.facade.user.mapper.UserMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
-import com.ssafy.igeolu.global.util.CoordinateConverter;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
@@ -89,5 +89,14 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	public void updateRealtorInfo(RealtorInfoUpdateRequestDto requestDto, Integer userId) {
 		User user = userService.getUserById(userId);
 		userService.updateRealtorInfo(user, requestDto);
+	}
+
+	@Override
+	public List<RealtorInfoGetResponseDto> getDongRealtorList(String dongcode) {
+
+		List<Realtor> realtors = userService.getDongRealtorList(dongcode);
+		return realtors.stream()
+			.map(UserMapper::toDto)
+			.collect(Collectors.toList());
 	}
 }

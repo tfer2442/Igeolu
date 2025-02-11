@@ -1,6 +1,7 @@
 package com.ssafy.igeolu.domain.user.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -167,5 +168,10 @@ public class UserServiceImpl implements UserService {
 			requestDto.getX(),
 			dongcodes
 		);
+	}
+
+	@Override
+	public List<Realtor> getDongRealtorList(String dongcode) {
+		return realtorRepository.findByDongcode(dongcode);
 	}
 }
