@@ -51,12 +51,10 @@ function App() {
 
   // === 3. Route Management ===
   const location = useLocation();
+  const isDesktopHomePage = location.pathname === '/';
+  const isDesktopMyPage = location.pathname === '/my-page'
+
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
-  const isMobileMainRoute = location.pathname.startsWith('/mobile-main');
-  const isMobileCalendarRoute =
-    location.pathname.startsWith('/mobile-calendar');
-  const isMobileMyPageRoute = location.pathname.startsWith('/mobile-my-page');
-  const isMobileLiveRoute = location.pathname.startsWith('/mobile-live');
 
   // === 4. User Authentication (Development Mode) ===
   useEffect(() => {
@@ -157,36 +155,31 @@ function App() {
   // === 7. UI Rendering Methods ===
   const renderChatInterface = () => {
     if (
-      isMobileChatRoute ||
-      isMobileMainRoute ||
-      isMobileCalendarRoute ||
-      isMobileMyPageRoute ||
-      isMobileLiveRoute
+      isDesktopHomePage || isDesktopMyPage
     )
+      return (
+        <>
+          <ChatButton onClick={handleToggleChat} />
+          <SlideLayout isOpen={isOpen} onClose={handleClose}>
+            {!selectedRoom ? (
+              <ChatModal
+                chatRooms={chatRooms}
+                onSelectChatRoom={handleSelectRoom}
+                onClose={handleClose}
+                isModalOpen={isOpen}
+                currentUserId={currentUserId}
+              />
+            ) : (
+              <ChatRoom
+                room={selectedRoom}
+                onBack={handleBack}
+                currentUserId={currentUserId}
+              />
+            )}
+          </SlideLayout>
+        </>
+      );
       return null;
-
-    return (
-      <>
-        <ChatButton onClick={handleToggleChat} />
-        <SlideLayout isOpen={isOpen} onClose={handleClose}>
-          {!selectedRoom ? (
-            <ChatModal
-              chatRooms={chatRooms}
-              onSelectChatRoom={handleSelectRoom}
-              onClose={handleClose}
-              isModalOpen={isOpen}
-              currentUserId={currentUserId}
-            />
-          ) : (
-            <ChatRoom
-              room={selectedRoom}
-              onBack={handleBack}
-              currentUserId={currentUserId}
-            />
-          )}
-        </SlideLayout>
-      </>
-    );
   };
 
   // === 8. Main Render ===
