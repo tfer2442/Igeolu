@@ -129,8 +129,8 @@ const ChatModal = ({
   return (
     <div className={`chat-modal ${isModalOpen ? 'active' : ''}`}>
       {/* 📌 모달 헤더 */}
-      <header className='modal-header'>
-        <h1 className='modal-title'>채팅방 목록</h1>
+      <header className='chat-modal-header'>
+        <h1 className='chat-modal-title'>채팅방 목록</h1>
         <button
           className='close-button'
           onClick={onClose}
@@ -141,7 +141,7 @@ const ChatModal = ({
       </header>
 
       {/* 📌 모달 본문 */}
-      <div className='modal-content'>
+      <div className='chat-modal-content'>
         {isLoading ? (
           <div className='loading-state'>로딩 중...</div>
         ) : error ? (
