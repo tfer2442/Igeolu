@@ -1,5 +1,6 @@
 package com.ssafy.igeolu.facade.user.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public UserInfoGetResponseDto getUserInfo(Integer userId) {
 		return userService.getUserInfo(userId);
 	}
@@ -85,17 +87,20 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
 		return userService.getRealtorInfo(userId);
 	}
 
 	@Override
+	@Transactional
 	public void updateRealtorInfo(RealtorInfoUpdateRequestDto requestDto, Integer userId) {
 		User user = userService.getUserById(userId);
 		userService.updateRealtorInfo(user, requestDto);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<RealtorInfoGetResponseDto> getDongRealtorList(String dongcode) {
 		// 1. 동에 해당하는 공인중개사 리스트 조회
 		List<Realtor> realtors = userService.getDongRealtorList(dongcode);
@@ -119,15 +124,36 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 				dto.setRatingAvg(ratingAvgMap.getOrDefault(realtor.getMember().getId(), 0.0));
 				return dto;
 			})
+			.sorted(Comparator.comparing(RealtorInfoGetResponseDto::getRatingAvg).reversed())
 			.toList();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<RealtorInfoGetResponseDto> getRealtorList() {
-
+		// 1. 공인중개사 전체 리스트 조회
 		List<Realtor> realtors = userService.getRealtorList();
+
+		// 2. 공인중개사 별로 member의 id 리스트 추출 (userId)
+		List<Integer> userIds = realtors.stream()
+			.map(realtor -> realtor.getMember().getId())
+			.toList();
+
+		// 3. 해당 id들로 평점 평균 조회
+		List<RatingAvgDto> ratingAvgs = ratingService.getAverageScoreByRealtorIds(userIds);
+
+		// 4. 결과를 Map으로 변환 (key: userId, value: 평균 평점)
+		Map<Integer, Double> ratingAvgMap = ratingAvgs.stream()
+			.collect(Collectors.toMap(RatingAvgDto::getUserId, RatingAvgDto::getAverageScore));
+
+		// 5. Realtor -> DTO 변환 시 평점 평균 정보 세팅
 		return realtors.stream()
-			.map(UserMapper::toDto)
-			.collect(Collectors.toList());
+			.map(realtor -> {
+				RealtorInfoGetResponseDto dto = UserMapper.toDto(realtor);
+				dto.setRatingAvg(ratingAvgMap.getOrDefault(realtor.getMember().getId(), 0.0));
+				return dto;
+			})
+			.sorted(Comparator.comparing(RealtorInfoGetResponseDto::getRatingAvg).reversed())
+			.toList();
 	}
 }
