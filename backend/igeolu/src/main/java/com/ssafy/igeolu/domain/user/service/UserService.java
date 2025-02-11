@@ -26,8 +26,8 @@ public interface UserService {
 		String registrationNumber,
 		String tel,
 		String address,
-		BigDecimal latitude,
-		BigDecimal longitude,
+		String y,
+		String x,
 		User member,
 		Dongcodes dongcodes);
 

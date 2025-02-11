@@ -20,6 +20,7 @@ import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
+import com.ssafy.igeolu.global.util.CoordinateConverter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,10 +51,20 @@ public class UserServiceImpl implements UserService {
 		String registrationNumber,
 		String tel,
 		String address,
-		BigDecimal latitude,
-		BigDecimal longitude,
+		String y,
+		String x,
 		User member,
 		Dongcodes dongcodes) {
+
+		// 좌표 변환
+		double[] latLon = CoordinateConverter.convertToLatLon(
+			Double.parseDouble(x),
+			Double.parseDouble(y)
+		);
+
+		// 타입 변환
+		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
+		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
 
 		Realtor realtor = Realtor.builder()
 			.title(title)
@@ -152,8 +163,8 @@ public class UserServiceImpl implements UserService {
 			requestDto.getRegistrationNumber(),
 			requestDto.getTel(),
 			requestDto.getAddress(),
-			requestDto.getLatitude(),
-			requestDto.getLongitude(),
+			requestDto.getY(),
+			requestDto.getX(),
 			dongcodes
 		);
 	}
