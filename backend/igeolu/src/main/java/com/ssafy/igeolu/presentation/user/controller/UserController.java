@@ -2,9 +2,9 @@ package com.ssafy.igeolu.presentation.user.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +15,7 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
+import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.service.UserFacadeService;
 import com.ssafy.igeolu.oauth.service.SecurityService;
@@ -73,6 +74,15 @@ public class UserController {
 		User user = userFacadeService.addInfo(request);
 		setNewAccessTokenCookie(user, httpServletResponse);
 		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "공인중개사 정보", description = "공인중개사의 정보를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/{userId}/realtor")
+	public ResponseEntity<RealtorInfoGetResponseDto> getRealtorInfo(@PathVariable Integer userId) {
+		return ResponseEntity.ok(userFacadeService.getRealtorInfo(userId));
 	}
 
 	public void setNewAccessTokenCookie(User user, HttpServletResponse httpServletResponse) {

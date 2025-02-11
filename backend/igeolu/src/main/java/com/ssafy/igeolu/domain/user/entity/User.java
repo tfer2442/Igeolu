@@ -39,7 +39,7 @@ public class User {
 
 	private String username;
 
-	@Enumerated(EnumType.STRING) // ROLE_MEMBER, ROLE_REALTOR 로 저장
+	@Enumerated(EnumType.STRING) // ROLE_MEMBER, ROLE_REALTOR, ROLE_INCOMPLETE_USER 로 저장
 	private Role role;
 
 	private String profileFilePath;
