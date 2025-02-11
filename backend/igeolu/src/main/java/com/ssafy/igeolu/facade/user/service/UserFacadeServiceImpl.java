@@ -1,5 +1,7 @@
 package com.ssafy.igeolu.facade.user.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
+import com.ssafy.igeolu.global.util.CoordinateConverter;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
@@ -64,8 +67,8 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 			request.getRegistrationNumber(),
 			request.getTel(),
 			request.getAddress(),
-			request.getLatitude(),
-			request.getLongitude(),
+			request.getY(),
+			request.getX(),
 			user,
 			dongcodes
 		);
