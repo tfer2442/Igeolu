@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { OpenVidu } from 'openvidu-browser';
 import { BsMicFill, BsMicMuteFill, BsCameraVideoFill, BsCameraVideoOffFill, BsStopCircleFill, BsRecordCircleFill } from 'react-icons/bs';
 import { BiExit } from 'react-icons/bi';
-import { MdFlipCameraIos } from 'react-icons/md';
+import { MdFlipCameraIos, MdNavigateNext } from 'react-icons/md';
 import axios from 'axios';
 
 import './MobileLivePage.css';
@@ -19,35 +19,92 @@ function MobileLivePage() {
     const [isCameraOn, setIsCameraOn] = useState(true);
     const [isRecording, setIsRecording] = useState(false);
     const [devices, setDevices] = useState([]);
-    const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
     const [currentSubscriberIndex, setCurrentSubscriberIndex] = useState(0);
     const [liveList, setLiveList] = useState([]);
     const [propertyList, setPropertyList] = useState({});  // liveId를 key로 사용
+    const [currentPropertyIndex, setCurrentPropertyIndex] = useState(0);
+    const [currentLivePropertyId, setCurrentLivePropertyId] = useState(null);
+    const [recordingId, setRecordingId] = useState(null);
+    const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
 
     useEffect(() => {
         const getVideoDevices = async () => {
             try {
-                // 먼저 사용자에게 카메라 권한을 요청
                 await navigator.mediaDevices.getUserMedia({ video: true });
-                
-                // 권한을 받은 후 디바이스 목록을 가져옴
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                console.log('Available video devices:', videoDevices); // 디버깅용
+                
+                console.log('All video devices:', videoDevices);
+                
+                // 먼저 일반적인 키워드로 시도
+                let frontCamera = videoDevices.find(device => 
+                    device.label.toLowerCase().includes('front') ||
+                    device.label.toLowerCase().includes('전면') ||
+                    device.label.toLowerCase().includes('user')
+                );
+                let backCamera = videoDevices.find(device => 
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('후면') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+
+                // 키워드로 찾지 못한 경우, facingMode 제약 조건을 사용하여 재시도
+                if (!frontCamera || !backCamera) {
+                    try {
+                        const frontStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'user' }
+                        });
+                        const frontTrack = frontStream.getVideoTracks()[0];
+                        frontCamera = videoDevices.find(device => device.deviceId === frontTrack.getSettings().deviceId);
+                        frontTrack.stop();
+
+                        const backStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment' }
+                        });
+                        const backTrack = backStream.getVideoTracks()[0];
+                        backCamera = videoDevices.find(device => device.deviceId === backTrack.getSettings().deviceId);
+                        backTrack.stop();
+                    } catch (e) {
+                        console.log('Error trying to identify cameras by facingMode:', e);
+                    }
+                }
+
+                // 여전히 찾지 못한 경우, 첫 번째 카메라를 후면 카메라로 가정
+                if (!backCamera && videoDevices.length > 0) {
+                    backCamera = videoDevices[0];
+                }
+                if (!frontCamera && videoDevices.length > 1) {
+                    frontCamera = videoDevices[1];
+                } else if (!frontCamera && videoDevices.length === 1) {
+                    frontCamera = videoDevices[0];
+                }
+                
+                console.log('Available cameras:');
+                console.log('Front camera:', frontCamera);
+                console.log('Back camera:', backCamera);
+                console.log('Current role:', role);
+                console.log('Selected camera:', role === 'host' ? 'Back camera' : 'Front camera');
                 
                 setDevices(videoDevices);
-                setCurrentVideoDevice(videoDevices[0]);
+                if (role === 'host') {
+                    setCurrentVideoDevice(backCamera || videoDevices[0]);
+                } else {
+                    setCurrentVideoDevice(frontCamera || videoDevices[0]);
+                }
             } catch (error) {
                 console.error('Error getting video devices:', error);
             }
         };
 
+        // getVideoDevices 함수 호출 추가
+        getVideoDevices();
+
         const initializeSession = async () => {
             try {
-                await getVideoDevices(); // getVideoDevices를 먼저 실행
+                // OpenVidu 객체 초기화
+                OV.current = new OpenVidu();
                 const newSession = OV.current.initSession();
-                setSession(newSession);
-
+                
                 newSession.on('streamCreated', (event) => {
                     const subscriber = newSession.subscribe(event.stream, undefined);
                     setSubscribers((subscribers) => [...subscribers, subscriber]);
@@ -59,59 +116,77 @@ function MobileLivePage() {
                     );
                 });
 
-                // 백엔드에서 받은 token을 직접 사용
-                await newSession.connect(token);
-                console.log('Session connected with token:', token);
+                // 연결 시도 전 약간의 지연 추가
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
-                const publisher = await OV.current.initPublisherAsync(undefined, {
-                    audioSource: undefined,
-                    videoSource: undefined,
-                    publishAudio: true,
-                    publishVideo: true,
-                    resolution: '640x480',
-                    frameRate: 30,
-                    insertMode: 'APPEND',
-                    mirror: false,
-                });
+                try {
+                    await newSession.connect(token);
+                    console.log('Session connected with token:', token);
+                    setSession(newSession);
 
-                await newSession.publish(publisher);
-                setPublisher(publisher);
-                console.log('Publisher created:', publisher);
+                    const publisher = await OV.current.initPublisherAsync(undefined, {
+                        audioSource: undefined,
+                        videoSource: undefined,
+                        publishAudio: true,
+                        publishVideo: true,
+                        resolution: '640x480',
+                        frameRate: 30,
+                        insertMode: 'APPEND',
+                        mirror: false,
+                    });
+
+                    await newSession.publish(publisher);
+                    setPublisher(publisher);
+                    console.log('Publisher created:', publisher);
+
+                } catch (connectionError) {
+                    console.error('Connection error:', connectionError);
+                    // 연결 실패 시 세션 정리
+                    if (newSession) {
+                        try {
+                            await newSession.disconnect();
+                        } catch (e) {
+                            console.error('Error disconnecting session:', e);
+                        }
+                    }
+                    throw connectionError;
+                }
 
             } catch (error) {
                 console.error('Error initializing session:', error.message);
                 console.error('Full error:', error);
+               
             }
         };
 
         const fetchLiveList = async () => {
             try {
-                const response = await axios.get('/api/lives', {
+                const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
                     headers: {
                         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
                         'userId': '32'
                     }
                 });
-                console.log('Fetched Live List:', response.data);  // 라이브 목록 로그
-                setLiveList(response.data);
                 
-                // 각 라이브에 대한 매물 정보 가져오기
-                response.data.forEach(async (live) => {
-                    console.log(`Fetching properties for liveId: ${live.liveId}`);  // 각 liveId 로그
-                    const propertyResponse = await axios.get(`/api/lives/${live.liveId}/properties`, {
-                        headers: {
-                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-                            'userId': '32'
-                        }
-                    });
-                    console.log(`Properties for liveId ${live.liveId}:`, propertyResponse.data);  // 매물 정보 로그
-                    setPropertyList(prev => ({
-                        ...prev,
-                        [live.liveId]: propertyResponse.data
-                    }));
+                setLiveList([{ liveId: sessionId }]);
+                
+                const properties = propertyResponse.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
+                console.log('Sorted properties:', properties);
+                
+                setPropertyList({
+                    [sessionId]: properties
                 });
+
+                if (properties && Array.isArray(properties) && properties.length > 0) {
+                    const initialProperty = properties[0];
+                    console.log('Setting initial property:', initialProperty);
+                    setCurrentLivePropertyId(initialProperty.livePropertyId);
+                    console.log('Initial livePropertyId:', initialProperty.livePropertyId);
+                } else {
+                    console.log('No properties found in response');
+                }
             } catch (error) {
-                console.error('Error fetching live list:', error);
+                console.error('Error fetching properties:', error);
             }
         };
 
@@ -122,10 +197,14 @@ function MobileLivePage() {
 
         return () => {
             if (session) {
-                session.disconnect();
+                try {
+                    session.disconnect();
+                } catch (error) {
+                    console.error('Error during cleanup:', error);
+                }
             }
         };
-    }, [sessionId, token]);
+    }, [sessionId, token, role]);
 
     const toggleMicrophone = () => {
         if (publisher) {
@@ -143,19 +222,41 @@ function MobileLivePage() {
 
     const switchCamera = async () => {
         try {
-            if (devices.length < 2) return; // 카메라가 1개 이하면 리턴
+            if (devices.length < 2) return;
 
-            // 현재 카메라의 인덱스 찾기
-            const currentIndex = devices.findIndex(device => device.deviceId === currentVideoDevice.deviceId);
-            // 다음 카메라 선택 (마지막 카메라면 첫 번째 카메라로)
-            const nextDevice = devices[(currentIndex + 1) % devices.length];
-            
+            const currentDevice = currentVideoDevice;
+            let nextDevice;
+
+            const isCurrentFront = currentDevice.label.toLowerCase().includes('front') ||
+                                 currentDevice.label.toLowerCase().includes('전면') ||
+                                 currentDevice.label.toLowerCase().includes('user');
+
+            if (isCurrentFront) {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('후면') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+            } else {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('front') ||
+                    device.label.toLowerCase().includes('전면') ||
+                    device.label.toLowerCase().includes('user')
+                );
+            }
+
+            if (!nextDevice) {
+                const currentIndex = devices.findIndex(device => device.deviceId === currentDevice.deviceId);
+                nextDevice = devices[(currentIndex + 1) % devices.length];
+            }
+
             if (publisher) {
-                // 기존 트랙 정지
-                publisher.stream.getMediaStream().getTracks().forEach(track => track.stop());
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: nextDevice.deviceId } }
+                });
+                const videoTrack = stream.getVideoTracks()[0];
                 
-                // 새로운 비디오 설정으로 스트림 교체
-                await publisher.replaceVideo(nextDevice.deviceId);
+                await publisher.replaceTrack(videoTrack);
                 setCurrentVideoDevice(nextDevice);
             }
         } catch (error) {
@@ -163,9 +264,67 @@ function MobileLivePage() {
         }
     };
 
-    const toggleRecording = () => {
-        // TODO: 녹화 API 구현 후 기능 추가 예정
-        setIsRecording(!isRecording);
+    const toggleRecording = async () => {
+        try {
+            if (!isRecording) {
+                if (currentLivePropertyId) {
+                    console.log('Starting recording for property:', currentLivePropertyId);
+                    console.log('Session ID:', sessionId);
+                    
+                    const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/start`, {
+                        sessionId: sessionId
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+                        }
+                    });
+                    
+                    if (response.data && response.data.id) {
+                        console.log('Recording started successfully. Full response:', response.data);
+                        console.log('Recording ID:', response.data.id);
+                        setRecordingId(response.data.id);
+                    } else {
+                        console.error('Recording start failed - Invalid response format:', response.data);
+                        throw new Error('녹화 시작 응답이 올바르지 않습니다.');
+                    }
+                } else {
+                    console.error('No property selected for recording');
+                    throw new Error('현재 선택된 매물이 없습니다.');
+                }
+            } else {
+                if (!recordingId) {
+                    console.error('No recording ID found for stopping recording');
+                    throw new Error('녹화 ID를 찾을 수 없습니다.');
+                }
+
+                console.log('Stopping recording:', {
+                    sessionId: sessionId,
+                    recordingId: recordingId,
+                    livePropertyId: currentLivePropertyId
+                });
+                
+                const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/stop`, {
+                    sessionId: sessionId,
+                    recordingId: recordingId,
+                    livePropertyId: currentLivePropertyId
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+                    }
+                });
+                
+                console.log('Recording stopped successfully. Response:', response.data);
+                setRecordingId(null);
+            }
+            setIsRecording(!isRecording);
+            console.log('Recording state updated:', !isRecording);
+        } catch (error) {
+            console.error('Error in toggleRecording:', error);
+            console.error('API Error Response:', error.response?.data);
+            alert(error.message || '녹화 기능 실행 중 오류가 발생했습니다.');
+        }
     };
 
     const leaveSession = () => {
@@ -185,6 +344,35 @@ function MobileLivePage() {
         setCurrentSubscriberIndex((prev) => 
             prev === subscribers.length - 1 ? 0 : prev + 1
         );
+    };
+
+    const handleNextProperty = async (liveId) => {
+        const properties = propertyList[liveId]?.sort((a, b) => a.livePropertyId - b.livePropertyId) || [];
+        if (currentPropertyIndex === properties.length - 1) {
+            return;
+        }
+        
+        try {
+            const currentProperty = properties[currentPropertyIndex];
+            await session.signal({
+                data: JSON.stringify({
+                    propertyId: currentProperty.livePropertyId,
+                    completedAt: new Date().toISOString()
+                }),
+                type: 'property-completed'
+            });
+            
+            console.log(`Property ${currentProperty.livePropertyId} marked as completed`);
+            
+            const nextIndex = currentPropertyIndex + 1;
+            setCurrentLivePropertyId(properties[nextIndex].livePropertyId);
+            console.log('Changed to property ID:', properties[nextIndex].livePropertyId);
+            
+            setCurrentPropertyIndex(nextIndex);
+        } catch (error) {
+            console.error('Error sending property completion signal:', error);
+            alert('매물 상태 업데이트 중 오류가 발생했습니다.');
+        }
     };
 
     return (
@@ -243,23 +431,42 @@ function MobileLivePage() {
                         )}
                     </div>
                     <div className="mobile-live-page__right-content__live-list">
-                        {liveList.map((live) => (
-                            <div key={live.liveId} className="live-item">
-                                {propertyList[live.liveId]?.map((property, index) => (
-                                    <div key={property.propertyId} className="property-item">
-                                        <img 
-                                            src={property.images[0]} 
-                                            alt="Property" 
-                                            className="property-image"
-                                        />
-                                        <div className="property-info">
-                                            <p>{property.deposit.toLocaleString()}/{property.monthlyRent.toLocaleString()}</p>
-                                        </div>
-                                    </div>
+                        {liveList.map((live) => {
+                            const sortedProperties = propertyList[live.liveId]
+                                ?.sort((a, b) => a.livePropertyId - b.livePropertyId) || [];
+                            const currentProperty = sortedProperties[currentPropertyIndex];
 
-                                ))}
-                            </div>
-                        ))}
+                            return (
+                                <div key={live.liveId} className="live-item">
+                                    {sortedProperties.length > 0 && (
+                                        <>
+                                            <div className="property-item">
+                                                <img 
+                                                    src={currentProperty.images[0]} 
+                                                    alt="Property" 
+                                                    className="property-image"
+                                                />
+                                                <div className="property-info">
+                                                    <p className="price">
+                                                        {(currentProperty.deposit ?? 0).toLocaleString()}/
+                                                        {(currentProperty.monthlyRent ?? 0).toLocaleString()}
+                                                    </p>
+                                                    <p className="description">
+                                                        {currentProperty.description || "매물 설명이 없습니다."}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                className="property-nav-button"
+                                                onClick={() => handleNextProperty(live.liveId)}
+                                            >
+                                                <MdNavigateNext size={20} />
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="mobile-live-page__right-content__live-option">
                         <div className="toolbar">

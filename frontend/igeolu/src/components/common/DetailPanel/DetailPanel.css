@@ -6,23 +6,23 @@
     border: 1px solid #e1e1e1;
     display: flex;
     flex-direction: column;
-  }
+}
   
-  .detail-panel-header {
+.detail-panel-header {
     padding: 1rem;
     border-bottom: 1px solid #e1e1e1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+}
   
-  .detail-panel-header h3 {
+.detail-panel-header h3 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
-  }
+}
   
-  .close-button {
+.detail-close-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -31,82 +31,82 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-  }
+}
   
-  .close-button:hover {
+.detail-close-button:hover {
     background-color: #f5f5f5;
-  }
+}
   
-  .detail-panel-content {
+.detail-panel-content {
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
-  }
+}
   
-  .detail-panel-section {
+.detail-panel-section {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
+}
   
-  .agent-profile {
+.agent-profile {
     display: flex;
     justify-content: center;
     margin-bottom: 1rem;
-  }
+}
   
-  .agent-image-container {
+.agent-image-container {
     width: 120px;
     height: 120px;
     border-radius: 60px;
     overflow: hidden;
-  }
+}
   
-  .agent-detail-image {
+.agent-detail-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
+}
   
-  .agent-additional-info {
+.agent-additional-info {
     display: flex;
     flex-direction: column;
-  }
+}
   
-  .info-row {
+.info-row {
     margin-bottom: 1rem;
-  }
+}
   
-  .info-row h5 {
+.info-row h5 {
     margin: 0 0 0.5rem 0;
     font-size: 0.9rem;
     color: #666;
-  }
+}
   
-  .info-row p {
+.info-row p {
     margin: 0;
     color: #333;
-  }
+}
   
-  .property-summary {
+.property-summary {
     margin-top: 0.5rem;
     background-color: #f8f9fa;
     padding: 1rem;
     border-radius: 8px;
-  }
+}
   
-  .property-summary h5 {
+.property-summary h5 {
     margin: 0 0 0.8rem 0;
     font-size: 0.9rem;
-  }
+}
   
-  .property-stats {
+.property-stats {
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
-  }
+}
   
-  .property-stat-item {
+.property-stat-item {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -115,15 +115,15 @@
     background-color: white;
     border-radius: 6px;
     border: 1px solid #e1e1e1;
-  }
+}
   
-  .property-type {
+.property-type {
     font-size: 0.8rem;
     color: #666;
-  }
+}
   
-  .property-count {
+.property-count {
     font-weight: 600;
     color: #333;
     margin-top: 0.2rem;
-  }
+}

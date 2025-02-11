@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 import './DesktopMainPageNav.css';
 
 const NAV_ITEMS = [
-  { id: 1, title: '방찾기', path: '/room' },
-  { id: 2, title: '공인중개사', path: '/agent' },
+  { id: 1, title: '방찾기', path: '/map?type=room' },
+  { id: 2, title: '공인중개사', path: '/map?type=agent' },
   { id: 3, title: '라이브', path: '/make' },
 ];
 
@@ -72,7 +72,7 @@ function DesktopMainPageNav() {
 
             {isDropdownOpen && (
               <div className='dropdown-menu'>
-                <Link to='/mypage' onClick={closeDropdown}>
+                <Link to='/desktop-my-page' onClick={closeDropdown}>
                   마이페이지
                 </Link>
                 <button onClick={handleLogoutClick}>로그아웃</button>

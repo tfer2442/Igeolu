@@ -11,7 +11,7 @@ import DesktopLive from './pages/DesktopLivePage/DesktopLive';
 import DesktopHome from './pages/DesktopHomePage/DesktopHome';
 import DesktopLogin from './pages/DesktopLoginPage/DesktopLoginPage';
 import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSearchPage'
-
+import DesktopMyPage from './pages/DesktopMyPage/DesktopMyPage';
 // Mobile Pages
 import Make from './pages/MobileLivePage/Make';
 import MobileMainPage from './pages/MobileMainPage/MobileMainPage';
@@ -33,7 +33,7 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import ChatAPI from './services/ChatApi';
+import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage'
 
 function App() {
@@ -124,7 +124,7 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await ChatAPI.getChatRooms(currentUserId);
+      const response = await ChatApi.getChatRooms(currentUserId);
       setChatRooms(response);
 
 
@@ -193,6 +193,7 @@ function App() {
           <Route path="/desktop-room-search" element={<DesktopRoomSearchPage />} />
           <Route path="/map" element={<Map/>}></Route>
 
+          <Route path="/desktop-my-page" element={<DesktopMyPage />} />
           {/* Mobile Routes */}
           <Route path='/mobile-login' element={<MobileLoginPage />} />
           <Route path='/make' element={<Make />} />

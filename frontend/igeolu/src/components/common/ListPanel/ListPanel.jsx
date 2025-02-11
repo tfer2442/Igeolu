@@ -1,10 +1,9 @@
 
+// ListPanel.jsx
 import React from 'react';
 import './ListPanel.css';
 
-const ListPanel = ({ isVisible, type, onItemClick, items = [] }) => {
-  if (!isVisible) return null;
-
+const ListPanel = ({ type, onItemClick, items = [] }) => {
   const formatPrice = (deposit, monthlyRent) => {
     const depositStr = deposit ? `${deposit.toLocaleString()}만원` : '0만원';
     const monthlyRentStr = monthlyRent ? `${monthlyRent.toLocaleString()}만원` : '0만원';

@@ -59,7 +59,7 @@ const MobileLiveSettingPage = () => {
             
             const response = await api.post('/lives', {
                 propertyIds: selectedProperties.map(prop => prop.propertyId),
-                role: 'host'  // role 유지
+                role: 'host'
             });
             
             console.log('Full response:', response);
@@ -97,7 +97,7 @@ const MobileLiveSettingPage = () => {
                     <div className="mobile-live-setting-page-content-my-estate">
                         <p id="my-estate-title">나의 부동산 매물</p>
                         <div className="mobile-live-setting-page-content-my-estate-list">
-                            {properties.map((property, index) => (
+                            {properties.map((property) => (
                                 <div 
                                     className={`mobile-live-setting-page-content-my-estate-list-item ${
                                         selectedProperties.some(p => p.propertyId === property.propertyId) ? 'selected' : ''
