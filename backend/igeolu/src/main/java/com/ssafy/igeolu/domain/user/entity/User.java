@@ -52,22 +52,6 @@ public class User {
 	private LocalDateTime updatedAt;
 
 
-	@Value("${file.base-rul}")
-	private String baseUrl;
-
-	public String getProfileFilePath() {
-		if(profileFilePath == null || profileFilePath.isEmpty()) {
-			if (this.role == Role.ROLE_MEMBER) {
-				return baseUrl + "/member.jpg";
-			}
-
-			if (this.role == Role.ROLE_REALTOR){
-				return baseUrl + "/realtor.jpg";
-			}
-		}
-
-		return profileFilePath;
-		}
 	public void changeRole(Role role) {
 		this.role = role;
 	}
