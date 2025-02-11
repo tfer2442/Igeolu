@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,8 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	private final UserService userService;
 	private final DongcodesService dongcodesService;
 	private final RatingService ratingService;
+	@Value("${file.base-url}")
+	private String baseUrl;
 
 	@Override
 	@Transactional
@@ -87,12 +90,6 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
-		return userService.getRealtorInfo(userId);
-	}
-
-	@Override
 	@Transactional
 	public void updateRealtorInfo(RealtorInfoUpdateRequestDto requestDto, Integer userId) {
 		User user = userService.getUserById(userId);
@@ -113,6 +110,30 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 		// 전체 공인중개사 리스트 조회
 		List<Realtor> realtors = userService.getRealtorList();
 		return convertToDtoWithRating(realtors);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public RealtorInfoGetResponseDto getRealtorDetail(Integer realtorId) {
+		// 1. realtorId로 공인중개사 엔티티 조회 (userService 혹은 repository를 이용)
+		User realtor = userService.getUserById(realtorId);
+		Realtor realtorInfo = userService.getRealtor(realtor);
+
+		// 2. 회원의 ID를 이용하여 평점 평균 조회
+		// ratingService.getAverageScoreByRealtorIds()는 리스트를 인자로 받으므로, 단일 조회를 위해 단일 요소 리스트로 감싸서 호출
+		List<RatingAvgDto> ratingAvgs = ratingService.getAverageScoreByRealtorIds(List.of(realtor.getId()));
+		Double ratingAvg = ratingAvgs.isEmpty() ? 0.0 : ratingAvgs.get(0).getAverageScore();
+
+		// 3. 조회한 공인중개사 엔티티를 DTO로 변환하고 평점 평균 세팅
+		RealtorInfoGetResponseDto dto = UserMapper.toDto(realtorInfo);
+		dto.setRatingAvg(ratingAvg);
+
+		// 4. 프로필 이미지가 없거나 빈 문자열이면 기본 경로를 설정
+		if (dto.getProfileImage() == null || dto.getProfileImage().trim().isEmpty()) {
+			dto.setProfileImage(getDefaultProfilePath(realtor.getRole()));
+		}
+
+		return dto;
 	}
 
 	/**
@@ -136,9 +157,25 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 			.map(realtor -> {
 				RealtorInfoGetResponseDto dto = UserMapper.toDto(realtor);
 				dto.setRatingAvg(ratingAvgMap.getOrDefault(realtor.getMember().getId(), 0.0));
+
+				// 프로필 이미지가 비어있으면 기본값으로 채움
+				if (dto.getProfileImage() == null || dto.getProfileImage().trim().isEmpty()) {
+					dto.setProfileImage(getDefaultProfilePath(realtor.getMember().getRole()));
+				}
+
 				return dto;
 			})
 			.sorted(Comparator.comparing(RealtorInfoGetResponseDto::getRatingAvg).reversed())
 			.toList();
+	}
+
+	private String getDefaultProfilePath(Role role) {
+		if (role == Role.ROLE_MEMBER) {
+			return baseUrl + "/member.jpg";
+		}
+		if (role == Role.ROLE_REALTOR) {
+			return baseUrl + "/realtor.jpg";
+		}
+		return null;
 	}
 }

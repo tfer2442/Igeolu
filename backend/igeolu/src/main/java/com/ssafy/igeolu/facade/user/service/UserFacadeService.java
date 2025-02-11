@@ -11,9 +11,7 @@ import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 
 public interface UserFacadeService {
 	MeGetResponseDto getMe();
-
-	RealtorInfoGetResponseDto getRealtorInfo(Integer userId);
-
+	
 	User addInfo(RealtorInfoPostRequestDto request);
 
 	UserInfoGetResponseDto getUserInfo(Integer userId);
@@ -23,4 +21,6 @@ public interface UserFacadeService {
 	List<RealtorInfoGetResponseDto> getDongRealtorList(String dongcode);
 
 	List<RealtorInfoGetResponseDto> getRealtorList();
+
+	RealtorInfoGetResponseDto getRealtorDetail(Integer realtorId);
 }
