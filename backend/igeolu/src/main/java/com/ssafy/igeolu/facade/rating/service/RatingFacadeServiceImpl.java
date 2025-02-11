@@ -1,6 +1,7 @@
 package com.ssafy.igeolu.facade.rating.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.igeolu.domain.live.entity.LiveSession;
 import com.ssafy.igeolu.domain.live.service.LiveSessionService;
@@ -9,11 +10,11 @@ import com.ssafy.igeolu.domain.rating.service.RatingService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.rating.dto.request.RatingPostRequestDto;
+import com.ssafy.igeolu.facade.rating.dto.response.RatingEligibilityGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,7 +31,6 @@ public class RatingFacadeServiceImpl implements RatingFacadeService {
 		// 라이브 세션 존재 여부 검증
 		LiveSession liveSession = liveSessionService.getLiveSession(liveId);
 
-		// 현재 고객이 해당 라이브 세션에 참여한 사용자인지 검증 (예: 고객이 맞는지)
 		Integer userId = securityService.getCurrentUser().getUserId();
 		User user = userService.getUserById(userId);
 
@@ -52,5 +52,26 @@ public class RatingFacadeServiceImpl implements RatingFacadeService {
 			.build();
 
 		ratingService.registerRating(rating);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public RatingEligibilityGetResponseDto checkRatingEligibility(String liveId) {
+		// 라이브 세션 존재 여부 검증
+		LiveSession liveSession = liveSessionService.getLiveSession(liveId);
+
+		Integer userId = securityService.getCurrentUser().getUserId();
+		User user = userService.getUserById(userId);
+
+		// 현재 고객이 해당 라이브 세션에 참여한 사용자인지 검증 (예: 고객이 맞는지)
+		if (liveSession.getMember().getId().equals(user.getId())) {
+			return RatingEligibilityGetResponseDto.builder()
+				.eligible(true)
+				.build();
+		}
+
+		return RatingEligibilityGetResponseDto.builder()
+			.eligible(false)
+			.build();
 	}
 }

@@ -36,7 +36,7 @@ public class Rating {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	// 평점 값 (예: 1 ~ 5)
+	// 평점 값 (예: 0 ~ 5)
 	private Float score;
 
 	// 평점을 받은 공인중개사 (라이브 세션으로부터 가져옴)

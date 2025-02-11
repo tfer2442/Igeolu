@@ -96,7 +96,8 @@ public class UserServiceImpl implements UserService {
 			.build();
 	}
 
-	private String getDefaultProfilePath(Role role) {
+	@Override
+	public String getDefaultProfilePath(Role role) {
 		if (role == Role.ROLE_MEMBER) {
 			return baseUrl + "/member.jpg";
 		}
@@ -112,16 +113,16 @@ public class UserServiceImpl implements UserService {
 			.orElseThrow(() -> new CustomException(ErrorCode.REALTOR_NOT_FOUND));
 	}
 
-	@Override
-	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-		Realtor realtor = realtorRepository.findByMember(user)
-			.orElseThrow(() -> new CustomException(ErrorCode.REALTOR_NOT_FOUND));
-
-		return mapToRealtorInfoDto(user, realtor);
-	}
+	// @Override
+	// public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
+	// 	User user = userRepository.findById(userId)
+	// 		.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+	//
+	// 	Realtor realtor = realtorRepository.findByMember(user)
+	// 		.orElseThrow(() -> new CustomException(ErrorCode.REALTOR_NOT_FOUND));
+	//
+	// 	return mapToRealtorInfoDto(user, realtor);
+	// }
 
 	private RealtorInfoGetResponseDto mapToRealtorInfoDto(User user, Realtor realtor) {
 		return RealtorInfoGetResponseDto.builder()

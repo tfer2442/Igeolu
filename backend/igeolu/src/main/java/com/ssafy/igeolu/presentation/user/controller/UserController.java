@@ -50,7 +50,7 @@ public class UserController {
 		return ResponseEntity.ok(userFacadeService.getMe());
 	}
 
-	@Operation(summary = "자신 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
+	@Operation(summary = "유저 정보 조회", description = "사용자의 정보를 조회합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
@@ -80,15 +80,6 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
-	@Operation(summary = "공인중개사 정보", description = "공인중개사의 정보를 조회합니다.")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "정상 처리"),
-	})
-	@GetMapping("/{userId}/realtor")
-	public ResponseEntity<RealtorInfoGetResponseDto> getRealtorInfo(@PathVariable Integer userId) {
-		return ResponseEntity.ok(userFacadeService.getRealtorInfo(userId));
-	}
-
 	@Operation(summary = "공인중개사 정보 수정", description = "공인중개사의 정보를 수정합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
@@ -98,6 +89,33 @@ public class UserController {
 		@RequestBody RealtorInfoUpdateRequestDto requestDto) {
 		userFacadeService.updateRealtorInfo(requestDto, userId);
 		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "동 공인중개사 리스트", description = "동네의 공인중개사의 정보를 반환합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/{dongcode}/realtors")
+	public ResponseEntity<List<RealtorInfoGetResponseDto>> getDongRealtorList(@PathVariable String dongcode) {
+		return ResponseEntity.ok(userFacadeService.getDongRealtorList(dongcode));
+	}
+
+	@Operation(summary = "공인중개사 리스트", description = "공인중개사의 리스트를 반환합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/realtors")
+	public ResponseEntity<List<RealtorInfoGetResponseDto>> getRealtorList() {
+		return ResponseEntity.ok(userFacadeService.getRealtorList());
+	}
+
+	@Operation(summary = "공인중개사 단일 조회", description = "공인중개사의 정보를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/{userId}/realtor")
+	public ResponseEntity<RealtorInfoGetResponseDto> getRealtorInfo(@PathVariable Integer userId) {
+		return ResponseEntity.ok(userFacadeService.getRealtorDetail(userId));
 	}
 
 	public void setNewAccessTokenCookie(User user, HttpServletResponse httpServletResponse) {
@@ -120,27 +138,5 @@ public class UserController {
 		cookie.setHttpOnly(true);
 
 		return cookie;
-	}
-
-	@Operation(summary = "동 공인중개사 리스트", description = "동네의 공인중개사의 정보를 반환합니다.")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "정상 처리"),
-	})
-	@GetMapping("/{dongcode}/realtors")
-	public ResponseEntity<List<RealtorInfoGetResponseDto>> getDongRealtorList(@PathVariable String dongcode) {
-		List<RealtorInfoGetResponseDto> realtors;
-		realtors = userFacadeService.getDongRealtorList(dongcode);
-		return ResponseEntity.ok(realtors);
-	}
-
-	@Operation(summary = "공인중개사 리스트", description = "공인중개사의 리스트를 반환합니다.")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "정상 처리"),
-	})
-	@GetMapping("/realtors")
-	public ResponseEntity<List<RealtorInfoGetResponseDto>> getRealtorList() {
-		List<RealtorInfoGetResponseDto> realtors;
-		realtors = userFacadeService.getRealtorList();
-		return ResponseEntity.ok(realtors);
 	}
 }
