@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import axios from 'axios';
-import DesktopMapPageNav from '../../components/common/DesktopNav/DesktopMapPageNav';
+import DesktopMapPageNav from '../../components/DesktopNav/DesktopMapPageNav';
 import LocationSearch from '../../components/common/LocationSearch/LocationSearch';
 import MenuButtons from '../../components/common/MenuButtons/MenuBottons';
 import Filter from '../../components/common/Filter/Filter';
