@@ -35,7 +35,8 @@ const submitInstance = axios.create({
   baseURL: 'https://i12d205.p.ssafy.io/api',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg'
+    // 최재영 38 ROLE_INCOMPLETE_REALTOR
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM4LCJyb2xlIjoiUk9MRV9JTkNPTVBMRVRFX1JFQUxUT1IiLCJpYXQiOjE3MzkyNDc2NzYsImV4cCI6MTc0MDQ1NzI3Nn0.vjWL_6w0MYPqe6aNMe4NNa4A2-q60uG9MxD1_rYjM4o'
   }
 });
 
