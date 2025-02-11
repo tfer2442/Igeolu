@@ -1,5 +1,6 @@
 // src/pages/MobileAdditionalInfoPage/MobileAdditionalInfo.jsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import './MobileAdditionalInfo.css';
 import AdditionalInfoAPI from '../../services/AdditionalInfoApi';
@@ -87,6 +88,7 @@ const MobileAdditionalInfo = () => {
   const [addressKeyword, setAddressKeyword] = useState('');
   const [addressResults, setAddressResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -142,8 +144,8 @@ const MobileAdditionalInfo = () => {
       setFormData(prev => ({
         ...prev,
         address: selectedAddress.roadAddrPart1,
-        latitude: parseFloat(coords.entX),
-        longitude: parseFloat(coords.entY),
+        latitude: parseFloat(coords.entY),
+        longitude: parseFloat(coords.entX),
         dongcode: selectedAddress.admCd
       }));
   
@@ -177,11 +179,25 @@ const MobileAdditionalInfo = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await AdditionalInfoAPI.submitAdditionalInfo(formData);
+        // API 요청을 위해 formData를 새로운 객체로 변환
+        const apiRequestData = {
+          ...formData,
+          y: formData.latitude,  // latitude를 y로 변환
+          x: formData.longitude, // longitude를 x로 변환
+        };
+        
+        // latitude와 longitude 필드 제거
+        delete apiRequestData.latitude;
+        delete apiRequestData.longitude;
+
+
+        const response = await AdditionalInfoAPI.submitAdditionalInfo(apiRequestData);
         console.log('추가 정보 저장 성공:', response);
+        navigate('/mobile-main'); 
         // 성공 후 처리 (예: 메인 페이지로 리다이렉트)
       } catch (error) {
         console.error('추가 정보 저장 실패:', error);
+        alert('정보 저장에 실패했습니다. 다시 시도해주세요.');
         // 에러 처리 (예: 에러 메시지 표시)
       }
     }
