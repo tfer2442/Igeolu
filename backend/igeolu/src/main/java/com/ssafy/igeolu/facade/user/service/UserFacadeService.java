@@ -21,4 +21,6 @@ public interface UserFacadeService {
 	void updateRealtorInfo(RealtorInfoUpdateRequestDto requestDto, Integer userId);
 
 	List<RealtorInfoGetResponseDto> getDongRealtorList(String dongcode);
+
+	List<RealtorInfoGetResponseDto> getRealtorList();
 }
