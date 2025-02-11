@@ -29,6 +29,7 @@ import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
+import com.ssafy.igeolu.facade.live.dto.response.SummaryPostResponseDto;
 import com.ssafy.igeolu.facade.live.mapper.LivePropertyMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -213,9 +214,18 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public String getLivePropertySummary(Integer livePropertyId) {
+	@Transactional
+	public SummaryPostResponseDto getLivePropertySummary(Integer livePropertyId) {
 		LiveProperty liveProperty = livePropertyService.getLiveProperty(livePropertyId);
+
+		// 요약을 한 적이 있다면, 반환
+		if (liveProperty.getSummary() != null) {
+			return SummaryPostResponseDto.builder()
+				.summary(liveProperty.getSummary())
+				.build();
+		}
+
+		// 요약을 한 적이 없다면, STT + AI 요약 실행
 
 		// 필요에 따라 NestRequestEntity의 옵션을 설정할 수 있습니다.
 		ClovaSpeechClient.NestRequestEntity requestEntity = new ClovaSpeechClient.NestRequestEntity();
@@ -229,13 +239,19 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 		// 예: 콜백 URL이나 기타 옵션 지정
 		// requestEntity.setCallback("https://your-callback-url.com");
-		String result = clovaSpeechClient.url(recording.getUrl(), requestEntity);
+		// STT 실행
+		String stt = clovaSpeechClient.url(recording.getUrl(), requestEntity);
 
-		return result;
+		// 요약 실행
+		String summary = createLivePropertySummary(stt);
+		liveProperty.setSummary(summary);
+
+		return SummaryPostResponseDto.builder()
+			.summary(summary)
+			.build();
 	}
 
-	@Override
-	public String createLivePropertySummary(String stt) {
+	private String createLivePropertySummary(String stt) {
 		try {
 			// 유저 프롬프트 템플릿 로드 및 변수 설정
 			String userPromptTemplate = promptLoader.loadUserPrompt();
@@ -253,9 +269,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 			Message systemMessage = new SystemMessage(systemCommand);
 
 			// AI 모델 호출
-			String response = chatModel.call(userMessage, systemMessage);
-
-			return response;
+			return chatModel.call(userMessage, systemMessage);
 
 		} catch (Exception e) {
 			throw new CustomException(ErrorCode.OPENAI_INTERNAL_SERVER_ERROR);
