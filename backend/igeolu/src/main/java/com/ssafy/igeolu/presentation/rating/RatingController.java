@@ -12,6 +12,7 @@ import com.ssafy.igeolu.facade.rating.service.RatingFacadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,7 +26,7 @@ public class RatingController {
 	})
 	@PostMapping("/api/lives/{liveId}/rating")
 	public ResponseEntity<String> registerRating(@PathVariable String liveId,
-		@RequestBody RatingPostRequestDto ratingPostRequestDto) {
+		@RequestBody @Valid RatingPostRequestDto ratingPostRequestDto) {
 		ratingFacadeService.registerRating(liveId, ratingPostRequestDto);
 
 		return ResponseEntity.ok().build();
