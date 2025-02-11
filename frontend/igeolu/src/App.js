@@ -1,7 +1,9 @@
+
 // src/App.js
 import './styles/global.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import './styles/global.css'
 
 // === 1. Component Imports ===
 // Desktop Pages
@@ -31,7 +33,8 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import ChatAPI from './services/ChatApi'; 
+import ChatAPI from './services/ChatApi';
+import Map from './pages/MapPage/MapPage'
 
 function App() {
   // === 2. State Management ===
@@ -195,6 +198,7 @@ function App() {
           <Route path='/login' element={<DesktopLogin />} />
           <Route path='/live' element={<DesktopLive />} />
           <Route path="/desktop-room-search" element={<DesktopRoomSearchPage />} />
+          <Route path="/map" element={<Map/>}></Route>
 
           {/* Mobile Routes */}
           <Route path='/mobile-login' element={<MobileLoginPage />} />
