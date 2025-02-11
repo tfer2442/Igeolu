@@ -13,6 +13,8 @@ services:
       TZ: Asia/Seoul
     depends_on:
       - mysql  # MySQL이 먼저 실행되도록 설정
+    volumes:
+      - igeolu-files:/app/igeolu-file  # 파일 업로드용 볼륨 추가
   mysql:
     image: mysql:8.0.36
     restart: always
@@ -62,3 +64,4 @@ volumes:
   mongodb_data:
   mongodb_config:
   openvidu_recordings:
+  igeolu-files:

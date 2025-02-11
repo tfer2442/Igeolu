@@ -19,6 +19,8 @@ public interface UserService {
 
 	void updateUserProfileImage(User user, MultipartFile file);
 
+	void deleteUserProfileImage(User user);
+
 	void saveRealtorInfo(Realtor realtor);
 
 	Realtor createNewRealtorInfo(String title,
