@@ -2,23 +2,22 @@ package com.ssafy.igeolu.domain.user.service;
 
 import java.math.BigDecimal;
 
-import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
-import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
-import com.ssafy.igeolu.domain.user.entity.Realtor;
-import com.ssafy.igeolu.domain.user.entity.Role;
-import com.ssafy.igeolu.domain.user.repositoy.RealtorRepository;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
+import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.file.service.FileService;
+import com.ssafy.igeolu.domain.user.entity.Realtor;
+import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.domain.user.repositoy.RealtorRepository;
 import com.ssafy.igeolu.domain.user.repositoy.UserRepository;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoUpdateRequestDto;
-import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
+import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 
@@ -64,7 +63,6 @@ public class UserServiceImpl implements UserService {
 			.address(address)
 			.latitude(latitude)
 			.longitude(longitude)
-			.liveCount(0)
 			.member(member)
 			.dongcodes(dongcodes)
 			.build();
@@ -97,6 +95,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public Realtor getRealtor(User user) {
+		return realtorRepository.findByMember(user)
+			.orElseThrow(() -> new CustomException(ErrorCode.REALTOR_NOT_FOUND));
+	}
+
+	@Override
 	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -123,6 +127,7 @@ public class UserServiceImpl implements UserService {
 			.dongCode(realtor.getDongcodes().getDongCode())
 			.build();
 	}
+
 	public void updateUserProfileImage(User user, MultipartFile file) {
 		String newImageUrl = fileService.saveFile(file);
 
