@@ -140,6 +140,8 @@ function MapPage() {
         if (activeMenu === 'room') {
             fetchSearchResults();
         }
+        // 필터값이 변경될 때마다 DetailPanel 닫기
+        setSelectedItem(null);
     }, [selectedCity, selectedDistrict, selectedNeighborhood, deposit, monthlyRent, selectedOptions, activeMenu]);
 
     const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
