@@ -1,5 +1,7 @@
 package com.ssafy.igeolu.presentation.user.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,7 +95,7 @@ public class UserController {
 	})
 	@PutMapping("/{userId}/realtor")
 	public ResponseEntity<Void> updateRealtorInfo(@PathVariable Integer userId,
-	@RequestBody RealtorInfoUpdateRequestDto requestDto) {
+		@RequestBody RealtorInfoUpdateRequestDto requestDto) {
 		userFacadeService.updateRealtorInfo(requestDto, userId);
 		return ResponseEntity.ok().build();
 	}
@@ -119,5 +120,16 @@ public class UserController {
 		cookie.setHttpOnly(true);
 
 		return cookie;
+	}
+
+	@Operation(summary = "동 공인중개사 리스트", description = "동네의 공인중개사의 정보를 반환합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/{dongcode}/realtor/list")
+	public ResponseEntity<List<RealtorInfoGetResponseDto>> getDongRealtorList(@PathVariable String dongcode) {
+		List<RealtorInfoGetResponseDto> realtors;
+		realtors = userFacadeService.getDongRealtorList(dongcode);
+		return ResponseEntity.ok(realtors);
 	}
 }

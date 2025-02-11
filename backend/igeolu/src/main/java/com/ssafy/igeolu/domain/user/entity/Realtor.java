@@ -61,30 +61,29 @@ public class Realtor {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Dongcodes dongcodes;
 
-  public void update(String title, String content, String registrationNumber,
-      String tel, String address, String y,
-      String x, Dongcodes dongcodes) {
+	public void update(String title, String content, String registrationNumber,
+		String tel, String address, String y,
+		String x, Dongcodes dongcodes) {
 
-    // 좌표 변환
-    double[] latLon = CoordinateConverter.convertToLatLon(
-        Double.parseDouble(x),
-        Double.parseDouble(y)
-    );
+		// 좌표 변환
+		double[] latLon = CoordinateConverter.convertToLatLon(
+			Double.parseDouble(x),
+			Double.parseDouble(y)
+		);
 
-    // 타입 변환
-    BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
-    BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
+		// 타입 변환
+		BigDecimal latitude = BigDecimal.valueOf(latLon[0]);
+		BigDecimal longitude = BigDecimal.valueOf(latLon[1]);
 
-
-    this.title = title;
-    this.content = content;
-    this.registrationNumber = registrationNumber;
-    this.tel = tel;
-    this.address = address;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.dongcodes = dongcodes;
-  }
+		this.title = title;
+		this.content = content;
+		this.registrationNumber = registrationNumber;
+		this.tel = tel;
+		this.address = address;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.dongcodes = dongcodes;
+	}
 
 	public void onLive() {
 		liveCount++;
