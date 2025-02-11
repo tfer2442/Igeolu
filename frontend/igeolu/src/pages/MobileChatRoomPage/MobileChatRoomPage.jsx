@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ChatRoom from '../../components/common/Chat/ChatRoom/ChatRoom';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import chatApi from '../../services/ChatApi';
 import './MobileChatRoomPage.css';
 
@@ -40,14 +41,7 @@ const MobileChatRoom = ({ currentUserId }) => {
     navigate('/mobile-chat');
   };
 
-  if (isLoading)
-    return (
-      <div className='mobile-chat-room-page-container'>
-        <div className='mobile-chat-room'>
-          <div className='loading-message'>로딩 중...</div>
-        </div>
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <div className='error-message'>{error}</div>;
   if (!room) return null;
 
