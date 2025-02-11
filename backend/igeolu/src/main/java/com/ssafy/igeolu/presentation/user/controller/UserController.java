@@ -76,6 +76,10 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(summary = "공인중개사 정보", description = "공인중개사의 정보를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
 	@GetMapping("/{userId}/realtor")
 	public ResponseEntity<RealtorInfoGetResponseDto> getRealtorInfo(@PathVariable Integer userId) {
 		return ResponseEntity.ok(userFacadeService.getRealtorInfo(userId));

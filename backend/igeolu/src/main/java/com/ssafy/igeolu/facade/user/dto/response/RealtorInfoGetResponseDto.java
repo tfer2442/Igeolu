@@ -30,7 +30,7 @@ public class RealtorInfoGetResponseDto {
 	private BigDecimal latitude;
 	private BigDecimal longitude;
 	private int liveCount;
-	private String dongCode;
+	private String dongCode	;
 
 
 }

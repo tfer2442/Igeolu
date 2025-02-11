@@ -11,6 +11,7 @@ import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
+import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -75,7 +76,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	}
 
 	@Override
-	public RealtorInfoPostRequestDto getRealtorInfo(Integer userId) {
-		return ;
+	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
+		return userService.getRealtorInfo(userId);
 	}
 }
