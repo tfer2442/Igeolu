@@ -9,8 +9,8 @@ const DetailPanel = ({ isVisible, onClose, type, data }) => {
         <div className='detail-panel'>
         <div className='detail-panel-header'>
             <h3>{type === 'room' ? '매물 상세정보' : '공인중개사 정보'}</h3>
-            <button className='close-button' onClick={onClose}>
-            <X size={20} />
+            <button className='detail-close-button' onClick={onClose}>
+                <X size={20} />
             </button>
         </div>
         <div className='detail-panel-content'>

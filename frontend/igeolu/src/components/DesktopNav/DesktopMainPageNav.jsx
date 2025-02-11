@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 import './DesktopMainPageNav.css';
 
 const NAV_ITEMS = [
-  { id: 1, title: '방찾기', path: '/room' },
-  { id: 2, title: '공인중개사', path: '/agent' },
+  { id: 1, title: '방찾기', path: '/map?type=room' },
+  { id: 2, title: '공인중개사', path: '/map?type=agent' },
   { id: 3, title: '라이브', path: '/make' },
 ];
 
