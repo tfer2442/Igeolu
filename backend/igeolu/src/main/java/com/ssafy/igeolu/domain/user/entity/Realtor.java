@@ -60,4 +60,17 @@ public class Realtor {
   @ManyToOne(fetch = FetchType.LAZY)
   private Dongcodes dongcodes;
 
+  public void update(String title, String content, String registrationNumber,
+      String tel, String address, BigDecimal latitude,
+      BigDecimal longitude, Dongcodes dongcodes) {
+    this.title = title;
+    this.content = content;
+    this.registrationNumber = registrationNumber;
+    this.tel = tel;
+    this.address = address;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.dongcodes = dongcodes;
+  }
+
 }

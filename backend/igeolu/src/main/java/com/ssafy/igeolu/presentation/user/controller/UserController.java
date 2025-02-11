@@ -4,9 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
+import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoUpdateRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
@@ -83,6 +86,17 @@ public class UserController {
 	@GetMapping("/{userId}/realtor")
 	public ResponseEntity<RealtorInfoGetResponseDto> getRealtorInfo(@PathVariable Integer userId) {
 		return ResponseEntity.ok(userFacadeService.getRealtorInfo(userId));
+	}
+
+	@Operation(summary = "공인중개사 정보 수정", description = "공인중개사의 정보를 수정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@PutMapping("/{userId}/realtor")
+	public ResponseEntity<Void> updateRealtorInfo(@PathVariable Integer userId,
+	@RequestBody RealtorInfoUpdateRequestDto requestDto) {
+		userFacadeService.updateRealtorInfo(requestDto, userId);
+		return ResponseEntity.ok().build();
 	}
 
 	public void setNewAccessTokenCookie(User user, HttpServletResponse httpServletResponse) {
