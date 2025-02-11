@@ -1,6 +1,6 @@
 package com.ssafy.igeolu.domain.user.service;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,5 +36,7 @@ public interface UserService {
 	RealtorInfoGetResponseDto getRealtorInfo(Integer userId);
 
 	void updateRealtorInfo(User user, RealtorInfoUpdateRequestDto requestDto);
+
+	List<Realtor> getDongRealtorList(String dongcode);
 
 }
