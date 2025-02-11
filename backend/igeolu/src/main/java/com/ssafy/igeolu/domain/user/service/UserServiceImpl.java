@@ -5,7 +5,10 @@ import java.math.BigDecimal;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.user.entity.Realtor;
+import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.repositoy.RealtorRepository;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +32,10 @@ public class UserServiceImpl implements UserService {
 	private final RealtorRepository realtorRepository;
 	public final FileService fileService;
 	private final DongcodesService dongcodesService;
+	private final UserService userService;
+
+	@Value("${file.base-url}")
+	private String baseUrl;
 
 	@Override
 	public User getUserById(Integer id) {
@@ -68,15 +75,26 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserInfoGetResponseDto getUserInfo(Integer userId) {
-
-		User user = getUserById(userId);
+		User user = userService.getUserById(userId);
 
 		return UserInfoGetResponseDto.builder()
 			.userId(user.getId())
 			.username(user.getUsername())
 			.role(user.getRole())
-			.imageUrl(user.getProfileFilePath())
+			.imageUrl(user.getProfileFilePath() == null || user.getProfileFilePath().isEmpty()
+				? getDefaultProfilePath(user.getRole())
+				: user.getProfileFilePath())
 			.build();
+	}
+
+	private String getDefaultProfilePath(Role role) {
+		if (role == Role.ROLE_MEMBER) {
+			return baseUrl + "/member.jpg";
+		}
+		if (role == Role.ROLE_REALTOR) {
+			return baseUrl + "/realtor.jpg";
+		}
+		return null;
 	}
 
 	@Override
