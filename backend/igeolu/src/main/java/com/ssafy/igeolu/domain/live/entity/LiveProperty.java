@@ -37,6 +37,9 @@ public class LiveProperty {
 	@Lob
 	private String memo;
 
+	@Lob
+	private String summary;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "property_id")
 	private Property property;
