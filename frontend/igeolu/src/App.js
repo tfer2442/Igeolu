@@ -1,17 +1,17 @@
-
 // src/App.js
 import './styles/global.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import './styles/global.css'
+import './styles/global.css';
 
 // === 1. Component Imports ===
 // Desktop Pages
 import DesktopLive from './pages/DesktopLivePage/DesktopLive';
 import DesktopHome from './pages/DesktopHomePage/DesktopHome';
 import DesktopLogin from './pages/DesktopLoginPage/DesktopLoginPage';
-import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSearchPage'
+import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSearchPage';
 import DesktopMyPage from './pages/DesktopMyPage/DesktopMyPage';
+
 // Mobile Pages
 import Make from './pages/MobileLivePage/Make';
 import MobileMainPage from './pages/MobileMainPage/MobileMainPage';
@@ -21,10 +21,11 @@ import MobileLivePage from './pages/MobileLivePage/MobileLivePage';
 import MobileChatList from './pages/MobileChatListPage/MobileChatListPage';
 import MobileChatRoom from './pages/MobileChatRoomPage/MobileChatRoomPage';
 import MobileLoginPage from './pages/MobileLoginPage/MobileLoginPage';
-import MobileRegisterPage from './pages/MobileRegisterPage/MobileRegisterPage'
-import MobileEditPage from './pages/MobileEditPage/MobileEditPage'
-import MobileEstateList from './pages/MobileEstateList/MobileEstateList'
-import MobileLiveSettingPage from './pages/MobileLiveSettingPage/MobileLiveSettingPage'
+import MobileRegisterPage from './pages/MobileRegisterPage/MobileRegisterPage';
+import MobileEditPage from './pages/MobileEditPage/MobileEditPage';
+import MobileEstateList from './pages/MobileEstateList/MobileEstateList';
+import MobileLiveSettingPage from './pages/MobileLiveSettingPage/MobileLiveSettingPage';
+import MobileAdditionalInfoPage from './pages/MobileAdditionalInfoPage/MobileAdditionalInfo';
 
 // Common Components
 import ChatButton from './components/common/Button/ChatButton/ChatButton';
@@ -34,7 +35,7 @@ import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
 import ChatApi from './services/ChatApi';
-import Map from './pages/MapPage/MapPage'
+import Map from './pages/MapPage/MapPage';
 
 function App() {
   // === 2. State Management ===
@@ -52,7 +53,7 @@ function App() {
   // === 3. Route Management ===
   const location = useLocation();
   const isDesktopHomePage = location.pathname === '/';
-  const isDesktopMyPage = location.pathname === '/my-page'
+  const isDesktopMyPage = location.pathname === '/my-page';
 
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
 
@@ -126,8 +127,6 @@ function App() {
       setError(null);
       const response = await ChatApi.getChatRooms(currentUserId);
       setChatRooms(response);
-
-
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
       console.error('채팅방 목록 조회 실패:', error);
@@ -141,7 +140,6 @@ function App() {
       fetchChatRooms();
     }
   }, [isUserInitialized, fetchChatRooms]);
-  
 
   // === 6. Event Handlers ===
   const handleToggleChat = () => setIsOpen(!isOpen);
@@ -154,9 +152,7 @@ function App() {
 
   // === 7. UI Rendering Methods ===
   const renderChatInterface = () => {
-    if (
-      isDesktopHomePage || isDesktopMyPage
-    )
+    if (isDesktopHomePage || isDesktopMyPage)
       return (
         <>
           <ChatButton onClick={handleToggleChat} />
@@ -179,51 +175,62 @@ function App() {
           </SlideLayout>
         </>
       );
-      return null;
+    return null;
   };
 
   // === 8. Main Render ===
   return (
-      <div className='App'>
-        <Routes>
-          {/* Desktop Routes */}
-          <Route path='/' element={<DesktopHome />} />
-          <Route path='/login' element={<DesktopLogin />} />
-          <Route path='/live' element={<DesktopLive />} />
-          <Route path="/desktop-room-search" element={<DesktopRoomSearchPage />} />
-          <Route path="/map" element={<Map/>}></Route>
+    <div className='App'>
+      <Routes>
+        {/* Desktop Routes */}
+        <Route path='/' element={<DesktopHome />} />
+        <Route path='/login' element={<DesktopLogin />} />
+        <Route path='/live' element={<DesktopLive />} />
+        <Route
+          path='/desktop-room-search'
+          element={<DesktopRoomSearchPage />}
+        />
+        <Route path='/map' element={<Map />}></Route>
+        <Route path='/mypage' element={<DesktopMyPage />} />
 
-          <Route path="/desktop-my-page" element={<DesktopMyPage />} />
-          {/* Mobile Routes */}
-          <Route path='/mobile-login' element={<MobileLoginPage />} />
-          <Route path='/make' element={<Make />} />
-          <Route path='/mobile-main' element={<MobileMainPage />} />
-          <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
-          <Route path='/mobile-my-page' element={<MobileMyPage />} />
-          <Route path='/mobile-live' element={<MobileLivePage />} />
-          <Route path="/mobile-register" element={<MobileRegisterPage />} />
-          <Route path="/mobile-edit" element={<MobileEditPage />} />
-          <Route path="/mobile-estate-list" element={<MobileEstateList />} />
-          <Route path="/mobile-live-setting" element={<MobileLiveSettingPage />} />
-          <Route
-            path='/mobile-chat'
-            element={
-              <MobileChatList
-                chatRooms={chatRooms}
-                isLoading={isLoading}
-                error={error}
-                onRetry={fetchChatRooms}
-                currentUserId={currentUserId}
-              />
-            }
-          />
-          <Route
-            path='/mobile-chat/:roomId'
-            element={<MobileChatRoom currentUserId={currentUserId} />}
-          />
-        </Routes>
-        {!isMobileChatRoute && renderChatInterface()}
-      </div>
+        <Route path='/desktop-my-page' element={<DesktopMyPage />} />
+        {/* Mobile Routes */}
+        <Route path='/mobile-login' element={<MobileLoginPage />} />
+        <Route
+          path='/mobile-additional-info'
+          element={<MobileAdditionalInfoPage />}
+        />
+        <Route path='/make' element={<Make />} />
+        <Route path='/mobile-main' element={<MobileMainPage />} />
+        <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
+        <Route path='/mobile-my-page' element={<MobileMyPage />} />
+        <Route path='/mobile-live' element={<MobileLivePage />} />
+        <Route path='/mobile-register' element={<MobileRegisterPage />} />
+        <Route path='/mobile-edit' element={<MobileEditPage />} />
+        <Route path='/mobile-estate-list' element={<MobileEstateList />} />
+        <Route
+          path='/mobile-live-setting'
+          element={<MobileLiveSettingPage />}
+        />
+        <Route
+          path='/mobile-chat'
+          element={
+            <MobileChatList
+              chatRooms={chatRooms}
+              isLoading={isLoading}
+              error={error}
+              onRetry={fetchChatRooms}
+              currentUserId={currentUserId}
+            />
+          }
+        />
+        <Route
+          path='/mobile-chat/:roomId'
+          element={<MobileChatRoom currentUserId={currentUserId} />}
+        />
+      </Routes>
+      {!isMobileChatRoute && renderChatInterface()}
+    </div>
   );
 }
 

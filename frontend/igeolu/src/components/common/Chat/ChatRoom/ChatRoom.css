@@ -41,7 +41,7 @@
 }
 
 /* 📌 뒤로 가기 버튼 스타일 */
-.back-button {
+.chat-back-button {
   padding: 0.5rem;
   background: none;
   border: none;
@@ -82,7 +82,7 @@
 
 
 /* 📌 입력 영역 컨테이너 */
-.input-wrapper {
+.chat-input-wrapper {
   position: absolute; /* 💡 fixed → absolute */
   bottom: 0;
   left: 0;

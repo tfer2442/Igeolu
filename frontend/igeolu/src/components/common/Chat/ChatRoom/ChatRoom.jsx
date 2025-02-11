@@ -6,6 +6,8 @@ import chatApi from '../../../../services/ChatApi';
 import ChatMessage from '../ChatMessage/ChatMessage';
 import ChatExtras from '../ChatExtras/ChatExtras';
 import './ChatRoom.css';
+import DesktopLoadingSpinner from '../../../LoadingSpinner/DesktopLoadingSpinner';
+import MobileLoadingSpinner from '../../../LoadingSpinner/MobileLoadingSpinner';
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -23,6 +25,8 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
   const [error, setError] = useState(null); // 에러 상태
   const chatSocketRef = useRef(null); // WebSocket 참조
   const messagesEndRef = useRef(null); // 메시지 목록 끝 위치 참조
+
+  const LoadingSpinner = isMobile ? MobileLoadingSpinner : DesktopLoadingSpinner;
 
   /* 📌 추가 기능 토글 */
   const toggleExtras = () => {
@@ -162,7 +166,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
       <header className='chat-room-header'>
         <button
           onClick={onBack}
-          className='back-button'
+          className='chat-back-button'
           aria-label='채팅방 목록으로 돌아가기'
         >
           ←
@@ -171,10 +175,15 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
       </header>
 
       {/* 📌 메시지 목록 */}
-      <div className={`input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
+      <div className={`chat-input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
         <div className='messages-container'>
-          {isLoading ? (
-            <div className='loading-state'>메시지를 불러오는 중...</div>
+        {isLoading ? (
+            <LoadingSpinner 
+              size="medium"
+              fullScreen={false}
+              backgroundColor="transparent"
+              showText={false}
+            />
           ) : error ? (
             <div className='error-state'>
               {error}

@@ -10,6 +10,8 @@ const ChatRoomList = ({ rooms, onSelectRoom, isMobile = false, defaultProfileIma
     console.log('rooms 데이터 확인:', rooms);
   }, [rooms]);
 
+  const noun = isMobile ? " 세입자님" : " 중개인님"
+
   return (
     <ul className={`chat-room-list ${isMobile ? 'mobile' : ''}`}>
       {rooms.map((room) => (
@@ -29,7 +31,7 @@ const ChatRoomList = ({ rooms, onSelectRoom, isMobile = false, defaultProfileIma
 
             <div className='chat-content'>
               <div className='user-name-row'>
-                <span className='user-name'>{room.userName}님</span>
+                <span className='user-name'>{room.userName}{noun}</span>
                 <span className='chat-time'>
                   {formatChatTime(room.updatedAt)}
                 </span>

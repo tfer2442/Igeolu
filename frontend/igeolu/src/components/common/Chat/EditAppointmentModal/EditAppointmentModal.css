@@ -1,7 +1,7 @@
 /* src/components/common/Chat/EditAppointmentModal/EditAppointmentModal.css */
 
 /* 오버레이 스타일 추가 */
-.modal-overlay {
+.appointment-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,11 +13,11 @@
     transition: opacity 0.3s ease;
   }
   
-  .modal-overlay.entering {
+  .appointment-modal-overlay.entering {
     animation: fadeIn 0.3s forwards;
   }
   
-  .modal-overlay.exiting {
+  .appointment-modal-overlay.exiting {
     animation: fadeOut 0.3s forwards;
   }
 

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
     "@stomp/stompjs": "^7.0.0",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
