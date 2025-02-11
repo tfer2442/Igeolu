@@ -132,4 +132,15 @@ public class UserController {
 		realtors = userFacadeService.getDongRealtorList(dongcode);
 		return ResponseEntity.ok(realtors);
 	}
+
+	@Operation(summary = "공인중개사 리스트", description = "공인중개사의 리스트를 반환합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@GetMapping("/realtors")
+	public ResponseEntity<List<RealtorInfoGetResponseDto>> getRealtorList() {
+		List<RealtorInfoGetResponseDto> realtors;
+		realtors = userFacadeService.getRealtorList();
+		return ResponseEntity.ok(realtors);
+	}
 }

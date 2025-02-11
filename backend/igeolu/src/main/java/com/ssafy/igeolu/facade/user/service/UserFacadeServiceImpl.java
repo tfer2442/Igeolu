@@ -99,4 +99,13 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 			.map(UserMapper::toDto)
 			.collect(Collectors.toList());
 	}
+
+	@Override
+	public List<RealtorInfoGetResponseDto> getRealtorList() {
+
+		List<Realtor> realtors = userService.getRealtorList();
+		return realtors.stream()
+			.map(UserMapper::toDto)
+			.collect(Collectors.toList());
+	}
 }
