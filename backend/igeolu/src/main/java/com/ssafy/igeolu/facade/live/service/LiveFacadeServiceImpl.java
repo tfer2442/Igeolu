@@ -111,7 +111,10 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		User user = userService.getUserById(userId);
 
 		LiveSession liveSession = liveSessionService.getLiveSession(requestDto.getSessionId());
-		liveSession.setMember(user);
+
+		if (liveSession.getMember() == null) {
+			liveSession.setMember(user);
+		}
 
 		return createMemberToken(requestDto.getSessionId());
 	}

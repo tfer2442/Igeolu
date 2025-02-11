@@ -21,6 +21,7 @@ public enum ErrorCode {
 	LIVE_PROPERTY_BAD_REQUEST(HttpStatus.BAD_REQUEST, "L003", "라이브 매물 관련 요청이 올바르지 않습니다."),
 	LIVE_PROPERTY_NOT_FOUND(HttpStatus.NOT_FOUND, "L004", "라이브 매물을 찾을 수 없습니다."),
 	RECORDING_NOT_FOUND(HttpStatus.NOT_FOUND, "L005", "녹화를 찾을 수 없습니다."),
+	RATING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "L006", "평점을 매길 수 없습니다."),
 
 	OPENAI_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "O001", "OpenAI 프롬프트를 로드 할 수 없습니다."),
 

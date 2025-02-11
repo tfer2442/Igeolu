@@ -37,7 +37,7 @@ public class Rating {
 	private Integer id;
 
 	// 평점 값 (예: 1 ~ 5)
-	private Integer score;
+	private Float score;
 
 	// 평점을 받은 공인중개사 (라이브 세션으로부터 가져옴)
 	@ManyToOne(fetch = FetchType.LAZY)
