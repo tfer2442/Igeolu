@@ -1,5 +1,8 @@
 package com.ssafy.igeolu.oauth.resolver;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
@@ -38,8 +41,15 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 			role = "member"; // 기본값
 		}
 
+		// 기존 추가 파라미터 복사
+		Map<String, Object> additionalParameters = new HashMap<>(request.getAdditionalParameters());
+		// 강제 재로그인을 위해 prompt=login 추가
+		additionalParameters.put("prompt", "login");
+
+		// OAuth2AuthorizationRequest 빌더에 state와 추가 파라미터를 적용하여 재빌드
 		return OAuth2AuthorizationRequest.from(request)
 			.state(role)
+			.additionalParameters(additionalParameters)
 			.build();
 	}
 }
