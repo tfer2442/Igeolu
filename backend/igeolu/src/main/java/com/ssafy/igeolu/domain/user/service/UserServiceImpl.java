@@ -141,14 +141,32 @@ public class UserServiceImpl implements UserService {
 			.build();
 	}
 
+	@Transactional
 	public void updateUserProfileImage(User user, MultipartFile file) {
+		// 1. 기존 파일 경로 저장
+		String oldFilePath = user.getProfileFilePath();
+
+		// 2. 새 파일 저장
 		String newImageUrl = fileService.saveFile(file);
 
+		// 3. 새 경로로 업데이트
+		user.setProfileFilePath(newImageUrl);
+
+		// 4. 기존 파일 삭제 (기본 이미지가 아닌 경우만)
+		if (oldFilePath != null && !oldFilePath.startsWith("/igeolu/")) {
+			fileService.deleteFile(oldFilePath);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void deleteUserProfileImage(User user) {
+		// 기존 파일이 있고 기본 이미지가 아닌 경우 삭제
 		if (user.getProfileFilePath() != null && !user.getProfileFilePath().startsWith("/igeolu/")) {
 			fileService.deleteFile(user.getProfileFilePath());
 		}
-
-		user.setProfileFilePath(newImageUrl);
+		// 프로필 경로를 null로 설정하면 기본 이미지가 사용됨
+		user.setProfileFilePath(null);
 	}
 
 	@Override

@@ -2,7 +2,9 @@ package com.ssafy.igeolu.presentation.user.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,11 +62,26 @@ public class UserController {
 		return ResponseEntity.ok(userFacadeService.getUserInfo(userId));
 	}
 
-	@PostMapping("/me/profile")
+	@Operation(summary = "프로필 이미지 업데이트", description = "사용자의 프로필 이미지를 업데이트합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "프로필 이미지 업데이트 성공")
+	})
+	@PutMapping(value = "me/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<UserInfoGetResponseDto> updateProfileImage(
 		@RequestParam("file") MultipartFile file) {
 		User currentUser = securityService.getUserEntity();
 		userService.updateUserProfileImage(currentUser, file);
+		return ResponseEntity.ok(userService.getUserInfo(currentUser.getId()));
+	}
+
+	@Operation(summary = "프로필 이미지 삭제", description = "사용자의 프로필 이미지를 삭제하고 디폴트 이미지로 변경.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "프로필 이미지 업데이트 성공")
+	})
+	@DeleteMapping("me/profile")
+	public ResponseEntity<UserInfoGetResponseDto> deleteProfileImage() {
+		User currentUser = securityService.getUserEntity();
+		userService.deleteUserProfileImage(currentUser);
 		return ResponseEntity.ok(userService.getUserInfo(currentUser.getId()));
 	}
 
