@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final RealtorRepository realtorRepository;
-	public final FileService fileService;
+	private final FileService fileService;
 	private final DongcodesService dongcodesService;
 
 	@Value("${file.base-url}")
@@ -153,8 +153,3 @@ public class UserServiceImpl implements UserService {
 		);
 	}
 }
-
-
-
-
-
