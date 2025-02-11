@@ -126,7 +126,7 @@ public class UserController {
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
-	@GetMapping("/{dongcode}/realtor/list")
+	@GetMapping("/{dongcode}/realtors")
 	public ResponseEntity<List<RealtorInfoGetResponseDto>> getDongRealtorList(@PathVariable String dongcode) {
 		List<RealtorInfoGetResponseDto> realtors;
 		realtors = userFacadeService.getDongRealtorList(dongcode);
