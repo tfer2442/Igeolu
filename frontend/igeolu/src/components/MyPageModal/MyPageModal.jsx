@@ -1,66 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import PropTypes from 'prop-types';
 import './MyPageModal.css';
+import LiveControllerApi from '../../services/LiveControllerApi';
 
-const MyPageModal = ({ onClose }) => {
-  const [mainImage, setMainImage] = useState('house1');
-  const thumbnails = ['house1', 'house2', 'house3'];
+const MyPageModal = ({ property, onClose }) => {
+  const [summary, setSummary] = useState('');
+  const [recordingInfo, setRecordingInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('summary'); // 'summary' or 'memo'
 
-  const handleThumbnailClick = (image) => {
-    setMainImage(image);
-  };
+  useEffect(() => {
+    const fetchPropertyDetails = async () => {
+      try {
+        setIsLoading(true);
+        if (property.livePropertyId) {
+          const summaryResponse = await LiveControllerApi.getLivePropertySummary(
+            property.livePropertyId
+          );
+          setSummary(summaryResponse['summary']);
+        }
+        
+        if (property.recordingId) {
+          const recordingResponse = await LiveControllerApi.getRecordingInfo(
+            property.recordingId
+          );
+          setRecordingInfo(recordingResponse);
+        }
+      } catch (error) {
+        console.error('Error fetching property details:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (property) {
+      fetchPropertyDetails();
+    }
+  }, [property]);
+
+  if (isLoading) {
+    return (
+      <div className="modal-overlay">
+        <div className="modal-container">
+          <div className="loading">로딩중...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="mypage-modal-overlay">
-      <div className="mypage-modal-container">
-        <button onClick={onClose} className="mypage-modal-close">
-          <X className="close-icon" />
-        </button>
-
-        <div className="mypage-modal-header">
-          <h2>남정옷통비앤제</h2>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <div className="modal-header">
+          <h2>{property.description}</h2>
+          <button onClick={onClose} className="close-button">
+            <X size={24} />
+          </button>
         </div>
 
-        <div className="mypage-modal-content">
-          <div className="content-wrapper">
-            <div className="main-content">
-              <div className="main-image-container">
-                <img 
-                  src={`/src/assets/images/${mainImage}.jpg`}
-                  alt="Property view"
-                  className="main-image"
-                />
-                <div className="play-button-overlay">
+        <div className="modal-content">
+          <div className="content-main">
+            <div className="video-container">
+              {recordingInfo?.url ? (
+                <div className="video-wrapper">
+                  {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                  <video src={recordingInfo.url} controls />
+                </div>
+              ) : (
+                <div className="video-placeholder">
                   <div className="play-button">
                     <div className="play-icon" />
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-
-            <div className="thumbnails-container">
-              {thumbnails.map((image, index) => (
-                <div 
-                  key={index}
-                  className={`thumbnail ${mainImage === image ? 'active' : ''}`}
-                  onClick={() => handleThumbnailClick(image)}
-                >
-                  <img 
-                    src={`/src/assets/images/${image}.jpg`}
-                    alt={`Thumbnail ${index + 1}`}
-                  />
+            
+            <div className="thumbnails">
+              {property.images.map((image, index) => (
+                <div key={index} className="thumbnail">
+                  <img src={image} alt={`Property view ${index + 1}`} />
                 </div>
               ))}
             </div>
           </div>
-          
-          <div className="description-container">
-            <h3>물성보수 메모</h3>
-            <p>
-              구내 공사 평수에 있어서는 산업정보가 중요기 거부 거절한 정허입니다.
-              오늘도 좋아라며 분야된 홍마금.
-            </p>
+
+          <div className="content-info">
+            <div className="tabs">
+              <button 
+                className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
+                onClick={() => setActiveTab('summary')}
+              >
+                음성요약
+              </button>
+              <button 
+                className={`tab ${activeTab === 'memo' ? 'active' : ''}`}
+                onClick={() => setActiveTab('memo')}
+              >
+                메모
+              </button>
+            </div>
+
+            <div className="tab-content">
+              {activeTab === 'summary' ? (
+                <div className="summary-content">
+                  {summary || '요약 정보가 없습니다.'}
+                </div>
+              ) : (
+                <div className="memo-content">
+                  {property.memo || '메모가 없습니다.'}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -69,6 +120,13 @@ const MyPageModal = ({ onClose }) => {
 };
 
 MyPageModal.propTypes = {
+  property: PropTypes.shape({
+    description: PropTypes.string,
+    images: PropTypes.arrayOf(PropTypes.string),
+    livePropertyId: PropTypes.number,
+    recordingId: PropTypes.string,
+    memo: PropTypes.string,
+  }).isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
