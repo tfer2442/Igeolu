@@ -48,7 +48,12 @@ function MobileLivePage() {
                 console.log('Back camera:', backCamera);
                 
                 setDevices(videoDevices);
-                setCurrentVideoDevice(frontCamera || videoDevices[0]);
+                // role이 host인 경우 후면 카메라를, 아닌 경우 전면 카메라를 기본으로 설정
+                if (role === 'host') {
+                    setCurrentVideoDevice(backCamera || videoDevices[0]);
+                } else {
+                    setCurrentVideoDevice(frontCamera || videoDevices[0]);
+                }
             } catch (error) {
                 console.error('Error getting video devices:', error);
             }
