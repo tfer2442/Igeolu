@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
 	private final RealtorRepository realtorRepository;
 	public final FileService fileService;
 	private final DongcodesService dongcodesService;
-	private final UserService userService;
 
 	@Value("${file.base-url}")
 	private String baseUrl;
@@ -75,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserInfoGetResponseDto getUserInfo(Integer userId) {
-		User user = userService.getUserById(userId);
+		User user = getUserById(userId);
 
 		return UserInfoGetResponseDto.builder()
 			.userId(user.getId())
