@@ -10,6 +10,7 @@ import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoPostRequestDto;
+import com.ssafy.igeolu.facade.user.dto.request.RealtorInfoUpdateRequestDto;
 import com.ssafy.igeolu.facade.user.dto.response.MeGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.RealtorInfoGetResponseDto;
 import com.ssafy.igeolu.facade.user.dto.response.UserInfoGetResponseDto;
@@ -78,5 +79,11 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	@Override
 	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
 		return userService.getRealtorInfo(userId);
+	}
+
+	@Override
+	public void updateRealtorInfo(RealtorInfoUpdateRequestDto requestDto, Integer userId) {
+		User user = userService.getUserById(userId);
+		userService.updateRealtorInfo(user, requestDto);
 	}
 }
