@@ -25,6 +25,7 @@ function MobileLivePage() {
     const [currentPropertyIndex, setCurrentPropertyIndex] = useState(0);
     const [currentLivePropertyId, setCurrentLivePropertyId] = useState(null);
     const [recordingId, setRecordingId] = useState(null);
+    const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
 
     useEffect(() => {
         const getVideoDevices = async () => {
@@ -32,7 +33,22 @@ function MobileLivePage() {
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                const frontCamera = videoDevices.find(device => 
+                    device.label.toLowerCase().includes('front') ||
+                    device.label.toLowerCase().includes('전면') ||
+                    device.label.toLowerCase().includes('user')
+                );
+                const backCamera = videoDevices.find(device => 
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('후면') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+                
+                console.log('Front camera:', frontCamera);
+                console.log('Back camera:', backCamera);
+                
                 setDevices(videoDevices);
+                setCurrentVideoDevice(frontCamera || videoDevices[0]);
             } catch (error) {
                 console.error('Error getting video devices:', error);
             }
@@ -40,10 +56,10 @@ function MobileLivePage() {
 
         const initializeSession = async () => {
             try {
-                await getVideoDevices();
+                // OpenVidu 객체 초기화
+                OV.current = new OpenVidu();
                 const newSession = OV.current.initSession();
-                setSession(newSession);
-
+                
                 newSession.on('streamCreated', (event) => {
                     const subscriber = newSession.subscribe(event.stream, undefined);
                     setSubscribers((subscribers) => [...subscribers, subscriber]);
@@ -55,27 +71,46 @@ function MobileLivePage() {
                     );
                 });
 
-                await newSession.connect(token);
-                console.log('Session connected with token:', token);
+                // 연결 시도 전 약간의 지연 추가
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
-                const publisher = await OV.current.initPublisherAsync(undefined, {
-                    audioSource: undefined,
-                    videoSource: undefined,
-                    publishAudio: true,
-                    publishVideo: true,
-                    resolution: '640x480',
-                    frameRate: 30,
-                    insertMode: 'APPEND',
-                    mirror: false,
-                });
+                try {
+                    await newSession.connect(token);
+                    console.log('Session connected with token:', token);
+                    setSession(newSession);
 
-                await newSession.publish(publisher);
-                setPublisher(publisher);
-                console.log('Publisher created:', publisher);
+                    const publisher = await OV.current.initPublisherAsync(undefined, {
+                        audioSource: undefined,
+                        videoSource: undefined,
+                        publishAudio: true,
+                        publishVideo: true,
+                        resolution: '640x480',
+                        frameRate: 30,
+                        insertMode: 'APPEND',
+                        mirror: false,
+                    });
+
+                    await newSession.publish(publisher);
+                    setPublisher(publisher);
+                    console.log('Publisher created:', publisher);
+
+                } catch (connectionError) {
+                    console.error('Connection error:', connectionError);
+                    // 연결 실패 시 세션 정리
+                    if (newSession) {
+                        try {
+                            await newSession.disconnect();
+                        } catch (e) {
+                            console.error('Error disconnecting session:', e);
+                        }
+                    }
+                    throw connectionError;
+                }
 
             } catch (error) {
                 console.error('Error initializing session:', error.message);
                 console.error('Full error:', error);
+               
             }
         };
 
@@ -117,10 +152,14 @@ function MobileLivePage() {
 
         return () => {
             if (session) {
-                session.disconnect();
+                try {
+                    session.disconnect();
+                } catch (error) {
+                    console.error('Error during cleanup:', error);
+                }
             }
         };
-    }, [sessionId, token, session]);
+    }, [sessionId, token]);
 
     const toggleMicrophone = () => {
         if (publisher) {
@@ -138,27 +177,45 @@ function MobileLivePage() {
 
     const switchCamera = async () => {
         try {
-            if (devices.length < 2) {
-                console.log('Not enough cameras available');
-                return;
+            if (devices.length < 2) return;
+
+            const currentDevice = currentVideoDevice;
+            let nextDevice;
+
+            const isCurrentFront = currentDevice.label.toLowerCase().includes('front') ||
+                                 currentDevice.label.toLowerCase().includes('전면') ||
+                                 currentDevice.label.toLowerCase().includes('user');
+
+            if (isCurrentFront) {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('후면') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+            } else {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('front') ||
+                    device.label.toLowerCase().includes('전면') ||
+                    device.label.toLowerCase().includes('user')
+                );
             }
 
-            const currentConstraints = publisher.stream.getMediaStream().getVideoTracks()[0].getConstraints();
-            const isCurrentFront = currentConstraints.facingMode === 'user';
-
-            const videoConfig = {
-                facingMode: isCurrentFront ? 'environment' : 'user'
-            };
+            if (!nextDevice) {
+                const currentIndex = devices.findIndex(device => device.deviceId === currentDevice.deviceId);
+                nextDevice = devices[(currentIndex + 1) % devices.length];
+            }
 
             if (publisher) {
-                publisher.stream.getMediaStream().getTracks().forEach(track => track.stop());
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: nextDevice.deviceId } }
+                });
+                const videoTrack = stream.getVideoTracks()[0];
                 
-                await publisher.replaceVideo(videoConfig);
-                console.log('Camera switched successfully to:', videoConfig.facingMode);
+                await publisher.replaceTrack(videoTrack);
+                setCurrentVideoDevice(nextDevice);
             }
         } catch (error) {
             console.error('Error switching camera:', error);
-            alert('카메라 전환 중 오류가 발생했습니다.');
         }
     };
 
