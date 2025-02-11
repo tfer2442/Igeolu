@@ -75,7 +75,10 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 						.roomId(cr.getId())
 						.userId(opponentUser.getId())
 						.userName(opponentUser.getUsername())
-						.userProfileUrl(opponentUser.getProfileFilePath())
+						.userProfileUrl(
+							opponentUser.getProfileFilePath() == null || opponentUser.getProfileFilePath().isEmpty()
+								? userService.getDefaultProfilePath(opponentUser.getRole()) :
+								opponentUser.getProfileFilePath())
 						.unreadCount(unreadCount)
 						.lastMessage(message)
 						.updatedAt(createdAt)

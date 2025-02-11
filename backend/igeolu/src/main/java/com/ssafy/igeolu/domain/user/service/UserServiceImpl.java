@@ -96,7 +96,8 @@ public class UserServiceImpl implements UserService {
 			.build();
 	}
 
-	private String getDefaultProfilePath(Role role) {
+	@Override
+	public String getDefaultProfilePath(Role role) {
 		if (role == Role.ROLE_MEMBER) {
 			return baseUrl + "/member.jpg";
 		}

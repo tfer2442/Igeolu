@@ -130,7 +130,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 
 		// 4. 프로필 이미지가 없거나 빈 문자열이면 기본 경로를 설정
 		if (dto.getProfileImage() == null || dto.getProfileImage().trim().isEmpty()) {
-			dto.setProfileImage(getDefaultProfilePath(realtor.getRole()));
+			dto.setProfileImage(userService.getDefaultProfilePath(realtor.getRole()));
 		}
 
 		return dto;
@@ -160,22 +160,12 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 
 				// 프로필 이미지가 비어있으면 기본값으로 채움
 				if (dto.getProfileImage() == null || dto.getProfileImage().trim().isEmpty()) {
-					dto.setProfileImage(getDefaultProfilePath(realtor.getMember().getRole()));
+					dto.setProfileImage(userService.getDefaultProfilePath(realtor.getMember().getRole()));
 				}
 
 				return dto;
 			})
 			.sorted(Comparator.comparing(RealtorInfoGetResponseDto::getRatingAvg).reversed())
 			.toList();
-	}
-
-	private String getDefaultProfilePath(Role role) {
-		if (role == Role.ROLE_MEMBER) {
-			return baseUrl + "/member.jpg";
-		}
-		if (role == Role.ROLE_REALTOR) {
-			return baseUrl + "/realtor.jpg";
-		}
-		return null;
 	}
 }
