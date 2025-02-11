@@ -1,19 +1,83 @@
-import React, { useState } from 'react';
+// src/pages/DesktopMyPage/DesktopMyPage.js
+import React, { useState, useEffect } from 'react';
 import './DesktopMyPage.css';
 import DesktopLiveAndMyPage from '../../components/DesktopNav/DesktopLiveAndMyPage';
+import LiveCarousel from '../../components/LiveCarousel/LiveCarousel';
 import defaultProfile from '../../assets/images/defaultProfileImageIMSI.png';
 import KakaoLogo from '../../assets/images/카카오로고.jpg';
-
-/* 임시버튼!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+import LiveControllerApi from '../../services/LiveControllerApi';
 import MyPageModal from '../../components/MyPageModal/MyPageModal';
+import PropertySlider from '../../components/PropertySlider/PropertySlider';
 
 function DesktopMyPage() {
-  /* 임시버튼!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [liveData, setLiveData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentLiveIndex, setCurrentLiveIndex] = useState(0);
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = async () => {
+    try {
+      setIsLoading(true);
+      const lives = await LiveControllerApi.getLives();
+      const livesWithProperties = await Promise.all(
+        lives.map(async (live) => ({
+          ...live,
+          properties: await LiveControllerApi.getLiveProperties(live.liveId),
+        }))
+      );
+      setLiveData(livesWithProperties);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePropertyClick = (property) => {
+    setSelectedProperty(property);
+    setIsModalOpen(true);
+  };
+
+  const handlePrevLive = () => {
+    setCurrentLiveIndex((prev) =>
+      prev === 0 ? liveData.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextLive = () => {
+    setCurrentLiveIndex((prev) =>
+      prev === liveData.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const renderPropertyCard = (property) => (
+    <div
+      key={property.propertyId}
+      className='property-card'
+      onClick={() => handlePropertyClick(property)}
+    >
+      <div className='property-image'>
+        <img src={property.images[0]} alt={property.description} />
+      </div>
+      <div className='property-info'>
+        <p className='property-name'>{property.description}</p>
+        <div className='property-actions'>
+          <p>음성 요약</p>
+          <p>체크리스트</p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className='desktop-my-page'>
       <DesktopLiveAndMyPage />
+      {/* 기존 회원정보 섹션 */}
       <div className='user-info'>
         <p>회원정보</p>
         <div className='user-info-content'>
@@ -32,6 +96,8 @@ function DesktopMyPage() {
           </div>
         </div>
       </div>
+
+      {/* 라이브 일정 섹션 */}
       <div className='user-info-schedule'>
         <p>라이브 일정</p>
         <div className='user-info-schedule-title'>
@@ -43,29 +109,35 @@ function DesktopMyPage() {
           <p>강동원</p>
         </div>
       </div>
+
       <div className='user-info-record'>
         <p>내가 본 라이브 매물</p>
-        <p>2022.01.01</p>
-        <div className='user-info-record-content'>
-          <div className='user-info-record-content-img'></div>
-          <div className='user-info-record-content-text'>
-            <p>남경앳홈비앙채</p>
-            <p>음성 요약</p>
-            <p>체크리스트</p>
-          </div>
-        </div>
+        {isLoading ? (
+          <p className='loading-message'>라이브 목록을 불러오는 중입니다...</p>
+        ) : liveData.length > 0 ? (
+          <>
+            <LiveCarousel
+              liveData={liveData}
+              currentIndex={currentLiveIndex}
+              onPrev={handlePrevLive}
+              onNext={handleNextLive}
+            />
+            <PropertySlider
+              properties={liveData[currentLiveIndex].properties}
+              onPropertyClick={handlePropertyClick}
+            />
+          </>
+        ) : (
+          <p>라이브 기록이 없습니다.</p>
+        )}
       </div>
 
-      {/* 임시버튼!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'
-      >
-        모달 열기
-      </button>
-
-      {isModalOpen && <MyPageModal onClose={() => setIsModalOpen(false)} />}
-      {/* 임시버튼!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
+      {isModalOpen && (
+        <MyPageModal
+          property={selectedProperty}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

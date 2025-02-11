@@ -42,6 +42,28 @@ instance.interceptors.response.use(
 );
 
 const LiveControllerApi = {
+  // 라이브 목록 조회
+  getLives: async () => {
+    try {
+      const response = await instance.get('/lives');
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      console.error('Error getting lives:', error);
+      return [];
+    }
+  },
+
+  // 라이브별 매물 목록 조회
+  getLiveProperties: async (liveId) => {
+    try {
+      const response = await instance.get(`/lives/${liveId}/properties`);
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      console.error('Error getting live properties:', error);
+      return [];
+    }
+  },
+
   // 라이브 매물 요약 조회
   getLivePropertySummary: async (livePropertyId) => {
     try {
