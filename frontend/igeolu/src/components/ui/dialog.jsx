@@ -1,5 +1,7 @@
+// src/components/ui/dialog.jsx
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
+import PropTypes from 'prop-types'
 import './dialog.css'
 
 const Dialog = DialogPrimitive.Root
@@ -22,6 +24,12 @@ const DialogContent = React.forwardRef(({ children, ...props }, ref) => (
     </div>
   </DialogPrimitive.Portal>
 ))
+
+DialogContent.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string
+}
+
 DialogContent.displayName = "DialogContent"
 
 const DialogHeader = ({
@@ -33,6 +41,11 @@ const DialogHeader = ({
     {...props}
   />
 )
+
+DialogHeader.propTypes = {
+  className: PropTypes.string
+}
+
 DialogHeader.displayName = "DialogHeader"
 
 const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
@@ -42,6 +55,11 @@ const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   />
 ))
+
+DialogTitle.propTypes = {
+  className: PropTypes.string
+}
+
 DialogTitle.displayName = "DialogTitle"
 
 const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
@@ -51,6 +69,11 @@ const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   />
 ))
+
+DialogDescription.propTypes = {
+  className: PropTypes.string
+}
+
 DialogDescription.displayName = "DialogDescription"
 
 export {

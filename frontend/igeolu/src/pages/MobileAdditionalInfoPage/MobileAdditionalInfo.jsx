@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import './MobileAdditionalInfo.css';
 import AdditionalInfoAPI from '../../services/AdditionalInfoApi';
+import PropTypes from 'prop-types'
 import { 
   Dialog, 
   DialogContent, 
@@ -124,10 +125,20 @@ const MobileAdditionalInfo = () => {
 
   const handleAddressSelect = async (selectedAddress) => {
     try {
-      // Get coordinates for the selected address
-      const coordResponse = await AdditionalInfoAPI.getCoordinates(selectedAddress);
+      const coordResponse = await AdditionalInfoAPI.getCoordinates({
+        admCd: selectedAddress.admCd,
+        rnMgtSn: selectedAddress.rnMgtSn,
+        udrtYn: selectedAddress.udrtYn,
+        buldMnnm: selectedAddress.buldMnnm,
+        buldSlno: selectedAddress.buldSlno
+      });
+  
+      if (!coordResponse?.results?.juso?.[0]) {
+        throw new Error('좌표 정보를 찾을 수 없습니다.');
+      }
+  
       const coords = coordResponse.results.juso[0];
-
+  
       setFormData(prev => ({
         ...prev,
         address: selectedAddress.roadAddrPart1,
@@ -135,12 +146,14 @@ const MobileAdditionalInfo = () => {
         longitude: parseFloat(coords.entY),
         dongcode: selectedAddress.admCd
       }));
-
+  
       setIsAddressDialogOpen(false);
       setAddressKeyword('');
       setAddressResults([]);
+  
     } catch (error) {
       console.error('주소 좌표 변환 실패:', error);
+      alert('주소 좌표 변환에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -178,12 +191,10 @@ const MobileAdditionalInfo = () => {
   return (
     <div className="additional-info-container">
       <div className="additional-info-wrapper">
-        <h1 className="form-title">추가 정보 입력</h1>
-
         <form onSubmit={handleSubmit} className="info-form">
           <div className="form-group">
             <label className="form-label">
-              제목
+              중개사무소이름
             </label>
             <input
               type="text"
@@ -191,7 +202,7 @@ const MobileAdditionalInfo = () => {
               value={formData.title}
               onChange={handleInputChange}
               className="form-input"
-              placeholder="매물 제목을 입력하세요"
+              placeholder="이걸루중개사무소"
             />
             {errors.title && (
               <p className="error-message">{errors.title}</p>
@@ -200,14 +211,14 @@ const MobileAdditionalInfo = () => {
 
           <div className="form-group">
             <label className="form-label">
-              내용
+              중개사무소소개
             </label>
             <textarea
               name="content"
               value={formData.content}
               onChange={handleInputChange}
               className="form-textarea"
-              placeholder="매물 상세 설명을 입력하세요"
+              placeholder="중개사무소를 소개해주세요!"
             />
             {errors.content && (
               <p className="error-message">{errors.content}</p>
@@ -294,5 +305,19 @@ const MobileAdditionalInfo = () => {
     </div>
   );
 };
+
+AddressSearchDialog.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onOpenChange: PropTypes.func.isRequired,
+  keyword: PropTypes.string.isRequired,
+  onKeywordChange: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  isSearching: PropTypes.bool.isRequired,
+  results: PropTypes.arrayOf(PropTypes.shape({
+    roadAddrPart1: PropTypes.string.isRequired,
+    jibunAddr: PropTypes.string.isRequired
+  })).isRequired,
+  onSelect: PropTypes.func.isRequired
+}
 
 export default MobileAdditionalInfo;
