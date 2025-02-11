@@ -33,7 +33,7 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
-import ChatAPI from './services/ChatAPI';
+import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage'
 
 function App() {
@@ -126,7 +126,7 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await ChatAPI.getChatRooms(currentUserId);
+      const response = await ChatApi.getChatRooms(currentUserId);
       setChatRooms(response);
 
 
