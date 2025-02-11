@@ -15,13 +15,15 @@ function MobileMainPage() {
                </div>
                <div className="mobile-main-page__top-name">
                 <div className="mobile-main-page__top-name-left">
-                    <p id="Name">송중기</p>
+                    {/* 수정예정 */}
+                    <p id="Name">송중기</p> 
                     <p>공인중개사님</p>
                 </div>
                </div>
                <div className="mobile-main-page__today-live-schedule    ">
                 <p>오늘의 라이브 일정</p>
                 <div className="mobile-main-page__today-live-schedule-content">
+                    {/* 수정예정 */}
                     <p id="Date">2025.01.31</p>
                     <p id="reserve-time">9:30분 xxx님과의 라이브 예약</p>
                 </div>
