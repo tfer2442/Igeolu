@@ -19,9 +19,11 @@ public class RealtorInfoPostRequestDto {
 
   private String address;
 
-  private BigDecimal latitude;
+  // latitude
+  private String y;
 
-  private BigDecimal longitude;
+  // longitude
+  private String x;
 
   private String dongcode;
 
