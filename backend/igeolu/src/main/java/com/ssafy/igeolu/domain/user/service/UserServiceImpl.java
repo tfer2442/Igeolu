@@ -174,4 +174,9 @@ public class UserServiceImpl implements UserService {
 	public List<Realtor> getDongRealtorList(String dongcode) {
 		return realtorRepository.findByDongcode(dongcode);
 	}
+
+	@Override
+	public List<Realtor> getRealtorList() {
+		return realtorRepository.findAll();
+	}
 }

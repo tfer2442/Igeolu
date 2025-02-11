@@ -39,4 +39,6 @@ public interface UserService {
 
 	List<Realtor> getDongRealtorList(String dongcode);
 
+	List<Realtor> getRealtorList();
+
 }
