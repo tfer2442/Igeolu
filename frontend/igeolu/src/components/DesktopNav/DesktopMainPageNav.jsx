@@ -72,7 +72,7 @@ function DesktopMainPageNav() {
 
             {isDropdownOpen && (
               <div className='dropdown-menu'>
-                <Link to='/mypage' onClick={closeDropdown}>
+                <Link to='/desktop-my-page' onClick={closeDropdown}>
                   마이페이지
                 </Link>
                 <button onClick={handleLogoutClick}>로그아웃</button>

@@ -7,6 +7,7 @@ import { BiExit } from 'react-icons/bi';
 import DesktopLiveAndMyPage from '../../components/DesktopNav/DesktopLiveAndMyPage';
 import './DesktopLive.css';
 import Memo2 from '../../components/Memo/Memo2';
+import axios from 'axios';
 
 
 function DesktopLive() {
@@ -23,6 +24,8 @@ function DesktopLive() {
   const OV = useRef(new OpenVidu());
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
+  const [propertyList, setPropertyList] = useState([]);
+  const [completedProperties, setCompletedProperties] = useState(new Set());
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -166,6 +169,38 @@ function DesktopLive() {
     };
   }, [token, sessionId]);
 
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get(`/api/lives/${sessionId}/properties`, {
+          headers: {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+          }
+        });
+        // livePropertyId 기준으로 정렬
+        const properties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
+        console.log('Sorted properties:', properties);
+        setPropertyList(properties);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      }
+    };
+
+    if (sessionId) {
+      fetchProperties();
+    }
+  }, [sessionId]);
+
+  // 시그널 리스너 추가
+  useEffect(() => {
+    if (session) {
+      session.on('signal:property-completed', (event) => {
+        const { propertyId } = JSON.parse(event.data);
+        setCompletedProperties(prev => new Set([...prev, propertyId]));
+      });
+    }
+  }, [session]);
+
   return (
     <div className='desktop-live-page'>
       <DesktopLiveAndMyPage />
@@ -184,12 +219,41 @@ function DesktopLive() {
           </div>
           <div className='desktop-live-page__left-content__bottom-content'>
             <div className='desktop-live-page__left-content__bottom-content__ai-checklist'></div>
-            <div className='desktop-live-page__left-content__bottom-content__live-order-list'></div>
+            <div className='desktop-live-page__left-content__bottom-content__live-order-list'>
+              <p>매물 순서</p>
+              <div className="property-list">
+
+                {propertyList.map((property, index) => (
+                  <div key={property.livePropertyId} className="property-item">
+                    <div className="property-left-content">
+                      <span className="property-number">{index + 1}</span>
+                      <div className="property-info">
+                        <p className="property-price">
+                          {property.deposit?.toLocaleString()} / 
+                          {property.monthlyRent?.toLocaleString()}
+                        </p>
+                        <p className="property-description">
+                          {property.description || "설명 없음"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="property-checkbox">
+                      <input 
+                        type="checkbox"
+                        checked={completedProperties.has(property.livePropertyId)}
+                        onChange={() => {}}
+                        className="property-checkbox-input"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
         <div className='desktop-live-page__right-content'>
           <div className='desktop-live-page__right-content__memo'>
-            <Memo2 />
+            <Memo2 sessionId={sessionId} />
           </div>
           <div className='desktop-live-page__right-content__my-cam'>
             {publisher && (
