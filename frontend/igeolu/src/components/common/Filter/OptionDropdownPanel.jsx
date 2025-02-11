@@ -14,14 +14,14 @@ const OptionDropdownPanel = ({
  if (!isOpen) return null;
 
  return (
-   <div className="option-panel">
-     <div className="option-content">
-       <div className="option-header">옵션 선택</div>
-       <div className="option-grid">
+   <div className="map-option-panel">
+     <div className="map-option-content">
+       <div className="map-option-header">옵션 선택</div>
+       <div className="map-option-grid">
          {Array.isArray(options) && options.map((option) => (
            <div
              key={option.optionId}
-             className={`option-item ${
+             className={`map-option-item ${
                selectedOptions.includes(option.optionId) ? 'selected' : ''
              }`}
              onClick={() => onOptionToggle(option.optionId)}
@@ -30,14 +30,14 @@ const OptionDropdownPanel = ({
            </div>
          ))}
        </div>
-       <div className="option-actions">
-         <button className="option-action-button reset" onClick={() => {
+       <div className="map-option-actions">
+         <button className="map-option-action-button reset" onClick={() => {
            onReset();
            setIsOptionDropdownOpen(false);
          }}>
            초기화
          </button>
-         <button className="option-action-button apply" onClick={onApply}>
+         <button className="map-option-action-button apply" onClick={onApply}>
            적용하기
          </button>
        </div>

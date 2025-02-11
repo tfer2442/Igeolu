@@ -1,4 +1,4 @@
-.option-panel {
+.map-option-panel {
     width: 320px;
     position: absolute;
     right: 0;
@@ -6,26 +6,26 @@
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     z-index: 1000;
-  }
+}
   
-.option-content {
+.map-option-content {
     padding: 1rem;
 }
   
-.option-header {
+.map-option-header {
     font-size: 0.875rem;
     font-weight: 600;
     color: #333;
     margin-bottom: 1rem;
 }
   
-.option-grid {
+.map-option-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
 }
   
-.option-item {
+.map-option-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -36,18 +36,18 @@
     transition: all 0.2s ease;
 }
   
-.option-item:hover {
+.map-option-item:hover {
     border-color: #0066ff;
     background-color: #f0f7ff;
 }
   
-.option-item.selected {
+.map-option-item.selected {
     background-color: #f0f7ff;
     border-color: #0066ff;
     color: #0066ff;
 }
   
-.option-actions {
+.map-option-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
@@ -56,7 +56,7 @@
     margin-top: 1rem;
 }
   
-.option-action-button {
+.map-option-action-button {
     padding: 0.5rem 1rem;
     border-radius: 6px;
     font-size: 0.875rem;
@@ -64,22 +64,22 @@
     transition: all 0.2s ease;
 }
   
-.option-action-button.reset {
+.map-option-action-button.reset {
     background: none;
     border: 1px solid #e1e1e1;
     color: #666;
 }
   
-.option-action-button.reset:hover {
+.map-option-action-button.reset:hover {
     background-color: #f5f5f5;
 }
   
-.option-action-button.apply {
+.map-option-action-button.apply {
     background-color: #0066ff;
     border: 1px solid #0066ff;
     color: white;
 }
   
-.option-action-button.apply:hover {
+.map-option-action-button.apply:hover {
     background-color: #0052cc;
 }
