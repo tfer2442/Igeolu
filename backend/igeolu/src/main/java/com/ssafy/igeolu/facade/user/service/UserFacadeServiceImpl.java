@@ -1,6 +1,7 @@
 package com.ssafy.igeolu.facade.user.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
+import com.ssafy.igeolu.domain.rating.repository.RatingAvgDto;
+import com.ssafy.igeolu.domain.rating.service.RatingService;
 import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
@@ -30,6 +33,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 	private final SecurityService securityService;
 	private final UserService userService;
 	private final DongcodesService dongcodesService;
+	private final RatingService ratingService;
 
 	@Override
 	@Transactional
@@ -93,10 +97,28 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 
 	@Override
 	public List<RealtorInfoGetResponseDto> getDongRealtorList(String dongcode) {
-
+		// 1. 동에 해당하는 공인중개사 리스트 조회
 		List<Realtor> realtors = userService.getDongRealtorList(dongcode);
+
+		// 2. 공인중개사 별로 member의 id 리스트 추출 (userId)
+		List<Integer> userIds = realtors.stream()
+			.map(realtor -> realtor.getMember().getId())
+			.toList();
+
+		// 3. 해당 id들로 평점 평균 조회
+		List<RatingAvgDto> ratingAvgs = ratingService.getAverageScoreByRealtorIds(userIds);
+
+		// 4. 결과를 Map으로 변환 (key: userId, value: 평균 평점)
+		Map<Integer, Double> ratingAvgMap = ratingAvgs.stream()
+			.collect(Collectors.toMap(RatingAvgDto::getUserId, RatingAvgDto::getAverageScore));
+
+		// 5. Realtor -> DTO 변환 시 평점 평균 정보 세팅
 		return realtors.stream()
-			.map(UserMapper::toDto)
-			.collect(Collectors.toList());
+			.map(realtor -> {
+				RealtorInfoGetResponseDto dto = UserMapper.toDto(realtor);
+				dto.setRatingAvg(ratingAvgMap.getOrDefault(realtor.getMember().getId(), 0.0));
+				return dto;
+			})
+			.toList();
 	}
 }
