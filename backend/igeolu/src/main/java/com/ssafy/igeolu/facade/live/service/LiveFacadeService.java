@@ -10,6 +10,7 @@ import com.ssafy.igeolu.facade.live.dto.request.StartLivePostRequestDto;
 import com.ssafy.igeolu.facade.live.dto.response.LiveGetResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePostResponseDto;
 import com.ssafy.igeolu.facade.live.dto.response.LivePropertyGetResponseDto;
+import com.ssafy.igeolu.facade.live.dto.response.SummaryPostResponseDto;
 
 import io.openvidu.java.client.Recording;
 
@@ -30,5 +31,5 @@ public interface LiveFacadeService {
 
 	void editMemo(Integer livePropertyId, MemoPutRequestDto memoPutRequestDto);
 
-	String getLivePropertySummary(Integer livePropertyId);
+	SummaryPostResponseDto getLivePropertySummary(Integer livePropertyId);
 }
