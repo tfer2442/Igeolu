@@ -67,7 +67,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
   return (
     <>
       <div
-        className={`modal-overlay ${animationState}`}
+        className={`appointment-modal-overlay ${animationState}`}
         onClick={handleClose}
         onKeyDown={handleClose}
         role='button'

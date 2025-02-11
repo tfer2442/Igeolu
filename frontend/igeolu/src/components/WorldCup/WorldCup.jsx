@@ -5,7 +5,7 @@ function WorldCup() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [properties, setProperties] = useState([]);
     const [currentImageIndexes, setCurrentImageIndexes] = useState({});
-    const userId = 1; // 테스트용 userId
+    const userId = 32; // 테스트용 userId
 
     useEffect(() => {
         const fetchProperties = async () => {

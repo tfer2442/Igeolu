@@ -72,7 +72,7 @@ const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
   return (
     <>
       <div
-        className={`modal-overlay ${animationState}`}
+        className={`appointment-modal-overlay ${animationState}`}
         onClick={handleClose}
         onKeyDown={handleClose}
         role='button'
