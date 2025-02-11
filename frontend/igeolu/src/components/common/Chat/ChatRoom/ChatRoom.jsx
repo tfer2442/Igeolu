@@ -6,6 +6,7 @@ import chatApi from '../../../../services/ChatApi';
 import ChatMessage from '../ChatMessage/ChatMessage';
 import ChatExtras from '../ChatExtras/ChatExtras';
 import './ChatRoom.css';
+import LoadingSpinner from '../../../LoadingSpinner/DesktopLoadingSpinner'
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -173,8 +174,13 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
       {/* 📌 메시지 목록 */}
       <div className={`input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
         <div className='messages-container'>
-          {isLoading ? (
-            <div className='loading-state'>메시지를 불러오는 중...</div>
+        {isLoading ? (
+            <LoadingSpinner 
+              size="medium"
+              fullScreen={false}
+              backgroundColor="transparent"
+              showText={false}
+            />
           ) : error ? (
             <div className='error-state'>
               {error}

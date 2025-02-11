@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ChatRoom from '../../components/common/Chat/ChatRoom/ChatRoom';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner';
 import chatApi from '../../services/ChatApi';
 import './MobileChatRoomPage.css';
 
