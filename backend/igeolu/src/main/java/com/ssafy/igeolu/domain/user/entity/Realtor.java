@@ -72,4 +72,8 @@ public class Realtor {
 		this.longitude = longitude;
 		this.dongcodes = dongcodes;
 	}
+
+	public void onLive() {
+		liveCount++;
+	}
 }

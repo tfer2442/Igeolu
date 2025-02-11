@@ -95,6 +95,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public Realtor getRealtor(User user) {
+		return realtorRepository.findByMember(user)
+			.orElseThrow(() -> new CustomException(ErrorCode.REALTOR_NOT_FOUND));
+	}
+
+	@Override
 	public RealtorInfoGetResponseDto getRealtorInfo(Integer userId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));

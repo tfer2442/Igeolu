@@ -19,6 +19,7 @@ import com.ssafy.igeolu.domain.live.service.LivePropertyService;
 import com.ssafy.igeolu.domain.live.service.LiveSessionService;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.service.PropertyService;
+import com.ssafy.igeolu.domain.user.entity.Realtor;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.live.dto.request.JoinLivePostRequestDto;
@@ -96,6 +97,9 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 		// 재정렬된 orderedProperties를 라이브 매물로 등록
 		livePropertyService.registerLiveProperties(orderedProperties, liveSession);
+
+		Realtor realtor = userService.getRealtor(user);
+		realtor.onLive();
 
 		return livePostResponseDto;
 	}
