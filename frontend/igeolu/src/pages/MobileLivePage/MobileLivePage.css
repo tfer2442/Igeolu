@@ -215,4 +215,12 @@
     -webkit-box-orient: vertical;
 }
 
+.property-nav-button.completed {
+    background-color: #666;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 

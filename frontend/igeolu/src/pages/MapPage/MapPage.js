@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import axios from 'axios';
@@ -8,6 +7,7 @@ import MenuButtons from '../../components/common/MenuButtons/MenuBottons';
 import Filter from '../../components/common/Filter/Filter';
 import ListPanel from '../../components/common/ListPanel/ListPanel';
 import DetailPanel from '../../components/common/DetailPanel/DetailPanel';
+import WorldCup from '../../components/WorldCup/WorldCup';
 import './MapPage.css';
 
 function MapPage() {
@@ -31,6 +31,7 @@ function MapPage() {
    const [cities, setCities] = useState([]);
    const [districts, setDistricts] = useState([]);
    const [neighborhoods, setNeighborhoods] = useState([]);
+   const [isWorldCupOpen, setIsWorldCupOpen] = useState(false);
 
    useEffect(() => {
        const fetchCities = async () => {
@@ -198,6 +199,14 @@ function MapPage() {
        setSelectedOptions(options);
    };
 
+   const handleStartWorldCup = () => {
+       if (searchResults.length >= 2) {
+           setIsWorldCupOpen(true);
+       } else {
+           alert('월드컵을 시작하기 위해서는 최소 2개 이상의 매물이 필요합니다.');
+       }
+   };
+
    return (
        <div className='desktop-map-page'>
            <DesktopMapPageNav onLoginSigninClick={handleLoginSigninClick}>
@@ -212,23 +221,32 @@ function MapPage() {
                </div>
                
                <div className='right-content'>
-                   <Filter 
-                       selectedCity={selectedCity}
-                       selectedDistrict={selectedDistrict}
-                       selectedNeighborhood={selectedNeighborhood}
-                       cities={cities}
-                       districts={districts}
-                       neighborhoods={neighborhoods}
-                       onCityChange={handleCityChange}
-                       onDistrictChange={handleDistrictChange}
-                       onNeighborhoodChange={handleNeighborhoodChange}
-                       onReset={handleReset}
-                       onPriceChange={handlePriceChange}
-                       onOptionsChange={handleOptionsChange}
-                       deposit={deposit}
-                       monthlyRent={monthlyRent}
-                       selectedOptions={selectedOptions}
-                   />
+                   <div className='filter-container'>
+                       <Filter 
+                           selectedCity={selectedCity}
+                           selectedDistrict={selectedDistrict}
+                           selectedNeighborhood={selectedNeighborhood}
+                           cities={cities}
+                           districts={districts}
+                           neighborhoods={neighborhoods}
+                           onCityChange={handleCityChange}
+                           onDistrictChange={handleDistrictChange}
+                           onNeighborhoodChange={handleNeighborhoodChange}
+                           onReset={handleReset}
+                           onPriceChange={handlePriceChange}
+                           onOptionsChange={handleOptionsChange}
+                           deposit={deposit}
+                           monthlyRent={monthlyRent}
+                           selectedOptions={selectedOptions}
+                       />
+                       <div className="filter-worldcup-container">
+                           <WorldCup 
+                               properties={searchResults}
+                               isOpen={isWorldCupOpen}
+                               onClose={() => setIsWorldCupOpen(false)}
+                           />
+                       </div>
+                   </div>
                    
                    <div className='right-content-inner'>
                        <ListPanel 

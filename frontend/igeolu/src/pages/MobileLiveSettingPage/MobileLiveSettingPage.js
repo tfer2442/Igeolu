@@ -67,22 +67,19 @@ const MobileLiveSettingPage = () => {
             const { sessionId, token } = response.data;
             console.log('Session created successfully:', { sessionId, token });
             
+            // MobileLivePage로 이동
             navigate('/mobile-live', { 
                 state: { 
                     sessionId, 
                     token,
                     role: 'host',
-                    selectedProperties: selectedProperties.map(prop => prop.propertyId)     
+                    selectedProperties: selectedProperties.map(prop => prop.propertyId),
+                    // connection.data에 전달할 정보도 포함
+                    clientData: JSON.stringify({ role: 'host' })  // OpenVidu connection.data용
                 } 
             });
         } catch (error) {
-            console.error('Error creating session:', {
-                message: error.message,
-                status: error.response?.status,
-                data: error.response?.data,
-                headers: error.response?.headers
-            });
-            
+            console.error('Error creating session:', error);
             alert('라이브 세션 생성에 실패했습니다. 잠시 후 다시 시도해주세요.');
         }
     };

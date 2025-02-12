@@ -1,0 +1,92 @@
+.rating-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.rating-modal {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.stars-container {
+    margin: 20px 0;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.star-container {
+    position: relative;
+    display: inline-block;
+}
+
+.star {
+    color: #ffd700;
+    position: relative;
+    z-index: 1;
+}
+
+.star.empty {
+    color: #e4e5e9;
+}
+
+.star-half-clickable {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.star-half-clickable.left {
+    left: 0;
+}
+
+.star-half-clickable.right {
+    right: 0;
+}
+
+.rating-value {
+    font-size: 18px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.submit-button, .cancel-button {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
