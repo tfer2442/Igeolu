@@ -15,7 +15,10 @@ const UserControllerApi = {
   // 공인중개사 정보 수정
   updateRealtorInfo: async (userId, realtorInfo) => {
     try {
-      const response = await instance.put(`/users/${userId}/realtor`, realtorInfo);
+      const response = await instance.put(
+        `/users/${userId}/realtor`,
+        realtorInfo
+      );
       return response;
     } catch (error) {
       console.error('Error updating realtor info:', error);
@@ -28,7 +31,7 @@ const UserControllerApi = {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       const response = await instance.put('/users/me/profile', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
