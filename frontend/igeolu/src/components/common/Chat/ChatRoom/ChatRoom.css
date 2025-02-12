@@ -60,7 +60,7 @@
 
 /* 📌 모바일에서 헤더 텍스트 색상 변경 */
 .chat-room.mobile .chat-room-title,
-.chat-room.mobile .back-button {
+.chat-room.mobile .chat-back-button {
   color: white;
 }
 
