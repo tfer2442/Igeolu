@@ -1,37 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { X } from 'lucide-react';
-import axios from 'axios';
 import './DetailPanel.css';
 
 const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
-    const [optionsData, setOptionsData] = useState([]);
-    
-    useEffect(() => {
-        const fetchOptions = async () => {
-            try {
-                // data.options가 ID 배열인 경우에만 API 호출
-                if (Array.isArray(data?.options) && data.options.length > 0 && typeof data.options[0] === 'number') {
-                    const response = await axios.get('https://i12d205.p.ssafy.io/api/options');
-                    const allOptions = response.data;
-                    
-                    const matchedOptions = data.options
-                        .map(optionId => allOptions.find(option => option.optionId === optionId))
-                        .filter(option => option);
-                    
-                    setOptionsData(matchedOptions);
-                } else if (Array.isArray(data?.options)) {
-                    // 이미 옵션 정보가 포함된 경우 바로 사용
-                    setOptionsData(data.options);
-                }
-            } catch (error) {
-                console.error('Error fetching options:', error);
-            }
-        };
-
-        fetchOptions();
-    }, [data?.options]);
-
     if (!isVisible) return null;
 
     // 매물 데이터인 경우의 type 체크
@@ -41,41 +13,65 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
     return (
         <div className='detail-panel'>
             <div className='detail-panel-header'>
-                <h3>{displayType === 'room' || isPropMarker ? '매물 상세정보' : '공인중개사 정보'}</h3>
+                <h3>{displayType === 'room' ? '매물 상세정보' : '공인중개사 정보'}</h3>
                 <button className='detail-close-button' onClick={onClose}>
                     <X size={20} />
                 </button>
             </div>
             <div className='detail-panel-content'>
-                {(displayType === 'room' || isPropMarker) ? (
+                {displayType === 'room' ? (
                     // 원룸 상세정보
                     <div className='detail-panel-section'>
-                        {data?.images && data.images.length > 0 ? (
-                            <div className='property-images'>
-                                {/* 이미지 표시 로직 */}
+                        <div className='property-image-slider'>
+                            {/* 추후 이미지 슬라이더 구현 */}
+                            <span>매물 이미지</span>
+                        </div>
+                        
+                        <div className='property-detail-info'>
+                            <div className='property-price-info'>
+                                <div className='price-row'>
+                                    <span className='price-label'>보증금</span>
+                                    <span className='price-value'>{data?.deposit?.toLocaleString()}만원</span>
+                                </div>
+                                <div className='price-row'>
+                                    <span className='price-label'>월세</span>
+                                    <span className='price-value'>{data?.monthlyRent?.toLocaleString()}만원</span>
+                                </div>
                             </div>
-                        ) : (
-                            <div className='image-placeholder'>이미지 영역</div>
-                        )}
-                        <div className='info-group'>
-                            <h4>매물 정보</h4>
-                            <p>보증금: {data?.deposit?.toLocaleString()}만원</p>
-                            <p>월세: {data?.monthlyRent?.toLocaleString()}만원</p>
-                            <p>주소: {data?.address}</p>
-                            <p>면적: {data?.area}㎡</p>
-                            <div className='options-group'>
-                                <h5>옵션정보</h5>
-                                {optionsData.length > 0 ? (
-                                    <div className='options-list'>
-                                        {optionsData.map((option) => (
-                                            <span key={option.optionId} className='option-tag'>
-                                                {option.optionName || option.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="no-options">옵션 정보 없음</p>
-                                )}
+
+                            <div className='property-basic-info'>
+                                <div className='info-item'>
+                                    <span className='info-label'>주소</span>
+                                    <span className='info-value'>{data?.address}</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>면적</span>
+                                    <span className='info-value'>{data?.area}㎡ ({Math.floor(data?.area * 0.3025)}평)</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>층수</span>
+                                    <span className='info-value'>{data?.floor}층</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>방향</span>
+                                    <span className='info-value'>{data?.direction || '-'}</span>
+                                </div>
+                            </div>
+
+                            {/* 옵션 정보 표시 */}
+                            <div className='property-options'>
+                                <h5>옵션 정보</h5>
+                                <div className='options-list'>
+                                    {console.log('Options data:', data?.options)}
+                                    {Array.isArray(data?.options) && data.options.map((option, index) => (
+                                        <span key={`${option.optionId || index}`} className='option-tag'>
+                                            {option.optionName}
+                                        </span>
+                                    ))}
+                                    {(!data?.options || !Array.isArray(data?.options) || data.options.length === 0) && (
+                                        <span className='no-options'>제공된 옵션 정보가 없습니다</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -99,7 +95,7 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
                             </div>
 
                             <div className='info-row'>
-                                <h5>공인중개사 사무소</h5>
+                                <h5>제목</h5>
                                 <p>{data?.title}</p>
                             </div>
 
