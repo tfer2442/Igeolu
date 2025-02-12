@@ -8,7 +8,7 @@ import RealEstateEdit from '../../components/RealEstateEdit/RealEstateEdit';
 import poster1 from '../../assets/images/포스터1.jpg';
 import poster2 from '../../assets/images/포스터2.jpg';
 import poster3 from '../../assets/images/포스터3.jpg';
-
+import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
 function MobileMainPage() {
   const [realtorInfo, setRealtorInfo] = useState({
     username: '',
@@ -128,7 +128,7 @@ function MobileMainPage() {
     fetchRealtorInfo();
   }, []);
 
-  if (loading) return <div>로딩중...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div>에러: {error}</div>;
 
   return (

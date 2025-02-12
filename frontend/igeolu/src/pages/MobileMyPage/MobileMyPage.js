@@ -5,6 +5,7 @@ import MobileBottomTab from "../../components/MobileBottomTab/MobileBottomTab";
 import { FiEdit } from "react-icons/fi";
 import RealEstateRegistration from "../../components/RealEstateRegistration/RealEstateRegistration";
 import RealEstateEdit from "../../components/RealEstateEdit/RealEstateEdit";
+import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
 
 function MobileMyPage() {
   const [realtorInfo, setRealtorInfo] = useState(null);
@@ -50,7 +51,7 @@ function MobileMyPage() {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {

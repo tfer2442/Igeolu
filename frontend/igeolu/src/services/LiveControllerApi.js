@@ -87,6 +87,17 @@ const LiveControllerApi = {
       throw error;
     }
   },
+
+  // 라이브 참여
+  joinLive: async (sessionId) => {
+    try {
+      const response = await instance.post('/lives/join', { sessionId });
+      return response;
+    } catch (error) {
+      console.error('Error joining live:', error);
+      throw error;
+    }
+  },
 };
 
 export default LiveControllerApi;

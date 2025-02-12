@@ -7,6 +7,7 @@ import './styles/global.css';
 // === 1. Component Imports ===
 // Desktop Pages
 import DesktopLive from './pages/DesktopLivePage/DesktopLive';
+import DesktopLiveJoinPage from './pages/DesktopLiveJoinPage/DesktopLiveJoinPage';
 import DesktopHome from './pages/DesktopHomePage/DesktopHome';
 import DesktopLogin from './pages/DesktopLoginPage/DesktopLoginPage';
 import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSearchPage';
@@ -193,6 +194,7 @@ function App() {
         <Route path='/' element={<DesktopHome />} />
         <Route path='/login' element={<DesktopLogin />} />
         <Route path='/live' element={<DesktopLive />} />
+        <Route path='/live-join' element={<DesktopLiveJoinPage />} />
         <Route
           path='/desktop-room-search'
           element={<DesktopRoomSearchPage />}
