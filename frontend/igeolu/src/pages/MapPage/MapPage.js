@@ -11,21 +11,18 @@ import WorldCup from '../../components/WorldCup/WorldCup';
 import './MapPage.css';
 
 function MapPage() {
-    const handleLoginSigninClick = () => {
-        console.log('로그인 |회원가입');
-    };
-
     // URL 파라미터에서 type 가져오기
     const searchParams = new URLSearchParams(window.location.search);
     const typeParam = searchParams.get('type');
 
-
+    // 상태 관리
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
     const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
     const [activeMenu, setActiveMenu] = useState(typeParam || 'room');
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
+    const [propertyMarkers, setPropertyMarkers] = useState([]);
     const [mapCenter, setMapCenter] = useState({
         lat: 37.566826,
         lng: 126.978656
@@ -36,7 +33,13 @@ function MapPage() {
     const [cities, setCities] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [neighborhoods, setNeighborhoods] = useState([]);
+<<<<<<< HEAD
     const [isWorldCupOpen, setIsWorldCupOpen] = useState(false);
+=======
+    const [initialProperties, setInitialProperties] = useState([]);
+
+    // 시/도 데이터 가져오기
+>>>>>>> feature/S12P11D205-298-mobile-api
     useEffect(() => {
         const fetchCities = async () => {
             try {
@@ -49,6 +52,7 @@ function MapPage() {
         fetchCities();
     }, []);
 
+    // 구/군 데이터 가져오기
     useEffect(() => {
         const fetchDistricts = async () => {
             if (selectedCity) {
@@ -65,6 +69,7 @@ function MapPage() {
         fetchDistricts();
     }, [selectedCity]);
 
+    // 동 데이터 가져오기
     useEffect(() => {
         const fetchNeighborhoods = async () => {
             if (selectedCity && selectedDistrict) {
@@ -81,6 +86,7 @@ function MapPage() {
         fetchNeighborhoods();
     }, [selectedCity, selectedDistrict]);
 
+    // 매물 검색 결과 가져오기
     const fetchSearchResults = async () => {
         try {
             const params = new URLSearchParams();
@@ -94,12 +100,31 @@ function MapPage() {
                 params.append('optionIds', selectedOptions.join(','));
             }
 
+            // 필터 조건이 없을 때도 전체 매물 조회
             if (params.toString() === '') {
-                setSearchResults([]);
-                return;
+                try {
+                    const response = await axios.get('https://i12d205.p.ssafy.io/api/properties/search');
+                    const validResults = response.data.filter(item =>
+                        item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
+                    );
+                    setSearchResults(validResults);
+                    setPropertyMarkers([]);
+                    
+                    if (validResults.length > 0) {
+                        const newCenter = {
+                            lat: parseFloat(validResults[0].latitude),
+                            lng: parseFloat(validResults[0].longitude)
+                        };
+                        setMapCenter(newCenter);
+                    }
+                    return;
+                } catch (error) {
+                    console.error('Error fetching all properties:', error);
+                    setSearchResults([]);
+                    setPropertyMarkers([]);
+                    return;
+                }
             }
-
-            console.log('Search Parameters:', Object.fromEntries(params));
 
             const response = await axios.get('https://i12d205.p.ssafy.io/api/properties/search', {
                 params: params,
@@ -111,17 +136,9 @@ function MapPage() {
             const validResults = response.data.filter(item =>
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
-
-            console.log('Valid Results:', validResults.map(item => ({
-                id: item.propertyId,
-                title: item.title,
-                location: {
-                    lat: item.latitude,
-                    lng: item.longitude
-                }
-            })));
             
             setSearchResults(validResults);
+            setPropertyMarkers([]);
 
             if (validResults.length > 0) {
                 const newCenter = {
@@ -133,16 +150,113 @@ function MapPage() {
         } catch (error) {
             console.error('Error fetching search results:', error);
             setSearchResults([]);
+            setPropertyMarkers([]);
         }
     };
 
+    // 공인중개사 목록 가져오기
+    const fetchRealtors = async () => {
+        try {
+            if (!selectedCity || !selectedDistrict || !selectedNeighborhood) {
+                const response = await axios.get('https://i12d205.p.ssafy.io/api/users/realtors');
+                setSearchResults(response.data);
+                setPropertyMarkers([]);
+                
+                if (response.data.length > 0) {
+                    const firstItem = response.data[0];
+                    if (firstItem.latitude && firstItem.longitude) {
+                        setMapCenter({
+                            lat: parseFloat(firstItem.latitude),
+                            lng: parseFloat(firstItem.longitude)
+                        });
+                    }
+                }
+                return;
+            }
+
+            try {
+                const selectedDong = neighborhoods.find(n => 
+                    n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
+                );
+
+                const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
+
+                if (!dongCode) {
+                    setSearchResults([]);
+                    setPropertyMarkers([]);
+                    return;
+                }
+
+                const response = await axios.get(`https://i12d205.p.ssafy.io/api/users/${dongCode}/realtors`);
+                
+                const resultsWithLocation = response.data.map(realtor => ({
+                    ...realtor,
+                    dongCode: dongCode,
+                    dongName: selectedNeighborhood
+                }));
+                
+                setSearchResults(resultsWithLocation);
+                setPropertyMarkers([]);
+
+                if (resultsWithLocation.length > 0) {
+                    const firstItem = resultsWithLocation[0];
+                    if (firstItem.latitude && firstItem.longitude) {
+                        setMapCenter({
+                            lat: parseFloat(firstItem.latitude),
+                            lng: parseFloat(firstItem.longitude)
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching realtors by dongcode:', error);
+                setSearchResults([]);
+                setPropertyMarkers([]);
+            }
+        } catch (error) {
+            console.error('Error fetching realtors:', error);
+            setSearchResults([]);
+            setPropertyMarkers([]);
+        }
+    };
+
+    // 필터값 변경시 검색 결과 업데이트
     useEffect(() => {
         if (activeMenu === 'room') {
             fetchSearchResults();
+        } else if (activeMenu === 'agent') {
+            fetchRealtors();
         }
-        // 필터값이 변경될 때마다 DetailPanel 닫기
         setSelectedItem(null);
-    }, [selectedCity, selectedDistrict, selectedNeighborhood, deposit, monthlyRent, selectedOptions, activeMenu]);
+        setPropertyMarkers([]);
+        setInitialProperties([]);
+    }, [selectedCity, selectedDistrict, selectedNeighborhood, activeMenu]);
+
+    // 필터 변경시 매물 필터링 적용
+    useEffect(() => {
+        if (initialProperties.length > 0) {
+            const filteredResults = initialProperties.filter(item => {
+                const passesDepositFilter = !deposit || item.deposit <= deposit;
+                const passesMonthlyRentFilter = !monthlyRent || item.monthlyRent <= monthlyRent;
+                
+                // 모든 선택된 옵션이 포함되어 있는지 확인
+                const passesOptionsFilter = selectedOptions.length === 0 || 
+                    selectedOptions.every(optionId => 
+                        item.options?.some(opt => opt.optionId === optionId)
+                    );
+
+                return passesDepositFilter && passesMonthlyRentFilter && passesOptionsFilter;
+            });
+            
+            setPropertyMarkers(filteredResults);
+
+            if (filteredResults.length > 0) {
+                setMapCenter({
+                    lat: parseFloat(filteredResults[0].latitude),
+                    lng: parseFloat(filteredResults[0].longitude)
+                });
+            }
+        }
+    }, [deposit, monthlyRent, selectedOptions, initialProperties]);
 
     const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
         setSelectedCity(sidoName);
@@ -153,13 +267,25 @@ function MapPage() {
     const handleMenuClick = (menuType) => {
         setActiveMenu(menuType);
         setSelectedItem(null);
+        setPropertyMarkers([]);
+        setInitialProperties([]);
         if (menuType === 'agent') {
-            setSearchResults([]);
+            fetchRealtors();
+        } else {
+            fetchSearchResults();
         }
     };
 
-    const handleItemClick = (item) => {
-        setSelectedItem(item);
+    const handleItemClick = (item, isPropertyMarker = false) => {
+        if (isPropertyMarker) {
+            setSelectedItem({
+                ...item,
+                type: 'room'
+            });
+        } else {
+            setSelectedItem(item);
+        }
+
         if (item && item.latitude && item.longitude) {
             setMapCenter({
                 lat: parseFloat(item.latitude),
@@ -170,6 +296,55 @@ function MapPage() {
 
     const handleDetailClose = () => {
         setSelectedItem(null);
+        setPropertyMarkers([]);
+        setInitialProperties([]);
+        if (activeMenu === 'agent') {
+            fetchRealtors();
+        }
+    };
+
+    const handleViewProperties = async (userId) => {
+        try {
+            const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
+                params: { userId: userId }
+            });
+            
+            // 유효한 좌표가 있는 매물만 필터링
+            const validResults = response.data.filter(item =>
+                item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
+            );
+
+            // 초기 매물 목록 저장
+            setInitialProperties(validResults);
+            
+            // 현재 필터 조건 적용
+            const filteredResults = validResults.filter(item => {
+                const passesDepositFilter = !deposit || item.deposit <= deposit;
+                const passesMonthlyRentFilter = !monthlyRent || item.monthlyRent <= monthlyRent;
+                
+                // 모든 선택된 옵션이 포함되어 있는지 확인
+                const passesOptionsFilter = selectedOptions.length === 0 || 
+                    selectedOptions.every(optionId => 
+                        item.options?.some(opt => opt.optionId === optionId)
+                    );
+
+                return passesDepositFilter && passesMonthlyRentFilter && passesOptionsFilter;
+            });
+            
+            setPropertyMarkers(filteredResults);
+
+            if (filteredResults.length > 0) {
+                const newCenter = {
+                    lat: parseFloat(filteredResults[0].latitude),
+                    lng: parseFloat(filteredResults[0].longitude)
+                };
+                setMapCenter(newCenter);
+            }
+        } catch (error) {
+            console.error('Error fetching realtor properties:', error);
+            setPropertyMarkers([]);
+            setInitialProperties([]);
+        }
     };
 
     const handleCityChange = (e) => {
@@ -194,6 +369,8 @@ function MapPage() {
         setDeposit(null);
         setMonthlyRent(null);
         setSelectedOptions([]);
+        setPropertyMarkers([]);
+        setInitialProperties([]);
     };
 
     const handlePriceChange = (newDeposit, newMonthlyRent) => {
@@ -215,7 +392,7 @@ function MapPage() {
 
     return (
         <div className='desktop-map-page'>
-            <DesktopMapPageNav onLoginSigninClick={handleLoginSigninClick}>
+            <DesktopMapPageNav onLoginSigninClick={() => console.log('로그인 |회원가입')}>
                 <LocationSearch onSearch={handleLocationSearch} />
             </DesktopMapPageNav>
             <div className='desktop-map-page-content'>
@@ -244,6 +421,7 @@ function MapPage() {
                         deposit={deposit}
                         monthlyRent={monthlyRent}
                         selectedOptions={selectedOptions}
+                        activeMenu={activeMenu}
                     />
                     <div className="filter-worldcup-container">
                            <WorldCup 
@@ -264,6 +442,7 @@ function MapPage() {
                             type={activeMenu}
                             data={selectedItem}
                             onClose={handleDetailClose}
+                            onViewProperties={handleViewProperties}
                         />
                         <div className='map-container'>
                             <div className='map-content'>
@@ -277,7 +456,29 @@ function MapPage() {
                                     }}
                                     level={3}
                                 >
+                                    {/* 기존 마커들 */}
                                     {searchResults.map((item, index) => {
+                                        if (!item || !item.latitude || !item.longitude) return null;
+                                        
+                                        const position = {
+                                            lat: parseFloat(item.latitude),
+                                            lng: parseFloat(item.longitude)
+                                        };
+                                        
+                                        const itemId = activeMenu === 'room' ? item.propertyId : item.userId;
+                                        const itemTitle = activeMenu === 'room' ? (item.title || '매물정보') : (item.username || '공인중개사');
+                                        return (
+                                            <MapMarker
+                                                key={`marker-${itemId || index}`}
+                                                position={position}
+                                                onClick={() => handleItemClick(item)}
+                                                title={itemTitle}
+                                            />
+                                        );
+                                    })}
+
+                                    {/* 공인중개사 매물 마커들 */}
+                                    {propertyMarkers.map((item, index) => {
                                         if (!item || !item.latitude || !item.longitude) return null;
                                         
                                         const position = {
@@ -287,10 +488,17 @@ function MapPage() {
                                         
                                         return (
                                             <MapMarker
-                                                key={`marker-${item.propertyId || index}`}
+                                                key={`property-${item.propertyId || index}`}
                                                 position={position}
-                                                onClick={() => handleItemClick(item)}
+                                                onClick={() => handleItemClick(item, true)}
                                                 title={item.title || '매물정보'}
+                                                image={{
+                                                    src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+                                                    size: {
+                                                        width: 24,
+                                                        height: 35
+                                                    },
+                                                }}
                                             />
                                         );
                                     })}

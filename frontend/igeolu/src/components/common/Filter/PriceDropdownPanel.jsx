@@ -10,7 +10,8 @@ const PriceDropdownPanel = ({
    onMonthlyRentChange: onMaxMonthlyRentChange,
    onApply,
    onReset,
-   setIsPriceDropdownOpen
+   setIsPriceDropdownOpen,
+   selectedOptions // 선택된 옵션 정보 props 추가
 }) => {
    if (!isOpen) return null;
 
@@ -27,6 +28,23 @@ const PriceDropdownPanel = ({
    const handleMaxMonthlyRentChange = (e) => {
        const value = e.target.value;
        onMaxMonthlyRentChange(value === '0' ? null : Number(value));
+   };
+
+   const handleApply = () => {
+       // 모든 필터 조건을 함께 적용
+       const params = new URLSearchParams();
+       if (maxDeposit) params.append('maxDeposit', maxDeposit);
+       if (maxMonthlyRent) params.append('maxMonthlyRent', maxMonthlyRent);
+       if (selectedOptions?.length > 0) {
+           params.append('optionIds', selectedOptions.join(','));
+       }
+       onApply(maxDeposit, maxMonthlyRent, params);
+       setIsPriceDropdownOpen(false);
+   };
+
+   const handleReset = () => {
+       onReset();
+       setIsPriceDropdownOpen(false);
    };
 
    return (
@@ -77,13 +95,10 @@ const PriceDropdownPanel = ({
                </div>
 
                <div className="price-actions">
-                   <button className="price-action-button reset" onClick={() => {
-                       onReset();
-                       setIsPriceDropdownOpen(false);
-                   }}>
+                   <button className="price-action-button reset" onClick={handleReset}>
                        초기화
                    </button>
-                   <button className="price-action-button apply" onClick={onApply}>
+                   <button className="price-action-button apply" onClick={handleApply}>
                        적용하기
                    </button>
                </div>

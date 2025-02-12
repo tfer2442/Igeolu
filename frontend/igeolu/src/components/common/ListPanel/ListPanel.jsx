@@ -1,5 +1,4 @@
 
-// ListPanel.jsx
 import React from 'react';
 import './ListPanel.css';
 
@@ -21,7 +20,7 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
           {items.length > 0 ? (
             items.map((item) => (
               <div 
-                key={item.propertyId}
+                key={type === 'room' ? item.propertyId : item.userId}
                 className='list-item'
                 onClick={() => onItemClick(item)}
               >
@@ -44,12 +43,14 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                   <div className='agent-item'>
                     <img 
                       src={item.profileImage || '/default-agent.png'} 
-                      alt={item.name} 
+                      alt={item.username} 
                       className='agent-image'
                     />
                     <div className='agent-info'>
-                      <span className='agent-name'>{item.name}</span>
-                      <p className='agent-content'>{item.description}</p>
+                      <span className='agent-name'>{item.username}</span>
+                      <p className='agent-title'>{item.title}</p>
+                      <p className='agent-content'>{item.content}</p>
+                      <p className='agent-address'>{item.address}</p>
                     </div>
                   </div>
                 )}

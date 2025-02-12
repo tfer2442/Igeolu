@@ -22,7 +22,8 @@ const Filter = ({
   onOptionsChange,
   deposit,
   monthlyRent,
-  selectedOptions
+  selectedOptions,
+  activeMenu // 추가: 현재 활성화된 메뉴
 }) => {
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
