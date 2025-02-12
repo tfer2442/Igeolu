@@ -145,3 +145,28 @@
 .view-properties-button:hover {
     background-color: #0052cc;
 }
+
+
+.options-group {
+    margin-top: 1rem;
+}
+
+.options-group h5 {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.options-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.option-tag {
+    padding: 0.25rem 0.5rem;
+    background-color: #f0f7ff;
+    color: #0066ff;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
