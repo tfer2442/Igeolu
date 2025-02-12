@@ -87,7 +87,7 @@
 .react-calendar__tile:hover {
     color: #01ADFF;
     cursor: pointer;
-    background-color: #272626 !important;
+    background-color: #01ADFF !important;
 }
 
 /* 오늘 날짜 스타일링 */
@@ -296,8 +296,8 @@
 
 .dot-container {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 6px;
+    right: 6px;
     display: flex;
     justify-content: center;
     align-items: center;
