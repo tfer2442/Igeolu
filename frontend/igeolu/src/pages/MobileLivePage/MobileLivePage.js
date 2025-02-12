@@ -101,27 +101,37 @@ function MobileLivePage() {
 
         const initializeSession = async () => {
             try {
-                // OpenVidu 객체 초기화
                 OV.current = new OpenVidu();
                 const newSession = OV.current.initSession();
                 
                 newSession.on('streamCreated', (event) => {
+                    console.log('Stream Created - Connection Data:', event.stream.connection.data);
+                    console.log('Stream Connection Details:', {
+                        connectionId: event.stream.connection.connectionId,
+                        creationTime: event.stream.connection.creationTime,
+                        data: event.stream.connection.data
+                    });
                     const subscriber = newSession.subscribe(event.stream, undefined);
                     setSubscribers((subscribers) => [...subscribers, subscriber]);
                 });
 
-                newSession.on('streamDestroyed', (event) => {
-                    setSubscribers((subscribers) =>
-                        subscribers.filter((sub) => sub !== event.stream.streamManager)
-                    );
+                newSession.on('connectionCreated', (event) => {
+                    console.log('Connection Created:', {
+                        connectionId: event.connection.connectionId,
+                        role: role,
+                        data: event.connection.data
+                    });
                 });
 
-                // 연결 시도 전 약간의 지연 추가
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // role 정보를 포함한 clientData 생성
+                const clientData = JSON.stringify({ role: role });
+                console.log('Connecting with clientData:', clientData);
 
                 try {
-                    await newSession.connect(token);
-                    console.log('Session connected with token:', token);
+                    // clientData를 포함하여 연결
+                    await newSession.connect(token, clientData);
+                    console.log('Session connected successfully');
+                    console.log('My Connection Data:', newSession.connection.data);
                     setSession(newSession);
 
                     const publisher = await OV.current.initPublisherAsync(undefined, {
@@ -136,8 +146,8 @@ function MobileLivePage() {
                     });
 
                     await newSession.publish(publisher);
+                    console.log('Publisher created with connection data:', publisher.stream.connection.data);
                     setPublisher(publisher);
-                    console.log('Publisher created:', publisher);
 
                 } catch (connectionError) {
                     console.error('Connection error:', connectionError);
@@ -348,9 +358,6 @@ function MobileLivePage() {
 
     const handleNextProperty = async (liveId) => {
         const properties = propertyList[liveId]?.sort((a, b) => a.livePropertyId - b.livePropertyId) || [];
-        if (currentPropertyIndex === properties.length - 1) {
-            return;
-        }
         
         try {
             const currentProperty = properties[currentPropertyIndex];
@@ -364,11 +371,13 @@ function MobileLivePage() {
             
             console.log(`Property ${currentProperty.livePropertyId} marked as completed`);
             
-            const nextIndex = currentPropertyIndex + 1;
-            setCurrentLivePropertyId(properties[nextIndex].livePropertyId);
-            console.log('Changed to property ID:', properties[nextIndex].livePropertyId);
-            
-            setCurrentPropertyIndex(nextIndex);
+            // 마지막 매물인 경우에도 시그널은 보내지만 인덱스는 변경하지 않음
+            if (currentPropertyIndex < properties.length - 1) {
+                const nextIndex = currentPropertyIndex + 1;
+                setCurrentLivePropertyId(properties[nextIndex].livePropertyId);
+                console.log('Changed to property ID:', properties[nextIndex].livePropertyId);
+                setCurrentPropertyIndex(nextIndex);
+            }
         } catch (error) {
             console.error('Error sending property completion signal:', error);
             alert('매물 상태 업데이트 중 오류가 발생했습니다.');
@@ -435,6 +444,7 @@ function MobileLivePage() {
                             const sortedProperties = propertyList[live.liveId]
                                 ?.sort((a, b) => a.livePropertyId - b.livePropertyId) || [];
                             const currentProperty = sortedProperties[currentPropertyIndex];
+                            const isLastProperty = currentPropertyIndex === sortedProperties.length - 1;
 
                             return (
                                 <div key={live.liveId} className="live-item">
@@ -456,12 +466,21 @@ function MobileLivePage() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <button 
-                                                className="property-nav-button"
-                                                onClick={() => handleNextProperty(live.liveId)}
-                                            >
-                                                <MdNavigateNext size={20} />
-                                            </button>
+                                            {isLastProperty ? (
+                                                <button 
+                                                    className="property-nav-button completed"
+                                                    onClick={() => handleNextProperty(live.liveId)}
+                                                >
+                                                    완료
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    className="property-nav-button"
+                                                    onClick={() => handleNextProperty(live.liveId)}
+                                                >
+                                                    <MdNavigateNext size={20} />
+                                                </button>
+                                            )}
                                         </>
                                     )}
                                 </div>

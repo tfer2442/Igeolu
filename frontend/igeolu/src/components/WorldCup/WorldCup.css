@@ -1,3 +1,7 @@
+.world-cup {
+    position: relative;
+}
+
 .world-cup__button {
     background-color: #7AA5F5;
     color: #fff;
@@ -7,67 +11,86 @@
     font-size: 18px;
     font-weight: 600;
     cursor: pointer;
+    display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s ease;
 }
 
-.world-cup__button:hover {
-    background-color: #6283c2;
-    color: #fff;
-    transition: background-color 0.3s ease;
+.world-cup__button--disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
-.modal-overlay {
+
+.world-cup__button--disabled:hover {
+    background-color: #cccccc;
+}
+
+.world-cup__button:not(.world-cup__button--disabled):hover {
+    background-color: #6283c2;
+}
+
+.world-cup-modal__overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
 }
 
-
-.modal {
-    background-color: #272626;
-    width: 100%;
-    padding: 20px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 60%;
-}
-.modal-container {
-    display: flex;
-    width: 60%;
-    height: 60%;
+.world-cup-modal {
     background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.world-cup-modal__container {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    color: black;
+    width: 100%;
     height: 100%;
-    border-radius: 15px;
 }
-.modal-header {
+
+.world-cup-modal__header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    margin-top: 20px;
- 
+    margin-bottom: 20px;
 }
 
+.world-cup-modal__close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    padding: 5px 10px;
+}
 
-.vs-container {
+.world-cup-modal__close-button:hover {
+    color: #000;
+}
+
+.world-cup-modal__vs-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 50px;
     position: relative;
-    
 }
 
 .room-option {
@@ -95,13 +118,85 @@
     border-radius: 8px;
 }
 
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
+.world-cup-modal__winner {
+    text-align: center;
+    padding: 20px;
+}
+
+.world-cup-modal__winner h3 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #7AA5F5;
+}
+
+.world-cup-modal__restart-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #7AA5F5;
     color: white;
-    font-size: 20px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
+}
+
+.world-cup-modal__restart-button:hover {
+    background-color: #6283c2;
+}
+
+.room-option__dummy {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    font-size: 24px;
+    color: #999;
+}
+
+.room-option--dummy {
+    pointer-events: none;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-controls {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.image-control-button {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.image-control-button:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.image-control-button svg {
+    color: #333;
 }

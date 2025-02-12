@@ -67,29 +67,22 @@ function Make() {
       });
       
       console.log('Join response:', response.data);
-      
-      const { token, liveUrl, role, hostId } = response.data;
-      console.log('Join response:', { token, liveUrl, role, hostId });
+      const { token, liveUrl } = response.data;
 
-      if (!token) {
-        throw new Error('Token not received from server');
-      }
-
+      // Desktop으로 접속하는 경우 'viewer' 역할로 참가
       navigate('/live', { 
         state: { 
           sessionId: inputSessionId, 
           token,
           liveUrl,
-          role: 'participant',
-          hostId
+          role: 'viewer'  // host가 아닌 viewer로 설정
         } 
       });
+
+      console.log('Navigating to live session as viewer');
+      
     } catch (error) {
-      console.error('Error joining session:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
+      console.error('Error joining session:', error);
       alert('세션 참여에 실패했습니다. 세션 ID를 확인해주세요.');
     }
   };

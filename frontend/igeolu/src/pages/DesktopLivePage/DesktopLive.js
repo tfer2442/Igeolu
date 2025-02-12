@@ -8,14 +8,18 @@ import DesktopLiveAndMyPage from '../../components/DesktopNav/DesktopLiveAndMyPa
 import './DesktopLive.css';
 import Memo2 from '../../components/Memo/Memo2';
 import axios from 'axios';
+import RatingModal from '../../components/RatingModal/RatingModal';
 
+// axios 기본 설정 추가
+axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 function DesktopLive() {
   const location = useLocation();
   console.log('Location state:', location.state); // 디버깅을 위해 추가
   
   // location.state에서 값을 추출할 때 기본값 설정
-  const { sessionId, token } = location.state || {};
+  const { sessionId, token, role } = location.state || {};
   
   // 상태 초기화
   const [session, setSession] = useState(null);
@@ -26,6 +30,7 @@ function DesktopLive() {
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [propertyList, setPropertyList] = useState([]);
   const [completedProperties, setCompletedProperties] = useState(new Set());
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -44,11 +49,68 @@ function DesktopLive() {
   };
 
   // 세션 나가기
-  const leaveSession = () => {
-    if (session) {
-      session.disconnect();
-      window.location.href = '/'; // 또는 다른 페이지로 이동
+  const leaveSession = async () => {
+    try {
+      // 토큰 정보 로깅
+      const authToken = axios.defaults.headers.common['Authorization'];
+      console.log('Current Authorization Token:', authToken);
+      
+      // API 요청 시 헤더 정보 로깅
+      console.log('Request Headers:', {
+        Authorization: authToken,
+        'Content-Type': axios.defaults.headers.common['Content-Type']
+      });
+      
+      // 평점 등록 자격 확인 및 응답 로깅
+      const response = await axios.get(`/api/lives/${sessionId}/rating/eligibility`);
+      console.log('Rating eligibility response:', response.data);
+      
+      if (response.data) {
+        // 평점 등록 자격이 있는 경우 모달 표시
+        setShowRatingModal(true);
+      } else {
+        // 자격이 없는 경우 바로 세션 종료
+        if (session) {
+          session.disconnect();
+          window.location.href = '/';
+        }
+      }
+    } catch (error) {
+      console.error('Error checking rating eligibility:', error);
+      console.error('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        headers: error.response?.headers
+      });
+      // 에러 발생 시 세션 종료
+      if (session) {
+        session.disconnect();
+        window.location.href = '/';
+      }
     }
+  };
+
+  const handleRatingSubmit = async (rating) => {
+    try {
+      // 여기에 평점 제출 API 호출 추가
+      await axios.post('/api/lives/rating', {
+        sessionId,
+        rating
+      });
+      
+      // 세션 종료 및 페이지 이동
+      if (session) {
+        session.disconnect();
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      alert('평점 제출 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowRatingModal(false);
   };
 
   // 토큰 파싱 함수
@@ -73,34 +135,37 @@ function DesktopLive() {
   };
 
   useEffect(() => {
+    console.log('Starting session initialization...');
+    // 현재 Authorization 헤더 정보 즉시 로깅
+    console.log('Current Headers:', {
+      Authorization: axios.defaults.headers.common['Authorization'],
+      'Content-Type': axios.defaults.headers.common['Content-Type']
+    });
+
     const initializeSession = async () => {
       try {
-        // 토큰 권한 확인
-        const tokenInfo = parseToken(token);
-        console.log('Token info:', tokenInfo);
-        
-        if (tokenInfo) {
-          console.log('Token role:', tokenInfo.role);
-          // PUBLISHER 또는 MODERATOR 권한 확인
-          const hasPublishPermission = ['PUBLISHER', 'MODERATOR'].includes(tokenInfo.role);
-          console.log('Has publish permission:', hasPublishPermission);
-          
-          if (!hasPublishPermission) {
-            console.warn('Token does not have publish permissions');
-            // 사용자에게 권한 없음을 알림
-            return;
-          }
-        }
-
         const newSession = OV.current.initSession();
         console.log('Session initialized:', newSession);
         setSession(newSession);
 
         // 스트림 생성 이벤트 핸들러
         newSession.on('streamCreated', (event) => {
-          console.log('Stream created:', event);
-          const subscriber = newSession.subscribe(event.stream, undefined);
-          setSubscribers((subscribers) => [...subscribers, subscriber]);
+          console.log('Stream created - Connection Data:', event.stream.connection.data);
+          try {
+            const connectionData = JSON.parse(event.stream.connection.data);
+            console.log('Parsed connection data:', connectionData);
+            
+            // host의 스트림인 경우에만 구독
+            if (connectionData.role === 'host') {
+              console.log('Host stream found, subscribing...');
+              const subscriber = newSession.subscribe(event.stream, undefined);
+              setSubscribers((subscribers) => [...subscribers, subscriber]);
+            } else {
+              console.log('Non-host stream, skipping subscription');
+            }
+          } catch (error) {
+            console.error('Error parsing connection data:', error);
+          }
         });
 
         // 스트림 제거 이벤트 핸들러
@@ -121,9 +186,11 @@ function DesktopLive() {
           console.log('Connection created:', event);
         });
 
-        console.log('Attempting to connect with token:', token);
-        await newSession.connect(token);
-        console.log('Session connected successfully');
+        // viewer로 연결
+        const clientData = JSON.stringify({ role: 'viewer' });
+        console.log('Connecting as viewer with data:', clientData);
+        await newSession.connect(token, clientData);
+        console.log('Connected to session successfully');
 
         // 퍼블리셔 초기화
         const publisher = await OV.current.initPublisherAsync(undefined, {
@@ -279,7 +346,11 @@ function DesktopLive() {
           </div>
         </div>
       </div>
-     
+      <RatingModal 
+        isOpen={showRatingModal}
+        onClose={handleModalClose}
+        sessionId={sessionId}
+      />
     </div>
   );
 }

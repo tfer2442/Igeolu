@@ -1,31 +1,31 @@
 import { useState, useEffect } from 'react';
 import './WorldCup.css';
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-function WorldCup() {
+function WorldCup({ properties = [], isOpen, onClose }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [properties, setProperties] = useState([]);
     const [currentImageIndexes, setCurrentImageIndexes] = useState({});
-    const userId = 32; // 테스트용 userId
+    const [round, setRound] = useState(16); // 16강, 8강, 4강, 결승
+    const [candidates, setCandidates] = useState([]); // 현재 라운드의 후보들
+    const [winners, setWinners] = useState([]); // 각 라운드의 승자들
+    const [winner, setWinner] = useState(null);  // 최종 우승자 상태 추가
 
     useEffect(() => {
-        const fetchProperties = async () => {
-            try {
-                const response = await fetch(`/api/properties?userId=${userId}`);
-                const data = await response.json();
-                setProperties(data);
-                // 각 매물의 이미지 인덱스 초기화
-                const initialIndexes = {};
-                data.forEach(property => {
-                    initialIndexes[property.propertyId] = 0;
-                });
-                setCurrentImageIndexes(initialIndexes);
-            } catch (error) {
-                console.error('Error fetching properties:', error);
-            }
-        };
+        setIsModalOpen(isOpen);
+    }, [isOpen]);
 
-        fetchProperties();
-    }, []);
+    useEffect(() => {
+        if (properties && properties.length >= 2) {
+            const initialIndexes = {};
+            properties.forEach(property => {
+                if (property && property.propertyId) {
+                    initialIndexes[property.propertyId] = 0;
+                }
+            });
+            setCurrentImageIndexes(initialIndexes);
+            initializeWorldCup(properties);
+        }
+    }, [properties]);
 
     const handleNextImage = (propertyId, imagesLength) => {
         setCurrentImageIndexes(prev => ({
@@ -41,62 +41,217 @@ function WorldCup() {
         }));
     };
 
+    const initializeWorldCup = (properties) => {
+        if (!properties || properties.length < 2) return;
+
+        const propertyCount = properties.length;
+        let initialRound;
+
+        // 가장 가까운 2의 배수로 라운드 결정
+        if (propertyCount <= 2) {
+            initialRound = 2;
+        } else if (propertyCount <= 4) {
+            initialRound = 4;
+        } else if (propertyCount <= 8) {
+            initialRound = 8;
+        } else {
+            initialRound = 16;
+        }
+
+        // 실제 필요한 매물 수 (라운드에 맞춰서)
+        const neededCount = Math.min(initialRound, Math.pow(2, Math.floor(Math.log2(propertyCount))));
+
+        // 매물 섞기
+        const shuffled = [...properties].sort(() => Math.random() - 0.5);
+        
+        // 필요한 개수만큼만 매물 선택 (초과하는 매물은 제외)
+        const selectedProperties = shuffled.slice(0, neededCount);
+
+        // 필요한 개수만큼 배열 채우기 (부족한 경우 부전승으로 채움)
+        const initial = [...selectedProperties];
+        while (initial.length < neededCount) {
+            initial.push({
+                propertyId: `dummy_${initial.length}`,
+                images: [],
+                deposit: 0,
+                monthlyRent: 0,
+                address: '부전승',
+                description: '부전승',
+                isDummy: true
+            });
+        }
+
+        console.log(`Starting WorldCup with ${neededCount} properties in ${initialRound}강`);
+        setCandidates(initial);
+        setRound(initialRound);
+        setWinners([]);
+        setWinner(null);
+    };
+
+    const selectWinner = (selectedProperty) => {
+        // 부전승 처리: 상대가 부전승인 경우 자동으로 다른 매물 선택
+        const currentPair = candidates.slice(0, 2);
+        let winningProperty = selectedProperty;
+
+        if (currentPair.some(p => p.isDummy)) {
+            winningProperty = currentPair.find(p => !p.isDummy) || selectedProperty;
+        }
+
+        const newWinners = [...winners, winningProperty];
+        
+        if (round === 2) {
+            setWinner(winningProperty);
+        } else {
+            if (newWinners.length === round / 2) {
+                const nextRound = round / 2;
+                setRound(nextRound);
+                setCandidates(newWinners);
+                setWinners([]);
+            } else {
+                setWinners(newWinners);
+                const remainingCandidates = candidates.slice(2);
+                setCandidates(remainingCandidates);
+            }
+        }
+    };
+
+    const resetWorldCup = () => {
+        setWinner(null);
+        setRound(16);
+        setCandidates([]);
+        setWinners([]);
+        initializeWorldCup(properties);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        onClose();
+        resetWorldCup();
+    };
+
+    const handleWorldCupClick = () => {
+        if (properties.length < 2) {
+            alert('월드컵을 시작하기 위해서는 최소 2개 이상의 매물이 필요합니다.');
+            return;
+        }
+        setIsModalOpen(true);
+    };
+
     return (
         <div className='world-cup'>
             <button 
-                className='world-cup__button'
-                onClick={() => setIsModalOpen(true)}
+                className={`world-cup__button ${properties.length < 2 ? 'world-cup__button--disabled' : ''}`}
+                onClick={handleWorldCupClick}
+                disabled={properties.length < 2}
             >
                 이상집 월드컵
             </button>
 
-            {isModalOpen && properties.length >= 2 && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <div className="modal-container">   
-                            <div className="modal-header">
-                                <p style={{color: '#959595', fontSize: '24px', margin: '0'}}>내 조건에 따른</p>
-                                <p style={{color: 'black', fontSize: '36px' ,fontWeight: 'bold', margin: '0'}}>매물 월드컵</p>
-                                <span style={{color: '#2C76FF', fontSize: '24px'}}>16강</span>
+            {isModalOpen && (
+                <div className="world-cup-modal__overlay">
+                    <div className="world-cup-modal">
+                        <div className="world-cup-modal__container">   
+                            <div className="world-cup-modal__header">
+                                <h2>매물 월드컵 {round}강</h2>
+                                <div>
+                                    {!winner && `${Math.floor(winners.length + 1)}/${round/2} 매치`}
+                                </div>
+                                <button 
+                                    className="world-cup-modal__close-button" 
+                                    onClick={handleCloseModal}
+                                >
+                                    X
+                                </button>
                             </div>
-                       
-                            <div className="modal-content">
-                                <div className="vs-container">
-                                    {[0, 1].map((index) => (
-                                        <div className="room-option" key={index}>
+                            <div className="world-cup-modal__content">
+                                {winner ? (
+                                    <div className="world-cup-modal__winner">
+                                        <h3>🏆 우승 매물 🏆</h3>
+                                        <div className="room-option">
                                             <div className="image-container">
-                                                {properties[index].images && properties[index].images.length > 0 && (
-                                                    <>
-                                                        <img 
-                                                            src={properties[index].images[currentImageIndexes[properties[index].propertyId]]} 
-                                                            alt={`매물${index + 1}`} 
-                                                        />
-                                                        {properties[index].images.length > 1 && (
-                                                            <div className="image-controls">
-                                                                <button onClick={() => handlePrevImage(
-                                                                    properties[index].propertyId, 
-                                                                    properties[index].images.length
-                                                                )}>←</button>
-                                                                <button onClick={() => handleNextImage(
-                                                                    properties[index].propertyId, 
-                                                                    properties[index].images.length
-                                                                )}>→</button>
-                                                            </div>
-                                                        )}
-                                                    </>
+                                                {winner.images && winner.images.length > 0 && (
+                                                    <img 
+                                                        src={winner.images[currentImageIndexes[winner.propertyId]]} 
+                                                        alt="우승 매물" 
+                                                    />
                                                 )}
                                             </div>
-                                            <p>{(properties[index].deposit ?? 0).toLocaleString()}원 / {(properties[index].monthlyRent ?? 0).toLocaleString()}원</p>
-                                            <p>{properties[index].address || '주소 정보 없음'}</p>
-                                            <p>{properties[index].description || '소개 정보 없음'}</p>
+                                            <p>{(winner.deposit ?? 0).toLocaleString()}원 / {(winner.monthlyRent ?? 0).toLocaleString()}원</p>
+                                            <p>{winner.address || '주소 정보 없음'}</p>
+                                            <p>{winner.description || '소개 정보 없음'}</p>
                                         </div>
-                                    ))}
-                                    <div className="vs-text">VS</div>
-                                </div>
+                                        <button 
+                                            className="world-cup-modal__restart-button" 
+                                            onClick={resetWorldCup}
+                                        >
+                                            다시하기
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="world-cup-modal__vs-container">
+                                        {candidates.slice(0, 2).map((property, index) => (
+                                            <div 
+                                                className={`room-option ${property.isDummy ? 'room-option--dummy' : ''}`}
+                                                key={property.propertyId}
+                                                onClick={() => !property.isDummy && selectWinner(property)}
+                                                style={{ 
+                                                    cursor: property.isDummy ? 'default' : 'pointer',
+                                                    opacity: property.isDummy ? 0.5 : 1 
+                                                }}
+                                            >
+                                                {property.isDummy ? (
+                                                    <div className="room-option__dummy">
+                                                        <p>부전승</p>
+                                                    </div>
+                                                ) : (
+                                                    <div className="image-container">
+                                                        {property.images && property.images.length > 0 && (
+                                                            <>
+                                                                <img 
+                                                                    src={property.images[currentImageIndexes[property.propertyId]]} 
+                                                                    alt={`매물${index + 1}`} 
+                                                                />
+                                                                {property.images.length > 1 && (
+                                                                    <div className="image-controls">
+                                                                        <button 
+                                                                            className="image-control-button"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handlePrevImage(
+                                                                                    property.propertyId, 
+                                                                                    property.images.length
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <IoIosArrowBack size={24} />
+                                                                        </button>
+                                                                        <button 
+                                                                            className="image-control-button"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handleNextImage(
+                                                                                    property.propertyId, 
+                                                                                    property.images.length
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <IoIosArrowForward size={24} />
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                )}
+                                                <p>{(property.deposit ?? 0).toLocaleString()}원 / {(property.monthlyRent ?? 0).toLocaleString()}원</p>
+                                                <p>{property.address || '주소 정보 없음'}</p>
+                                                <p>{property.description || '소개 정보 없음'}</p>
+                                            </div>
+                                        ))}
+                                        <div className="vs-text">VS</div>
+                                    </div>
+                                )}
                             </div>
-                            <button className="close-button" onClick={() => setIsModalOpen(false)}>
-                                X
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -105,4 +260,4 @@ function WorldCup() {
     );
 }
 
-export default WorldCup;
+export default WorldCup; 

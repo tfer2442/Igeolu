@@ -1,4 +1,3 @@
-
 .desktop-map-page {
     width: 100%;
     height: 100vh;
@@ -51,6 +50,27 @@
 .map-content {
     height: 100%;
     position: relative;
+}
+
+.worldcup-button-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-worldcup-container {
+    margin-left: auto; /* 오른쪽 정렬 */
 }
 
 
