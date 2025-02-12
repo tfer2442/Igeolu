@@ -33,13 +33,10 @@ function MapPage() {
     const [cities, setCities] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [neighborhoods, setNeighborhoods] = useState([]);
-<<<<<<< HEAD
     const [isWorldCupOpen, setIsWorldCupOpen] = useState(false);
-=======
     const [initialProperties, setInitialProperties] = useState([]);
 
     // 시/도 데이터 가져오기
->>>>>>> feature/S12P11D205-298-mobile-api
     useEffect(() => {
         const fetchCities = async () => {
             try {
