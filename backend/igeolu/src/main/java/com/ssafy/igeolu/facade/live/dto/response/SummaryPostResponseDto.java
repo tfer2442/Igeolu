@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class SummaryPostResponseDto {
-	@Schema(name = "라이브 매물 요약")
+	@Schema(description = "라이브 매물 요약")
 	private String summary;
 }
