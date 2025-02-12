@@ -145,7 +145,14 @@ function App() {
   const handleToggleChat = () => setIsOpen(!isOpen);
   const handleSelectRoom = (room) => setSelectedRoom(room);
   const handleBack = () => setSelectedRoom(null);
-  const handleClose = () => {
+  const handleClose = async () => {
+    if (selectedRoom) {
+      try {
+        await ChatApi.markMessagesAsRead(selectedRoom.roomId, currentUserId);
+      } catch (error) {
+        console.error('메시지 읽음 처리 실패:', error);
+      }
+    }
     setIsOpen(false);
     setSelectedRoom(null);
   };
