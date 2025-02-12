@@ -59,8 +59,8 @@ function App() {
 
   // === 4. User Authentication (Development Mode) ===
   useEffect(() => {
-    // const devUser = { userId: 33, role: 'realtor' }; // 오승우
-    const devUser = { userId: 35, role: 'member' }; // 이진형
+    const devUser = { userId: 33, role: 'realtor' }; // 오승우
+    // const devUser = { userId: 35, role: 'member' }; // 이진형
     setUser(devUser);
     localStorage.setItem('user', JSON.stringify(devUser));
     setIsUserInitialized(true);

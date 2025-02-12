@@ -1,6 +1,7 @@
 // src/components/common/Chat/ChatExtras/ChatExtras.jsx
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import liveIcon from '../../../../assets/images/liveButton.png';
 import reservationIcon from '../../../../assets/images/reservationButton.png';
 import attachIcon from '../../../../assets/images/fileAttatchButton.png';
@@ -8,6 +9,7 @@ import AppointmentModal from '../AppointmentModal/AppointmentModal';
 import './ChatExtras.css';
 
 const ChatExtras = ({ isOpen, room, currentUserId, onClose }) => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -36,7 +38,16 @@ useEffect(() => {
     <>
       <div className={`chat-extras ${isOpen ? 'open' : ''} ${isAnimating ? 'animating' : ''}`}>
         <div className='chat-extras-content'>
-          <button className='extra-button'>
+        <button 
+            className='extra-button'
+            onClick={() => {
+              setIsAnimating(true);
+              setTimeout(() => {
+                onClose();
+                navigate('/mobile-live-setting');
+              }, 300);
+            }}
+          >
             <div className='icon-circle'>
               <img src={liveIcon} alt='라이브' />
             </div>
