@@ -32,7 +32,7 @@
     transition: transform 0.2s;
     background-color: white;
     width: 115px;
-    height: 200px; /* 높이도 비율에 맞게 조정 */
+    height: 160px; /* 높이도 비율에 맞게 조정 */
   }
   
   .property-image {
@@ -49,7 +49,7 @@
   
   .property-info {
     padding: 8px;
-    height: 81px;
+    height: 40px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

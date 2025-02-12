@@ -8,19 +8,13 @@ const MyPageModal = ({ property, onClose }) => {
   const [summary, setSummary] = useState('');
   const [recordingInfo, setRecordingInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('summary'); // 'summary' or 'memo'
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('summary');
 
   useEffect(() => {
-    const fetchPropertyDetails = async () => {
+    const fetchRecordingInfo = async () => {
       try {
         setIsLoading(true);
-        if (property.livePropertyId) {
-          const summaryResponse = await LiveControllerApi.getLivePropertySummary(
-            property.livePropertyId
-          );
-          setSummary(summaryResponse['summary']);
-        }
-        
         if (property.recordingId) {
           const recordingResponse = await LiveControllerApi.getRecordingInfo(
             property.recordingId
@@ -28,16 +22,32 @@ const MyPageModal = ({ property, onClose }) => {
           setRecordingInfo(recordingResponse);
         }
       } catch (error) {
-        console.error('Error fetching property details:', error);
+        console.error('Error fetching recording info:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (property) {
-      fetchPropertyDetails();
+      fetchRecordingInfo();
     }
   }, [property]);
+
+  const handleLoadSummary = async () => {
+    try {
+      setIsSummaryLoading(true);
+      if (property.livePropertyId) {
+        const summaryResponse = await LiveControllerApi.getLivePropertySummary(
+          property.livePropertyId
+        );
+        setSummary(summaryResponse['summary']);
+      }
+    } catch (error) {
+      console.error('Error fetching property summary:', error);
+    } finally {
+      setIsSummaryLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -104,7 +114,22 @@ const MyPageModal = ({ property, onClose }) => {
             <div className="tab-content">
               {activeTab === 'summary' ? (
                 <div className="summary-content">
-                  {summary || '요약 정보가 없습니다.'}
+                  {summary ? (
+                    summary
+                  ) : (
+                    <div className="summary-loading-container">
+                      {isSummaryLoading ? (
+                        <div>요약 정보를 불러오는 중...</div>
+                      ) : (
+                        <button 
+                          onClick={handleLoadSummary}
+                          className="load-summary-button"
+                        >
+                          요약 정보 불러오기
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="memo-content">
