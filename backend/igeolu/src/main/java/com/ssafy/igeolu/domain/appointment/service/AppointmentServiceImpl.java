@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.repository.AppointmentRepository;
+import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +27,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public List<Appointment> getAppointmentList(User user) {
-		return appointmentRepository.findByUserOrOpponentUser(user);
+		if (user.getRole() == Role.ROLE_REALTOR) {
+			return appointmentRepository.findAllByUser(user);
+		}
+
+		if (user.getRole() == Role.ROLE_MEMBER) {
+			return appointmentRepository.findAllByOpponentUser(user);
+		}
+
+		throw new CustomException(ErrorCode.FORBIDDEN_USER);
 	}
 
 	@Override

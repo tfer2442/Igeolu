@@ -1,6 +1,8 @@
 package com.ssafy.igeolu.facade.appointment.service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +11,7 @@ import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
 import com.ssafy.igeolu.domain.chatroom.entity.ChatRoom;
 import com.ssafy.igeolu.domain.chatroom.service.ChatRoomService;
+import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentListGetRequestDto;
@@ -35,13 +38,19 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	@Override
 	public List<AppointmentListGetResponseDto> getAppointmentList(AppointmentListGetRequestDto request) {
 		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(E) HH:mm", Locale.KOREAN);
 
 		return appointmentService.getAppointmentList(user).stream()
 			.map(a -> AppointmentListGetResponseDto.builder()
 				.appointmentId(a.getId())
-				.scheduledAt(a.getScheduledAt())
+				.scheduledAt(a.getScheduledAt().format(formatter))
 				.title(a.getTitle())
-				.opponentName(a.getOpponentUser().getUsername())
+				.opponentId(
+					user.getRole() == Role.ROLE_REALTOR ? a.getOpponentUser().getId() :
+						a.getUser().getId()) // 만약, 약속 리스트를 조회하는 사람이 공인중개사라면 고객 id를 반환, 조회하는 사람이 고객이라면 공인중개사 id를 반환
+				.opponentName(
+					user.getRole() == Role.ROLE_REALTOR ? a.getOpponentUser().getUsername() :
+						a.getUser().getUsername()) // 만약, 약속 리스트를 조회하는 사람이 공인중개사라면 고객 이름 반환, 조회하는 사람이 고객이라면 공인중개사 이름 반환
 				.build())
 			.toList();
 	}

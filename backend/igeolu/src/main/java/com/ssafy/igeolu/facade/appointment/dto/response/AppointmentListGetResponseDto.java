@@ -13,7 +13,7 @@ public class AppointmentListGetResponseDto {
 	@Schema(description = "약속 id")
 	private Integer appointmentId;
 
-	@Schema(description = "스케줄 날짜")
+	@Schema(description = "스케줄 날짜", example = "yyyy-MM-dd(E) HH:mm")
 	private String scheduledAt;
 
 	@Schema(description = "약속 내용")
