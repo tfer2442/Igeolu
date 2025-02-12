@@ -10,9 +10,6 @@ public class AppointmentPostRequestDto {
 	private LocalDateTime scheduledAt;
 	private String title;
 
-	// 본인
-	private Integer userId;
-
 	// 상대방
 	private Integer opponentUserId;
 
