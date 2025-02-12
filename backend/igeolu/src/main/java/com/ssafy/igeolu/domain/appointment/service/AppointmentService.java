@@ -20,4 +20,6 @@ public interface AppointmentService {
 		User user);
 
 	void deleteAppointment(Appointment appointment);
+
+	List<Appointment> getAppointmentsBySchedule(LocalDateTime start, LocalDateTime end);
 }

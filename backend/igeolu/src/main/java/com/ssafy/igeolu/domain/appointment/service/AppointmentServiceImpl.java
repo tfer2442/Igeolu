@@ -47,4 +47,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public void deleteAppointment(Appointment appointment) {
 		appointmentRepository.delete(appointment);
 	}
+
+	@Override
+	public List<Appointment> getAppointmentsBySchedule(LocalDateTime start, LocalDateTime end) {
+		return appointmentRepository.findByScheduledAtBetweenAndNotificationSentFalse(start, end);
+	}
 }
