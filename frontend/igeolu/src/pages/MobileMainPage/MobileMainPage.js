@@ -1,12 +1,14 @@
 
 import './MobileMainPage.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab'
 import MobileLogo from '../../assets/images/모바일로고.png'
 import MobileAlarm from '../../assets/images/알림아이콘.png'
 import RealEstateRegistration from '../../components/RealEstateRegistration/RealEstateRegistration'
 import RealEstateEdit from '../../components/RealEstateEdit/RealEstateEdit'
-import poster from '../../assets/images/포스터.jpg'
+import poster1 from '../../assets/images/포스터1.jpg'
+import poster2 from '../../assets/images/포스터2.jpg'
+import poster3 from '../../assets/images/포스터3.jpg'
 
 function MobileMainPage() {
     const [realtorInfo, setRealtorInfo] = useState({
@@ -21,6 +23,62 @@ function MobileMainPage() {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // ------------ 공지 관련 ------------
+    const [currentPoster, setCurrentPoster] = useState(0);
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+    const autoPlayRef = useRef(null);
+
+    const posters = [poster1, poster2, poster3];
+
+    // 자동 슬라이드 효과
+    useEffect(() => {
+        if (isAutoPlaying) {
+            autoPlayRef.current = setInterval(() => {
+                setCurrentPoster((prev) => (prev + 1) % posters.length);
+            }, 3000); // 3초마다 변경
+        }
+        
+        return () => {
+            if (autoPlayRef.current) {
+                clearInterval(autoPlayRef.current);
+            }
+        };
+    }, [isAutoPlaying]);
+
+    // 터치 이벤트 핸들러
+    const handleTouchStart = (e) => {
+        setIsAutoPlaying(false);
+        setTouchStart(e.touches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEnd(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        
+        const distance = touchStart - touchEnd;
+        const minSwipeDistance = 50;
+
+        if (Math.abs(distance) > minSwipeDistance) {
+            if (distance > 0) {
+                // 왼쪽으로 스와이프
+                setCurrentPoster((prev) => (prev + 1) % posters.length);
+            } else {
+                // 오른쪽으로 스와이프
+                setCurrentPoster((prev) => (prev - 1 + posters.length) % posters.length);
+            }
+        }
+
+        setTouchStart(null);
+        setTouchEnd(null);
+    };
+
+    // ------------ 공지 관련 ------------
 
     useEffect(() => {
         const fetchRealtorInfo = async () => {
@@ -87,8 +145,26 @@ function MobileMainPage() {
                </div>
                <div className="mobile-main-page__notice">
                     <p>공지</p>
-                    <img src={poster} alt="poster" />
-               </div>
+                    <div 
+                        className="mobile-main-page__notice-slider"
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        <img 
+                            src={posters[currentPoster]} 
+                            alt={`poster ${currentPoster + 1}`} 
+                        />
+                        <div className="mobile-main-page__notice-dots">
+                            {posters.map((_, index) => (
+                                <span 
+                                    key={index} 
+                                    className={`dot ${index === currentPoster ? 'active' : ''}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
                 <MobileBottomTab />
             </div>
         </div>

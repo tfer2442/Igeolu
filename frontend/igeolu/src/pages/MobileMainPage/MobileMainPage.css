@@ -106,6 +106,40 @@
     margin: 0;
 }
 
+.mobile-main-page__notice-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.mobile-main-page__notice-slider img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.3s ease-in-out;
+}
+
+.mobile-main-page__notice-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.dot.active {
+    background-color: white;
+}
+
 /* 스크롤바 스타일링 */
 .mobile-main-page::-webkit-scrollbar {
     display: none;  /* Chrome, Safari, Opera */
