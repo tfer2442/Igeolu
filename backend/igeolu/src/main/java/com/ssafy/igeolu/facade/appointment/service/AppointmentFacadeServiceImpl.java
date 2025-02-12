@@ -62,10 +62,10 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 			.build();
 
 		Appointment savedAppointment = appointmentService.createAppointment(appointment);
+
 		return AppointmentPostResponseDto.builder()
 			.appointmentId(savedAppointment.getId())
 			.build();
-
 	}
 
 	@Override
