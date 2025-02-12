@@ -342,6 +342,7 @@
 
 // export default MapPage;
 
+
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import axios from 'axios';
@@ -354,14 +355,11 @@ import DetailPanel from '../../components/common/DetailPanel/DetailPanel';
 import './MapPage.css';
 
 function MapPage() {
-    const handleLoginSigninClick = () => {
-        console.log('로그인 |회원가입');
-    };
-
     // URL 파라미터에서 type 가져오기
     const searchParams = new URLSearchParams(window.location.search);
     const typeParam = searchParams.get('type');
 
+    // 상태 관리
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
     const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
@@ -379,10 +377,12 @@ function MapPage() {
     const [districts, setDistricts] = useState([]);
     const [neighborhoods, setNeighborhoods] = useState([]);
 
+    // 시/도 데이터 가져오기
     useEffect(() => {
         const fetchCities = async () => {
             try {
                 const response = await axios.get('https://i12d205.p.ssafy.io/api/sidos');
+                console.log('Fetched cities:', response.data);
                 setCities(response.data);
             } catch (error) {
                 console.error('Error fetching cities:', error);
@@ -391,11 +391,13 @@ function MapPage() {
         fetchCities();
     }, []);
 
+    // 구/군 데이터 가져오기
     useEffect(() => {
         const fetchDistricts = async () => {
             if (selectedCity) {
                 try {
                     const response = await axios.get(`https://i12d205.p.ssafy.io/api/guguns?sidoName=${encodeURIComponent(selectedCity)}`);
+                    console.log('Fetched districts:', response.data);
                     setDistricts(response.data);
                 } catch (error) {
                     console.error('Error fetching districts:', error);
@@ -407,11 +409,13 @@ function MapPage() {
         fetchDistricts();
     }, [selectedCity]);
 
+    // 동 데이터 가져오기
     useEffect(() => {
         const fetchNeighborhoods = async () => {
             if (selectedCity && selectedDistrict) {
                 try {
                     const response = await axios.get(`https://i12d205.p.ssafy.io/api/dongs?sidoName=${encodeURIComponent(selectedCity)}&gugunName=${encodeURIComponent(selectedDistrict)}`);
+                    console.log('Fetched neighborhoods:', response.data);
                     setNeighborhoods(response.data);
                 } catch (error) {
                     console.error('Error fetching neighborhoods:', error);
@@ -423,6 +427,7 @@ function MapPage() {
         fetchNeighborhoods();
     }, [selectedCity, selectedDistrict]);
 
+    // 매물 검색 결과 가져오기
     const fetchSearchResults = async () => {
         try {
             const params = new URLSearchParams();
@@ -436,6 +441,8 @@ function MapPage() {
                 params.append('optionIds', selectedOptions.join(','));
             }
 
+            console.log('Property search params:', Object.fromEntries(params));
+
             // 필터 조건이 없을 때도 전체 매물 조회
             if (params.toString() === '') {
                 try {
@@ -443,6 +450,7 @@ function MapPage() {
                     const validResults = response.data.filter(item =>
                         item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
                     );
+                    console.log('All properties response:', validResults);
                     setSearchResults(validResults);
                     
                     if (validResults.length > 0) {
@@ -471,6 +479,7 @@ function MapPage() {
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
             
+            console.log('Filtered properties response:', validResults);
             setSearchResults(validResults);
 
             if (validResults.length > 0) {
@@ -489,15 +498,19 @@ function MapPage() {
     // 공인중개사 목록 가져오기
     const fetchRealtors = async () => {
         try {
-            const params = new URLSearchParams();
+            // 현재 필터 설정값 로깅
+            console.log('Current Filter Settings:', {
+                selectedCity,
+                selectedDistrict,
+                selectedNeighborhood,
+                filterStatus: !selectedCity || !selectedDistrict || !selectedNeighborhood ? '전체 조회' : '필터링된 조회'
+            });
 
-            if (selectedCity) params.append('sidoName', selectedCity);
-            if (selectedDistrict) params.append('gugunName', selectedDistrict);
-            if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
-
-            // 필터 설정값이 없는 경우
-            if (params.toString() === '') {
+            // 필터 설정값이 없는 경우 (전체 조회)
+            if (!selectedCity || !selectedDistrict || !selectedNeighborhood) {
+                console.log('Fetching all realtors from:', 'https://i12d205.p.ssafy.io/api/users/realtors');
                 const response = await axios.get('https://i12d205.p.ssafy.io/api/users/realtors');
+                console.log('All realtors response:', response.data);
                 setSearchResults(response.data);
                 
                 if (response.data.length > 0) {
@@ -512,23 +525,56 @@ function MapPage() {
                 return;
             }
 
-            // 필터 설정값이 있는 경우
-            const response = await axios.get('https://i12d205.p.ssafy.io/api/realtors', {
-                params: params,
-                paramsSerializer: {
-                    indexes: null
-                }
-            });
-            setSearchResults(response.data);
+            // 동까지 모두 선택된 경우 (필터링된 조회)
+            try {
+                // neighborhoods 데이터 구조 확인을 위한 로깅
+                console.log('Current neighborhoods data:', neighborhoods);
+                
+                // 선택된 동의 정보에서 dongCode 가져오기
+                // API 응답 구조에 맞게 수정
+                const selectedDong = neighborhoods.find(n => 
+                    n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
+                );
 
-            if (response.data.length > 0) {
-                const firstItem = response.data[0];
-                if (firstItem.latitude && firstItem.longitude) {
-                    setMapCenter({
-                        lat: parseFloat(firstItem.latitude),
-                        lng: parseFloat(firstItem.longitude)
-                    });
+                console.log('Selected dong data:', selectedDong);
+
+                // dongCode가 다른 속성명으로 존재할 수 있으므로 체크
+                const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
+
+                if (!dongCode) {
+                    console.error('DongCode not found for:', selectedNeighborhood);
+                    console.error('Selected dong data:', selectedDong);
+                    setSearchResults([]);
+                    return;
                 }
+
+                const apiUrl = `https://i12d205.p.ssafy.io/api/users/${dongCode}/realtors`;
+                console.log('Fetching filtered realtors from:', apiUrl);
+                
+                const response = await axios.get(apiUrl);
+                console.log('Filtered realtors response:', response.data);
+                
+                const resultsWithLocation = response.data.map(realtor => ({
+                    ...realtor,
+                    dongCode: dongCode,
+                    dongName: selectedNeighborhood
+                }));
+                
+                console.log('Results with location:', resultsWithLocation);
+                setSearchResults(resultsWithLocation);
+
+                if (resultsWithLocation.length > 0) {
+                    const firstItem = resultsWithLocation[0];
+                    if (firstItem.latitude && firstItem.longitude) {
+                        setMapCenter({
+                            lat: parseFloat(firstItem.latitude),
+                            lng: parseFloat(firstItem.longitude)
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching realtors by dongcode:', error);
+                setSearchResults([]);
             }
         } catch (error) {
             console.error('Error fetching realtors:', error);
@@ -536,16 +582,17 @@ function MapPage() {
         }
     };
 
+    // 필터값 변경시 검색 결과 업데이트
     useEffect(() => {
         if (activeMenu === 'room') {
             fetchSearchResults();
         } else if (activeMenu === 'agent') {
             fetchRealtors();
         }
-        // 필터값이 변경될 때마다 DetailPanel 닫기
         setSelectedItem(null);
     }, [selectedCity, selectedDistrict, selectedNeighborhood, deposit, monthlyRent, selectedOptions, activeMenu]);
 
+    // 이벤트 핸들러
     const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
         setSelectedCity(sidoName);
         setSelectedDistrict(gugunName);
@@ -611,7 +658,7 @@ function MapPage() {
 
     return (
         <div className='desktop-map-page'>
-            <DesktopMapPageNav onLoginSigninClick={handleLoginSigninClick}>
+            <DesktopMapPageNav onLoginSigninClick={() => console.log('로그인 |회원가입')}>
                 <LocationSearch onSearch={handleLocationSearch} />
             </DesktopMapPageNav>
             <div className='desktop-map-page-content'>
@@ -675,7 +722,6 @@ function MapPage() {
                                         
                                         const itemId = activeMenu === 'room' ? item.propertyId : item.userId;
                                         const itemTitle = activeMenu === 'room' ? (item.title || '매물정보') : (item.username || '공인중개사');
-                                        
                                         return (
                                             <MapMarker
                                                 key={`marker-${itemId || index}`}
