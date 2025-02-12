@@ -16,6 +16,8 @@ import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPostRequestDto
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPutRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentListGetResponseDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentPostResponseDto;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
@@ -68,22 +70,23 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 
 	@Override
 	public void updateAppointment(Integer appointmentId, AppointmentPutRequestDto request) {
-
-		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
-
 		Appointment appointment = appointmentService.getAppointment(appointmentId);
+
+		if (!appointment.getUser().getId().equals(securityService.getCurrentUser().getUserId())) {
+			throw new CustomException(ErrorCode.FORBIDDEN_USER);
+		}
+
 		appointmentService.updateAppointment(appointment,
 			request.getScheduledAt(),
-			request.getTitle(),
-			user);
+			request.getTitle());
 	}
 
 	@Override
 	public void deleteAppointment(Integer appointmentId) {
 		Appointment appointment = appointmentService.getAppointment(appointmentId);
-		//TODO: appointment user 랑 토큰값이랑 같은지 검증 필요
-		if (appointment.getUser().getId() != securityService.getCurrentUser().getUserId()) {
-			throw new RuntimeException("잘못된 유저의 접근입니다!");
+
+		if (!appointment.getUser().getId().equals(securityService.getCurrentUser().getUserId())) {
+			throw new CustomException(ErrorCode.FORBIDDEN_USER);
 		}
 
 		appointmentService.deleteAppointment(appointment);

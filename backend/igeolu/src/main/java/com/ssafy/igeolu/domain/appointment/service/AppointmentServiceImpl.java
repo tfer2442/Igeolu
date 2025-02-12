@@ -35,12 +35,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public void updateAppointment(Appointment appointment,
 		LocalDateTime scheduledAt,
-		String title,
-		User user) {
+		String title) {
 
 		appointment.setScheduledAt(scheduledAt);
 		appointment.setTitle(title);
-		appointment.setUser(user);
 	}
 
 	@Override

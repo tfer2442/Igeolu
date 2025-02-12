@@ -33,7 +33,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 		if (authentication == null || authentication.getPrincipal() == null
 			|| "anonymousUser".equals(authentication.getPrincipal())) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 
 		if (authentication.getPrincipal() instanceof CustomOAuth2User principal) {
@@ -48,7 +48,7 @@ public class SecurityServiceImpl implements SecurityService {
 				.build();
 		}
 
-		throw new CustomException(ErrorCode.UNAUTHORIZED);
+		throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 	}
 
 	/**
@@ -65,11 +65,11 @@ public class SecurityServiceImpl implements SecurityService {
 				return existingUser;
 			})
 			.orElseGet(() -> userRepository.save(
-					User.builder()
-						.role(getSignupRole(state))
-						.kakaoId(kakaoId)
-						.username(nickName)
-						.build()
+				User.builder()
+					.role(getSignupRole(state))
+					.kakaoId(kakaoId)
+					.username(nickName)
+					.build()
 
 			));
 	}
@@ -89,7 +89,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 		if (authentication == null || authentication.getPrincipal() == null
 			|| "anonymousUser".equals(authentication.getPrincipal())) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 
 		if (authentication.getPrincipal() instanceof CustomOAuth2User principal) {
@@ -97,7 +97,7 @@ public class SecurityServiceImpl implements SecurityService {
 				.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 		}
 
-		throw new CustomException(ErrorCode.UNAUTHORIZED);
+		throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 	}
 
 	/**

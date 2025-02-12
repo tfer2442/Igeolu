@@ -42,9 +42,11 @@ public class Appointment {
 	// 예약 정보
 	private String title;
 
+	//공인중개사
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
+	// 고객
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User opponentUser;
 

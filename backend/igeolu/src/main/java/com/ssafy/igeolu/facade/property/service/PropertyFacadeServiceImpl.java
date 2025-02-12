@@ -151,7 +151,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		// 매물 소유자와 현재 사용자가 다르면 예외 발생
 		if (!property.getUser().getId().equals(currentUserId)) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 
 		// dongcode 업데이트 추가
@@ -241,7 +241,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 
 		// 매물 소유자와 현재 사용자가 다르면 예외 발생
 		if (!property.getUser().getId().equals(currentUserId)) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 
 		// 이미지 파일의 경로들을 미리 저장 (DB 삭제 후 파일 시스템에서 삭제하기 위함)
