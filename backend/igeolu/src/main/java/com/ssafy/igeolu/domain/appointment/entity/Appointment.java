@@ -57,4 +57,8 @@ public class Appointment {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
+
+	// 중복 알림 전송을 방지하기 위한 필드
+	@Column(nullable = false)
+	private boolean notificationSent = false;
 }
