@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import axios from 'axios';
@@ -95,32 +96,6 @@ function MapPage() {
             if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
             if (selectedOptions?.length > 0) {
                 params.append('optionIds', selectedOptions.join(','));
-            }
-
-            // 필터 조건이 없을 때도 전체 매물 조회
-            if (params.toString() === '') {
-                try {
-                    const response = await axios.get('https://i12d205.p.ssafy.io/api/properties/search');
-                    const validResults = response.data.filter(item =>
-                        item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
-                    );
-                    setSearchResults(validResults);
-                    setPropertyMarkers([]);
-                    
-                    if (validResults.length > 0) {
-                        const newCenter = {
-                            lat: parseFloat(validResults[0].latitude),
-                            lng: parseFloat(validResults[0].longitude)
-                        };
-                        setMapCenter(newCenter);
-                    }
-                    return;
-                } catch (error) {
-                    console.error('Error fetching all properties:', error);
-                    setSearchResults([]);
-                    setPropertyMarkers([]);
-                    return;
-                }
             }
 
             const response = await axios.get('https://i12d205.p.ssafy.io/api/properties/search', {
@@ -226,16 +201,22 @@ function MapPage() {
         setSelectedItem(null);
         setPropertyMarkers([]);
         setInitialProperties([]);
-    }, [selectedCity, selectedDistrict, selectedNeighborhood, activeMenu]);
+    }, [
+        selectedCity, 
+        selectedDistrict, 
+        selectedNeighborhood, 
+        activeMenu,
+        deposit,
+        monthlyRent,
+        selectedOptions
+    ]);
 
-    // 필터 변경시 매물 필터링 적용
+    // 공인중개사 매물 필터링
     useEffect(() => {
         if (initialProperties.length > 0) {
             const filteredResults = initialProperties.filter(item => {
                 const passesDepositFilter = !deposit || item.deposit <= deposit;
                 const passesMonthlyRentFilter = !monthlyRent || item.monthlyRent <= monthlyRent;
-                
-                // 모든 선택된 옵션이 포함되어 있는지 확인
                 const passesOptionsFilter = selectedOptions.length === 0 || 
                     selectedOptions.every(optionId => 
                         item.options?.some(opt => opt.optionId === optionId)
@@ -306,20 +287,15 @@ function MapPage() {
                 params: { userId: userId }
             });
             
-            // 유효한 좌표가 있는 매물만 필터링
             const validResults = response.data.filter(item =>
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
 
-            // 초기 매물 목록 저장
             setInitialProperties(validResults);
             
-            // 현재 필터 조건 적용
             const filteredResults = validResults.filter(item => {
                 const passesDepositFilter = !deposit || item.deposit <= deposit;
                 const passesMonthlyRentFilter = !monthlyRent || item.monthlyRent <= monthlyRent;
-                
-                // 모든 선택된 옵션이 포함되어 있는지 확인
                 const passesOptionsFilter = selectedOptions.length === 0 || 
                     selectedOptions.every(optionId => 
                         item.options?.some(opt => opt.optionId === optionId)
@@ -378,6 +354,7 @@ function MapPage() {
     const handleOptionsChange = (options) => {
         setSelectedOptions(options);
     };
+
     const handleStartWorldCup = () => {
         if (searchResults.length >= 2) {
             setIsWorldCupOpen(true);
@@ -385,7 +362,6 @@ function MapPage() {
             alert('월드컵을 시작하기 위해서는 최소 2개 이상의 매물이 필요합니다.');
         }
     };
- 
 
     return (
         <div className='desktop-map-page'>
@@ -401,32 +377,32 @@ function MapPage() {
                 </div>
                 
                 <div className='right-content'>
-                     <div className='filter-container'>
-                    <Filter 
-                        selectedCity={selectedCity}
-                        selectedDistrict={selectedDistrict}
-                        selectedNeighborhood={selectedNeighborhood}
-                        cities={cities}
-                        districts={districts}
-                        neighborhoods={neighborhoods}
-                        onCityChange={handleCityChange}
-                        onDistrictChange={handleDistrictChange}
-                        onNeighborhoodChange={handleNeighborhoodChange}
-                        onReset={handleReset}
-                        onPriceChange={handlePriceChange}
-                        onOptionsChange={handleOptionsChange}
-                        deposit={deposit}
-                        monthlyRent={monthlyRent}
-                        selectedOptions={selectedOptions}
-                        activeMenu={activeMenu}
-                    />
-                    <div className="filter-worldcup-container">
-                           <WorldCup 
-                               properties={searchResults}
-                               isOpen={isWorldCupOpen}
-                               onClose={() => setIsWorldCupOpen(false)}
-                           />
-                       </div>
+                    <div className='filter-container'>
+                        <Filter 
+                            selectedCity={selectedCity}
+                            selectedDistrict={selectedDistrict}
+                            selectedNeighborhood={selectedNeighborhood}
+                            cities={cities}
+                            districts={districts}
+                            neighborhoods={neighborhoods}
+                            onCityChange={handleCityChange}
+                            onDistrictChange={handleDistrictChange}
+                            onNeighborhoodChange={handleNeighborhoodChange}
+                            onReset={handleReset}
+                            onPriceChange={handlePriceChange}
+                            onOptionsChange={handleOptionsChange}
+                            deposit={deposit}
+                            monthlyRent={monthlyRent}
+                            selectedOptions={selectedOptions}
+                            activeMenu={activeMenu}
+                        />
+                        <div className="filter-worldcup-container">
+                            <WorldCup 
+                                properties={searchResults}
+                                isOpen={isWorldCupOpen}
+                                onClose={() => setIsWorldCupOpen(false)}
+                            />
+                        </div>
                     </div>
                     <div className='right-content-inner'>
                         <ListPanel 
