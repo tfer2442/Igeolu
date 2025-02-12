@@ -1,4 +1,3 @@
-// src/pages/DesktopMyPage/DesktopMyPage.js
 import React, { useState, useEffect } from 'react';
 import './DesktopMyPage.css';
 import DesktopLiveAndMyPage from '../../components/DesktopNav/DesktopLiveAndMyPage';
@@ -6,6 +5,7 @@ import LiveCarousel from '../../components/LiveCarousel/LiveCarousel';
 import defaultProfile from '../../assets/images/defaultProfileImageIMSI.png';
 import KakaoLogo from '../../assets/images/카카오로고.jpg';
 import LiveControllerApi from '../../services/LiveControllerApi';
+import UserControllerApi from '../../services/UserControllerApi';
 import MyPageModal from '../../components/MyPageModal/MyPageModal';
 import PropertySlider from '../../components/PropertySlider/PropertySlider';
 
@@ -15,10 +15,56 @@ function DesktopMyPage() {
   const [liveData, setLiveData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentLiveIndex, setCurrentLiveIndex] = useState(0);
+  const [userInfo, setUserInfo] = useState(null);
+  const [realtorInfos, setRealtorInfos] = useState({});
 
   useEffect(() => {
     fetchAllData();
+    fetchUserInfo();
   }, []);
+
+  const fetchRealtorInfo = async (realtorId) => {
+    try {
+      const response = await UserControllerApi.getUserInfo(realtorId);
+      setRealtorInfos(prev => ({
+        ...prev,
+        [realtorId]: response
+      }));
+    } catch (error) {
+      console.error('Error fetching realtor info:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchRealtorsInfo = async () => {
+      try {
+        const realtorPromises = liveData
+          .filter(live => live.realtorId && !realtorInfos[live.realtorId])
+          .map(live => fetchRealtorInfo(live.realtorId));
+        
+        await Promise.all(realtorPromises);
+      } catch (error) {
+        console.error('Error fetching realtors info:', error);
+      }
+    };
+
+    if (liveData.length > 0) {
+      fetchRealtorsInfo();
+    }
+  }, [liveData, realtorInfos]);
+
+  const fetchUserInfo = async () => {
+    try {
+      const cachedUser = localStorage.getItem('user');
+      if (!cachedUser) return;
+
+      const { userId } = JSON.parse(cachedUser);
+      const response = await UserControllerApi.getUserInfo(userId);
+      setUserInfo(response);
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
 
   const fetchAllData = async () => {
     try {
@@ -27,7 +73,7 @@ function DesktopMyPage() {
       const livesWithProperties = await Promise.all(
         lives.map(async (live) => ({
           ...live,
-          properties: await LiveControllerApi.getLiveProperties(live.liveId),
+          properties: await LiveControllerApi.getLiveProperties(live.liveId) || []
         }))
       );
       setLiveData(livesWithProperties);
@@ -36,6 +82,15 @@ function DesktopMyPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
   };
 
   const handlePropertyClick = (property) => {
@@ -55,39 +110,22 @@ function DesktopMyPage() {
     );
   };
 
-  const renderPropertyCard = (property) => (
-    <div
-      key={property.propertyId}
-      className='property-card'
-      onClick={() => handlePropertyClick(property)}
-    >
-      <div className='property-image'>
-        <img src={property.images[0]} alt={property.description} />
-      </div>
-      <div className='property-info'>
-        <p className='property-name'>{property.description}</p>
-        <div className='property-actions'>
-          <p>음성 요약</p>
-          <p>체크리스트</p>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className='desktop-my-page'>
       <DesktopLiveAndMyPage />
-      {/* 기존 회원정보 섹션 */}
       <div className='user-info'>
         <p>회원정보</p>
         <div className='user-info-content'>
           <div className='user-info-content-img'>
-            <img src={defaultProfile} alt='프로필 이미지' />
+            <img 
+              src={userInfo?.imageUrl || defaultProfile} 
+              alt='프로필 이미지' 
+            />
           </div>
           <div className='user-info-content-text'>
             <div className='user-info-content-text-name'>
               <p>이름</p>
-              <p>이름</p>
+              <p>{userInfo?.username || '이름 없음'}</p>
             </div>
             <div className='user-info-content-social'>
               <p>연결된 소셜 계정</p>
@@ -97,17 +135,17 @@ function DesktopMyPage() {
         </div>
       </div>
 
-      {/* 라이브 일정 섹션 */}
       <div className='user-info-schedule'>
-        <p>라이브 일정</p>
         <div className='user-info-schedule-title'>
-          <p>일정</p>
+          <p>라이브일정</p>
           <p>공인중개사</p>
         </div>
-        <div className='user-info-schedule-content'>
-          <p>2022.01.01</p>
-          <p>강동원</p>
-        </div>
+        {liveData.map((live) => (
+          <div key={live.liveId} className='user-info-schedule-content'>
+            <p>{formatDate(live.createdAt)}</p>
+            <p>{realtorInfos[live.realtorId]?.username || '로딩 중...'}</p>
+          </div>
+        ))}
       </div>
 
       <div className='user-info-record'>
@@ -122,10 +160,12 @@ function DesktopMyPage() {
               onPrev={handlePrevLive}
               onNext={handleNextLive}
             />
-            <PropertySlider
-              properties={liveData[currentLiveIndex].properties}
-              onPropertyClick={handlePropertyClick}
-            />
+            {liveData[currentLiveIndex]?.properties && (
+              <PropertySlider
+                properties={liveData[currentLiveIndex].properties}
+                onPropertyClick={handlePropertyClick}
+              />
+            )}
           </>
         ) : (
           <p>라이브 기록이 없습니다.</p>

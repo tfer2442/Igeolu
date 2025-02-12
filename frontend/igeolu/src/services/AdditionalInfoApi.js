@@ -30,6 +30,21 @@ instance.interceptors.request.use(
   }
 );
 
+// 응답 인터셉터
+instance.interceptors.response.use(
+  (response) => {
+    console.log('✅ [Response]');
+    console.log('⬅️ Status:', response.status);
+    console.log('⬅️ Data:', response.data);
+    return response.data;
+  },
+  (error) => {
+    console.error('❌ [Response Error]', error.response || error);
+    return Promise.reject(error);
+  }
+);
+
+
 // 백엔드 API 요청
 const submitInstance = axios.create({
   baseURL: 'https://i12d205.p.ssafy.io/api',
@@ -67,19 +82,6 @@ submitInstance.interceptors.response.use(
   }
 );
 
-// 응답 인터셉터
-instance.interceptors.response.use(
-  (response) => {
-    console.log('✅ [Response]');
-    console.log('⬅️ Status:', response.status);
-    console.log('⬅️ Data:', response.data);
-    return response.data;
-  },
-  (error) => {
-    console.error('❌ [Response Error]', error.response || error);
-    return Promise.reject(error);
-  }
-);
 
 const AdditionalInfoAPI = {
   submitAdditionalInfo: async (data) => {
