@@ -1,3 +1,4 @@
+// src/pages/DesktopMyPage/DesktopMyPage.js
 import React, { useState, useEffect } from 'react';
 import './DesktopMyPage.css';
 import DesktopLiveAndMyPage from '../../components/DesktopNav/DesktopLiveAndMyPage';
@@ -8,6 +9,7 @@ import LiveControllerApi from '../../services/LiveControllerApi';
 import UserControllerApi from '../../services/UserControllerApi';
 import MyPageModal from '../../components/MyPageModal/MyPageModal';
 import PropertySlider from '../../components/PropertySlider/PropertySlider';
+import { appointmentAPI } from '../../services/AppointmentApi';
 
 function DesktopMyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,18 +19,33 @@ function DesktopMyPage() {
   const [currentLiveIndex, setCurrentLiveIndex] = useState(0);
   const [userInfo, setUserInfo] = useState(null);
   const [realtorInfos, setRealtorInfos] = useState({});
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    fetchAllData();
-    fetchUserInfo();
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true);
+        await Promise.all([
+          fetchAppointments(),
+          fetchAllData()
+        ]);
+        await fetchUserInfo();
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchInitialData();
   }, []);
 
   const fetchRealtorInfo = async (realtorId) => {
     try {
       const response = await UserControllerApi.getUserInfo(realtorId);
-      setRealtorInfos(prev => ({
+      setRealtorInfos((prev) => ({
         ...prev,
-        [realtorId]: response
+        [realtorId]: response,
       }));
     } catch (error) {
       console.error('Error fetching realtor info:', error);
@@ -39,9 +56,9 @@ function DesktopMyPage() {
     const fetchRealtorsInfo = async () => {
       try {
         const realtorPromises = liveData
-          .filter(live => live.realtorId && !realtorInfos[live.realtorId])
-          .map(live => fetchRealtorInfo(live.realtorId));
-        
+          .filter((live) => live.realtorId && !realtorInfos[live.realtorId])
+          .map((live) => fetchRealtorInfo(live.realtorId));
+
         await Promise.all(realtorPromises);
       } catch (error) {
         console.error('Error fetching realtors info:', error);
@@ -66,21 +83,32 @@ function DesktopMyPage() {
     }
   };
 
+  const fetchAppointments = async () => {
+    try {
+      const cachedUser = localStorage.getItem('user');
+      if (!cachedUser) return;
+  
+      const { userId } = JSON.parse(cachedUser);
+      const response = await appointmentAPI.getAppointments(userId);
+      setAppointments(response.data);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    }
+  };
+  
   const fetchAllData = async () => {
     try {
-      setIsLoading(true);
       const lives = await LiveControllerApi.getLives();
       const livesWithProperties = await Promise.all(
         lives.map(async (live) => ({
           ...live,
-          properties: await LiveControllerApi.getLiveProperties(live.liveId) || []
+          properties:
+            (await LiveControllerApi.getLiveProperties(live.liveId)) || [],
         }))
       );
       setLiveData(livesWithProperties);
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -89,7 +117,7 @@ function DesktopMyPage() {
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit'
+      day: '2-digit',
     });
   };
 
@@ -117,9 +145,9 @@ function DesktopMyPage() {
         <p>회원정보</p>
         <div className='user-info-content'>
           <div className='user-info-content-img'>
-            <img 
-              src={userInfo?.imageUrl || defaultProfile} 
-              alt='프로필 이미지' 
+            <img
+              src={userInfo?.imageUrl || defaultProfile}
+              alt='프로필 이미지'
             />
           </div>
           <div className='user-info-content-text'>
@@ -140,10 +168,13 @@ function DesktopMyPage() {
           <p>라이브일정</p>
           <p>공인중개사</p>
         </div>
-        {liveData.map((live) => (
-          <div key={live.liveId} className='user-info-schedule-content'>
-            <p>{formatDate(live.createdAt)}</p>
-            <p>{realtorInfos[live.realtorId]?.username || '로딩 중...'}</p>
+        {appointments.map((appointment) => (
+          <div
+            key={appointment.appointmentId}
+            className='user-info-schedule-content'
+          >
+            <p>{formatDate(appointment.scheduledAt)}</p>
+            <p>{appointment.opponentName}</p>
           </div>
         ))}
       </div>
