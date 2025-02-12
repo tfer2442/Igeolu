@@ -1,3 +1,4 @@
+// src/pages/MobileCalendarPage/MobileCalendarPage.js
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -5,14 +6,16 @@ import './MobileCalendarPage.css';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
 import { appointmentAPI } from '../../services/AppointmentApi';
 import EditAppointmentModal from '../../components/common/Chat/EditAppointmentModal/EditAppointmentModal';
+import DeleteConfirmDialog from '../../components/DeleteConfirmDialog/DeleteConfirmDialog';
 
 function MobileCalendarPage() {
   const [value, setValue] = useState(new Date());
   const [slideStates, setSlideStates] = useState({});
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [groupedAppointments, setGroupedAppointments] = useState({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
   const appointmentRefs = useRef({});
-  
 
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.userId;
@@ -108,15 +111,28 @@ function MobileCalendarPage() {
     setEditingAppointment(appointment);
   };
 
-  const handleDelete = async (appointmentId) => {
-    if (!appointmentId) return;
+  const handleDeleteClick = (appointment) => {
+    setAppointmentToDelete(appointment);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!appointmentToDelete?.appointmentId) return;
 
     try {
-      await appointmentAPI.deleteAppointment(appointmentId);
+      await appointmentAPI.deleteAppointment(appointmentToDelete.appointmentId);
       fetchAppointments();
     } catch (error) {
       console.error('Failed to delete appointment:', error);
+    } finally {
+      setShowDeleteConfirm(false);
+      setAppointmentToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setAppointmentToDelete(null);
   };
 
   const handleTouchStart = (id, e) => {
@@ -146,12 +162,9 @@ function MobileCalendarPage() {
     const container = e.currentTarget.parentElement;
     const scheduleItem = e.currentTarget;
     const actions = container.querySelector('.schedule-actions');
-    const currentX = parseInt(
-      scheduleItem.style.transform.replace('translateX(-', '')
-    );
+    const currentX = parseInt(scheduleItem.style.transform.replace('translateX(-', ''));
 
-    const finalTransform =
-      currentX > 80 ? 'translateX(-160px)' : 'translateX(0)';
+    const finalTransform = currentX > 80 ? 'translateX(-160px)' : 'translateX(0)';
     scheduleItem.style.transform = finalTransform;
     actions.style.transform = finalTransform;
 
@@ -236,7 +249,7 @@ function MobileCalendarPage() {
                         </button>
                         <button
                           className="delete-btn"
-                          onClick={() => handleDelete(appointment.appointmentId)}
+                          onClick={() => handleDeleteClick(appointment)}
                         >
                           삭제
                         </button>
@@ -251,6 +264,14 @@ function MobileCalendarPage() {
             )}
           </div>
         </div>
+
+        {showDeleteConfirm && (
+          <DeleteConfirmDialog
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
+        )}
+
         <MobileBottomTab />
       </div>
       {editingAppointment && (
