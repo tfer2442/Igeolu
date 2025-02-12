@@ -170,3 +170,9 @@
     border-radius: 4px;
     font-size: 0.8rem;
 }
+
+.no-options {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+}
