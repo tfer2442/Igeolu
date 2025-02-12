@@ -22,6 +22,7 @@ function MapPage() {
     const [activeMenu, setActiveMenu] = useState(typeParam || 'room');
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
+    const [propertyMarkers, setPropertyMarkers] = useState([]); // 공인중개사 매물 마커
     const [mapCenter, setMapCenter] = useState({
         lat: 37.566826,
         lng: 126.978656
@@ -108,6 +109,7 @@ function MapPage() {
                     );
                     console.log('All properties response:', validResults);
                     setSearchResults(validResults);
+                    setPropertyMarkers([]); // 매물 마커 초기화
                     
                     if (validResults.length > 0) {
                         const newCenter = {
@@ -120,6 +122,7 @@ function MapPage() {
                 } catch (error) {
                     console.error('Error fetching all properties:', error);
                     setSearchResults([]);
+                    setPropertyMarkers([]);
                     return;
                 }
             }
@@ -137,6 +140,7 @@ function MapPage() {
             
             console.log('Filtered properties response:', validResults);
             setSearchResults(validResults);
+            setPropertyMarkers([]); // 매물 마커 초기화
 
             if (validResults.length > 0) {
                 const newCenter = {
@@ -148,6 +152,7 @@ function MapPage() {
         } catch (error) {
             console.error('Error fetching search results:', error);
             setSearchResults([]);
+            setPropertyMarkers([]);
         }
     };
 
@@ -166,6 +171,7 @@ function MapPage() {
                 const response = await axios.get('https://i12d205.p.ssafy.io/api/users/realtors');
                 console.log('All realtors response:', response.data);
                 setSearchResults(response.data);
+                setPropertyMarkers([]); // 매물 마커 초기화
                 
                 if (response.data.length > 0) {
                     const firstItem = response.data[0];
@@ -194,6 +200,7 @@ function MapPage() {
                     console.error('DongCode not found for:', selectedNeighborhood);
                     console.error('Selected dong data:', selectedDong);
                     setSearchResults([]);
+                    setPropertyMarkers([]);
                     return;
                 }
 
@@ -211,6 +218,7 @@ function MapPage() {
                 
                 console.log('Results with location:', resultsWithLocation);
                 setSearchResults(resultsWithLocation);
+                setPropertyMarkers([]); // 매물 마커 초기화
 
                 if (resultsWithLocation.length > 0) {
                     const firstItem = resultsWithLocation[0];
@@ -224,10 +232,12 @@ function MapPage() {
             } catch (error) {
                 console.error('Error fetching realtors by dongcode:', error);
                 setSearchResults([]);
+                setPropertyMarkers([]);
             }
         } catch (error) {
             console.error('Error fetching realtors:', error);
             setSearchResults([]);
+            setPropertyMarkers([]);
         }
     };
 
@@ -239,6 +249,7 @@ function MapPage() {
             fetchRealtors();
         }
         setSelectedItem(null);
+        setPropertyMarkers([]); // 매물 마커 초기화
     }, [selectedCity, selectedDistrict, selectedNeighborhood, deposit, monthlyRent, selectedOptions, activeMenu]);
 
     const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
@@ -250,6 +261,7 @@ function MapPage() {
     const handleMenuClick = (menuType) => {
         setActiveMenu(menuType);
         setSelectedItem(null);
+        setPropertyMarkers([]); // 매물 마커 초기화
         if (menuType === 'agent') {
             fetchRealtors();
         } else {
@@ -269,7 +281,7 @@ function MapPage() {
 
     const handleDetailClose = () => {
         setSelectedItem(null);
-        // 매물 마커도 초기화
+        setPropertyMarkers([]); // 매물 마커 초기화
         if (activeMenu === 'agent') {
             fetchRealtors();
         }
@@ -288,7 +300,7 @@ function MapPage() {
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
             
-            setSearchResults(validResults);
+            setPropertyMarkers(validResults); // searchResults 대신 propertyMarkers 업데이트
 
             if (validResults.length > 0) {
                 const newCenter = {
@@ -299,6 +311,7 @@ function MapPage() {
             }
         } catch (error) {
             console.error('Error fetching realtor properties:', error);
+            setPropertyMarkers([]);
         }
     };
 
@@ -324,6 +337,7 @@ function MapPage() {
         setDeposit(null);
         setMonthlyRent(null);
         setSelectedOptions([]);
+        setPropertyMarkers([]); // 매물 마커 초기화
     };
 
     const handlePriceChange = (newDeposit, newMonthlyRent) => {
@@ -392,6 +406,7 @@ function MapPage() {
                                     }}
                                     level={3}
                                 >
+                                    {/* 기존 마커들 */}
                                     {searchResults.map((item, index) => {
                                         if (!item || !item.latitude || !item.longitude) return null;
                                         
@@ -408,6 +423,32 @@ function MapPage() {
                                                 position={position}
                                                 onClick={() => handleItemClick(item)}
                                                 title={itemTitle}
+                                            />
+                                        );
+                                    })}
+
+                                    {/* 공인중개사 매물 마커들 */}
+                                    {propertyMarkers.map((item, index) => {
+                                        if (!item || !item.latitude || !item.longitude) return null;
+                                        
+                                        const position = {
+                                            lat: parseFloat(item.latitude),
+                                            lng: parseFloat(item.longitude)
+                                        };
+                                        
+                                        return (
+                                            <MapMarker
+                                                key={`property-${item.propertyId || index}`}
+                                                position={position}
+                                                onClick={() => handleItemClick(item)}
+                                                title={item.title || '매물정보'}
+                                                image={{
+                                                    src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+                                                    size: {
+                                                        width: 24,
+                                                        height: 35
+                                                    },
+                                                }}
                                             />
                                         );
                                     })}
