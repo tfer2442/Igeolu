@@ -1,7 +1,6 @@
-
-
 import React from 'react';
 import { X } from 'lucide-react';
+import ChatApi from '../../../services/ChatApi';
 import './DetailPanel.css';
 
 const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
@@ -10,6 +9,24 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
     // 매물 데이터인 경우의 type 체크
     const isPropMarker = data?.type === 'room';
     const displayType = isPropMarker ? 'room' : type;
+
+    const handleCreateChatRoom = async () => {
+        try {
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            if (!currentUser?.userId) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+            const response = await ChatApi.createChatRoom(currentUser.userId, data?.userId);
+            if (response?.id) {
+                alert('채팅방이 생성되었습니다.');
+                // 필요한 경우 채팅방으로 이동하는 로직 추가
+            }
+        } catch (error) {
+            console.error('채팅방 생성 실패:', error);
+            alert('채팅방 생성에 실패했습니다.');
+        }
+    };
 
     return (
         <div className='detail-panel'>
@@ -98,6 +115,12 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
                                 onClick={() => onViewProperties(data?.userId)}
                             >
                                 매물 보기
+                            </button>
+                            <button 
+                                className='mappage-chat-button'
+                                onClick={handleCreateChatRoom}
+                            >
+                                채팅하기
                             </button>
                         </div>
                     </div>

@@ -122,6 +122,8 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
     };
   }, [room.roomId]); // room.roomId만 의존성으로 사용
 
+
+
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {
     const trimmedMessage = newMessage.trim();
@@ -160,15 +162,27 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
     }
   };
 
+  /* 📌 뒤로가기 읽은 메세지 마크크 처리 */
+  const handleBackWithMarkRead = async () => {
+    try {
+      await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+      onBack();
+    } catch (error) {
+      console.error('메시지 읽음 처리 실패:', error);
+      // 읽음 처리가 실패하더라도 뒤로가기는 실행
+      onBack();
+    }
+  };
+
   return (
     <div className={`chat-room ${isMobile ? 'mobile' : ''}`}>
       {/* 📌 채팅방 헤더 */}
       <header className='chat-room-header'>
-        <button
-          onClick={onBack}
-          className='chat-back-button'
-          aria-label='채팅방 목록으로 돌아가기'
-        >
+      <button
+  onClick={handleBackWithMarkRead}
+  className='chat-back-button'
+  aria-label='채팅방 목록으로 돌아가기'
+>
           ←
         </button>
         <h2 className='chat-room-title'>{room.userName}</h2>

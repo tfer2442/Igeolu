@@ -1,3 +1,4 @@
+/* src/pages/MobileCalendarPage/MobileCalendarPage.css */
 .mobile-calendar-page-container {
     display: flex;
     justify-content: center;
@@ -86,7 +87,8 @@
 .react-calendar__tile:hover {
     color: #01ADFF;
     cursor: pointer;
-    background-color: #272626 !important;
+    background-color: #e2e1e1;
+    border-radius: 50%;
 }
 
 /* 오늘 날짜 스타일링 */
@@ -142,7 +144,6 @@
 
 .schedule-item {
     display: flex;
-    align-items: center;
     padding: 15px;
     background-color: #2F2E2E;
     border-radius: 8px;
@@ -150,7 +151,7 @@
     transform: translateX(0);
     transition: transform 0.3s ease;
     touch-action: pan-x;
-  }
+}
 
 .schedule-item::before {
     content: '';
@@ -164,25 +165,41 @@
     border-radius: 2px;
 }
 
-.schedule-opponent {
-    color: white;
+.schedule-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-left: 15px;
 }
 
+.schedule-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.schedule-opponent {
+    color: white;
+    font-weight: 500;
+}
+
 .schedule-time {
-    margin-left: auto;
     color: #9F9F9F;
     font-size: 14px;
 }
 
 .schedule-title {
     color: #E2E1E1;
+    font-size: 14px;
+    margin-top: 2px;
+    opacity: 0.9;
 }
 
 .schedule-actions {
     position: absolute;
     top: 0;
-    right: -170px;
+    right: -210px;
     height: 100%;
     display: flex;
     gap: 8px;
@@ -193,12 +210,22 @@
 
   .edit-btn, .delete-btn {
     height: 100%;
-    width: 70px;
+    width: 90px;
     padding: 8px 16px;
     border: none;
     border-radius: 8px;
     color: white;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .action-icon {
+    width: 32px;  /* 아이콘 크기 조절 */
+    height: 32px;  /* 아이콘 크기 조절 */
   }
   
   .edit-btn {
@@ -207,6 +234,10 @@
   
   .delete-btn {
     background-color: #FF6B6B;
+  }
+
+  .edit-btn span, .delete-btn span {
+    font-size: 12px;  /* 텍스트 크기 조절 */
   }
 
 .no-schedule {
@@ -266,8 +297,8 @@
 
 .dot-container {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 6px;
+    right: 6px;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -106,6 +106,52 @@
     margin: 0;
 }
 
+.mobile-main-page__notice-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    touch-action: pan-y pinch-zoom;
+}
+
+.mobile-main-page__notice-slider img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+}
+
+.mobile-main-page__notice-slider img.fade {
+    opacity: 0;
+}
+
+.mobile-main-page__notice-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px; /* 크기 증가 */
+    height: 8px; /* 크기 증가 */
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease; /* 전환 효과 추가 */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+}
+
+.dot.active {
+    background-color: white;
+    width: 10px; /* 활성 상태일 때 약간 더 크게 */
+    height: 10px;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5); /* 활성 상태일 때 밝은 그림자 */
+}
+
 /* 스크롤바 스타일링 */
 .mobile-main-page::-webkit-scrollbar {
     display: none;  /* Chrome, Safari, Opera */

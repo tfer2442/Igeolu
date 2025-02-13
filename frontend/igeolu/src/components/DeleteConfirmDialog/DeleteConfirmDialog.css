@@ -1,0 +1,65 @@
+/* src/components/DeleteConfirmDialog/DeleteConfirmDialog.css */
+.delete-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .delete-dialog {
+    background-color: #272626;
+    border: 1px solid #403F3F;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    max-width: 320px;
+  }
+  
+  .delete-dialog-title {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .delete-dialog-description {
+    color: #9F9F9F;
+    margin-bottom: 20px;
+  }
+  
+  .delete-dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  .delete-dialog-cancel {
+    padding: 8px 16px;
+    background-color: #4B4B4B;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .delete-dialog-confirm {
+    padding: 8px 16px;
+    background-color: #FF6B6B;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .delete-dialog-cancel:hover {
+    background-color: #5B5B5B;
+  }
+  
+  .delete-dialog-confirm:hover {
+    background-color: #FF8181;
+  }
