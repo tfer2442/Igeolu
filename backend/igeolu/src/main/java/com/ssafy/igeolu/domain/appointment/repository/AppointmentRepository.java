@@ -17,10 +17,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 	// List<Appointment> findByUserOrOpponentUser(@Param("user") User user);
 
 	// 공인중개사가 약속을 조회할 때 사용
-	List<Appointment> findAllByUser(User user);
+	List<Appointment> findAllByRealtor(User realtor);
 
 	// 고객이 약속을 조회할 때 사용
-	List<Appointment> findAllByOpponentUser(User opponentUser);
+	List<Appointment> findAllByMember(User member);
 
 	// 예약 시간이 지정한 범위 내이고, 아직 알림이 전송되지 않은 예약을 조회
 	List<Appointment> findByScheduledAtBetweenAndNotificationSentFalse(LocalDateTime start, LocalDateTime end);

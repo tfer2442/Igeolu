@@ -28,11 +28,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<Appointment> getAppointmentList(User user) {
 		if (user.getRole() == Role.ROLE_REALTOR) {
-			return appointmentRepository.findAllByUser(user);
+			return appointmentRepository.findAllByRealtor(user);
 		}
 
 		if (user.getRole() == Role.ROLE_MEMBER) {
-			return appointmentRepository.findAllByOpponentUser(user);
+			return appointmentRepository.findAllByMember(user);
 		}
 
 		throw new CustomException(ErrorCode.FORBIDDEN_USER);

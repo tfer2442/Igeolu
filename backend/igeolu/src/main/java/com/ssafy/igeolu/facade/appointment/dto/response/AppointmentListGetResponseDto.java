@@ -19,9 +19,15 @@ public class AppointmentListGetResponseDto {
 	@Schema(description = "약속 내용")
 	private String title;
 
-	@Schema(description = "약속 상대방 id")
-	private Integer opponentId;
+	@Schema(description = "공인중개사 id")
+	private Integer realtorId;
 
-	@Schema(description = "약속 상대방 이름")
-	private String opponentName;
+	@Schema(description = "공인중개사 이름")
+	private String realtorName;
+
+	@Schema(description = "고객 id")
+	private Integer memberId;
+
+	@Schema(description = "고객 이름")
+	private String memberName;
 }

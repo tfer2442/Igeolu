@@ -15,13 +15,15 @@ public class AppointmentNotificationResponseDto {
 	@Schema(description = "알림 id")
 	private Integer notificationId;
 
-	@Schema(description = "약속 id")
-	private Integer appointmentId;
+	@Schema(description = "스케줄 날짜", example = "yyyy-MM-dd(E) HH:mm")
+	private String scheduledAt;
 
 	@Schema(description = "알림 내용")
 	private String message;
 
-	@Schema(description = "")
-	private Integer userId;
-	private Integer opponentUserId;
+	@Schema(description = "약속 상대방 id")
+	private Integer opponentId;
+
+	@Schema(description = "약속 상대방 이름")
+	private String opponentName;
 }

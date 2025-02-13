@@ -11,10 +11,8 @@ import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
 import com.ssafy.igeolu.domain.chatroom.entity.ChatRoom;
 import com.ssafy.igeolu.domain.chatroom.service.ChatRoomService;
-import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
-import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentListGetRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPostRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPutRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentListGetResponseDto;
@@ -36,7 +34,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	private final SecurityService securityService;
 
 	@Override
-	public List<AppointmentListGetResponseDto> getAppointmentList(AppointmentListGetRequestDto request) {
+	public List<AppointmentListGetResponseDto> getAppointmentList() {
 		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(E) HH:mm", Locale.KOREAN);
 
@@ -45,12 +43,10 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 				.appointmentId(a.getId())
 				.scheduledAt(a.getScheduledAt().format(formatter))
 				.title(a.getTitle())
-				.opponentId(
-					user.getRole() == Role.ROLE_REALTOR ? a.getOpponentUser().getId() :
-						a.getUser().getId()) // 만약, 약속 리스트를 조회하는 사람이 공인중개사라면 고객 id를 반환, 조회하는 사람이 고객이라면 공인중개사 id를 반환
-				.opponentName(
-					user.getRole() == Role.ROLE_REALTOR ? a.getOpponentUser().getUsername() :
-						a.getUser().getUsername()) // 만약, 약속 리스트를 조회하는 사람이 공인중개사라면 고객 이름 반환, 조회하는 사람이 고객이라면 공인중개사 이름 반환
+				.realtorId(a.getRealtor().getId())
+				.realtorName(a.getRealtor().getUsername())
+				.memberId(a.getMember().getId())
+				.memberName(a.getMember().getUsername())
 				.build())
 			.toList();
 	}
@@ -58,15 +54,15 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	@Override
 	public AppointmentPostResponseDto createAppointment(AppointmentPostRequestDto request) {
 
-		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
-		User opponentUser = userService.getUserById(request.getOpponentUserId());
+		User realtor = userService.getUserById(securityService.getCurrentUser().getUserId());
+		User member = userService.getUserById(request.getMemberId());
 		ChatRoom chatRoom = chatRoomService.getChatRoom(request.getChatRoomId());
 
 		Appointment appointment = Appointment.builder()
 			.scheduledAt(request.getScheduledAt())
 			.title(request.getTitle())
-			.user(user)
-			.opponentUser(opponentUser)
+			.realtor(realtor)
+			.member(member)
 			.chatRoom(chatRoom)
 			.build();
 
@@ -81,7 +77,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	public void updateAppointment(Integer appointmentId, AppointmentPutRequestDto request) {
 		Appointment appointment = appointmentService.getAppointment(appointmentId);
 
-		if (!appointment.getUser().getId().equals(securityService.getCurrentUser().getUserId())) {
+		if (!appointment.getRealtor().getId().equals(securityService.getCurrentUser().getUserId())) {
 			throw new CustomException(ErrorCode.FORBIDDEN_USER);
 		}
 
@@ -94,7 +90,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	public void deleteAppointment(Integer appointmentId) {
 		Appointment appointment = appointmentService.getAppointment(appointmentId);
 
-		if (!appointment.getUser().getId().equals(securityService.getCurrentUser().getUserId())) {
+		if (!appointment.getRealtor().getId().equals(securityService.getCurrentUser().getUserId())) {
 			throw new CustomException(ErrorCode.FORBIDDEN_USER);
 		}
 
