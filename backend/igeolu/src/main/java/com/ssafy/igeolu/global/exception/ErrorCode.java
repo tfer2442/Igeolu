@@ -17,6 +17,8 @@ public enum ErrorCode {
 
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "C001", "사용자를 찾을 수 없습니다."),
 	REALTOR_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "중개사를 찾을 수 없습니다."),
+	
+	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "N001", "알림을 찾을 수 없습니다."),
 
 	LIVE_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "L001", "라이브 세션을 찾을 수 없습니다."),
 	LIVE_SESSION_NOT_CREATE(HttpStatus.INTERNAL_SERVER_ERROR, "L002", "라이브 세션을 생성할 수 없습니다."),

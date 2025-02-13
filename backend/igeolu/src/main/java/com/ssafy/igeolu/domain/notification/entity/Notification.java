@@ -34,11 +34,15 @@ public class Notification {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	// 알림 발생 시각
+	// 스케줄 시간
 	private LocalDateTime scheduledAt;
 
 	// 알림 내용
 	private String message;
+
+	// 읽음 여부
+	@Builder.Default
+	private Boolean isRead = false;
 
 	// 알림 대상자
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +50,6 @@ public class Notification {
 
 	@CreatedDate
 	@Column(updatable = false)
+	// 알림 발생 시각
 	private LocalDateTime createdAt;
 }

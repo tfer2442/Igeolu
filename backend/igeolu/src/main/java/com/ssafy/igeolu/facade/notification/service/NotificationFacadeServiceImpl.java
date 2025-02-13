@@ -6,12 +6,14 @@ import java.util.List;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
 import com.ssafy.igeolu.domain.notification.entity.Notification;
 import com.ssafy.igeolu.domain.notification.service.NotificationService;
 import com.ssafy.igeolu.facade.notification.dto.response.AppointmentNotificationResponseDto;
+import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +23,11 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	private final SimpMessagingTemplate messagingTemplate;
 	private final AppointmentService appointmentService;
 	private final NotificationService notificationService;
+	private final SecurityService securityService;
 
-	@Scheduled(fixedRate = 60000) // 1분 마다 실행
+	@Scheduled(fixedRate = 60000) // 1분
+	@Override
+	@Transactional
 	public void sendAppointmentNotifications() {
 		LocalDateTime now = LocalDateTime.now();
 		// 예약 시간이 현재 시각으로부터 10분 후부터 11분 후 사이인 예약 조회
@@ -89,5 +94,43 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 			// 중복 알림 전송을 방지하기 위해 알림 전송 플래그 업데이트
 			appointment.setNotificationSent(true);
 		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<AppointmentNotificationResponseDto> getNotifications() {
+		Integer userId = securityService.getCurrentUser().getUserId();
+
+		List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
+
+		return notifications.stream()
+			.map(notification -> AppointmentNotificationResponseDto.builder()
+				.notificationId(notification.getId())
+				.scheduledAt(notification.getScheduledAt())
+				.createdAt(notification.getCreatedAt())
+				.message(notification.getMessage())
+				.build())
+			.toList();
+	}
+
+	@Override
+	@Transactional
+	public AppointmentNotificationResponseDto updateReadingStatus(Integer notificationId) {
+		Notification notification = notificationService.getNotification(notificationId);
+		notification.setIsRead(true);
+
+		return AppointmentNotificationResponseDto.builder()
+			.notificationId(notification.getId())
+			.scheduledAt(notification.getScheduledAt())
+			.createdAt(notification.getCreatedAt())
+			.message(notification.getMessage())
+			.build();
+	}
+
+	@Override
+	@Transactional
+	public void removeNotification(Integer notificationId) {
+		Notification notification = notificationService.getNotification(notificationId);
+		notificationService.removeNotification(notification);
 	}
 }
