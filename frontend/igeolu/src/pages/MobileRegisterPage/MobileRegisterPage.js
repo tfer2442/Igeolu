@@ -1,8 +1,10 @@
+// src/pages/MobileRegisterPage/MobileRegisterPage.js
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { IoIosArrowBack, IoIosCamera, IoMdClose } from 'react-icons/io';
 import './MobileRegisterPage.css';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
+import AdditionalInfoAPI from '../../services/AdditionalInfoApi';
 
 function MobileRegisterPage() {
     const [images, setImages] = useState([]);
@@ -24,10 +26,7 @@ function MobileRegisterPage() {
     const [searchError, setSearchError] = useState(null);
     const [showResults, setShowResults] = useState(false);
     const [coordinates, setCoordinates] = useState({ x: '', y: '', dongcode: '' });
-
-    // API 키 상수
-    const JUSO_KEY = 'U01TX0FVVEgyMDI1MDIwMzE1MTIyOTExNTQ0MDQ=';
-    const COORD_KEY = 'U01TX0FVVEgyMDI1MDIwMzE1MTExNTExNTQ0MDM=';
+    const [imageFiles, setImageFiles] = useState([]);
 
     const toggleOptions = () => {
         setOptionsVisible(!optionsVisible);
@@ -43,12 +42,16 @@ function MobileRegisterPage() {
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
+        // 실제 파일 저장
+        setImageFiles(prev => [...prev, ...files]);
+        // 미리보기용 URL 생성
         const imageUrls = files.map(file => URL.createObjectURL(file));
         setImages(prev => [...prev, ...imageUrls]);
     };
 
     const handleDeleteImage = (indexToDelete) => {
         setImages(images.filter((_, index) => index !== indexToDelete));
+        setImageFiles(imageFiles.filter((_, index) => index !== indexToDelete));
     };
 
     // 주소 검색 함수
@@ -59,25 +62,13 @@ function MobileRegisterPage() {
         setSearchError(null);
         
         try {
-            const response = await axios.get(
-                `https://business.juso.go.kr/addrlink/addrLinkApi.do`, {
-                    params: {
-                        currentPage: 1,
-                        countPerPage: 10,
-                        keyword: addressKeyword,
-                        confmKey: JUSO_KEY,
-                        resultType: 'json'
-                    }
-                }
-            );
+            const response = await AdditionalInfoAPI.searchAddress(addressKeyword);
             
-            const data = response.data;
-            
-            if (data.results?.common?.errorCode === '0') {
-                setAddressResults(data.results.juso || []);
+            if (response.results?.common?.errorCode === '0') {
+                setAddressResults(response.results.juso || []);
                 setShowResults(true);
             } else {
-                throw new Error(data.results?.common?.errorMessage || '주소 검색에 실패했습니다.');
+                throw new Error(response.results?.common?.errorMessage || '주소 검색에 실패했습니다.');
             }
         } catch (err) {
             setSearchError(err.message);
@@ -90,24 +81,16 @@ function MobileRegisterPage() {
     // 좌표 조회 함수
     const getCoordinates = async (admCd, rnMgtSn, udrtYn, buldMnnm, buldSlno) => {
         try {
-            const response = await axios.get(
-                'https://business.juso.go.kr/addrlink/addrCoordApi.do', {
-                    params: {
-                        admCd,
-                        rnMgtSn,
-                        udrtYn,
-                        buldMnnm,
-                        buldSlno,
-                        confmKey: COORD_KEY,
-                        resultType: 'json'
-                    }
-                }
-            );
+            const response = await AdditionalInfoAPI.getCoordinates({
+                admCd,
+                rnMgtSn,
+                udrtYn,
+                buldMnnm,
+                buldSlno
+            });
             
-            const data = response.data;
-            
-            if (data.results?.common?.errorCode === '0') {
-                const coordInfo = data.results.juso[0];
+            if (response.results?.common?.errorCode === '0') {
+                const coordInfo = response.results.juso[0];
                 return {
                     entX: coordInfo.entX,
                     entY: coordInfo.entY
@@ -170,32 +153,53 @@ function MobileRegisterPage() {
                 dongcode: coordinates.dongcode,
                 options: selectedOptions
             };
-
-            console.log('전송할 데이터:', propertyData);
-            console.log('전송할 이미지:', fileInputRef.current?.files);
-
+    
+            console.log('JSON 데이터:', propertyData);  // JSON 데이터 확인
+    
             // FormData 생성
             const formData = new FormData();
-
+    
             // JSON 데이터를 Blob 형태로 추가
             formData.append(
                 "propertyPostRequestDto",
                 new Blob([JSON.stringify(propertyData)], { type: "application/json" })
             );
-
-            // 이미지 파일들 추가
-            const fileInput = fileInputRef.current;
-            if (fileInput && fileInput.files) {
-                Array.from(fileInput.files).forEach((file) => {
-                    formData.append('images', file);
-                });
-            }
-
-            const response = await axios.post('/api/properties', formData, {
-                headers: {
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
-                }
+    
+            // 선택된 이미지 파일들 추가
+            imageFiles.forEach((file) => {
+                formData.append('images', file);
             });
+    
+            // FormData 내용 확인
+            console.log('========= FormData 내용 =========');
+            for (let [key, value] of formData.entries()) {
+                if (key === 'propertyPostRequestDto') {
+                    console.log('propertyPostRequestDto:', JSON.parse(await value.text()));
+                } else {
+                    console.log(`${key}:`, value);
+                }
+            }
+            console.log('===============================');
+    
+            console.log('이미지 파일 정보:');
+            imageFiles.forEach((file, index) => {
+                console.log(`이미지 ${index + 1}:`, {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size
+                });
+            });
+    
+            // axios instance 생성
+        const axiosInstance = axios.create({
+            baseURL: 'https://i12d205.p.ssafy.io/api',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+            }
+        });
+
+        const response = await axiosInstance.post('/properties', formData);
             
             if (response.status === 200 || response.status === 201) {
                 alert('매물이 성공적으로 등록되었습니다.');
