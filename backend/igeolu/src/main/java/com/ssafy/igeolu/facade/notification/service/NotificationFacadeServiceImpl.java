@@ -30,8 +30,9 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	@Transactional
 	public void sendAppointmentNotifications() {
 		LocalDateTime now = LocalDateTime.now();
-		// 예약 시간이 현재 시각으로부터 10분 후부터 11분 후 사이인 예약 조회
-		LocalDateTime startTime = now.plusMinutes(10);
+		// 예약 시간이 현재 시각으로부터 9분 후부터 11분 후 사이인 예약 조회
+		// (10분 전송 기준에 여유를 둡니다.)
+		LocalDateTime startTime = now.plusMinutes(9);
 		LocalDateTime endTime = now.plusMinutes(11);
 
 		List<Appointment> appointments = appointmentService.getAppointmentsBySchedule(startTime, endTime);
