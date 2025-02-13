@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.notification.entity.Notification;
 import com.ssafy.igeolu.domain.notification.repository.NotificationRepository;
+import com.ssafy.igeolu.global.exception.CustomException;
+import com.ssafy.igeolu.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public Notification getNotification(Integer notificationId) {
-		return null;
+		return notificationRepository.findById(notificationId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
 	}
 }
