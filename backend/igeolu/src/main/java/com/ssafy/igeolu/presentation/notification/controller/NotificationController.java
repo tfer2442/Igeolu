@@ -1,5 +1,7 @@
 package com.ssafy.igeolu.presentation.notification.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +24,7 @@ public class NotificationController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
 	@GetMapping("/api/notifications")
-	public ResponseEntity<AppointmentNotificationResponseDto> getNotifications() {
+	public ResponseEntity<List<AppointmentNotificationResponseDto>> getNotifications() {
 		return ResponseEntity.ok(notificationFacadeService.getNotifications());
 	}
 }
