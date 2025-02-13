@@ -91,4 +91,9 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 			appointment.setNotificationSent(true);
 		}
 	}
+
+	@Override
+	public List<AppointmentNotificationResponseDto> getNotifications() {
+		return List.of();
+	}
 }
