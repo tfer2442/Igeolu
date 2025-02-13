@@ -179,3 +179,124 @@
 .modal-buttons button:hover {
     opacity: 0.9;
 }
+
+/* 알림 배지 스타일 */
+.profile-button {
+    position: relative;
+  }
+  
+  .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff4646;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dropdown-notification-badge {
+    background-color: #ff4646;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 11px;
+    margin-left: 8px;
+  }
+  
+  /* 알림 모달 스타일 */
+  .notification-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .notification-modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 400px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .notification-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e1e1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .notification-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  
+  .notification-list {
+    overflow-y: auto;
+    max-height: 60vh;
+    padding: 0;
+  }
+  
+  .notification-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e1e1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .notification-item:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .notification-item.unread {
+    background-color: #f0f7ff;
+  }
+  
+  .notification-item.unread:hover {
+    background-color: #e5f1ff;
+  }
+  
+  .notification-message {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .notification-date {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .no-notifications {
+    padding: 32px 20px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+  }

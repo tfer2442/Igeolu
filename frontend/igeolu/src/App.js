@@ -1,8 +1,7 @@
 // src/App.js
 import './styles/global.css';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import './styles/global.css';
 
 // === 1. Component Imports ===
 // Desktop Pages
@@ -35,8 +34,10 @@ import ChatRoom from './components/common/Chat/ChatRoom/ChatRoom';
 import SlideLayout from './components/common/Chat/SlideLayout/SlideLayout';
 
 // Services
+import ChatRoomsWebSocket from './services/webSocket/chatRoomsWebSocket';
 import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage';
+import NotificationProvider from './components/NotificationProvider/NotificationProvider';
 
 function App() {
   // === 2. State Management ===
@@ -47,9 +48,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isUserInitialized, setIsUserInitialized] = useState(false);
-
-  // User States
+  const roomsSocketRef = useRef(null);
   const [user, setUser] = useState(null);
+  const [isAppMounted, setIsAppMounted] = useState(false);
+  const [isNotificationInitialized, setIsNotificationInitialized] = useState(false);
 
   // === 3. Route Management ===
   const location = useLocation();
@@ -65,6 +67,9 @@ function App() {
     setUser(devUser);
     localStorage.setItem('user', JSON.stringify(devUser));
     setIsUserInitialized(true);
+
+    setIsAppMounted(true);
+  return () => setIsAppMounted(false);
   }, []);
 
   const currentUserId = user?.userId || null;
@@ -122,11 +127,60 @@ function App() {
   // const currentUserId = user?.userId || null;
 
   // === 5. Chat Room Management ===
+   // WebSocket 연결 및 채팅방 업데이트 관리
+   const handleRoomsUpdate = useCallback((updatedRooms) => {
+    setChatRooms((prev) => {
+      const mergedRooms = [...prev];
+      updatedRooms.forEach((newRoom) => {
+        const index = mergedRooms.findIndex((r) => r.roomId === newRoom.roomId);
+        if (index > -1) {
+          mergedRooms[index] = { ...mergedRooms[index], ...newRoom };
+        } else {
+          mergedRooms.unshift(newRoom);
+        }
+      });
+      return mergedRooms;
+    });
+  }, []);
+
+  // WebSocket 연결 관리
+  useEffect(() => {
+    if (!isAppMounted || !isUserInitialized || !user?.userId || !isNotificationInitialized) return;
+
+    const initializeWebSocket = async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      try {
+        if (!roomsSocketRef.current || !roomsSocketRef.current.isConnected) {
+          roomsSocketRef.current = new ChatRoomsWebSocket(
+            user.userId,
+            handleRoomsUpdate
+          );
+          await roomsSocketRef.current.connect();
+        }
+      } catch (error) {
+        setError('실시간 업데이트 연결에 실패했습니다.');
+      }
+    };
+  
+    initializeWebSocket();
+
+    return () => {
+      if (roomsSocketRef.current) {
+        roomsSocketRef.current.disconnect();
+        roomsSocketRef.current = null;
+      }
+    };
+  }, [user?.userId, isUserInitialized, isNotificationInitialized, handleRoomsUpdate]);
+
+  // 채팅방 목록 초기 로드
   const fetchChatRooms = useCallback(async () => {
+    if (!user?.userId) return;
+
     try {
       setIsLoading(true);
       setError(null);
-      const response = await ChatApi.getChatRooms(currentUserId);
+      const response = await ChatApi.getChatRooms(user.userId);
       setChatRooms(response);
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
@@ -134,13 +188,13 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentUserId]);
+  }, [user?.userId]);
 
   useEffect(() => {
-    if (isUserInitialized) {
+    if (isUserInitialized && user?.userId) {
       fetchChatRooms();
     }
-  }, [isUserInitialized, fetchChatRooms]);
+  }, [isUserInitialized, user?.userId, fetchChatRooms]);
 
   // === 6. Event Handlers ===
   const handleToggleChat = () => setIsOpen(!isOpen);
@@ -158,6 +212,17 @@ function App() {
     setSelectedRoom(null);
   };
 
+  const chatModalProps = {
+    isModalOpen: isOpen,
+    onSelectChatRoom: handleSelectRoom,
+    onClose: handleClose,
+    currentUserId: user?.userId,
+    chatRooms,
+    isLoading,
+    error,
+    onRetry: fetchChatRooms
+  };
+
   // === 7. UI Rendering Methods ===
   const renderChatInterface = () => {
     if (isDesktopHomePage || isDesktopMyPage)
@@ -166,18 +231,12 @@ function App() {
           <ChatButton onClick={handleToggleChat} />
           <SlideLayout isOpen={isOpen} onClose={handleClose}>
             {!selectedRoom ? (
-              <ChatModal
-                chatRooms={chatRooms}
-                onSelectChatRoom={handleSelectRoom}
-                onClose={handleClose}
-                isModalOpen={isOpen}
-                currentUserId={currentUserId}
-              />
+              <ChatModal {...chatModalProps} />
             ) : (
               <ChatRoom
                 room={selectedRoom}
                 onBack={handleBack}
-                currentUserId={currentUserId}
+                currentUserId={user?.userId}
               />
             )}
           </SlideLayout>
@@ -189,6 +248,13 @@ function App() {
   // === 8. Main Render ===
   return (
     <div className='App'>
+      <NotificationProvider 
+        user={user}
+        onInitialized={() => {
+          console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
+          setIsNotificationInitialized(true);
+        }}
+      />
       <Routes>
         {/* Desktop Routes */}
         <Route path='/' element={<DesktopHome />} />
@@ -239,6 +305,7 @@ function App() {
         />
       </Routes>
       {!isMobileChatRoute && renderChatInterface()}
+      
     </div>
   );
 }
