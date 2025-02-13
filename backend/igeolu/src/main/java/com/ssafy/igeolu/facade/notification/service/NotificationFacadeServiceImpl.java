@@ -113,9 +113,15 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	}
 
 	@Override
-	public Notification updateReadingStatus(Integer notificationId) {
+	public AppointmentNotificationResponseDto updateReadingStatus(Integer notificationId) {
 		Notification notification = notificationService.getNotification(notificationId);
+		notification.setIsRead(true);
 
-		return null;
+		return AppointmentNotificationResponseDto.builder()
+			.notificationId(notification.getId())
+			.scheduledAt(notification.getScheduledAt())
+			.createdAt(notification.getCreatedAt())
+			.message(notification.getMessage())
+			.build();
 	}
 }
