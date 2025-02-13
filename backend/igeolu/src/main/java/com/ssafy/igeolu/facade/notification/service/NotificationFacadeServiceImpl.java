@@ -1,9 +1,7 @@
 package com.ssafy.igeolu.facade.notification.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,10 +32,6 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 		List<Appointment> appointments = appointmentService.getAppointmentsBySchedule(startTime, endTime);
 
 		for (Appointment appointment : appointments) {
-			// 알림 메시지 구성
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(E) HH:mm", Locale.KOREAN);
-			String formattedScheduledAt = appointment.getScheduledAt().format(formatter);
-			String formattedCreatedAt = now.format(formatter);
 
 			// 각 사용자별 메시지 생성
 			String messageForRealtor = "'" + appointment.getTitle() + "' 일정: 고객 "
@@ -49,20 +43,32 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 			Notification notificationForRealtor = Notification.builder()
 				.user(appointment.getRealtor())
 				.message(messageForRealtor)
-				.scheduledAt(startTime)
+				.scheduledAt(appointment.getScheduledAt())
 				.build();
 
 			Notification notificationForMember = Notification.builder()
 				.user(appointment.getMember())
 				.message(messageForMember)
-				.scheduledAt(startTime)
+				.scheduledAt(appointment.getScheduledAt())
 				.build();
 
-			// 알림 DTO 생성
-			AppointmentNotificationResponseDto notificationDto = AppointmentNotificationResponseDto.builder()
-				.notificationId()
-				.message(message)
+			notificationService.registerNotification(notificationForRealtor);
+			notificationService.registerNotification(notificationForMember);
 
+			// 공인중개사 알림 DTO 생성
+			AppointmentNotificationResponseDto notificationDtoForRealtor = AppointmentNotificationResponseDto.builder()
+				.notificationId(notificationForRealtor.getId())
+				.scheduledAt(notificationForRealtor.getScheduledAt())
+				.createdAt(notificationForRealtor.getCreatedAt())
+				.message(messageForRealtor)
+				.build();
+
+			// 고객 알림 DTO 생성
+			AppointmentNotificationResponseDto notificationDtoForMember = AppointmentNotificationResponseDto.builder()
+				.notificationId(notificationForMember.getId())
+				.scheduledAt(notificationForMember.getScheduledAt())
+				.createdAt(notificationForMember.getCreatedAt())
+				.message(messageForMember)
 				.build();
 
 			// WebSocket을 통해 알림 전송

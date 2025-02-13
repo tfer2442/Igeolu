@@ -21,10 +21,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
 		// 메시지를 구독(수신)하는 요청 엔드포인트
 		// /api/sub 로 시작하는 stomp 메세지는 브로커로 라우팅함
-		registry.enableSimpleBroker("/api/sub");
+		registry.enableSimpleBroker("/api/sub", "/api/sub-user");
 
 		// 메시지를 발행(송신)하는 엔드포인트
 		// /api/pub 으로 시작하는 stomp 메세지의 경로는 @controller @MessageMaping 메서드로 라우팅
 		registry.setApplicationDestinationPrefixes("/api/pub");
+
+		// 사용자 전용 메시지 전송을 위한 접두사 설정 (예: convertAndSendToUser() 사용 시)
+		registry.setUserDestinationPrefix("/api/sub-user");
 	}
 }
