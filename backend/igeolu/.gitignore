@@ -59,4 +59,7 @@ backend/igeolu/.vscode/
 ### key file ###
 backend/igeolu/src/main/resources/application-key.yml
 
+### log file ###
+/logs
+
 ################
