@@ -23,4 +23,9 @@ public class NotificationServiceImpl implements NotificationService {
 	public List<Notification> getNotificationsByUserId(Integer userId) {
 		return notificationRepository.findByUser_IdOrderByCreatedAtDesc(userId);
 	}
+
+	@Override
+	public Notification getNotification(Integer notificationId) {
+		return null;
+	}
 }

@@ -8,4 +8,6 @@ public interface NotificationService {
 	void registerNotification(Notification notification);
 
 	List<Notification> getNotificationsByUserId(Integer userId);
+
+	Notification getNotification(Integer notificationId);
 }

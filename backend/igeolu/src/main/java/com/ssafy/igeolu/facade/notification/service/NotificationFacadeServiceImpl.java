@@ -114,6 +114,8 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 
 	@Override
 	public Notification updateReadingStatus(Integer notificationId) {
+		Notification notification = notificationService.getNotification(notificationId);
+
 		return null;
 	}
 }
