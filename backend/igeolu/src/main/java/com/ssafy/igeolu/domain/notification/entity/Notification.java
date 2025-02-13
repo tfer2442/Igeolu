@@ -40,6 +40,10 @@ public class Notification {
 	// 알림 내용
 	private String message;
 
+	// 읽음 여부
+	@Builder.Default
+	private Boolean isRead = false;
+
 	// 알림 대상자
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
