@@ -71,12 +71,20 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 				.message(messageForMember)
 				.build();
 
-			// WebSocket을 통해 알림 전송
-			// (클라이언트는 "/api/sub/notifications/{userId}"를 구독해야 합니다)
-			messagingTemplate.convertAndSend("/api/sub/notifications/" + appointment.getRealtor().getId(),
-				notificationDtoForRealtor);
-			messagingTemplate.convertAndSend("/api/sub/notifications/" + appointment.getMember().getId(),
-				notificationDtoForMember);
+			// WebSocket을 통해 알림 전송 (사용자별 전송)
+			// 첫번째 인자로 대상 사용자의 username을 전달합니다.
+			// 최종적으로 클라이언트는 "/api/sub-user/{username}/notifications"로 메시지를 수신하게 됩니다.
+			messagingTemplate.convertAndSendToUser(
+				appointment.getRealtor().getId().toString(), // 대상 사용자의 username
+				"/notifications",                        // destination, 최종 경로는 "/api/sub-user/{username}/notifications"
+				notificationDtoForRealtor
+			);
+
+			messagingTemplate.convertAndSendToUser(
+				appointment.getMember().getId().toString(),
+				"/notifications",
+				notificationDtoForMember
+			);
 
 			// 중복 알림 전송을 방지하기 위해 알림 전송 플래그 업데이트
 			appointment.setNotificationSent(true);
