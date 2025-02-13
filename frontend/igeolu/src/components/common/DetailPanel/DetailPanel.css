@@ -363,3 +363,253 @@
     font-size: 0.9rem;
     color: #666;
 }
+
+/* 공인중개사 프로필 스타일 */
+.agent-profile-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.agent-profile-header {
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.agent-image-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #f0f0f0;
+}
+
+.agent-detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.agent-primary-info {
+    flex: 1;
+}
+
+.agent-name {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.agent-title {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.agent-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #0066ff;
+}
+
+.agent-content-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.agent-description {
+    margin: 0;
+    line-height: 1.6;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+.agent-info-grid {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.info-grid-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-grid-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-grid-label {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.info-grid-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.view-properties-button {
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1.5rem;
+    padding: 1rem;
+    background-color: #0066ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.view-properties-button:hover {
+    background-color: #0052cc;
+}
+
+/* 매물 목록 스타일 */
+.property-list-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.property-list-header {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.total-count {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.property-list-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.property-list-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.property-list-item:hover {
+    border-color: #0066ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
+}
+
+.property-preview-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.property-preview-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.property-list-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.property-list-main-info {
+    margin-bottom: 0.5rem;
+}
+
+.property-list-price {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.deposit {
+    font-weight: 600;
+    color: #0066ff;
+    font-size: 1.1rem;
+}
+
+.monthly-rent {
+    color: #333;
+    font-weight: 500;
+}
+
+.property-specs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.spec-divider {
+    color: #ccc;
+}
+
+.property-list-sub-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.address {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.property-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.property-tag {
+    padding: 0.25rem 0.5rem;
+    background-color: #f0f7ff;
+    color: #0066ff;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.property-tag.more {
+    background-color: #f5f5f5;
+    color: #666;
+}

@@ -330,50 +330,44 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
                     </div>
                 ) : (
                     <div className='detail-panel-section'>
-                        <div className='agent-profile'>
-                            <div className='agent-image-container'>
-                                <img 
-                                    src={data?.profileImage || '/default-agent.png'} 
-                                    alt={data?.username} 
-                                    className='agent-detail-image'
-                                />
-                            </div>
-                        </div>
-
-                        <div className='agent-additional-info'>
-                            <div className='info-row'>
-                                <h5>이름</h5>
-                                <p>{data?.username}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>제목</h5>
-                                <p>{data?.title}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>주소</h5>
-                                <p>{data?.address}</p>
+                        <div className='agent-profile-card'>
+                            <div className='agent-profile-header'>
+                                <div className='agent-image-wrapper'>
+                                    <img 
+                                        src={data?.profileImage || '/default-agent.png'} 
+                                        alt={data?.username} 
+                                        className='agent-detail-image'
+                                    />
+                                </div>
+                                <div className='agent-primary-info'>
+                                    <h4 className='agent-name'>{data?.username}</h4>
+                                    <p className='agent-title'>{data?.title}</p>
+                                    <div className='agent-stats'>
+                                        <div className='stat-item'>
+                                            <span className='stat-label'>라이브</span>
+                                            <span className='stat-value'>{data?.liveCount || 0}회</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className='info-row'>
-                                <h5>등록번호</h5>
-                                <p>{data?.registrationNumber}</p>
+                            <div className='agent-content-section'>
+                                <p className='agent-description'>{data?.content}</p>
                             </div>
 
-                            <div className='info-row'>
-                                <h5>연락처</h5>
-                                <p>{data?.tel}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>소개</h5>
-                                <p>{data?.content}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>라이브 방송 횟수</h5>
-                                <p>{data?.liveCount || 0}회</p>
+                            <div className='agent-info-grid'>
+                                <div className='info-grid-item'>
+                                    <span className='info-grid-label'>등록번호</span>
+                                    <span className='info-grid-value'>{data?.registrationNumber}</span>
+                                </div>
+                                <div className='info-grid-item'>
+                                    <span className='info-grid-label'>연락처</span>
+                                    <span className='info-grid-value'>{data?.tel}</span>
+                                </div>
+                                <div className='info-grid-item full-width'>
+                                    <span className='info-grid-label'>주소</span>
+                                    <span className='info-grid-value'>{data?.address}</span>
+                                </div>
                             </div>
 
                             <button 
