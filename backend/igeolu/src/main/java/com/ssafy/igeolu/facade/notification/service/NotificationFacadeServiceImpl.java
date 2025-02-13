@@ -66,6 +66,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 				.scheduledAt(notificationForRealtor.getScheduledAt())
 				.createdAt(notificationForRealtor.getCreatedAt())
 				.message(messageForRealtor)
+				.isRead(false)
 				.build();
 
 			// 고객 알림 DTO 생성
@@ -74,6 +75,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 				.scheduledAt(notificationForMember.getScheduledAt())
 				.createdAt(notificationForMember.getCreatedAt())
 				.message(messageForMember)
+				.isRead(false)
 				.build();
 
 			// WebSocket을 통해 알림 전송 (사용자별 전송)
