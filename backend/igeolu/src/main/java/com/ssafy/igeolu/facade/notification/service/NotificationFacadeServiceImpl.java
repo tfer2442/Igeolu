@@ -27,6 +27,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 
 	@Scheduled(fixedRate = 60000)
 	@Override
+	@Transactional
 	public void sendAppointmentNotifications() {
 		LocalDateTime now = LocalDateTime.now();
 		// 예약 시간이 현재 시각으로부터 10분 후부터 11분 후 사이인 예약 조회
@@ -113,6 +114,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	}
 
 	@Override
+	@Transactional
 	public AppointmentNotificationResponseDto updateReadingStatus(Integer notificationId) {
 		Notification notification = notificationService.getNotification(notificationId);
 		notification.setIsRead(true);
@@ -126,7 +128,8 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	}
 
 	@Override
+	@Transactional
 	public void removeNotification(Integer notificationId) {
-		
+
 	}
 }
