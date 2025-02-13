@@ -353,7 +353,7 @@ function MapPage() {
         } else {
             setSelectedItem(item);
         }
-
+    
         if (item && item.latitude && item.longitude) {
             updateMapCenter({
                 lat: parseFloat(item.latitude),
@@ -372,7 +372,8 @@ function MapPage() {
         }
     };
 
-    const handleViewProperties = async (userId) => {
+
+    const handleViewProperties = async (userId, selectedPropertyId = null) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/api/properties`, {
                 params: { userId: userId }
@@ -381,28 +382,24 @@ function MapPage() {
             const validResults = response.data.filter(item =>
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
-
+    
             setInitialProperties(validResults);
             
-            const filteredResults = validResults.filter(item => {
-                const passesDepositFilter = !deposit || item.deposit <= deposit;
-                const passesMonthlyRentFilter = !monthlyRent || item.monthlyRent <= monthlyRent;
-                const passesOptionsFilter = selectedOptions.length === 0 || 
-                    selectedOptions.every(optionId => 
-                        item.options?.some(opt => opt.optionId === optionId)
-                    );
-
-                return passesDepositFilter && passesMonthlyRentFilter && passesOptionsFilter;
-            });
-            
-            setPropertyMarkers(filteredResults);
-
-            if (filteredResults.length > 0) {
-                updateMapCenter({
-                    lat: parseFloat(filteredResults[0].latitude),
-                    lng: parseFloat(filteredResults[0].longitude)
-                });
-                setMapLevel(5);
+            // selectedPropertyId가 있으면 해당 매물만 마커로 표시
+            if (selectedPropertyId) {
+                const selectedProperty = validResults.find(item => item.propertyId === selectedPropertyId);
+                if (selectedProperty) {
+                    setPropertyMarkers([selectedProperty]);
+                    // 선택된 매물 위치로 지도 중심 이동
+                    updateMapCenter({
+                        lat: parseFloat(selectedProperty.latitude),
+                        lng: parseFloat(selectedProperty.longitude)
+                    });
+                    setMapLevel(3);
+                }
+            } else {
+                // 매물 목록 보기 상태에서는 모든 매물 표시
+                setPropertyMarkers(validResults);
             }
         } catch (error) {
             console.error('Error fetching realtor properties:', error);
