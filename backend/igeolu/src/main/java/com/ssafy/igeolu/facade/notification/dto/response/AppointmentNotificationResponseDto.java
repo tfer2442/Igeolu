@@ -25,4 +25,7 @@ public class AppointmentNotificationResponseDto {
 
 	@Schema(description = "알림 내용")
 	private String message;
+
+	@Schema(description = "읽음 여부")
+	private Boolean isRead;
 }

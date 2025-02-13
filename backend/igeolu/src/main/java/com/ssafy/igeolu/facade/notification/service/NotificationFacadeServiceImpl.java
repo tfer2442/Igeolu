@@ -109,6 +109,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 				.scheduledAt(notification.getScheduledAt())
 				.createdAt(notification.getCreatedAt())
 				.message(notification.getMessage())
+				.isRead(notification.getIsRead())
 				.build())
 			.toList();
 	}
