@@ -65,7 +65,7 @@ public class UserFacadeServiceImpl implements UserFacadeService {
 		User user = userService.getUserById(userId);
 
 		if (!user.getRole().equals(Role.ROLE_INCOMPLETE_REALTOR)) {
-			throw new CustomException(ErrorCode.UNAUTHORIZED);
+			throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
 		}
 
 		Dongcodes dongcodes = dongcodesService.getDongcodes(request.getDongcode());

@@ -37,16 +37,19 @@ public class Appointment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	// 예약일
 	private LocalDateTime scheduledAt;
 
 	// 예약 정보
 	private String title;
 
+	//공인중개사
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+	private User realtor;
 
+	// 고객
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User opponentUser;
+	private User member;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ChatRoom chatRoom;
@@ -57,4 +60,8 @@ public class Appointment {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
+
+	// 중복 알림 전송을 방지하기 위한 필드
+	@Builder.Default
+	private Boolean notificationSent = false;
 }

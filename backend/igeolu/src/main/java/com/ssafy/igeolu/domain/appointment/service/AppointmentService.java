@@ -16,8 +16,9 @@ public interface AppointmentService {
 
 	void updateAppointment(Appointment appointment,
 		LocalDateTime scheduledAt,
-		String title,
-		User user);
+		String title);
 
 	void deleteAppointment(Appointment appointment);
+
+	List<Appointment> getAppointmentsBySchedule(LocalDateTime start, LocalDateTime end);
 }

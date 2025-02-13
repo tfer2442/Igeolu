@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentListGetRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPostRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPutRequestDto;
 import com.ssafy.igeolu.facade.appointment.dto.response.AppointmentListGetResponseDto;
@@ -36,9 +35,8 @@ public class AppointmentController {
 		@ApiResponse(responseCode = "200", description = "정상 처리")
 	})
 	@GetMapping("")
-	public ResponseEntity<List<AppointmentListGetResponseDto>> getAppointmentList(
-		AppointmentListGetRequestDto request) {
-		List<AppointmentListGetResponseDto> responses = appointmentFacadeService.getAppointmentList(request);
+	public ResponseEntity<List<AppointmentListGetResponseDto>> getAppointmentList() {
+		List<AppointmentListGetResponseDto> responses = appointmentFacadeService.getAppointmentList();
 		return ResponseEntity.ok().body(responses);
 	}
 
