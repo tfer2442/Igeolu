@@ -22,7 +22,8 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	private final AppointmentService appointmentService;
 	private final NotificationService notificationService;
 
-	@Scheduled(fixedRate = 60000) // 1분 마다 실행
+	@Scheduled(fixedRate = 60000)
+	@Override
 	public void sendAppointmentNotifications() {
 		LocalDateTime now = LocalDateTime.now();
 		// 예약 시간이 현재 시각으로부터 10분 후부터 11분 후 사이인 예약 조회
