@@ -1,8 +1,6 @@
 package com.ssafy.igeolu.facade.appointment.service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,12 +35,11 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	@Override
 	public List<AppointmentListGetResponseDto> getAppointmentList() {
 		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(E) HH:mm", Locale.KOREAN);
 
 		return appointmentService.getAppointmentList(user).stream()
 			.map(a -> AppointmentListGetResponseDto.builder()
 				.appointmentId(a.getId())
-				.scheduledAt(a.getScheduledAt().format(formatter))
+				.scheduledAt(a.getScheduledAt())
 				.title(a.getTitle())
 				.realtorId(a.getRealtor().getId())
 				.realtorName(a.getRealtor().getUsername())
