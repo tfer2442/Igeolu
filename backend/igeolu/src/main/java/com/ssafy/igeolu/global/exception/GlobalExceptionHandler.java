@@ -1,5 +1,6 @@
 package com.ssafy.igeolu.global.exception;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex, HttpServletRequest request) {
 		ErrorCode errorCode = ex.getErrorCode();
-
+		logException(ex);
 		return ResponseEntity.status(errorCode.getStatus())
 			.body(ErrorResponse.of(errorCode, request.getRequestURI()));
 	}
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler {
 		MethodArgumentNotValidException ex,
 		HttpServletRequest request
 	) {
-
+		logException(ex);
 		// FieldError를 전부 모아서, 각각 "필드명: 에러메시지" 형태로 변환한 뒤
 		// 쉼표(혹은 세미콜론 등)로 구분하여 하나의 문자열로 합칩니다.
 		String errorMessage = ex.getBindingResult().getFieldErrors().stream()
@@ -50,9 +51,20 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception ex, HttpServletRequest request) {
-		log.error("error", ex);
+		logException(ex);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 			.body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, request.getRequestURI()));
 	}
 
+	private void logException(Exception ex) {
+		log.error("""
+                        Ex={}
+                        Message={}
+                        StackTrace={}""",
+				ex.getClass().getSimpleName(),
+				ex.getMessage(),
+				Arrays.stream(ex.getStackTrace())
+						.map(StackTraceElement::toString) // 스택트레이스 줄바꿈 추가
+						.collect(Collectors.joining("\n")));
+	}
 }
