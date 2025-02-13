@@ -10,6 +10,16 @@
 //     const [properties, setProperties] = useState([]);
 //     const [optionsData, setOptionsData] = useState([]);
 
+//     // DetailPanel이 닫힐 때 모든 상태 초기화
+//     useEffect(() => {
+//         if (!isVisible) {
+//             setView('main');
+//             setSelectedProperty(null);
+//             setProperties([]);
+//             setOptionsData([]);
+//         }
+//     }, [isVisible]);
+
 //     useEffect(() => {
 //         const fetchOptions = async () => {
 //             if (data?.options && Array.isArray(data.options)) {
@@ -296,6 +306,7 @@
 
 // export default DetailPanel;
 
+
 import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
@@ -307,16 +318,6 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
     const [properties, setProperties] = useState([]);
     const [optionsData, setOptionsData] = useState([]);
 
-    // DetailPanel이 닫힐 때 모든 상태 초기화
-    useEffect(() => {
-        if (!isVisible) {
-            setView('main');
-            setSelectedProperty(null);
-            setProperties([]);
-            setOptionsData([]);
-        }
-    }, [isVisible]);
-
     useEffect(() => {
         const fetchOptions = async () => {
             if (data?.options && Array.isArray(data.options)) {
@@ -327,7 +328,6 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
                         data.options.includes(option.optionId)
                     );
                     setOptionsData(filteredOptions);
-                    console.log('로드된 옵션 데이터:', filteredOptions);
                 } catch (error) {
                     console.error('옵션 정보 로드 실패:', error);
                 }
@@ -339,28 +339,13 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
         }
     }, [isVisible, data]);
 
+    // 새로운 공인중개사가 선택되었을 때 view를 'main'으로 리셋
     useEffect(() => {
-        if (isVisible && data) {
-            console.log('DetailPanel 데이터:', {
-                type: type,
-                isPropMarker: data?.type === 'room',
-                propertyId: data?.propertyId,
-                title: data?.title,
-                deposit: data?.deposit,
-                monthlyRent: data?.monthlyRent,
-                address: data?.address,
-                area: data?.area,
-                currentFloor: data?.currentFloor,
-                totalFloors: data?.totalFloors,
-                options: optionsData,
-                description: data?.description,
-                images: data?.images,
-                createdAt: data?.createdAt,
-                updatedAt: data?.updatedAt,
-                전체_데이터: data
-            });
+        if (data && data.type !== 'room') {
+            setView('main');
+            setSelectedProperty(null);
         }
-    }, [isVisible, data, type, optionsData]);
+    }, [data]);
 
     if (!isVisible) return null;
 
