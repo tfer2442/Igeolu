@@ -6,14 +6,27 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.ssafy.igeolu.global.websocket.CustomHandshakeHandler;
+import com.ssafy.igeolu.global.websocket.JwtHandshakeInterceptor;
+import com.ssafy.igeolu.oauth.util.JWTUtil;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+	private final JWTUtil jwtUtil;
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
+
 		// stomp 접속 주소 url = ws://localhost:8080/api/chats/ws, 프로토콜이 http가 아니다!
 		registry.addEndpoint("/api/chats/ws") // 연결될 엔드포인트
+			// JWT 인증을 위한 handshake interceptor 추가
+			.addInterceptors(new JwtHandshakeInterceptor(jwtUtil))
+			// 사용자 Principal을 설정하기 위한 custom handshake handler 사용
+			.setHandshakeHandler(new CustomHandshakeHandler())
 			.setAllowedOrigins("https://i12d205.p.ssafy.io", "http://localhost:3000");
 	}
 
