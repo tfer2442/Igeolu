@@ -1,5 +1,7 @@
 package com.ssafy.igeolu.domain.notification.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.notification.entity.Notification;
@@ -15,5 +17,10 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void registerNotification(Notification notification) {
 		notificationRepository.save(notification);
+	}
+
+	@Override
+	public List<Notification> getNotificationsByUserId(Integer userId) {
+		return List.of();
 	}
 }

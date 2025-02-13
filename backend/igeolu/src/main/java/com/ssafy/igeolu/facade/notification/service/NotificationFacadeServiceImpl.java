@@ -12,6 +12,7 @@ import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
 import com.ssafy.igeolu.domain.notification.entity.Notification;
 import com.ssafy.igeolu.domain.notification.service.NotificationService;
 import com.ssafy.igeolu.facade.notification.dto.response.AppointmentNotificationResponseDto;
+import com.ssafy.igeolu.oauth.service.SecurityService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	private final SimpMessagingTemplate messagingTemplate;
 	private final AppointmentService appointmentService;
 	private final NotificationService notificationService;
+	private final SecurityService securityService;
 
 	@Scheduled(fixedRate = 60000)
 	@Override
@@ -94,6 +96,10 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 
 	@Override
 	public List<AppointmentNotificationResponseDto> getNotifications() {
+		Integer userId = securityService.getCurrentUser().getUserId();
+
+		List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
+
 		return List.of();
 	}
 }
