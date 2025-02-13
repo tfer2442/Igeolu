@@ -32,8 +32,6 @@ const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
     setFormData({
       scheduledAt: localDate,
       title: appointment.title,
-      userId: appointment.userId,
-      opponentUserId: appointment.opponentUserId,
     });
 
     // Add escape key handler

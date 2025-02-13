@@ -174,7 +174,7 @@ function DesktopMyPage() {
             className='user-info-schedule-content'
           >
             <p>{formatDate(appointment.scheduledAt)}</p>
-            <p>{appointment.opponentName}</p>
+            <p>{appointment.realtorName}</p>
           </div>
         ))}
       </div>

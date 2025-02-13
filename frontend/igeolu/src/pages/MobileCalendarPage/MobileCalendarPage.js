@@ -53,11 +53,11 @@ function MobileCalendarPage() {
     }
 
     try {
-      const response = await appointmentAPI.getAppointments(userId);
+      const response = await appointmentAPI.getAppointments();
       const formattedAppointments = response.data.map((appointment) => ({
         appointmentId: appointment.id || appointment.appointmentId,
         scheduledAt: appointment.scheduledAt,
-        opponentName: appointment.opponentName,
+        memberName: appointment.memberName,
         title: appointment.title,
       }));
       setGroupedAppointments(groupAppointmentsByDate(formattedAppointments));
@@ -253,7 +253,7 @@ function MobileCalendarPage() {
                           <div className='schedule-info'>
                             <div className='schedule-main'>
                               <span className='schedule-opponent'>
-                                {appointment.opponentName}님
+                                {appointment.memberName}님
                               </span>
                               <span className='schedule-time'>
                                 {new Date(

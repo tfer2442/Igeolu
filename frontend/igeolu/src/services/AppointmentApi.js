@@ -43,8 +43,8 @@ instance.interceptors.response.use(
 );
 
 export const appointmentAPI = {
-  getAppointments: (userId) =>
-    instance.get('/appointments', { params: { userId } }),
+  getAppointments: () =>
+    instance.get('/appointments'),
 
   createAppointment: (data) => instance.post('/appointments', data),
 

@@ -9,8 +9,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
   const [formData, setFormData] = useState({
     scheduledAt: '',
     title: '',
-    userId: currentUserId,
-    opponentUserId: roomInfo.userId,
+    memberId: roomInfo.userId,
     chatRoomId: roomInfo.roomId,
   });
 
