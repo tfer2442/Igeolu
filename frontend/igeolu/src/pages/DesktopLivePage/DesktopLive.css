@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     width: 90vw;
-    height: 80vh;
+    height: 90vh;
     margin: 10px auto;
     gap: 20px;
 }
@@ -17,20 +17,21 @@
 }
 .desktop-live-page__left-content__live-video {
     width: 100%;
-    height: 70%;
+    height: 80%;
     border: 1px solid #E2E1E1;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    background-color: #000;
+    overflow: visible;
+    background-color: transparent;
+    position: relative;
 }
 .desktop-live-page__left-content__bottom-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 30%;
+    height: 20%;
     gap: 20px;
 }
 .desktop-live-page__left-content__bottom-content__ai-checklist {
@@ -245,4 +246,101 @@
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.subscriber-video {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.subscriber-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.subscriber-video canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.subscriber-video-container {
+    width: 640px;
+    height: 480px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}
+
+.video-overlay-container {
+    width: 640px !important;
+    height: 480px !important;
+    position: relative;
+    background: none;
+    margin: auto;
+}
+
+.detection-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.ai-checklist-container {
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-checklist-container h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.question-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.question-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.question-list::-webkit-scrollbar-track {
+    background: #e8f7ff;
+    border-radius: 3px;
+}
+
+.question-list::-webkit-scrollbar-thumb {
+    background: #01ADFF;
+    border-radius: 3px;
+}
+
+.question-list::-webkit-scrollbar-thumb:hover {
+    background: #0088cc;
+}
+
+.question-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    border-left: 3px solid #01ADFF;
+}
+
+.question-item:last-child {
+    margin-bottom: 0;
 }

@@ -142,7 +142,7 @@ function MobileLivePage() {
                         resolution: '640x480',
                         frameRate: 30,
                         insertMode: 'APPEND',
-                        mirror: false,
+                        mirror: true,
                     });
 
                     await newSession.publish(publisher);
