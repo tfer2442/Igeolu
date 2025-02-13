@@ -35,7 +35,7 @@ public class NotificationController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
 	@PatchMapping("/api/notifications/{notificationId}")
-	public ResponseEntity<AppointmentNotificationResponseDto> getNotifications(
+	public ResponseEntity<AppointmentNotificationResponseDto> updateReadingStatus(
 		@PathVariable Integer notificationId) {
 
 		return ResponseEntity.ok(notificationFacadeService.updateReadingStatus(notificationId));
