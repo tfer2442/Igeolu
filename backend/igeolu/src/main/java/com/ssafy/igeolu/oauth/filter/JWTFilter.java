@@ -55,8 +55,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		}
 
 		if (token == null) {
-			log.debug(JWTFilter.class.getName() + " token is null");
-			System.out.println("token null");
+			System.out.println(JWTFilter.class.getSimpleName() + " token is null");
 			filterChain.doFilter(request, response);
 
 			return;
@@ -64,8 +63,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		// 토큰 소멸 시간 검증
 		if (jwtUtil.isExpired(token)) {
-			log.debug(JWTFilter.class.getName() + " token is expired");
-			System.out.println("token expired");
+			System.out.println(JWTFilter.class.getSimpleName() + " token is expired");
 			filterChain.doFilter(request, response);
 
 			// 조건이 해당되면 메소드 종료 (필수)

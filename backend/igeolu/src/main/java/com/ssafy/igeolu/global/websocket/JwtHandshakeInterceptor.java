@@ -49,14 +49,13 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 		}
 
 		if (token == null) {
-			log.debug(JwtHandshakeInterceptor.class.getSimpleName() + " before handshake");
-			System.out.println("token null");
+			System.out.println(JwtHandshakeInterceptor.class.getSimpleName() + " token is null");
 			return false;
 		}
 
 		// 토큰 만료 여부 검사
 		if (jwtUtil.isExpired(token)) {
-			System.out.println("token expired");
+			System.out.println(JwtHandshakeInterceptor.class.getSimpleName() + " token is expired");
 			return false;
 		}
 
