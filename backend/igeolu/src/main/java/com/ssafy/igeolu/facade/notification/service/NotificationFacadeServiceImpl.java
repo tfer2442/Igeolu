@@ -111,4 +111,9 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 				.build())
 			.toList();
 	}
+
+	@Override
+	public Notification updateReadingStatus(Integer notificationId) {
+		return null;
+	}
 }

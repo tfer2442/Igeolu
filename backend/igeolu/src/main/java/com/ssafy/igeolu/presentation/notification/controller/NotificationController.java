@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.igeolu.domain.notification.entity.Notification;
 import com.ssafy.igeolu.facade.notification.dto.response.AppointmentNotificationResponseDto;
 import com.ssafy.igeolu.facade.notification.service.NotificationFacadeService;
 
@@ -35,10 +36,10 @@ public class NotificationController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
 	@PatchMapping("/api/notifications/{notificationId}")
-	public ResponseEntity<?> getNotifications(
+	public ResponseEntity<Notification> getNotifications(
 		@PathVariable Integer notificationId) {
-		// notificationFacadeService.update
-		// return ResponseEntity.ok(notificationFacadeService.getNotifications());
+
+		return ResponseEntity.ok(notificationFacadeService.updateReadingStatus(notificationId));
 	}
 }
 
