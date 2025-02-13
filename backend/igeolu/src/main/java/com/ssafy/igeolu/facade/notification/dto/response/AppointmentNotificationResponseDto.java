@@ -1,5 +1,7 @@
 package com.ssafy.igeolu.facade.notification.dto.response;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,11 +17,11 @@ public class AppointmentNotificationResponseDto {
 	@Schema(description = "알림 id")
 	private Integer notificationId;
 
-	@Schema(description = "스케줄 날짜", example = "yyyy-MM-dd(E) HH:mm")
-	private String scheduledAt;
+	@Schema(description = "스케줄 날짜")
+	private LocalDateTime scheduledAt;
 
 	@Schema(description = "알림 발생일")
-	private String createdAt;
+	private LocalDateTime createdAt;
 
 	@Schema(description = "알림 내용")
 	private String message;
