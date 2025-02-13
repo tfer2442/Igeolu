@@ -5,6 +5,7 @@ export const instance = axios.create({
   baseURL: 'https://i12d205.p.ssafy.io/api',
   headers: {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
   },
 });
 
@@ -104,8 +105,11 @@ const AdditionalInfoAPI = {
         resultType: 'json'
       });
 
+      const proxyUrl = 'https://proxy.cors.sh/';
+      const targetUrl = `https://business.juso.go.kr/addrlink/addrLinkApi.do?${params.toString()}`;
+
       const response = await instance.get(
-        `https://business.juso.go.kr/addrlink/addrLinkApi.do?${params.toString()}`
+        proxyUrl + targetUrl
       );
       
       return response;
@@ -117,7 +121,10 @@ const AdditionalInfoAPI = {
   
   getCoordinates: async (address) => {
     try {
-      const response = await instance.get('https://business.juso.go.kr/addrlink/addrCoordApi.do', {
+      const proxyUrl = 'https://proxy.cors.sh/';
+      const targetUrl = 'https://business.juso.go.kr/addrlink/addrCoordApi.do'
+
+      const response = await instance.get(proxyUrl + targetUrl, {
         params: {
           confmKey: 'U01TX0FVVEgyMDI1MDIwMzE1MTExNTExNTQ0MDM=',
           admCd: address.admCd,
