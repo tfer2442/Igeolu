@@ -34,7 +34,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
 		// 메시지를 구독(수신)하는 요청 엔드포인트
 		// /api/sub 로 시작하는 stomp 메세지는 브로커로 라우팅함
-		registry.enableSimpleBroker("/api/sub", "/api/sub-user");
+		registry.enableSimpleBroker("/api/sub", "/api/sub-user")
+			// 첫 번째 값: 서버가 클라이언트로 heartbeat를 보내는 간격
+			// 두 번째 값: 클라이언트가 서버로 heartbeat를 보내는 간격
+			.setHeartbeatValue(new long[] {10000, 10000}); // 10초 간격
 
 		// 메시지를 발행(송신)하는 엔드포인트
 		// /api/pub 으로 시작하는 stomp 메세지의 경로는 @controller @MessageMaping 메서드로 라우팅
