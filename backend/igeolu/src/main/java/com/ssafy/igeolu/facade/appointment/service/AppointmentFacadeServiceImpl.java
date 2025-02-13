@@ -11,6 +11,7 @@ import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
 import com.ssafy.igeolu.domain.chatroom.entity.ChatRoom;
 import com.ssafy.igeolu.domain.chatroom.service.ChatRoomService;
+import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
 import com.ssafy.igeolu.facade.appointment.dto.request.AppointmentPostRequestDto;
@@ -55,6 +56,11 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 	public AppointmentPostResponseDto createAppointment(AppointmentPostRequestDto request) {
 
 		User realtor = userService.getUserById(securityService.getCurrentUser().getUserId());
+
+		if (realtor.getRole() != Role.ROLE_REALTOR) {
+			throw new CustomException(ErrorCode.FORBIDDEN_USER);
+		}
+
 		User member = userService.getUserById(request.getMemberId());
 		ChatRoom chatRoom = chatRoomService.getChatRoom(request.getChatRoomId());
 
