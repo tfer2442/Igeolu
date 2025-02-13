@@ -17,9 +17,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 @RequiredArgsConstructor
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
 	private final JWTUtil jwtUtil;
@@ -53,7 +55,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		}
 
 		if (token == null) {
-
+			log.debug(JWTFilter.class.getName() + " token is null");
 			System.out.println("token null");
 			filterChain.doFilter(request, response);
 
@@ -62,7 +64,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		// 토큰 소멸 시간 검증
 		if (jwtUtil.isExpired(token)) {
-
+			log.debug(JWTFilter.class.getName() + " token is expired");
 			System.out.println("token expired");
 			filterChain.doFilter(request, response);
 

@@ -13,8 +13,10 @@ import com.ssafy.igeolu.oauth.util.JWTUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 	private final JWTUtil jwtUtil;
 
@@ -47,6 +49,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 		}
 
 		if (token == null) {
+			log.debug(JwtHandshakeInterceptor.class.getSimpleName() + " before handshake");
 			System.out.println("token null");
 			return false;
 		}
