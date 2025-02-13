@@ -25,7 +25,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	private final NotificationService notificationService;
 	private final SecurityService securityService;
 
-	@Scheduled(fixedRate = 60000)
+	@Scheduled(fixedRate = 60000) // 1분
 	@Override
 	@Transactional
 	public void sendAppointmentNotifications() {
@@ -130,6 +130,7 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	@Override
 	@Transactional
 	public void removeNotification(Integer notificationId) {
-
+		Notification notification = notificationService.getNotification(notificationId);
+		notificationService.removeNotification(notification);
 	}
 }

@@ -31,4 +31,9 @@ public class NotificationServiceImpl implements NotificationService {
 		return notificationRepository.findById(notificationId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
 	}
+
+	@Override
+	public void removeNotification(Notification notification) {
+		notificationRepository.delete(notification);
+	}
 }

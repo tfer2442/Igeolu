@@ -10,4 +10,6 @@ public interface NotificationService {
 	List<Notification> getNotificationsByUserId(Integer userId);
 
 	Notification getNotification(Integer notificationId);
+
+	void removeNotification(Notification notification);
 }
