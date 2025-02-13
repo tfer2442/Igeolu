@@ -124,4 +124,9 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 			.message(notification.getMessage())
 			.build();
 	}
+
+	@Override
+	public void removeNotification(Integer notificationId) {
+		
+	}
 }

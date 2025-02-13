@@ -3,6 +3,7 @@ package com.ssafy.igeolu.presentation.notification.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,16 @@ public class NotificationController {
 		@PathVariable Integer notificationId) {
 
 		return ResponseEntity.ok(notificationFacadeService.updateReadingStatus(notificationId));
+	}
+
+	@Operation(summary = "알림 삭제", description = "알림을 삭제합니다")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@DeleteMapping("/api/notifications/{notificationId}")
+	public ResponseEntity<String> removeNotification(@PathVariable Integer notificationId) {
+		notificationFacadeService.removeNotification(notificationId);
+		return ResponseEntity.ok().build();
 	}
 }
 

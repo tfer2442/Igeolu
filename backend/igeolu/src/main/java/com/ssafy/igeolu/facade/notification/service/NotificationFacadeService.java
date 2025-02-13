@@ -10,4 +10,6 @@ public interface NotificationFacadeService {
 	List<AppointmentNotificationResponseDto> getNotifications();
 
 	AppointmentNotificationResponseDto updateReadingStatus(Integer notificationId);
+
+	void removeNotification(Integer notificationId);
 }
