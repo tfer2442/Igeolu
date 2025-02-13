@@ -34,7 +34,7 @@ public class Notification {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	// 알림 발생 시각
+	// 스케줄 시간
 	private LocalDateTime scheduledAt;
 
 	// 알림 내용
@@ -50,5 +50,6 @@ public class Notification {
 
 	@CreatedDate
 	@Column(updatable = false)
+	// 알림 발생 시각
 	private LocalDateTime createdAt;
 }
