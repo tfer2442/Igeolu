@@ -1,4 +1,5 @@
 
+// ListPanel.jsx
 import React from 'react';
 import { Building2, MapPin, Home } from 'lucide-react';
 import './ListPanel.css';
@@ -8,31 +9,13 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
     return `${deposit ? deposit.toLocaleString() : 0}/${monthlyRent ? monthlyRent.toLocaleString() : 0}`;
   };
 
-  const PropertyImage = ({ item }) => {
-    if (!item.images || item.images.length === 0) {
-      return (
-        <div className="property-image">
-          <div className="no-image">이미지가 없습니다</div>
-        </div>
-      );
+  const formatFloorInfo = (currentFloor, totalFloors) => {
+    if (currentFloor && totalFloors) {
+        return `${currentFloor}층 / 전체 ${totalFloors}층`;
+    } else if (currentFloor) {
+        return `${currentFloor}층`;
     }
-
-    return (
-      <div className="property-image">
-        <img 
-          src={item.images[0]} 
-          alt={item.title} 
-          className="room-image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '/room-placeholder.jpg';
-          }}
-        />
-        {item.roomType && (
-          <span className="room-type-badge">{item.roomType}</span>
-        )}
-      </div>
-    );
+    return '-';
   };
 
   return (
@@ -62,15 +45,34 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                 onClick={() => onItemClick(item)}
               >
                 {type === 'room' ? (
-                  <div className="property-item">
-                    <PropertyImage item={item} />
-                    <div className="property-info">
-                      <h4>{item.title}</h4>
-                      <div className="price-info">
-                        <span className="price-value">{formatPrice(item.deposit, item.monthlyRent)}</span>
+                  <div className="property-list-item">
+                    <div className="property-image">
+                      {item.images && item.images.length > 0 ? (
+                        <img 
+                          src={item.images[0]} 
+                          alt="매물 이미지"
+                          className="room-image"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/room-placeholder.jpg';
+                          }}
+                        />
+                      ) : (
+                        <div className="no-image">이미지 없음</div>
+                      )}
+                    </div>
+                    <div className='property-list-item-content'>
+                      <div className='property-list-price'>
+                        <span className='deposit'>{item.deposit?.toLocaleString()}만원</span>
+                        <span className='monthly-rent'>{item.monthlyRent?.toLocaleString()}만원</span>
                       </div>
-                      <div className="address-info">
-                        <p className="address">{item.address || '주소 정보 없음'}</p>
+                      <div className='property-list-info'>
+                        <span className='address'>{item.address}</span>
+                        <div className='property-specs'>
+                          <span>{item.area}㎡</span>
+                          <span className='spec-divider'>|</span>
+                          <span>{formatFloorInfo(item.currentFloor, item.totalFloors)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -100,7 +102,7 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
             ))
           ) : (
             <div className='no-results'>
-              <Building2 size={48} />
+              {type === 'room' ? <Home size={48} /> : <Building2 size={48} />}
               <p>검색 결과가 없습니다.</p>
               <span>다른 검색 조건을 시도해보세요.</span>
             </div>
