@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
@@ -95,11 +96,19 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<AppointmentNotificationResponseDto> getNotifications() {
 		Integer userId = securityService.getCurrentUser().getUserId();
 
 		List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
 
-		return List.of();
+		return notifications.stream()
+			.map(notification -> AppointmentNotificationResponseDto.builder()
+				.notificationId(notification.getId())
+				.scheduledAt(notification.getScheduledAt())
+				.createdAt(notification.getCreatedAt())
+				.message(notification.getMessage())
+				.build())
+			.toList();
 	}
 }
