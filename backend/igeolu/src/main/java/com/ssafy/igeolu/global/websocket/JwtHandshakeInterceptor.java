@@ -30,12 +30,11 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 		if (request instanceof ServletServerHttpRequest servletRequest) {
 			HttpServletRequest httpServletRequest = servletRequest.getServletRequest();
 
-			// 1. 헤더에서 Authorization 토큰 추출
-			String authorization = httpServletRequest.getHeader("Authorization");
-			if (authorization != null && authorization.startsWith("Bearer ")) {
-				token = authorization.substring(7); // "Bearer " 이후의 토큰 부분 추출
-			} else {
-				// 2. 쿠키에서 Authorization 토큰 추출
+			// 1. 쿼리 파라미터에서 token 추출
+			token = httpServletRequest.getParameter("token");
+
+			// 2. 쿼리 파라미터에 토큰이 없으면 쿠키에서 Authorization 토큰 추출
+			if (token == null) {
 				Cookie[] cookies = httpServletRequest.getCookies();
 				if (cookies != null) {
 					for (Cookie cookie : cookies) {
