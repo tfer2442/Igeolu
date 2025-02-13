@@ -57,8 +57,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 			return false;
 		}
 
-		// 필요하다면, 토큰에서 username 등 사용자 정보를 추출하여 attributes에 저장
-		Integer userId = jwtUtil.getUserId(token);
+		// 필요하다면, 토큰에서 userId 등 사용자 정보를 추출하여 attributes에 저장
+		String userId = jwtUtil.getUserId(token).toString();
 		attributes.put("userId", userId);
 
 		return true;
