@@ -1,7 +1,6 @@
 
-
 import React, { useState, useEffect } from 'react';
-import { X, ArrowLeft } from 'lucide-react';
+import { X, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import './DetailPanel.css';
 
@@ -17,6 +16,7 @@ const DetailPanel = ({
     const [selectedProperty, setSelectedProperty] = useState(null);
     const [properties, setProperties] = useState([]);
     const [optionsData, setOptionsData] = useState([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     useEffect(() => {
         const fetchOptions = async () => {
@@ -45,6 +45,7 @@ const DetailPanel = ({
             setSelectedProperty(null);
             setProperties([]);
             setOptionsData([]);
+            setCurrentImageIndex(0);
         }
     }, [isVisible, setView]);
 
@@ -76,7 +77,81 @@ const DetailPanel = ({
     const handlePropertyClick = (property) => {
         setSelectedProperty(property);
         setView('propertyDetail');
+        setCurrentImageIndex(0);
         onViewProperties(data.userId, property.propertyId);
+    };
+
+    const handleNextImage = (e) => {
+        e.stopPropagation();
+        const images = view === 'propertyDetail' ? selectedProperty?.images : data?.images;
+        if (images && images.length > 0) {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        }
+    };
+
+    const handlePrevImage = (e) => {
+        e.stopPropagation();
+        const images = view === 'propertyDetail' ? selectedProperty?.images : data?.images;
+        if (images && images.length > 0) {
+            setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+        }
+    };
+
+    const ImageSlider = ({ images }) => {
+        if (!images || images.length === 0) {
+            return <div className="no-image">이미지가 없습니다</div>;
+        }
+
+        return (
+            <div className="image-slider">
+                <img 
+                    src={images[currentImageIndex]} 
+                    alt="매물 이미지" 
+                    className="slider-image"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/room-placeholder.jpg';
+                    }}
+                />
+                {images.length > 1 && (
+                    <>
+                        <div className="slider-controls">
+                            <button onClick={handlePrevImage} className="slider-button">
+                                <ChevronLeft size={24} />
+                            </button>
+                            <button onClick={handleNextImage} className="slider-button">
+                                <ChevronRight size={24} />
+                            </button>
+                        </div>
+                        <div className="image-counter">
+                            {currentImageIndex + 1} / {images.length}
+                        </div>
+                        <div className="image-thumbnails">
+                            {images.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className={`thumbnail-wrapper ${index === currentImageIndex ? 'active' : ''}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentImageIndex(index);
+                                    }}
+                                >
+                                    <img
+                                        src={image}
+                                        alt={`썸네일 ${index + 1}`}
+                                        className="thumbnail-image"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/room-placeholder.jpg';
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+            </div>
+        );
     };
 
     const renderOptions = () => {
@@ -115,7 +190,6 @@ const DetailPanel = ({
                             onClick={() => {
                                 setView('main');
                                 setSelectedProperty(null);
-                                // 다시 모든 매물 마커 표시
                                 onViewProperties(data.userId);
                             }}
                         >
@@ -135,33 +209,52 @@ const DetailPanel = ({
             <div className='detail-panel-content'>
                 {view === 'propertyList' ? (
                     <div className='property-list-view'>
-                        {properties.map((property) => (
-                            <div
-                                key={property.propertyId}
-                                className='property-list-item'
-                                onClick={() => handlePropertyClick(property)}
-                            >
-                                <div className='property-list-item-content'>
-                                    <div className='property-list-price'>
-                                        <span className='deposit'>{property.deposit?.toLocaleString()}만원</span>
-                                        <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}만원</span>
+                        <div className='property-list-header'>
+                            <span className='total-count'>총 {properties.length}개의 매물</span>
+                        </div>
+                        <div className='property-list-content'>
+                            {properties.map((property) => (
+                                <div
+                                    key={property.propertyId}
+                                    className='property-list-item'
+                                    onClick={() => handlePropertyClick(property)}
+                                >
+                                    <div className='property-preview-image'>
+                                        {property.images && property.images.length > 0 ? (
+                                            <img 
+                                                src={property.images[0]} 
+                                                alt="매물 이미지"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = '/room-placeholder.jpg';
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="no-image-preview">이미지 없음</div>
+                                        )}
                                     </div>
-                                    <div className='property-list-info'>
-                                        <span className='address'>{property.address}</span>
-                                        <div className='property-specs'>
-                                            <span>{property.area}㎡</span>
-                                            <span className='spec-divider'>|</span>
-                                            <span>{formatFloorInfo(property.currentFloor, property.totalFloors)}</span>
+                                    <div className='property-list-item-content'>
+                                        <div className='property-list-price'>
+                                            <span className='deposit'>{property.deposit?.toLocaleString()}만원</span>
+                                            <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}만원</span>
+                                        </div>
+                                        <div className='property-list-info'>
+                                            <span className='address'>{property.address}</span>
+                                            <div className='property-specs'>
+                                                <span>{property.area}㎡</span>
+                                                <span className='spec-divider'>|</span>
+                                                <span>{formatFloorInfo(property.currentFloor, property.totalFloors)}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 ) : view === 'propertyDetail' ? (
                     <div className='detail-panel-section'>
                         <div className='property-image-slider'>
-                            <span>매물 이미지</span>
+                            <ImageSlider images={selectedProperty?.images} />
                         </div>
                         <div className='property-detail-info'>
                             <div className='property-price-info'>
@@ -201,9 +294,8 @@ const DetailPanel = ({
                 ) : displayType === 'room' ? (
                     <div className='detail-panel-section'>
                         <div className='property-image-slider'>
-                            <span>매물 이미지</span>
+                            <ImageSlider images={data?.images} />
                         </div>
-                        
                         <div className='property-detail-info'>
                             <div className='property-price-info'>
                                 <div className='price-row'>
@@ -215,7 +307,6 @@ const DetailPanel = ({
                                     <span className='price-value'>{data?.monthlyRent?.toLocaleString()}만원</span>
                                 </div>
                             </div>
-
                             <div className='property-basic-info'>
                                 <div className='info-item'>
                                     <span className='info-label'>주소</span>
@@ -232,7 +323,6 @@ const DetailPanel = ({
                                     </span>
                                 </div>
                             </div>
-
                             <div className='property-options'>
                                 <h5>옵션 정보</h5>
                                 <div className='options-list'>
@@ -250,6 +340,10 @@ const DetailPanel = ({
                                         src={data?.profileImage || '/default-agent.png'} 
                                         alt={data?.username} 
                                         className='agent-detail-image'
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/default-agent.png';
+                                        }}
                                     />
                                 </div>
                                 <div className='agent-primary-info'>

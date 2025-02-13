@@ -8,6 +8,33 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
     return `${deposit ? deposit.toLocaleString() : 0}/${monthlyRent ? monthlyRent.toLocaleString() : 0}`;
   };
 
+  const PropertyImage = ({ item }) => {
+    if (!item.images || item.images.length === 0) {
+      return (
+        <div className="property-image">
+          <div className="no-image">이미지가 없습니다</div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="property-image">
+        <img 
+          src={item.images[0]} 
+          alt={item.title} 
+          className="room-image"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/room-placeholder.jpg';
+          }}
+        />
+        {item.roomType && (
+          <span className="room-type-badge">{item.roomType}</span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className='list-panel'>
       <div className='list-panel-header'>
@@ -36,16 +63,7 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
               >
                 {type === 'room' ? (
                   <div className="property-item">
-                    <div className="property-image">
-                      <img 
-                        src={item.imageUrl || '/room-placeholder.jpg'} 
-                        alt={item.title} 
-                        className="room-image"
-                      />
-                      {item.roomType && (
-                        <span className="room-type-badge">{item.roomType}</span>
-                      )}
-                    </div>
+                    <PropertyImage item={item} />
                     <div className="property-info">
                       <h4>{item.title}</h4>
                       <div className="price-info">
@@ -62,6 +80,10 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                       src={item.profileImage || '/default-agent.png'} 
                       alt={item.username} 
                       className='agent-image'
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/default-agent.png';
+                      }}
                     />
                     <div className='agent-info'>
                       <span className='agent-name'>{item.username}</span>

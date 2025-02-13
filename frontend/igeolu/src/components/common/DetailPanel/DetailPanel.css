@@ -71,18 +71,130 @@
     gap: 1.5rem;
 }
 
-.property-image-slider {
+/* 이미지 슬라이더 스타일 */
+.image-slider {
     position: relative;
     width: 100%;
-    height: 200px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
+    min-height: 300px;
+    border-radius: 12px;
     overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.slider-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.slider-controls {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    pointer-events: none;
+}
+
+.slider-button {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    pointer-events: auto;
+    color: #333;
+    z-index: 10;
 }
 
+.slider-button:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.image-counter {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 10;
+}
+
+.image-thumbnails {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.image-thumbnails::-webkit-scrollbar {
+    height: 6px;
+}
+
+.image-thumbnails::-webkit-scrollbar-track {
+    background: rgba(241, 241, 241, 0.3);
+    border-radius: 3px;
+}
+
+.image-thumbnails::-webkit-scrollbar-thumb {
+    background: rgba(136, 136, 136, 0.5);
+    border-radius: 3px;
+}
+
+.thumbnail-wrapper {
+    flex: 0 0 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.thumbnail-wrapper.active {
+    border-color: #0066ff;
+}
+
+.thumbnail-wrapper:hover {
+    transform: translateY(-2px);
+}
+
+.thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    color: #666;
+    font-size: 16px;
+}
+
+/* 매물 정보 스타일 */
 .property-detail-info {
     display: flex;
     flex-direction: column;
@@ -141,7 +253,6 @@
     padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 8px;
-    margin-top: 0.5rem;
 }
 
 .property-options h5 {
@@ -150,7 +261,27 @@
     color: #666;
 }
 
-/* 공인중개사 프로필 스타일 */
+.options-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.option-tag {
+    padding: 0.35rem 0.75rem;
+    background-color: #f0f7ff;
+    color: #0066ff;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.no-options {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 공인중개사 정보 스타일 */
 .agent-profile-card {
     background: white;
     border-radius: 12px;
@@ -179,87 +310,9 @@
     object-fit: cover;
 }
 
-.agent-primary-info {
-    flex: 1;
-}
-
-.agent-name {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
-}
-
-.agent-title {
-    margin: 0.5rem 0;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.agent-stats {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.75rem;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.stat-label {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.stat-value {
-    font-weight: 600;
-    color: #0066ff;
-}
-
-.agent-content-section {
-    padding: 1.5rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.agent-description {
-    margin: 0;
-    line-height: 1.6;
-    color: #444;
-    font-size: 0.95rem;
-}
-
-.agent-info-grid {
-    padding: 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-}
-
-.info-grid-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.info-grid-item.full-width {
-    grid-column: 1 / -1;
-}
-
-.info-grid-label {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.info-grid-value {
-    font-weight: 500;
-    color: #333;
-}
-
 .view-properties-button {
     width: calc(100% - 3rem);
-    margin: 0 1.5rem 1.5rem;
+    margin: 1.5rem;
     padding: 1rem;
     background-color: #0066ff;
     color: white;
@@ -277,19 +330,14 @@
 
 /* 매물 목록 스타일 */
 .property-list-view {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
 .property-list-header {
     padding: 1rem;
     border-bottom: 1px solid #f0f0f0;
-}
-
-.total-count {
-    font-size: 0.9rem;
-    color: #666;
 }
 
 .property-list-content {
@@ -329,21 +377,23 @@
     object-fit: cover;
 }
 
-.property-list-item-content {
-    flex: 1;
+.no-image-preview {
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    color: #666;
+    font-size: 14px;
 }
 
-.property-list-main-info {
-    margin-bottom: 0.5rem;
+.property-list-item-content {
+    flex: 1;
+    min-width: 0;
 }
 
 .property-list-price {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
     margin-bottom: 0.5rem;
 }
 
@@ -356,46 +406,16 @@
 .monthly-rent {
     color: #333;
     font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.property-list-info {
+    font-size: 0.9rem;
+    color: #666;
 }
 
 .property-specs {
     display: flex;
-    align-items: center;
     gap: 0.5rem;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.spec-divider {
-    color: #ccc;
-}
-
-.property-list-sub-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.address {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.property-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.property-tag {
-    padding: 0.25rem 0.5rem;
-    background-color: #f0f7ff;
-    color: #0066ff;
-    border-radius: 4px;
-    font-size: 0.8rem;
-}
-
-.property-tag.more {
-    background-color: #f5f5f5;
-    color: #666;
+    margin-top: 0.25rem;
 }
