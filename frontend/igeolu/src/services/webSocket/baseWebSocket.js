@@ -1,4 +1,3 @@
-// services/websocket/baseWebSocket.js
 import { Client } from '@stomp/stompjs';
 
 class BaseWebSocket {
@@ -25,72 +24,41 @@ class BaseWebSocket {
 
     return new Promise((resolve, reject) => {
       try {
-        // 기존 연결이 있다면 정리
         if (this.stompClient) {
           console.log('기존 연결 정리 중...');
           this.stompClient.deactivate();
           this.stompClient = null;
         }
 
-        // 토큰 가져오기
         const token = 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg';
-        console.log('연결 설정 시작:', {
-          url: this.SOCKET_URL,
-          hasToken: !!token
-        });
-
+        
         this.stompClient = new Client({
           webSocketFactory: () => {
-            console.log('WebSocket 팩토리 호출됨');
-            const token = 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg'; // 토큰값
             const wsUrl = `${this.SOCKET_URL}?token=${token}`;
             console.log('연결 시도 URL:', wsUrl);
-            const ws = new WebSocket(wsUrl);  // URL에 토큰을 포함
-            return ws;
+            return new WebSocket(wsUrl);
           },
-          // connectHeaders: {
-          //   Authorization: `Bearer ${token}`
-          // },
           reconnectDelay: 5000,
-          heartbeatIncoming: 30000,
-          heartbeatOutgoing: 30000,
+          heartbeatIncoming: 4000,
+          heartbeatOutgoing: 4000,
           debug: function(str) {
             console.log('STOMP 디버그:', str);
           },
           onConnect: () => {
-            console.log('STOMP 연결 성공', {
-              stompConnected: this.stompClient.connected,
-              headers: this.stompClient.connectHeaders
-            });
+            console.log('STOMP 연결 성공');
             this.isConnected = true;
             resolve();
           },
           onStompError: (frame) => {
-            console.error('STOMP 에러 발생:', {
-              frame,
-              headers: frame.headers,
-              body: frame.body,
-              command: frame.command
-            });
+            console.error('STOMP 에러 발생:', frame);
             this.isConnected = false;
             reject(new Error('STOMP connection failed'));
           },
           onWebSocketError: (event) => {
-            console.error('WebSocket 에러 세부 정보:', {
-              event,
-              type: event.type,
-              message: event.message,
-              filename: event.filename,
-              lineno: event.lineno
-            });
+            console.error('WebSocket 에러:', event);
           },
           onWebSocketClose: (event) => {
-            console.log('WebSocket 연결 종료 세부 정보:', {
-              event,
-              code: event.code,
-              reason: event.reason,
-              wasClean: event.wasClean
-            });
+            console.log('WebSocket 연결 종료:', event);
             this.isConnected = false;
           }
         });
@@ -99,12 +67,7 @@ class BaseWebSocket {
         this.stompClient.activate();
       } catch (error) {
         this.isConnected = false;
-        console.error('WebSocket 연결 중 예외 발생:', {
-          error,
-          message: error.message,
-          stack: error.stack,
-          name: error.name
-        });
+        console.error('WebSocket 연결 중 예외 발생:', error);
         reject(error);
       }
     });
@@ -124,11 +87,7 @@ class BaseWebSocket {
           console.log('STOMP 클라이언트 비활성화 완료');
         }
       } catch (error) {
-        console.error('연결 해제 중 에러:', {
-          error,
-          message: error.message,
-          stack: error.stack
-        });
+        console.error('연결 해제 중 에러:', error);
       } finally {
         this.isConnected = false;
         this.stompClient = null;
@@ -142,6 +101,5 @@ class BaseWebSocket {
     throw new Error('subscribe method must be implemented');
   }
 }
-
 
 export default BaseWebSocket;

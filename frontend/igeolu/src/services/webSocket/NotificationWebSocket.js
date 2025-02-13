@@ -15,7 +15,7 @@ class NotificationWebSocket extends BaseWebSocket {
   async reconnect() {
     console.log('🔄 재연결 프로세스 시작', {
       시도횟수: this.reconnectAttempts + 1,
-      최대시도횟수: this.maxReconnectAttempts
+      최대시도횟수: this.maxReconnectAttempts,
     });
 
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
@@ -25,7 +25,7 @@ class NotificationWebSocket extends BaseWebSocket {
 
     try {
       this.reconnectAttempts++;
-      
+
       // 이전 연결 정리
       if (this.stompClient) {
         console.log('🧹 이전 연결 정리 중...');
@@ -35,7 +35,7 @@ class NotificationWebSocket extends BaseWebSocket {
       // 새로운 연결 시도
       console.log(`🔄 ${this.reconnectAttempts}번째 재연결 시도...`);
       await this.connect();
-      
+
       // 재구독
       if (this.isConnected) {
         console.log('✅ 재연결 성공, 재구독 시도...');
@@ -45,7 +45,7 @@ class NotificationWebSocket extends BaseWebSocket {
       }
     } catch (error) {
       console.error('❌ 재연결 실패:', error);
-      
+
       // 일정 시간 후 다시 시도
       setTimeout(() => {
         this.reconnect();
@@ -60,35 +60,41 @@ class NotificationWebSocket extends BaseWebSocket {
     }
 
     try {
-      const subscriptionPath = `/api/sub/notifications`;
+      const subscriptionPath = `/api/sub-user/${this.userId}/notifications`;
       console.log('📌 알림 구독 시도:', {
         path: subscriptionPath,
-        userId: this.userId
+        userId: this.userId,
       });
 
       this.subscription = this.stompClient.subscribe(
         subscriptionPath,
         (message) => {
-          console.log('📨 알림 수신:', {
-            messageData: message,
-            subscription: this.subscription?.id
+          console.log('📨 웹소켓으로 새로운 알림 수신:', {
+            원본메시지: message,
+            바디: message.body,
+            헤더: message.headers,
+            구독ID: this.subscription?.id,
           });
 
           try {
             const notification = JSON.parse(message.body);
-            console.log('✅ 파싱된 알림:', notification);
+            console.log('✅ 파싱된 알림 데이터:', {
+              알림ID: notification.notificationId,
+              메시지: notification.message,
+              생성시간: notification.createdAt,
+              읽음여부: notification.isRead,
+            });
             this.onNotificationReceived(notification);
           } catch (error) {
             console.error('❌ 알림 파싱 실패:', error);
           }
         },
         {
-          id: `notification-${this.userId}`
+          id: `notification-${this.userId}`,
         }
       );
 
       console.log('✅ 알림 구독 완료');
-
     } catch (error) {
       console.error('❌ 알림 구독 중 오류:', error);
       throw error;
@@ -99,7 +105,7 @@ class NotificationWebSocket extends BaseWebSocket {
   async connect() {
     try {
       await super.connect();
-      
+
       // WebSocket 종료 이벤트 핸들러 추가
       if (this.stompClient) {
         const originalOnWebSocketClose = this.stompClient.onWebSocketClose;
@@ -108,7 +114,7 @@ class NotificationWebSocket extends BaseWebSocket {
             code: event.code,
             reason: event.reason || '이유 없음',
             wasClean: event.wasClean,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
 
           // code 1006으로 연결이 종료된 경우 재연결 시도

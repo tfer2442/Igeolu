@@ -249,12 +249,12 @@ function App() {
   return (
     <div className='App'>
       <NotificationProvider 
-        user={user}
-        onInitialized={() => {
-          console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
-          setIsNotificationInitialized(true);
-        }}
-      />
+      user={user}
+      onInitialized={() => {
+        console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
+        setIsNotificationInitialized(true);
+      }}
+    >
       <Routes>
         {/* Desktop Routes */}
         <Route path='/' element={<DesktopHome />} />
@@ -305,7 +305,7 @@ function App() {
         />
       </Routes>
       {!isMobileChatRoute && renderChatInterface()}
-      
+    </NotificationProvider>
     </div>
   );
 }
