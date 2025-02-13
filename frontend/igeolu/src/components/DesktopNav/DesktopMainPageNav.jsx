@@ -4,6 +4,8 @@ import defaultProfile from '../../assets/images/defaultProfileImageIMSI.png';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './DesktopMainPageNav.css';
+import UserControllerApi from '../../services/UserControllerApi';
+
 
 const NAV_ITEMS = [
   { id: 1, title: '방찾기', path: '/map?type=room' },
@@ -15,11 +17,28 @@ function DesktopMainPageNav() {
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState(defaultProfile);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      
+      // 사용자 정보 가져오기
+      const fetchUserInfo = async () => {
+        try {
+          const response = await UserControllerApi.getUserInfo(parsedUser.userId);
+          if (response.imageUrl) {
+            setProfileImage(response.imageUrl);
+          }
+        } catch (error) {
+          console.error('Error fetching user info:', error);
+          // 에러 발생 시 기본 이미지 유지
+        }
+      };
+  
+      fetchUserInfo();
     }
   }, []);
 
@@ -36,6 +55,7 @@ function DesktopMainPageNav() {
   const handleLogoutConfirm = () => {
     localStorage.removeItem('user');
     setUser(null);
+    setProfileImage(defaultProfile);
     window.location.href = 'https://i12d205.p.ssafy.io/api/logout';
   };
 
@@ -67,7 +87,7 @@ function DesktopMainPageNav() {
         {user ? (
           <div className='profile-container'>
             <button className='profile-button' onClick={handleProfileClick}>
-              <img src={defaultProfile} alt='profile' />
+              <img src={profileImage} alt='profile' />
             </button>
 
             {isDropdownOpen && (
