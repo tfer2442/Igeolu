@@ -1,11 +1,19 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import './DetailPanel.css';
 
-const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
-    const [view, setView] = useState('main');
+const DetailPanel = ({ 
+    isVisible, 
+    onClose, 
+    type, 
+    data, 
+    onViewProperties,
+    view,
+    setView 
+}) => {
     const [selectedProperty, setSelectedProperty] = useState(null);
     const [properties, setProperties] = useState([]);
     const [optionsData, setOptionsData] = useState([]);
@@ -32,11 +40,20 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
     }, [isVisible, data]);
 
     useEffect(() => {
+        if (!isVisible) {
+            setView('main');
+            setSelectedProperty(null);
+            setProperties([]);
+            setOptionsData([]);
+        }
+    }, [isVisible, setView]);
+
+    useEffect(() => {
         if (data && data.type !== 'room') {
             setView('main');
             setSelectedProperty(null);
         }
-    }, [data]);
+    }, [data, setView]);
 
     if (!isVisible) return null;
 
@@ -59,7 +76,7 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
     const handlePropertyClick = (property) => {
         setSelectedProperty(property);
         setView('propertyDetail');
-        onViewProperties(data.userId, property.propertyId);  // propertyId 전달
+        onViewProperties(data.userId, property.propertyId);
     };
 
     const renderOptions = () => {
@@ -88,8 +105,8 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
             <div className='detail-panel-header'>
                 <h3>
                     {view === 'propertyList' ? '매물 목록' :
-                    view === 'propertyDetail' ? '매물 상세정보' :
-                    displayType === 'room' ? '매물 상세정보' : '공인중개사 정보'}
+                     view === 'propertyDetail' ? '매물 상세정보' :
+                     displayType === 'room' ? '매물 상세정보' : '공인중개사 정보'}
                 </h3>
                 <div className="header-buttons">
                     {(view === 'propertyList' || view === 'propertyDetail') && (

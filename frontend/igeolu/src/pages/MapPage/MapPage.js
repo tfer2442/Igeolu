@@ -39,12 +39,11 @@ function MapPage() {
     const [isWorldCupOpen, setIsWorldCupOpen] = useState(false);
     const [initialProperties, setInitialProperties] = useState([]);
     const [isKakaoMapsLoaded, setIsKakaoMapsLoaded] = useState(false);
+    const [detailPanelView, setDetailPanelView] = useState('main');
 
-    // Kakao Maps API 로드 상태 확인
     useEffect(() => {
         const loadKakaoMaps = () => {
             if (window.kakao && window.kakao.maps) {
-                // Geocoder 서비스 로드
                 if (!window.kakao.maps.services) {
                     window.kakao.maps.load(() => {
                         setIsKakaoMapsLoaded(true);
@@ -53,7 +52,6 @@ function MapPage() {
                     setIsKakaoMapsLoaded(true);
                 }
             } else {
-                // API가 아직 로드되지 않은 경우 대기
                 setTimeout(loadKakaoMaps, 100);
             }
         };
@@ -77,7 +75,6 @@ function MapPage() {
         }
     };
 
-    // 시/도 데이터 가져오기
     useEffect(() => {
         const fetchCities = async () => {
             try {
@@ -90,7 +87,6 @@ function MapPage() {
         fetchCities();
     }, []);
 
-    // 구/군 데이터 가져오기
     useEffect(() => {
         const fetchDistricts = async () => {
             if (selectedCity) {
@@ -107,7 +103,6 @@ function MapPage() {
         fetchDistricts();
     }, [selectedCity]);
 
-    // 동 데이터 가져오기
     useEffect(() => {
         const fetchNeighborhoods = async () => {
             if (selectedCity && selectedDistrict) {
@@ -124,9 +119,7 @@ function MapPage() {
         fetchNeighborhoods();
     }, [selectedCity, selectedDistrict]);
 
-    // 좌표 검색 함수
     const searchCoordinates = async (address) => {
-        // API 로드 대기
         let retryCount = 0;
         while (!isKakaoMapsLoaded && retryCount < 20) {
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -152,7 +145,6 @@ function MapPage() {
         });
     };
 
-    // 매물 검색 결과 가져오기
     const fetchSearchResults = async () => {
         try {
             const params = new URLSearchParams();
@@ -204,16 +196,21 @@ function MapPage() {
         }
     };
 
-    // 공인중개사 목록 가져오기
     const fetchRealtors = async () => {
         try {
+            // 지역 필터가 모두 설정되지 않은 경우 전체 공인중개사 목록 조회
             if (!selectedCity || !selectedDistrict || !selectedNeighborhood) {
                 const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
-                setSearchResults(response.data);
+                const realtors = response.data.map(realtor => ({
+                    ...realtor,
+                    type: 'agent' // 타입 정보 추가
+                }));
+                
+                setSearchResults(realtors);
                 setPropertyMarkers([]);
                 
-                if (response.data.length > 0) {
-                    const firstItem = response.data[0];
+                if (realtors.length > 0) {
+                    const firstItem = realtors[0];
                     if (firstItem.latitude && firstItem.longitude) {
                         updateMapCenter({
                             lat: parseFloat(firstItem.latitude),
@@ -225,42 +222,42 @@ function MapPage() {
                 return;
             }
 
-            try {
-                const selectedDong = neighborhoods.find(n => 
-                    n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
-                );
+            // 지역 필터가 설정된 경우 해당 지역의 공인중개사 목록 조회
+            const selectedDong = neighborhoods.find(n => 
+                n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
+            );
 
-                const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
+            const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
 
-                if (!dongCode) {
-                    setSearchResults([]);
-                    setPropertyMarkers([]);
-                    return;
-                }
-
-                const response = await axios.get(`${API_BASE_URL}/api/users/${dongCode}/realtors`);
-                
-                const resultsWithLocation = response.data.map(realtor => ({
-                    ...realtor,
-                    dongCode: dongCode,
-                    dongName: selectedNeighborhood
-                }));
-                
-                setSearchResults(resultsWithLocation);
+            if (!dongCode) {
+                setSearchResults([]);
                 setPropertyMarkers([]);
+                return;
+            }
 
-                if (resultsWithLocation.length > 0) {
-                    const firstItem = resultsWithLocation[0];
-                    if (firstItem.latitude && firstItem.longitude) {
-                        updateMapCenter({
-                            lat: parseFloat(firstItem.latitude),
-                            lng: parseFloat(firstItem.longitude)
-                        });
-                        setMapLevel(5);
-                    }
+            const response = await axios.get(`${API_BASE_URL}/api/users/${dongCode}/realtors`);
+            
+            const realtors = response.data.map(realtor => ({
+                ...realtor,
+                type: 'agent', // 타입 정보 추가
+                dongCode: dongCode,
+                dongName: selectedNeighborhood
+            }));
+            
+            setSearchResults(realtors);
+            setPropertyMarkers([]);
+
+            if (realtors.length > 0) {
+                const firstItem = realtors[0];
+                if (firstItem.latitude && firstItem.longitude) {
+                    updateMapCenter({
+                        lat: parseFloat(firstItem.latitude),
+                        lng: parseFloat(firstItem.longitude)
+                    });
+                    setMapLevel(5);
                 } else {
+                    const fullAddress = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood}`;
                     try {
-                        const fullAddress = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood}`;
                         const coordinates = await searchCoordinates(fullAddress);
                         updateMapCenter(coordinates);
                         setMapLevel(5);
@@ -269,10 +266,6 @@ function MapPage() {
                         updateMapCenter(DEFAULT_CENTER);
                     }
                 }
-            } catch (error) {
-                console.error('Error fetching realtors by dongcode:', error);
-                setSearchResults([]);
-                setPropertyMarkers([]);
             }
         } catch (error) {
             console.error('Error fetching realtors:', error);
@@ -281,7 +274,6 @@ function MapPage() {
         }
     };
 
-    // 필터값 변경시 검색 결과 업데이트
     useEffect(() => {
         if (activeMenu === 'room') {
             fetchSearchResults();
@@ -301,7 +293,6 @@ function MapPage() {
         selectedOptions
     ]);
 
-    // 공인중개사 매물 필터링
     useEffect(() => {
         if (initialProperties.length > 0) {
             const filteredResults = initialProperties.filter(item => {
@@ -345,6 +336,11 @@ function MapPage() {
     };
 
     const handleItemClick = (item, isPropertyMarker = false) => {
+        // DetailPanel이 매물 상세정보를 보여주고 있을 때는 마커 클릭을 무시
+        if (selectedItem && detailPanelView === 'propertyDetail') {
+            return;
+        }
+
         if (isPropertyMarker) {
             setSelectedItem({
                 ...item,
@@ -353,7 +349,7 @@ function MapPage() {
         } else {
             setSelectedItem(item);
         }
-    
+
         if (item && item.latitude && item.longitude) {
             updateMapCenter({
                 lat: parseFloat(item.latitude),
@@ -372,7 +368,6 @@ function MapPage() {
         }
     };
 
-
     const handleViewProperties = async (userId, selectedPropertyId = null) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/api/properties`, {
@@ -382,7 +377,7 @@ function MapPage() {
             const validResults = response.data.filter(item =>
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
-    
+
             setInitialProperties(validResults);
             
             // selectedPropertyId가 있으면 해당 매물만 마커로 표시
@@ -390,7 +385,6 @@ function MapPage() {
                 const selectedProperty = validResults.find(item => item.propertyId === selectedPropertyId);
                 if (selectedProperty) {
                     setPropertyMarkers([selectedProperty]);
-                    // 선택된 매물 위치로 지도 중심 이동
                     updateMapCenter({
                         lat: parseFloat(selectedProperty.latitude),
                         lng: parseFloat(selectedProperty.longitude)
@@ -506,6 +500,8 @@ function MapPage() {
                             data={selectedItem}
                             onClose={handleDetailClose}
                             onViewProperties={handleViewProperties}
+                            view={detailPanelView}
+                            setView={setDetailPanelView}
                         />
                         <div className='map-container'>
                             <div className='map-content'>
