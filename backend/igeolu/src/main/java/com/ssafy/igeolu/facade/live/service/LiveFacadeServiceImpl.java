@@ -179,6 +179,8 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		// 빌더를 통해 녹화 속성 객체 생성
 		RecordingProperties properties = new RecordingProperties.Builder()
 			.name(livePropertyId.toString())
+			.outputMode(Recording.OutputMode.COMPOSED)
+			.recordingLayout(RecordingLayout.CUSTOM)
 			.build();
 
 		try {
