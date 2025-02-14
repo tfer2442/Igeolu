@@ -312,6 +312,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 			ConnectionProperties connectionProps = new ConnectionProperties.Builder()
 				.type(ConnectionType.WEBRTC)
 				.role(OpenViduRole.MODERATOR) // host 설정
+				.data("publisher")
 				.build();
 
 			// 5. 세션에 연결 생성 후 토큰 발급
