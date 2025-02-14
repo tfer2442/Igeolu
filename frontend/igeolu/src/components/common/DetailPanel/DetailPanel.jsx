@@ -99,6 +99,7 @@ const DetailPanel = ({
         setSelectedProperty(property);
         setView('propertyDetail');
         setCurrentImageIndex(0);
+        // 선택된 매물의 ID만 전달하여 해당 매물만 지도에 표시
         onViewProperties(data.userId, property.propertyId);
     };
 
@@ -206,21 +207,23 @@ const DetailPanel = ({
                 </h3>
                 <div className="header-buttons">
                 {(view === 'propertyList' || view === 'propertyDetail') && (
-                        <button 
-                            className='detail-back-button'
-                            onClick={() => {
-                                if (view === 'propertyDetail') {
-                                    setView('propertyList');
-                                    setSelectedProperty(null);
-                                } else {
-                                    setView('main');
-                                    setSelectedProperty(null);
-                                    onViewProperties(data.userId);
-                                }
-                            }}
-                        >
-                            <ArrowLeft size={20} />
-                        </button>
+                    <button 
+                        className='detail-back-button'
+                        onClick={() => {
+                        if (view === 'propertyDetail') {
+                            setView('propertyList');
+                            setSelectedProperty(null);
+                            // 매물 목록으로 돌아갈 때 모든 매물 표시
+                            onViewProperties(data.userId, null, true);
+                        } else {
+                            setView('main');
+                            setSelectedProperty(null);
+                            onViewProperties(data.userId, null, true);
+                        }
+                        }}
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
                     )}
                     <button className='detail-close-button' onClick={() => {
                         onClose();
@@ -386,12 +389,6 @@ const DetailPanel = ({
                                 <div className='agent-primary-info'>
                                     <h4 className='agent-name'>{data?.username}</h4>
                                     <p className='agent-title'>{data?.title}</p>
-                                    {/* <div className='agent-stats'>
-                                        <div className='stat-item'>
-                                            <span className='stat-label'>라이브</span>
-                                            <span className='stat-value'>{data?.liveCount || 0}회</span>
-                                        </div>
-                                    </div> */}
                                     <div className='agent-stats'>
                                         <div className='stat-item'>
                                             <span className='stat-label'>평점</span>

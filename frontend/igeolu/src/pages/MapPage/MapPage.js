@@ -386,12 +386,12 @@ function MapPage() {
                 item && typeof item.latitude === 'number' && typeof item.longitude === 'number'
             );
 
-            setInitialProperties(validResults);
-            
             if (selectedPropertyId) {
+                // 특정 매물이 선택된 경우 해당 매물만 표시
                 const selectedProperty = validResults.find(item => item.propertyId === selectedPropertyId);
                 if (selectedProperty) {
                     setPropertyMarkers([selectedProperty]);
+                    setInitialProperties([selectedProperty]);
                     updateMapCenter({
                         lat: parseFloat(selectedProperty.latitude),
                         lng: parseFloat(selectedProperty.longitude)
@@ -399,7 +399,17 @@ function MapPage() {
                     setMapLevel(3);
                 }
             } else {
+                // 매물 목록을 볼 때는 모든 매물 표시
+                setInitialProperties(validResults);
                 setPropertyMarkers(validResults);
+                if (validResults.length > 0) {
+                    // 첫 번째 매물을 기준으로 지도 중심 이동
+                    updateMapCenter({
+                        lat: parseFloat(validResults[0].latitude),
+                        lng: parseFloat(validResults[0].longitude)
+                    });
+                    setMapLevel(5); // 목록 전체를 볼 수 있도록 줌 레벨 조정
+                }
             }
         } catch (error) {
             console.error('Error fetching realtor properties:', error);
@@ -407,6 +417,7 @@ function MapPage() {
             setInitialProperties([]);
         }
     };
+
 
     const handleCityChange = (e) => {
         setSelectedCity(e.target.value);
