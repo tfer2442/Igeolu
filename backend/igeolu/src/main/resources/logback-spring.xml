@@ -1,9 +1,10 @@
 <configuration>
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProperty name="activeProfile" source="spring.profiles.active"/>
 
-    <property name="CUSTOM_CONSOLE_LOG_PATTERN" value="[%X{request_id:-dev}] ${CONSOLE_LOG_PATTERN}"/>
-    <property name="CUSTOM_FILE_LOG_PATTERN" value="[%X{request_id:-dev}] ${FILE_LOG_PATTERN}"/>
+    <property name="CUSTOM_CONSOLE_LOG_PATTERN" value="[${activeProfile}] ${CONSOLE_LOG_PATTERN}"/>
+    <property name="CUSTOM_FILE_LOG_PATTERN" value="[${activeProfile}] ${FILE_LOG_PATTERN}"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
