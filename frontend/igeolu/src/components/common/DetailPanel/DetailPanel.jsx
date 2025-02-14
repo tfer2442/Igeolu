@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft, ChevronLeft, ChevronRight, Building2, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 import './DetailPanel.css';
+import RatingStars from '../RatingStars/RatingStarts';
 
 const DetailPanel = ({ 
     isVisible, 
@@ -385,12 +386,28 @@ const DetailPanel = ({
                                 <div className='agent-primary-info'>
                                     <h4 className='agent-name'>{data?.username}</h4>
                                     <p className='agent-title'>{data?.title}</p>
-                                    <div className='agent-stats'>
+                                    {/* <div className='agent-stats'>
                                         <div className='stat-item'>
                                             <span className='stat-label'>라이브</span>
                                             <span className='stat-value'>{data?.liveCount || 0}회</span>
                                         </div>
+                                    </div> */}
+                                    <div className='agent-stats'>
+                                        <div className='stat-item'>
+                                            <span className='stat-label'>평점</span>
+                                            <div className='stat-value'>
+                                                <RatingStars rating={data?.ratingAvg} />
+                                            </div>
+                                        </div>
+                                        <div className='stat-item'>
+                                            <span className='stat-label'>방송 횟수</span>
+                                            <div className='live-count'>
+                                                <span className="live-count-number">{data?.liveCount || 0}</span>
+                                                <span>회</span>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
 
