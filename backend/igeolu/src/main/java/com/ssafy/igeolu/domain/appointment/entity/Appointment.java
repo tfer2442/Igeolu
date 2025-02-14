@@ -12,6 +12,8 @@ import com.ssafy.igeolu.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,6 +44,9 @@ public class Appointment {
 
 	// 예약 정보
 	private String title;
+
+	@Enumerated(EnumType.STRING)
+	private AppointmentType appointmentType;
 
 	//공인중개사
 	@ManyToOne(fetch = FetchType.LAZY)
