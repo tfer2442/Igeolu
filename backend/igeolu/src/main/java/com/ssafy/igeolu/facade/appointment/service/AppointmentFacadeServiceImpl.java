@@ -41,6 +41,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 				.appointmentId(a.getId())
 				.scheduledAt(a.getScheduledAt())
 				.title(a.getTitle())
+				.appointmentType(a.getAppointmentType())
 				.realtorId(a.getRealtor().getId())
 				.realtorName(a.getRealtor().getUsername())
 				.memberId(a.getMember().getId())
@@ -74,7 +75,6 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 
 		return AppointmentPostResponseDto.builder()
 			.appointmentId(savedAppointment.getId())
-			.appointmentType(savedAppointment.getAppointmentType())
 			.build();
 	}
 
