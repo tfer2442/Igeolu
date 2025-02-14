@@ -64,6 +64,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 		Appointment appointment = Appointment.builder()
 			.scheduledAt(request.getScheduledAt())
 			.title(request.getTitle())
+			.appointmentType(request.getAppointmentType())
 			.realtor(realtor)
 			.member(member)
 			.chatRoom(chatRoom)
@@ -73,6 +74,7 @@ public class AppointmentFacadeServiceImpl implements AppointmentFacadeService {
 
 		return AppointmentPostResponseDto.builder()
 			.appointmentId(savedAppointment.getId())
+			.appointmentType(savedAppointment.getAppointmentType())
 			.build();
 	}
 
