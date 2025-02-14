@@ -9,6 +9,12 @@ import './DesktopLive.css';
 import Memo2 from '../../components/Memo/Memo2';
 import axios from 'axios';
 import RatingModal from '../../components/RatingModal/RatingModal';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-backend-webgl';
+import { detect } from '../../utils/detect';
+import labels from '../../utils/labels.json';
+import { renderBoxes } from '../../utils/renderBox';
+import { objectQuestions } from '../../utils/questions.js';
 
 // axios 기본 설정 추가
 axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
@@ -16,21 +22,26 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 function DesktopLive() {
   const location = useLocation();
-  console.log('Location state:', location.state); // 디버깅을 위해 추가
-  
-  // location.state에서 값을 추출할 때 기본값 설정
   const { sessionId, token, role } = location.state || {};
   
   // 상태 초기화
   const [session, setSession] = useState(null);
   const [publisher, setPublisher] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
-  const OV = useRef(new OpenVidu());
+  const OV = useRef((() => {
+    const ov = new OpenVidu();
+    ov.enableProdMode();
+    return ov;
+  })());
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [propertyList, setPropertyList] = useState([]);
   const [completedProperties, setCompletedProperties] = useState(new Set());
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const subscriberVideoRef = useRef(null);
+  const detectionCanvasRef = useRef(null);
+  const [model, setModel] = useState(null);
+  const [displayedQuestions, setDisplayedQuestions] = useState(new Set());
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -134,6 +145,26 @@ function DesktopLive() {
     }
   };
 
+  // YOLOv8 모델 로드
+  useEffect(() => {
+    const loadModel = async () => {
+      console.log('🔄 모델 로딩 시작...');
+      try {
+        const modelPath = '/yolov8n_web_model/model.json';
+        const loadedModel = await tf.loadGraphModel(modelPath);
+        console.log('✅ 모델 로딩 성공:', loadedModel);
+        
+        setModel({
+          net: loadedModel,
+          inputShape: loadedModel.inputs[0].shape
+        });
+      } catch (error) {
+        console.error('❌ 모델 로딩 중 오류 발생:', error);
+      }
+    };
+    loadModel();
+  }, []);
+
   useEffect(() => {
     console.log('Starting session initialization...');
     // 현재 Authorization 헤더 정보 즉시 로깅
@@ -148,23 +179,61 @@ function DesktopLive() {
         console.log('Session initialized:', newSession);
         setSession(newSession);
 
-        // 스트림 생성 이벤트 핸들러
+        // 스트림 생성 이벤트 핸들러 수정
         newSession.on('streamCreated', (event) => {
           console.log('Stream created - Connection Data:', event.stream.connection.data);
           try {
             const connectionData = JSON.parse(event.stream.connection.data);
             console.log('Parsed connection data:', connectionData);
             
-            // host의 스트림인 경우에만 구독
             if (connectionData.role === 'host') {
               console.log('Host stream found, subscribing...');
               const subscriber = newSession.subscribe(event.stream, undefined);
+              
+              subscriber.on('videoElementCreated', (event) => {
+                const videoElement = event.element;
+                console.log('Video element created for subscriber:', videoElement);
+                
+                videoElement.addEventListener('loadeddata', async () => {
+                  console.log('Video loaded, initializing YOLO detection');
+                  
+                  if (model && detectionCanvasRef.current) {
+                    detectionCanvasRef.current.width = videoElement.videoWidth;
+                    detectionCanvasRef.current.height = videoElement.videoHeight;
+                    
+                    const detectFrame = async () => {
+                      if (!videoElement.paused && !videoElement.ended) {
+                        try {
+                          const predictions = await detect(
+                            videoElement,
+                            model,
+                            detectionCanvasRef.current
+                          );
+                          
+                          if (predictions && predictions.length > 0) {
+                            console.log('Detected objects:', predictions.map(pred => ({
+                              class: pred.class,
+                              confidence: pred.confidence.toFixed(2)
+                            })));
+                          }
+                        } catch (error) {
+                          console.error('Detection error:', error);
+                        }
+                      }
+                      requestAnimationFrame(detectFrame);
+                    };
+                    
+                    detectFrame();
+                  }
+                });
+              });
+              
               setSubscribers((subscribers) => [...subscribers, subscriber]);
             } else {
               console.log('Non-host stream, skipping subscription');
             }
           } catch (error) {
-            console.error('Error parsing connection data:', error);
+            console.error('Error in stream creation:', error);
           }
         });
 
@@ -201,7 +270,7 @@ function DesktopLive() {
           resolution: '640x480',
           frameRate: 30,
           insertMode: 'APPEND',
-          mirror: false,
+          mirror: true,
         });
         console.log('Publisher initialized:', publisher);
 
@@ -217,7 +286,7 @@ function DesktopLive() {
         }
 
       } catch (error) {
-        console.error('Error in initializeSession:', error);
+        console.error('Session initialization error:', error);
       }
     };
 
@@ -268,24 +337,110 @@ function DesktopLive() {
     }
   }, [session]);
 
+  // detectVideo 관련 useEffect 제거하고 새로운 useEffect 추가
+  useEffect(() => {
+    if (subscriberVideoRef.current && model && detectionCanvasRef.current) {
+      const videoElement = subscriberVideoRef.current;
+      
+      const detectFrame = async () => {
+        if (!videoElement.paused && !videoElement.ended) {
+          try {
+            const predictions = await detect(
+              videoElement,
+              model,
+              detectionCanvasRef.current
+            );
+            
+            if (predictions && predictions.length > 0) {
+              // predictions에서 필요한 데이터 추출
+              const boxes_data = predictions.flatMap(pred => pred.bbox);
+              const scores_data = predictions.map(pred => pred.confidence);
+              const classes_data = predictions.map(pred => labels.indexOf(pred.class));
+              
+              // 비디오와 캔버스 크기에 따른 비율 계산
+              const xRatio = videoElement.videoWidth / detectionCanvasRef.current.width;
+              const yRatio = videoElement.videoHeight / detectionCanvasRef.current.height;
+              
+              // renderBoxes 함수를 사용하여 감지된 객체를 캔버스에 그립니다
+              renderBoxes(
+                detectionCanvasRef.current,
+                boxes_data,
+                scores_data,
+                classes_data,
+                [xRatio, yRatio]
+              );
+              
+              
+
+              // objectQuestions 사용하도록 수정
+              predictions.forEach(pred => {
+                const detectedClass = pred.class;
+                const questions = objectQuestions[detectedClass];
+                
+                if (questions) {
+                  questions.forEach(question => {
+                    setDisplayedQuestions(prev => new Set([...prev, question]));
+                  });
+                }
+              });
+            }
+          } catch (error) {
+            console.error('Detection error:', error);
+          }
+        }
+        requestAnimationFrame(detectFrame);
+      };
+
+      if (videoElement.readyState === 4) {
+        detectionCanvasRef.current.width = videoElement.videoWidth;
+        detectionCanvasRef.current.height = videoElement.videoHeight;
+        detectFrame();
+      } else {
+        videoElement.addEventListener('loadeddata', () => {
+          detectionCanvasRef.current.width = videoElement.videoWidth;
+          detectionCanvasRef.current.height = videoElement.videoHeight;
+          detectFrame();
+        });
+      }
+    }
+  }, [model, subscriberVideoRef.current, detectionCanvasRef.current]);
+
   return (
-    <div className='desktop-live-page'>
+    <div className="desktop-live-page">
       <DesktopLiveAndMyPage />
       <div className='desktop-live-page__content'>
         <div className='desktop-live-page__left-content'>
           <div className='desktop-live-page__left-content__live-video'>
             {subscribers.map((sub, i) => (
-              <div key={i} className="subscriber-video">
-                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-                <video
-                  autoPlay
-                  ref={(video) => video && sub.addVideoElement(video)}
-                />
+              <div key={i} className="subscriber-video-container">
+                <div className="video-overlay-container">
+                  <video
+                    autoPlay
+                    ref={(video) => {
+                      video && sub.addVideoElement(video);
+                      subscriberVideoRef.current = video;
+                    }}
+                    className="subscriber-video"
+                  />
+                  <canvas
+                    ref={detectionCanvasRef}
+                    className="detection-canvas"
+                  />
+                </div>
               </div>
             ))}
           </div>
           <div className='desktop-live-page__left-content__bottom-content'>
-            <div className='desktop-live-page__left-content__bottom-content__ai-checklist'></div>
+            <div className='desktop-live-page__left-content__bottom-content__ai-checklist'>
+              <p>AI 체크리스트</p>
+              <div className="ai-questions-list">
+                {Array.from(displayedQuestions).map((question, index) => (
+                  <div key={index} className="ai-question-item">
+                    {question}
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className='desktop-live-page__left-content__bottom-content__live-order-list'>
               <p>매물 순서</p>
               <div className="property-list">

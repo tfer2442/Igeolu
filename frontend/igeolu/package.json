@@ -5,6 +5,8 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
     "@stomp/stompjs": "^7.0.0",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow/tfjs": "^4.22.0",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "date-fns": "^4.1.0",
