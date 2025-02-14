@@ -25,77 +25,142 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	private final NotificationService notificationService;
 	private final SecurityService securityService;
 
-	@Scheduled(fixedRate = 60000) // 1분
+	@Scheduled(fixedRate = 60000) // 1분마다 실행
 	@Override
 	@Transactional
 	public void sendAppointmentNotifications() {
 		LocalDateTime now = LocalDateTime.now();
-		// 예약 시간이 현재 시각으로부터 9분 후부터 11분 후 사이인 예약 조회
-		// (10분 전송 기준에 여유를 둡니다.)
-		LocalDateTime startTime = now.plusMinutes(9);
-		LocalDateTime endTime = now.plusMinutes(11);
 
-		List<Appointment> appointments = appointmentService.getAppointmentsBySchedule(startTime, endTime);
+		// === 10분 전 알림 처리 ===
+		LocalDateTime startTime10 = now.plusMinutes(9);
+		LocalDateTime endTime10 = now.plusMinutes(11);
+		List<Appointment> appointments10 = appointmentService.getAppointmentsForTenMinuteNotification(startTime10,
+			endTime10);
 
-		for (Appointment appointment : appointments) {
-
-			// 각 사용자별 메시지 생성
-			String messageForRealtor = "'" + appointment.getTitle() + "' 일정: 고객 "
-				+ appointment.getMember().getUsername() + "님과의 약속이 10분 뒤에 시작됩니다.";
-			String messageForMember = "'" + appointment.getTitle() + "' 일정: 공인중개사 "
-				+ appointment.getRealtor().getUsername() + "님과의 약속이 10분 뒤에 시작됩니다.";
+		for (Appointment appointment : appointments10) {
+			// 각 사용자별 10분 전 알림 메시지 생성
+			String messageForRealtor10 = "고객 " + appointment.getMember().getUsername() + "님과의 약속이 10분 뒤에 시작됩니다.";
+			String messageForMember10 = "공인중개사 " + appointment.getRealtor().getUsername() + "님과의 약속이 10분 뒤에 시작됩니다.";
 
 			// 알림 객체 생성
-			Notification notificationForRealtor = Notification.builder()
+			Notification notificationForRealtor10 = Notification.builder()
 				.user(appointment.getRealtor())
-				.message(messageForRealtor)
+				.title(appointment.getTitle())
+				.message(messageForRealtor10)
 				.scheduledAt(appointment.getScheduledAt())
 				.build();
 
-			Notification notificationForMember = Notification.builder()
+			Notification notificationForMember10 = Notification.builder()
 				.user(appointment.getMember())
-				.message(messageForMember)
+				.title(appointment.getTitle())
+				.message(messageForMember10)
 				.scheduledAt(appointment.getScheduledAt())
 				.build();
 
-			notificationService.registerNotification(notificationForRealtor);
-			notificationService.registerNotification(notificationForMember);
+			// 알림 DB 등록
+			notificationService.registerNotification(notificationForRealtor10);
+			notificationService.registerNotification(notificationForMember10);
 
-			// 공인중개사 알림 DTO 생성
-			AppointmentNotificationResponseDto notificationDtoForRealtor = AppointmentNotificationResponseDto.builder()
-				.notificationId(notificationForRealtor.getId())
-				.scheduledAt(notificationForRealtor.getScheduledAt())
-				.createdAt(notificationForRealtor.getCreatedAt())
-				.message(messageForRealtor)
+			// 알림 DTO 생성
+			AppointmentNotificationResponseDto notificationDtoForRealtor10 = AppointmentNotificationResponseDto.builder()
+				.notificationId(notificationForRealtor10.getId())
+				.scheduledAt(notificationForRealtor10.getScheduledAt())
+				.createdAt(notificationForRealtor10.getCreatedAt())
+				.title(notificationForRealtor10.getTitle())
+				.message(messageForRealtor10)
 				.isRead(false)
 				.build();
 
-			// 고객 알림 DTO 생성
-			AppointmentNotificationResponseDto notificationDtoForMember = AppointmentNotificationResponseDto.builder()
-				.notificationId(notificationForMember.getId())
-				.scheduledAt(notificationForMember.getScheduledAt())
-				.createdAt(notificationForMember.getCreatedAt())
-				.message(messageForMember)
+			AppointmentNotificationResponseDto notificationDtoForMember10 = AppointmentNotificationResponseDto.builder()
+				.notificationId(notificationForMember10.getId())
+				.scheduledAt(notificationForMember10.getScheduledAt())
+				.createdAt(notificationForMember10.getCreatedAt())
+				.title(notificationForMember10.getTitle())
+				.message(messageForMember10)
 				.isRead(false)
 				.build();
 
-			// WebSocket을 통해 알림 전송 (사용자별 전송)
-			// 첫번째 인자로 대상 사용자의 username을 전달합니다.
-			// 최종적으로 클라이언트는 "/api/sub-user/{username}/notifications"로 메시지를 수신하게 됩니다.
+			// WebSocket을 통해 알림 전송
 			messagingTemplate.convertAndSendToUser(
-				appointment.getRealtor().getId().toString(), // 대상 사용자의 username
-				"/notifications",                        // destination, 최종 경로는 "/api/sub-user/{username}/notifications"
-				notificationDtoForRealtor
+				appointment.getRealtor().getId().toString(),
+				"/notifications",
+				notificationDtoForRealtor10
 			);
 
 			messagingTemplate.convertAndSendToUser(
 				appointment.getMember().getId().toString(),
 				"/notifications",
-				notificationDtoForMember
+				notificationDtoForMember10
 			);
 
-			// 중복 알림 전송을 방지하기 위해 알림 전송 플래그 업데이트
-			appointment.setNotificationSent(true);
+			// 10분 전 알림 전송 완료 플래그 업데이트
+			appointment.setTenMinutesNotified(true);
+		}
+
+		// === 30분 전 알림 처리 ===
+		LocalDateTime startTime30 = now.plusMinutes(29);
+		LocalDateTime endTime30 = now.plusMinutes(31);
+		List<Appointment> appointments30 = appointmentService.getAppointmentsForThirtyMinuteNotification(startTime30,
+			endTime30);
+
+		for (Appointment appointment : appointments30) {
+			// 각 사용자별 30분 전 알림 메시지 생성
+			String messageForRealtor30 = "고객 " + appointment.getMember().getUsername() + "님과의 약속이 30분 뒤에 시작됩니다.";
+			String messageForMember30 = "공인중개사 " + appointment.getRealtor().getUsername() + "님과의 약속이 30분 뒤에 시작됩니다.";
+
+			// 알림 객체 생성
+			Notification notificationForRealtor30 = Notification.builder()
+				.user(appointment.getRealtor())
+				.title(appointment.getTitle())
+				.message(messageForRealtor30)
+				.scheduledAt(appointment.getScheduledAt())
+				.build();
+
+			Notification notificationForMember30 = Notification.builder()
+				.user(appointment.getMember())
+				.title(appointment.getTitle())
+				.message(messageForMember30)
+				.scheduledAt(appointment.getScheduledAt())
+				.build();
+
+			// 알림 DB 등록
+			notificationService.registerNotification(notificationForRealtor30);
+			notificationService.registerNotification(notificationForMember30);
+
+			// 알림 DTO 생성
+			AppointmentNotificationResponseDto notificationDtoForRealtor30 = AppointmentNotificationResponseDto.builder()
+				.notificationId(notificationForRealtor30.getId())
+				.scheduledAt(notificationForRealtor30.getScheduledAt())
+				.createdAt(notificationForRealtor30.getCreatedAt())
+				.title(notificationForRealtor30.getTitle())
+				.message(messageForRealtor30)
+				.isRead(false)
+				.build();
+
+			AppointmentNotificationResponseDto notificationDtoForMember30 = AppointmentNotificationResponseDto.builder()
+				.notificationId(notificationForMember30.getId())
+				.scheduledAt(notificationForMember30.getScheduledAt())
+				.createdAt(notificationForMember30.getCreatedAt())
+				.title(notificationForMember30.getTitle())
+				.message(messageForMember30)
+				.isRead(false)
+				.build();
+
+			// WebSocket을 통해 알림 전송
+			messagingTemplate.convertAndSendToUser(
+				appointment.getRealtor().getId().toString(),
+				"/notifications",
+				notificationDtoForRealtor30
+			);
+
+			messagingTemplate.convertAndSendToUser(
+				appointment.getMember().getId().toString(),
+				"/notifications",
+				notificationDtoForMember30
+			);
+
+			// 30분 전 알림 전송 완료 플래그 업데이트
+			appointment.setThirtyMinutesNotified(true);
 		}
 	}
 

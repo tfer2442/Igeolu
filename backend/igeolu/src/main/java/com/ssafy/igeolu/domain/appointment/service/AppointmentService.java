@@ -19,6 +19,8 @@ public interface AppointmentService {
 		String title);
 
 	void deleteAppointment(Appointment appointment);
+	
+	List<Appointment> getAppointmentsForTenMinuteNotification(LocalDateTime start, LocalDateTime end);
 
-	List<Appointment> getAppointmentsBySchedule(LocalDateTime start, LocalDateTime end);
+	List<Appointment> getAppointmentsForThirtyMinuteNotification(LocalDateTime start, LocalDateTime end);
 }
