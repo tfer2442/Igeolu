@@ -1,12 +1,64 @@
-import React from 'react';
-import { X } from 'lucide-react';
+
 import ChatApi from '../../../services/ChatApi';
+import React, { useState, useEffect } from 'react';
+import { X, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import axios from 'axios';
 import './DetailPanel.css';
 
-const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
+const DetailPanel = ({ 
+    isVisible, 
+    onClose, 
+    type, 
+    data, 
+    onViewProperties,
+    view,
+    setView 
+}) => {
+    const [selectedProperty, setSelectedProperty] = useState(null);
+    const [properties, setProperties] = useState([]);
+    const [optionsData, setOptionsData] = useState([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchOptions = async () => {
+            if (data?.options && Array.isArray(data.options)) {
+                try {
+                    const response = await axios.get('https://i12d205.p.ssafy.io/api/options');
+                    const allOptions = response.data;
+                    const filteredOptions = allOptions.filter(option => 
+                        data.options.includes(option.optionId)
+                    );
+                    setOptionsData(filteredOptions);
+                } catch (error) {
+                    console.error('옵션 정보 로드 실패:', error);
+                }
+            }
+        };
+
+        if (isVisible && data) {
+            fetchOptions();
+        }
+    }, [isVisible, data]);
+
+    useEffect(() => {
+        if (!isVisible) {
+            setView('main');
+            setSelectedProperty(null);
+            setProperties([]);
+            setOptionsData([]);
+            setCurrentImageIndex(0);
+        }
+    }, [isVisible, setView]);
+
+    useEffect(() => {
+        if (data && data.type !== 'room') {
+            setView('main');
+            setSelectedProperty(null);
+        }
+    }, [data, setView]);
+
     if (!isVisible) return null;
 
-    // 매물 데이터인 경우의 type 체크
     const isPropMarker = data?.type === 'room';
     const displayType = isPropMarker ? 'room' : type;
 
@@ -28,91 +80,325 @@ const DetailPanel = ({ isVisible, onClose, type, data, onViewProperties }) => {
         }
     };
 
+    const handleViewProperties = async () => {
+        try {
+            const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
+                params: { userId: data.userId }
+            });
+            setProperties(response.data);
+            setView('propertyList');
+            onViewProperties(data.userId);
+        } catch (error) {
+            console.error('Error fetching properties:', error);
+        }
+    };
+
+    const handlePropertyClick = (property) => {
+        setSelectedProperty(property);
+        setView('propertyDetail');
+        setCurrentImageIndex(0);
+        onViewProperties(data.userId, property.propertyId);
+    };
+
+    const handleNextImage = (e) => {
+        e.stopPropagation();
+        const images = view === 'propertyDetail' ? selectedProperty?.images : data?.images;
+        if (images && images.length > 0) {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        }
+    };
+
+    const handlePrevImage = (e) => {
+        e.stopPropagation();
+        const images = view === 'propertyDetail' ? selectedProperty?.images : data?.images;
+        if (images && images.length > 0) {
+            setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+        }
+    };
+
+    const ImageSlider = ({ images }) => {
+        if (!images || images.length === 0) {
+            return <div className="no-image">이미지가 없습니다</div>;
+        }
+
+        return (
+            <div className="image-slider">
+                <img 
+                    src={images[currentImageIndex]} 
+                    alt="매물 이미지" 
+                    className="slider-image"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/room-placeholder.jpg';
+                    }}
+                />
+                {images.length > 1 && (
+                    <>
+                        <div className="slider-controls">
+                            <button onClick={handlePrevImage} className="slider-button">
+                                <ChevronLeft size={24} />
+                            </button>
+                            <button onClick={handleNextImage} className="slider-button">
+                                <ChevronRight size={24} />
+                            </button>
+                        </div>
+                        <div className="image-counter">
+                            {currentImageIndex + 1} / {images.length}
+                        </div>
+                        <div className="image-thumbnails">
+                            {images.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className={`thumbnail-wrapper ${index === currentImageIndex ? 'active' : ''}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentImageIndex(index);
+                                    }}
+                                >
+                                    <img
+                                        src={image}
+                                        alt={`썸네일 ${index + 1}`}
+                                        className="thumbnail-image"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/room-placeholder.jpg';
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    };
+
+    const renderOptions = () => {
+        if (!optionsData || optionsData.length === 0) {
+            return <span className='no-options'>제공된 옵션 정보가 없습니다</span>;
+        }
+
+        return optionsData.map((option) => (
+            <span key={option.optionId} className='option-tag'>
+                {option.optionName}
+            </span>
+        ));
+    };
+
+    const formatFloorInfo = (currentFloor, totalFloors) => {
+        if (currentFloor && totalFloors) {
+            return `${currentFloor}층 / 전체 ${totalFloors}층`;
+        } else if (currentFloor) {
+            return `${currentFloor}층`;
+        }
+        return '-';
+    };
+
     return (
         <div className='detail-panel'>
             <div className='detail-panel-header'>
-                <h3>{displayType === 'room' ? '매물 상세정보' : '공인중개사 정보'}</h3>
-                <button className='detail-close-button' onClick={onClose}>
-                    <X size={20} />
-                </button>
+                <h3>
+                    {view === 'propertyList' ? '매물 목록' :
+                     view === 'propertyDetail' ? '매물 상세정보' :
+                     displayType === 'room' ? '매물 상세정보' : '공인중개사 정보'}
+                </h3>
+                <div className="header-buttons">
+                    {(view === 'propertyList' || view === 'propertyDetail') && (
+                        <button 
+                            className='detail-back-button'
+                            onClick={() => {
+                                setView('main');
+                                setSelectedProperty(null);
+                                onViewProperties(data.userId);
+                            }}
+                        >
+                            <ArrowLeft size={20} />
+                        </button>
+                    )}
+                    <button className='detail-close-button' onClick={() => {
+                        onClose();
+                        setView('main');
+                        setSelectedProperty(null);
+                    }}>
+                        <X size={20} />
+                    </button>
+                </div>
             </div>
+            
             <div className='detail-panel-content'>
-                {displayType === 'room' ? (
-                    // 원룸 상세정보
-                    <div className='detail-panel-section'>
-                        <div className='image-placeholder'>이미지 영역</div>
-                        <div className='info-group'>
-                            <h4>매물 정보</h4>
-                            <p>보증금: {data?.deposit?.toLocaleString()}만원</p>
-                            <p>월세: {data?.monthlyRent?.toLocaleString()}만원</p>
-                            <p>주소: {data?.address}</p>
-                            <p>면적: {data?.area}㎡</p>
-                            {data?.options && data.options.length > 0 && (
-                                <div className='options-group'>
-                                    <h5>옵션정보</h5>
-                                    <div className='options-list'>
-                                        {data.options.map((option, index) => (
-                                            <span key={index} className='option-tag'>
-                                                {option.optionName}
-                                            </span>
-                                        ))}
+                {view === 'propertyList' ? (
+                    <div className='property-list-view'>
+                        <div className='property-list-header'>
+                            <span className='total-count'>총 {properties.length}개의 매물</span>
+                        </div>
+                        <div className='property-list-content'>
+                            {properties.map((property) => (
+                                <div
+                                    key={property.propertyId}
+                                    className='property-list-item'
+                                    onClick={() => handlePropertyClick(property)}
+                                >
+                                    <div className='property-preview-image'>
+                                        {property.images && property.images.length > 0 ? (
+                                            <img 
+                                                src={property.images[0]} 
+                                                alt="매물 이미지"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = '/room-placeholder.jpg';
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="no-image-preview">이미지 없음</div>
+                                        )}
+                                    </div>
+                                    <div className='property-list-item-content'>
+                                        <div className='property-list-price'>
+                                            <span className='deposit'>{property.deposit?.toLocaleString()}만원</span>
+                                            <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}만원</span>
+                                        </div>
+                                        <div className='property-list-info'>
+                                            <span className='address'>{property.address}</span>
+                                            <div className='property-specs'>
+                                                <span>{property.area}㎡</span>
+                                                <span className='spec-divider'>|</span>
+                                                <span>{formatFloorInfo(property.currentFloor, property.totalFloors)}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            )}
+                            ))}
+                        </div>
+                    </div>
+                ) : view === 'propertyDetail' ? (
+                    <div className='detail-panel-section'>
+                        <div className='property-image-slider'>
+                            <ImageSlider images={selectedProperty?.images} />
+                        </div>
+                        <div className='property-detail-info'>
+                            <div className='property-price-info'>
+                                <div className='price-row'>
+                                    <span className='price-label'>보증금</span>
+                                    <span className='price-value'>{selectedProperty?.deposit?.toLocaleString()}만원</span>
+                                </div>
+                                <div className='price-row'>
+                                    <span className='price-label'>월세</span>
+                                    <span className='price-value'>{selectedProperty?.monthlyRent?.toLocaleString()}만원</span>
+                                </div>
+                            </div>
+                            <div className='property-basic-info'>
+                                <div className='info-item'>
+                                    <span className='info-label'>주소</span>
+                                    <span className='info-value'>{selectedProperty?.address}</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>면적</span>
+                                    <span className='info-value'>{selectedProperty?.area}㎡ ({Math.floor(selectedProperty?.area * 0.3025)}평)</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>층수</span>
+                                    <span className='info-value'>
+                                        {formatFloorInfo(selectedProperty?.currentFloor, selectedProperty?.totalFloors)}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className='property-options'>
+                                <h5>옵션 정보</h5>
+                                <div className='options-list'>
+                                    {renderOptions()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : displayType === 'room' ? (
+                    <div className='detail-panel-section'>
+                        <div className='property-image-slider'>
+                            <ImageSlider images={data?.images} />
+                        </div>
+                        <div className='property-detail-info'>
+                            <div className='property-price-info'>
+                                <div className='price-row'>
+                                    <span className='price-label'>보증금</span>
+                                    <span className='price-value'>{data?.deposit?.toLocaleString()}만원</span>
+                                </div>
+                                <div className='price-row'>
+                                    <span className='price-label'>월세</span>
+                                    <span className='price-value'>{data?.monthlyRent?.toLocaleString()}만원</span>
+                                </div>
+                            </div>
+                            <div className='property-basic-info'>
+                                <div className='info-item'>
+                                    <span className='info-label'>주소</span>
+                                    <span className='info-value'>{data?.address}</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>면적</span>
+                                    <span className='info-value'>{data?.area}㎡ ({Math.floor(data?.area * 0.3025)}평)</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>층수</span>
+                                    <span className='info-value'>
+                                        {formatFloorInfo(data?.currentFloor, data?.totalFloors)}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className='property-options'>
+                                <h5>옵션 정보</h5>
+                                <div className='options-list'>
+                                    {renderOptions()}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ) : (
-                    // 공인중개사 상세정보
                     <div className='detail-panel-section'>
-                        <div className='agent-profile'>
-                            <div className='agent-image-container'>
-                                <img 
-                                    src={data?.profileImage || '/default-agent.png'} 
-                                    alt={data?.username} 
-                                    className='agent-detail-image'
-                                />
-                            </div>
-                        </div>
-
-                        <div className='agent-additional-info'>
-                            <div className='info-row'>
-                                <h5>이름</h5>
-                                <p>{data?.username}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>제목</h5>
-                                <p>{data?.title}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>주소</h5>
-                                <p>{data?.address}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>등록번호</h5>
-                                <p>{data?.registrationNumber}</p>
+                        <div className='agent-profile-card'>
+                            <div className='agent-profile-header'>
+                                <div className='agent-image-wrapper'>
+                                    <img 
+                                        src={data?.profileImage || '/default-agent.png'} 
+                                        alt={data?.username} 
+                                        className='agent-detail-image'
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/default-agent.png';
+                                        }}
+                                    />
+                                </div>
+                                <div className='agent-primary-info'>
+                                    <h4 className='agent-name'>{data?.username}</h4>
+                                    <p className='agent-title'>{data?.title}</p>
+                                    <div className='agent-stats'>
+                                        <div className='stat-item'>
+                                            <span className='stat-label'>라이브</span>
+                                            <span className='stat-value'>{data?.liveCount || 0}회</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className='info-row'>
-                                <h5>연락처</h5>
-                                <p>{data?.tel}</p>
+                            <div className='agent-content-section'>
+                                <p className='agent-description'>{data?.content}</p>
                             </div>
 
-                            <div className='info-row'>
-                                <h5>소개</h5>
-                                <p>{data?.content}</p>
-                            </div>
-
-                            <div className='info-row'>
-                                <h5>라이브 방송 횟수</h5>
-                                <p>{data?.liveCount || 0}회</p>
+                            <div className='agent-info-grid'>
+                                <div className='info-grid-item'>
+                                    <span className='info-grid-label'>등록번호</span>
+                                    <span className='info-grid-value'>{data?.registrationNumber}</span>
+                                </div>
+                                <div className='info-grid-item'>
+                                    <span className='info-grid-label'>연락처</span>
+                                    <span className='info-grid-value'>{data?.tel}</span>
+                                </div>
+                                <div className='info-grid-item full-width'>
+                                    <span className='info-grid-label'>주소</span>
+                                    <span className='info-grid-value'>{data?.address}</span>
+                                </div>
                             </div>
 
                             <button 
                                 className='view-properties-button'
-                                onClick={() => onViewProperties(data?.userId)}
+                                onClick={handleViewProperties}
                             >
                                 매물 보기
                             </button>
