@@ -344,20 +344,48 @@ function MapPage() {
         }
     };
 
+    // const handleItemClick = (item, isPropertyMarker = false) => {
+    //     if (selectedItem && detailPanelView === 'propertyDetail') {
+    //         return;
+    //     }
+
+    //     if (isPropertyMarker) {
+    //         setSelectedItem({
+    //             ...item,
+    //             type: 'room'
+    //         });
+    //     } else {
+    //         setSelectedItem(item);
+    //     }
+
+    //     if (item && item.latitude && item.longitude) {
+    //         updateMapCenter({
+    //             lat: parseFloat(item.latitude),
+    //             lng: parseFloat(item.longitude)
+    //         });
+    //         setMapLevel(3);
+    //     }
+    // };
+
     const handleItemClick = (item, isPropertyMarker = false) => {
         if (selectedItem && detailPanelView === 'propertyDetail') {
             return;
         }
-
-        if (isPropertyMarker) {
-            setSelectedItem({
+    
+        const isRoom = item.type === 'room' || activeMenu === 'room';
+    
+        if (isPropertyMarker || isRoom) {
+            const roomItem = {
                 ...item,
                 type: 'room'
-            });
+            };
+            setSelectedItem(roomItem);
+            setPropertyMarkers([roomItem]);  // 선택된 매물만 마커로 표시
+            setInitialProperties([]);
         } else {
             setSelectedItem(item);
         }
-
+    
         if (item && item.latitude && item.longitude) {
             updateMapCenter({
                 lat: parseFloat(item.latitude),
@@ -372,7 +400,10 @@ function MapPage() {
         setPropertyMarkers([]);
         setInitialProperties([]);
         if (activeMenu === 'agent') {
-            fetchRealtors();
+            fetchRealtors();  // 공인중개사 메뉴는 그대로 유지
+        } else if (activeMenu === 'room') {
+            // 원룸 메뉴인 경우에만 검색 결과를 다시 표시
+            fetchSearchResults();
         }
     };
 
@@ -516,65 +547,67 @@ function MapPage() {
                             <div className='map-content'>
                                 {mapCenter && typeof mapCenter.lat === 'number' && typeof mapCenter.lng === 'number' && (
                                     <Map
-                                        center={mapCenter}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            borderRadius: '12px',
-                                            border: '1px solid #e1e1e1'
-                                        }}
-                                        level={mapLevel}
-                                    >
-                                        {searchResults.map((item, index) => {
-                                            if (!item?.latitude || !item?.longitude) return null;
-                                            
-                                            const position = {
-                                                lat: parseFloat(item.latitude),
-                                                lng: parseFloat(item.longitude)
-                                            };
-                                            
-                                            if (isNaN(position.lat) || isNaN(position.lng)) return null;
-                                            
-                                            const itemId = activeMenu === 'room' ? item.propertyId : item.userId;
-                                            const itemTitle = activeMenu === 'room' ? (item.title || '매물정보') : (item.username || '공인중개사');
-                                            
-                                            return (
-                                                <MapMarker
-                                                    key={`marker-${itemId || index}`}
-                                                    position={position}
-                                                    onClick={() => handleItemClick(item)}
-                                                    title={itemTitle}
-                                                />
-                                            );
-                                        })}
-
-                                        {propertyMarkers.map((item, index) => {
-                                            if (!item?.latitude || !item?.longitude) return null;
-                                            
-                                            const position = {
-                                                lat: parseFloat(item.latitude),
-                                                lng: parseFloat(item.longitude)
-                                            };
-                                            
-                                            if (isNaN(position.lat) || isNaN(position.lng)) return null;
-
-                                            return (
-                                                <MapMarker
-                                                    key={`property-${item.propertyId || index}`}
-                                                    position={position}
-                                                    onClick={() => handleItemClick(item, true)}
-                                                    title={item.title || '매물정보'}
-                                                    image={{
-                                                        src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
-                                                        size: {
-                                                            width: 24,
-                                                            height: 35
-                                                        },
-                                                    }}
-                                                />
-                                            );
-                                        })}
-                                    </Map>
+                                    center={mapCenter}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: '12px',
+                                        border: '1px solid #e1e1e1'
+                                    }}
+                                    level={mapLevel}
+                                >
+                                    {/* 선택된 매물이 없을 때만 검색 결과 마커들을 표시 */}
+                                    {!selectedItem && searchResults.map((item, index) => {
+                                        if (!item?.latitude || !item?.longitude) return null;
+                                        
+                                        const position = {
+                                            lat: parseFloat(item.latitude),
+                                            lng: parseFloat(item.longitude)
+                                        };
+                                        
+                                        if (isNaN(position.lat) || isNaN(position.lng)) return null;
+                                        
+                                        const itemId = activeMenu === 'room' ? item.propertyId : item.userId;
+                                        const itemTitle = activeMenu === 'room' ? (item.title || '매물정보') : (item.username || '공인중개사');
+                                        
+                                        return (
+                                            <MapMarker
+                                                key={`marker-${itemId || index}`}
+                                                position={position}
+                                                onClick={() => handleItemClick(item)}
+                                                title={itemTitle}
+                                            />
+                                        );
+                                    })}
+                                
+                                    {/* 선택된 매물의 마커 */}
+                                    {propertyMarkers.map((item, index) => {
+                                        if (!item?.latitude || !item?.longitude) return null;
+                                        
+                                        const position = {
+                                            lat: parseFloat(item.latitude),
+                                            lng: parseFloat(item.longitude)
+                                        };
+                                        
+                                        if (isNaN(position.lat) || isNaN(position.lng)) return null;
+                                
+                                        return (
+                                            <MapMarker
+                                                key={`property-${item.propertyId || index}`}
+                                                position={position}
+                                                onClick={() => handleItemClick(item, true)}
+                                                title={item.title || '매물정보'}
+                                                image={{
+                                                    src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+                                                    size: {
+                                                        width: 24,
+                                                        height: 35
+                                                    },
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </Map>
                                 )}
                             </div>
                         </div>
