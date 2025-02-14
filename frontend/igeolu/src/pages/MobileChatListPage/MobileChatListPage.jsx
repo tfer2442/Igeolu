@@ -6,6 +6,7 @@ import ChatRoomList from '../../components/common/Chat/ChatRoomList/ChatRoomList
 import './MobileChatListPage.css';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
 import mobileDefaultProfile from '../../assets/images/defaultProfileImageIMSI.png';
+import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
 
 const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
   const navigate = useNavigate();
@@ -17,9 +18,7 @@ const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
   return (
     <div className='mobile-chat-list-page-container'>
       <div className='mobile-chat-list'>
-        <header className='mobile-header'>
-          <h1 className='mobile-title'>채팅</h1>
-        </header>
+        <MobileTopBar title="채팅" />
 
         <div className='mobile-chat-content'>
           {isLoading ? (
