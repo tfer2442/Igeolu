@@ -2,7 +2,7 @@
 /* 📌 추가 기능 섹션 (기본 스타일) */
 .chat-extras {
   padding: 16px;
-  height: 100px;
+  height: 120px;
   background-color: #272626;
   bottom: 64px; /* 입력창 높이만큼 띄움 */
   left: 0;
@@ -33,6 +33,8 @@
   gap: 16px;
   justify-content: flex-start;
   padding: 0 16px;
+  height: 100%; /* 컨테이너 높이 100%로 설정 */
+  align-items: center;
 }
 
 /* 📌 추가 기능 버튼 스타일 */
@@ -49,8 +51,8 @@
 }
 
 .icon-circle {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   background-color: white;
   border-radius: 50%;
   display: flex;
@@ -59,7 +61,7 @@
 }
 
 .icon-circle img {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
