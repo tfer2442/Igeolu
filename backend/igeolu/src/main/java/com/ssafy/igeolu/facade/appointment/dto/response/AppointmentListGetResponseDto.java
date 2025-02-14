@@ -2,6 +2,8 @@ package com.ssafy.igeolu.facade.appointment.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.igeolu.domain.appointment.entity.AppointmentType;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +22,9 @@ public class AppointmentListGetResponseDto {
 
 	@Schema(description = "약속 내용")
 	private String title;
+
+	@Schema(description = "약속 타입", example = "LIVE", allowableValues = {"LIVE", "COMMON"})
+	AppointmentType appointmentType;
 
 	@Schema(description = "공인중개사 id")
 	private Integer realtorId;

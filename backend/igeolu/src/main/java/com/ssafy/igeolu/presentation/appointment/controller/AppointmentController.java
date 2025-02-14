@@ -21,6 +21,7 @@ import com.ssafy.igeolu.facade.appointment.service.AppointmentFacadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -46,7 +47,7 @@ public class AppointmentController {
 	})
 	@PostMapping("")
 	public ResponseEntity<AppointmentPostResponseDto> createAppointment(
-		@RequestBody AppointmentPostRequestDto request) {
+		@RequestBody @Valid AppointmentPostRequestDto request) {
 		AppointmentPostResponseDto response = appointmentFacadeService.createAppointment(request);
 		return ResponseEntity.ok().body(response);
 	}
