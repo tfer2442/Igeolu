@@ -61,7 +61,11 @@ public class Appointment {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
-	// 중복 알림 전송을 방지하기 위한 필드
+	// 10분 전 중복 알림 전송을 방지하기 위한 필드
 	@Builder.Default
-	private Boolean notificationSent = false;
+	private Boolean tenMinutesNotified = false;
+
+	// 10분 전 중복 알림 전송을 방지하기 위한 필드
+	@Builder.Default
+	private Boolean thirtyMinutesNotified = false;
 }

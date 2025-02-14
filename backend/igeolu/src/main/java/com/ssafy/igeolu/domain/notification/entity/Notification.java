@@ -37,6 +37,9 @@ public class Notification {
 	// 스케줄 시간
 	private LocalDateTime scheduledAt;
 
+	// 약속 제목
+	private String title;
+
 	// 알림 내용
 	private String message;
 

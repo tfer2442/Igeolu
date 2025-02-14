@@ -58,7 +58,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public List<Appointment> getAppointmentsBySchedule(LocalDateTime start, LocalDateTime end) {
-		return appointmentRepository.findByScheduledAtBetweenAndNotificationSentFalse(start, end);
+	public List<Appointment> getAppointmentsForTenMinuteNotification(LocalDateTime start, LocalDateTime end) {
+		return appointmentRepository.findByScheduledAtBetweenAndTenMinutesNotifiedFalse(start, end);
+	}
+
+	@Override
+	public List<Appointment> getAppointmentsForThirtyMinuteNotification(LocalDateTime start, LocalDateTime end) {
+		return appointmentRepository.findByScheduledAtBetweenAndThirtyMinutesNotifiedFalse(start, end);
 	}
 }
