@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import liveIcon from '../../../../assets/images/liveButton.png';
 import reservationIcon from '../../../../assets/images/reservationButton.png';
-import attachIcon from '../../../../assets/images/fileAttatchButton.png';
 import AppointmentModal from '../AppointmentModal/AppointmentModal';
 import './ChatExtras.css';
 
@@ -58,12 +57,6 @@ useEffect(() => {
               <img src={reservationIcon} alt='예약' />
             </div>
             <span>예약</span>
-          </button>
-          <button className='extra-button'>
-            <div className='icon-circle'>
-              <img src={attachIcon} alt='첨부' />
-            </div>
-            <span>첨부</span>
           </button>
         </div>
       </div>

@@ -9,6 +9,8 @@ import poster1 from '../../assets/images/포스터1.jpg';
 import poster2 from '../../assets/images/포스터2.jpg';
 import poster3 from '../../assets/images/포스터3.jpg';
 import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
+import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
+
 function MobileMainPage() {
   const [realtorInfo, setRealtorInfo] = useState({
     username: '',
@@ -134,10 +136,7 @@ function MobileMainPage() {
   return (
     <div className='mobile-main-page-container'>
       <div className='mobile-main-page'>
-        <div className='mobile-main-page__top-bar'>
-          <img src={MobileLogo} alt='Mobile Logo' />
-          <img src={MobileAlarm} alt='Mobile Alarm' />
-        </div>
+      <MobileTopBar logoSrc={MobileLogo} />
         <div className='mobile-main-page__top-name'>
           <div className='mobile-main-page__top-name-left'>
             <p id='Name'>{realtorInfo.username}</p>

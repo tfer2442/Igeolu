@@ -9,7 +9,7 @@ import EditAppointmentModal from '../../components/common/Chat/EditAppointmentMo
 import DeleteConfirmDialog from '../../components/DeleteConfirmDialog/DeleteConfirmDialog';
 import editIcon from '../../assets/images/reservationEdit.png';
 import deleteIcon from '../../assets/images/reservationDelete.png';
-
+import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
 
 function MobileCalendarPage() {
   const [value, setValue] = useState(new Date());
@@ -200,9 +200,7 @@ function MobileCalendarPage() {
   return (
     <div className='mobile-calendar-page-container'>
       <div className='mobile-calendar-page'>
-        <div className='mobile-calendar-page__top'>
-          <p>캘린더</p>
-        </div>
+      <MobileTopBar title="캘린더" />
         <div className='mobile-calendar-page__content'>
           <div className='mobile-calendar-page__calendar'>
             <Calendar
