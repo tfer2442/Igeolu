@@ -315,6 +315,13 @@
     display: flex;
     flex-direction: column;
 }
+
+.agent-action-buttons {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
   
 .info-row {
     margin-bottom: 0.75rem; /* 마진 약간 감소 */
@@ -376,37 +383,50 @@
 }
 
 .view-properties-button {
-    width: calc(100% - 3rem);
-    padding: 0.75rem;
-    margin-top: 0.75rem; /* 마진 감소 */
-    margin: 1.5rem;
+    width: 100%;
     padding: 1rem;
     background-color: #0066ff;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .view-properties-button:hover {
     background-color: #0052cc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
 }
+
 
 .mappage-chat-button {
     width: 100%;
-    padding: 0.75rem;
-    margin-top: 0.5rem;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+    padding: 1rem;
+    background-color: white;
+    color: #0066ff;
+    border: 2px solid #0066ff;
     border-radius: 8px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.mappage-chat-button:hover {
+    background-color: #f0f7ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
 }
 
 .chat-button:hover {

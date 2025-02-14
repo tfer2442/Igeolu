@@ -421,7 +421,7 @@
 
 import ChatApi from '../../../services/ChatApi';
 import React, { useState, useEffect } from 'react';
-import { X, ArrowLeft, ChevronLeft, ChevronRight, Building2 } from 'lucide-react';
+import { X, ArrowLeft, ChevronLeft, ChevronRight, Building2, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 import './DetailPanel.css';
 
@@ -827,18 +827,23 @@ const DetailPanel = ({
                                 </div>
                             </div>
 
-                            <button 
-                                className='view-properties-button'
-                                onClick={handleViewProperties}
-                            >
-                                매물 보기
-                            </button>
-                            <button 
-                                className='mappage-chat-button'
-                                onClick={handleCreateChatRoom}
-                            >
-                                채팅하기
-                            </button>
+                            <div className="agent-action-buttons">
+                                <button 
+                                    className='view-properties-button'
+                                    onClick={handleViewProperties}
+                                >
+                                    <Building2 size={20} />
+                                    매물 보기
+                                </button>
+                                <button 
+                                    className='mappage-chat-button'
+                                    onClick={handleCreateChatRoom}
+                                >
+                                    <MessageCircle size={20} />
+                                    채팅하기
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 )}
