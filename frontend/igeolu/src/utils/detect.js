@@ -4,13 +4,6 @@ import labels from "./labels.json";
 
 const numClass = labels.length;
 
-/**
- * Preprocess image / frame before forwarding into the model
- * @param {HTMLVideoElement|HTMLImageElement} source
- * @param {Number} modelWidth
- * @param {Number} modelHeight
- * @returns input tensor, xRatio, yRatio
- */
 const preprocess = (source, modelWidth, modelHeight) => {
   return tf.tidy(() => {
     const img = tf.browser.fromPixels(source);
@@ -18,8 +11,8 @@ const preprocess = (source, modelWidth, modelHeight) => {
     const maxSize = Math.max(w, h);
     
     const imgPadded = img.pad([
-      [0, maxSize - h], // Padding bottom
-      [0, maxSize - w], // Padding right
+      [0, maxSize - h],
+      [0, maxSize - w],
       [0, 0],
     ]);
 
@@ -35,11 +28,6 @@ const preprocess = (source, modelWidth, modelHeight) => {
   });
 };
 
-/**
- * Process model output and return detection boxes
- * @param {tf.Tensor} transRes Transposed result tensor
- * @returns {Object} Processed boxes, scores, and classes
- */
 const processOutput = (transRes) => {
   return tf.tidy(() => {
     const boxes = (() => {
@@ -58,25 +46,25 @@ const processOutput = (transRes) => {
   });
 };
 
-/**
- * Run inference and detection from the source.
- * @param {HTMLImageElement|HTMLVideoElement} source
- * @param {tf.GraphModel} model Loaded YOLOv8 TensorFlow.js model
- * @param {HTMLCanvasElement} canvasRef Canvas reference
- * @returns {Array} Array of predictions
- */
 export const detect = async (source, model, canvasRef) => {
   const [modelWidth, modelHeight] = model.inputShape.slice(1, 3);
+  let tensors = [];
 
   try {
     const { input, xRatio, yRatio } = preprocess(source, modelWidth, modelHeight);
+    tensors.push(input);
     
-    const res = await tf.tidy(() => model.net.execute(input));
+    const res = model.net.execute(input);
+    tensors.push(res);
+    
     const transRes = res.transpose([0, 2, 1]);
+    tensors.push(transRes);
     
     const { boxes, scores, classes } = processOutput(transRes);
+    tensors.push(boxes, scores, classes);
     
     const nms = await tf.image.nonMaxSuppressionAsync(boxes, scores, 500, 0.45, 0.2);
+    tensors.push(nms);
     
     const boxes_data = boxes.gather(nms).dataSync();
     const scores_data = scores.gather(nms).dataSync();
@@ -84,7 +72,6 @@ export const detect = async (source, model, canvasRef) => {
 
     renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [xRatio, yRatio]);
 
-    // Create predictions array
     const predictions = Array.from(scores_data).map((score, i) => ({
       class: labels[classes_data[i]],
       confidence: score,
@@ -96,22 +83,20 @@ export const detect = async (source, model, canvasRef) => {
       ]
     }));
 
-    // Cleanup
-    tf.dispose([res, transRes, boxes, scores, classes, nms]);
-    
     return predictions;
   } catch (error) {
     console.error('Detection error:', error);
     return [];
+  } finally {
+    // Clean up all tensors
+    tensors.forEach(tensor => {
+      if (tensor && tensor.dispose) {
+        tensor.dispose();
+      }
+    });
   }
 };
 
-/**
- * Function to detect objects in a video frame-by-frame.
- * @param {HTMLVideoElement} vidSource Video source
- * @param {tf.GraphModel} model Loaded YOLOv8 TensorFlow.js model
- * @param {HTMLCanvasElement} canvasRef Canvas reference
- */
 export const detectVideo = (vidSource, model, canvasRef) => {
   let isProcessing = false;
   let animationFrameId = null;
@@ -130,9 +115,9 @@ export const detectVideo = (vidSource, model, canvasRef) => {
     }
 
     isProcessing = true;
+    let tensors = [];
 
     try {
-      // Update canvas dimensions if needed
       if (canvasRef.width !== vidSource.videoWidth || 
           canvasRef.height !== vidSource.videoHeight) {
         canvasRef.width = vidSource.videoWidth;
@@ -141,35 +126,43 @@ export const detectVideo = (vidSource, model, canvasRef) => {
 
       const [modelWidth, modelHeight] = model.inputShape.slice(1, 3);
       
-      await tf.tidy(async () => {
-        const { input, xRatio, yRatio } = preprocess(vidSource, modelWidth, modelHeight);
-        const res = model.net.execute(input);
-        const transRes = res.transpose([0, 2, 1]);
-        const { boxes, scores, classes } = processOutput(transRes);
-        
-        const nms = await tf.image.nonMaxSuppressionAsync(boxes, scores, 500, 0.45, 0.2);
-        
-        const boxes_data = boxes.gather(nms).dataSync();
-        const scores_data = scores.gather(nms).dataSync();
-        const classes_data = classes.gather(nms).dataSync();
+      const { input, xRatio, yRatio } = preprocess(vidSource, modelWidth, modelHeight);
+      tensors.push(input);
+      
+      const res = model.net.execute(input);
+      tensors.push(res);
+      
+      const transRes = res.transpose([0, 2, 1]);
+      tensors.push(transRes);
+      
+      const { boxes, scores, classes } = processOutput(transRes);
+      tensors.push(boxes, scores, classes);
+      
+      const nms = await tf.image.nonMaxSuppressionAsync(boxes, scores, 500, 0.45, 0.2);
+      tensors.push(nms);
+      
+      const boxes_data = boxes.gather(nms).dataSync();
+      const scores_data = scores.gather(nms).dataSync();
+      const classes_data = classes.gather(nms).dataSync();
 
-        renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [xRatio, yRatio]);
-        
-        nms.dispose();
-      });
+      renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [xRatio, yRatio]);
 
     } catch (error) {
       console.error("Detection error:", error);
     } finally {
+      // Clean up all tensors
+      tensors.forEach(tensor => {
+        if (tensor && tensor.dispose) {
+          tensor.dispose();
+        }
+      });
       isProcessing = false;
       animationFrameId = requestAnimationFrame(detectFrame);
     }
   };
 
-  // Start detection loop
   detectFrame();
 
-  // Return cleanup function
   return () => {
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);

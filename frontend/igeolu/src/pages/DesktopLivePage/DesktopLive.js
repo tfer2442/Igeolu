@@ -14,6 +14,7 @@ import '@tensorflow/tfjs-backend-webgl';
 import { detect } from '../../utils/detect';
 import labels from '../../utils/labels.json';
 import { renderBoxes } from '../../utils/renderBox';
+import { objectQuestions } from '../../utils/questions.js';
 
 // axios 기본 설정 추가
 axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
@@ -21,16 +22,17 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 function DesktopLive() {
   const location = useLocation();
-  console.log('Location state:', location.state); // 디버깅을 위해 추가
-  
-  // location.state에서 값을 추출할 때 기본값 설정
   const { sessionId, token, role } = location.state || {};
   
   // 상태 초기화
   const [session, setSession] = useState(null);
   const [publisher, setPublisher] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
-  const OV = useRef(new OpenVidu());
+  const OV = useRef((() => {
+    const ov = new OpenVidu();
+    ov.enableProdMode();
+    return ov;
+  })());
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [propertyList, setPropertyList] = useState([]);
@@ -39,6 +41,7 @@ function DesktopLive() {
   const subscriberVideoRef = useRef(null);
   const detectionCanvasRef = useRef(null);
   const [model, setModel] = useState(null);
+  const [displayedQuestions, setDisplayedQuestions] = useState(new Set());
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -283,7 +286,7 @@ function DesktopLive() {
         }
 
       } catch (error) {
-        console.error('Error in initializeSession:', error);
+        console.error('Session initialization error:', error);
       }
     };
 
@@ -367,10 +370,19 @@ function DesktopLive() {
                 [xRatio, yRatio]
               );
               
-              console.log('Detected objects:', predictions.map(pred => ({
-                class: pred.class,
-                confidence: pred.confidence.toFixed(2)
-              })));
+              
+
+              // objectQuestions 사용하도록 수정
+              predictions.forEach(pred => {
+                const detectedClass = pred.class;
+                const questions = objectQuestions[detectedClass];
+                
+                if (questions) {
+                  questions.forEach(question => {
+                    setDisplayedQuestions(prev => new Set([...prev, question]));
+                  });
+                }
+              });
             }
           } catch (error) {
             console.error('Detection error:', error);
@@ -380,14 +392,11 @@ function DesktopLive() {
       };
 
       if (videoElement.readyState === 4) {
-        console.log('Video is ready');
         detectionCanvasRef.current.width = videoElement.videoWidth;
         detectionCanvasRef.current.height = videoElement.videoHeight;
         detectFrame();
       } else {
-        console.log('Waiting for video to be ready...');
         videoElement.addEventListener('loadeddata', () => {
-          console.log('Video loaded');
           detectionCanvasRef.current.width = videoElement.videoWidth;
           detectionCanvasRef.current.height = videoElement.videoHeight;
           detectFrame();
@@ -422,7 +431,16 @@ function DesktopLive() {
             ))}
           </div>
           <div className='desktop-live-page__left-content__bottom-content'>
-            <div className='desktop-live-page__left-content__bottom-content__ai-checklist'></div>
+            <div className='desktop-live-page__left-content__bottom-content__ai-checklist'>
+              <p>AI 체크리스트</p>
+              <div className="ai-questions-list">
+                {Array.from(displayedQuestions).map((question, index) => (
+                  <div key={index} className="ai-question-item">
+                    {question}
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className='desktop-live-page__left-content__bottom-content__live-order-list'>
               <p>매물 순서</p>
               <div className="property-list">
