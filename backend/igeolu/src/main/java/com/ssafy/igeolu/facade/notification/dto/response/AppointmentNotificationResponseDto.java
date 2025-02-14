@@ -23,6 +23,9 @@ public class AppointmentNotificationResponseDto {
 	@Schema(description = "알림 발생일")
 	private LocalDateTime createdAt;
 
+	@Schema(description = "약속 제목")
+	private String title;
+
 	@Schema(description = "알림 내용")
 	private String message;
 
