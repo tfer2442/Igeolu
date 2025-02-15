@@ -51,7 +51,8 @@ function App() {
   const roomsSocketRef = useRef(null);
   const [user, setUser] = useState(null);
   const [isAppMounted, setIsAppMounted] = useState(false);
-  const [isNotificationInitialized, setIsNotificationInitialized] = useState(false);
+  const [isNotificationInitialized, setIsNotificationInitialized] =
+    useState(false);
 
   // === 3. Route Management ===
   const location = useLocation();
@@ -69,7 +70,7 @@ function App() {
     setIsUserInitialized(true);
 
     setIsAppMounted(true);
-  return () => setIsAppMounted(false);
+    return () => setIsAppMounted(false);
   }, []);
 
   const currentUserId = user?.userId || null;
@@ -127,8 +128,8 @@ function App() {
   // const currentUserId = user?.userId || null;
 
   // === 5. Chat Room Management ===
-   // WebSocket 연결 및 채팅방 업데이트 관리
-   const handleRoomsUpdate = useCallback((updatedRooms) => {
+  // WebSocket 연결 및 채팅방 업데이트 관리
+  const handleRoomsUpdate = useCallback((updatedRooms) => {
     setChatRooms((prev) => {
       const mergedRooms = [...prev];
       updatedRooms.forEach((newRoom) => {
@@ -145,35 +146,46 @@ function App() {
 
   // WebSocket 연결 관리
   useEffect(() => {
-    if (!isAppMounted || !isUserInitialized || !user?.userId || !isNotificationInitialized) return;
+    if (
+      !isAppMounted ||
+      !isUserInitialized ||
+      !user?.userId ||
+      !isNotificationInitialized
+    )
+      return;
 
     const initializeWebSocket = async () => {
-
       if (roomsSocketRef.current?.isConnected) return;
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       try {
-        if (!roomsSocketRef.current || !roomsSocketRef.current.isConnected) {
-          roomsSocketRef.current = new ChatRoomsWebSocket(
-            user.userId,
-            handleRoomsUpdate
-          );
-          await roomsSocketRef.current.connect();
-        }
+        // 1. 먼저 채팅방 목록을 가져옴
+        const rooms = await ChatApi.getChatRooms(user.userId);
+        setChatRooms(rooms);
+
+        // 2. WebSocket 연결 및 모든 채팅방 구독
+        roomsSocketRef.current = new ChatRoomsWebSocket(
+          user.userId,
+          async () => {
+            // 새 메시지 수신 시 채팅방 목록 갱신
+            const updatedRooms = await ChatApi.getChatRooms(user.userId);
+            setChatRooms(updatedRooms);
+          }
+        );
+
+        // 3. WebSocket 연결
+        await roomsSocketRef.current.connect();
+
+        // 4. 모든 채팅방 구독
+        roomsSocketRef.current.subscribeToChatRooms(rooms);
+
+        console.log('WebSocket 초기화 및 채팅방 구독 완료');
       } catch (error) {
+        console.error('WebSocket 초기화 실패:', error);
         setError('실시간 업데이트 연결에 실패했습니다.');
       }
     };
-  
-    initializeWebSocket();
 
-    return () => {
-      if (roomsSocketRef.current && !isAppMounted) {
-        roomsSocketRef.current.disconnect();
-        roomsSocketRef.current = null;
-      }
-    };
+    initializeWebSocket();
   }, [user?.userId, isUserInitialized, isNotificationInitialized]);
 
   // 채팅방 목록 초기 로드
@@ -215,6 +227,15 @@ function App() {
     setSelectedRoom(null);
   };
 
+  // 로그아웃 핸들러에서 WebSocket 연결 해제
+  const handleLogout = () => {
+    if (roomsSocketRef.current) {
+      roomsSocketRef.current.disconnect();
+      roomsSocketRef.current = null;
+    }
+    // 로그아웃 관련 다른 처리들...
+  };
+
   const chatModalProps = {
     isModalOpen: isOpen,
     onSelectChatRoom: handleSelectRoom,
@@ -223,7 +244,7 @@ function App() {
     chatRooms,
     isLoading,
     error,
-    onRetry: fetchChatRooms
+    onRetry: fetchChatRooms,
   };
 
   // === 7. UI Rendering Methods ===
@@ -251,64 +272,64 @@ function App() {
   // === 8. Main Render ===
   return (
     <div className='App'>
-      <NotificationProvider 
-      user={user}
-      onInitialized={() => {
-        console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
-        setIsNotificationInitialized(true);
-      }}
-    >
-      <Routes>
-        {/* Desktop Routes */}
-        <Route path='/' element={<DesktopHome />} />
-        <Route path='/login' element={<DesktopLogin />} />
-        <Route path='/live' element={<DesktopLive />} />
-        <Route path='/live-join' element={<DesktopLiveJoinPage />} />
-        <Route
-          path='/desktop-room-search'
-          element={<DesktopRoomSearchPage />}
-        />
-        <Route path='/map' element={<Map />}></Route>
-        <Route path='/mypage' element={<DesktopMyPage />} />
+      <NotificationProvider
+        user={user}
+        onInitialized={() => {
+          console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
+          setIsNotificationInitialized(true);
+        }}
+      >
+        <Routes>
+          {/* Desktop Routes */}
+          <Route path='/' element={<DesktopHome />} />
+          <Route path='/login' element={<DesktopLogin />} />
+          <Route path='/live' element={<DesktopLive />} />
+          <Route path='/live-join' element={<DesktopLiveJoinPage />} />
+          <Route
+            path='/desktop-room-search'
+            element={<DesktopRoomSearchPage />}
+          />
+          <Route path='/map' element={<Map />}></Route>
+          <Route path='/mypage' element={<DesktopMyPage />} />
 
-        <Route path='/desktop-my-page' element={<DesktopMyPage />} />
-        {/* Mobile Routes */}
-        <Route path='/mobile-login' element={<MobileLoginPage />} />
-        <Route
-          path='/mobile-additional-info'
-          element={<MobileAdditionalInfoPage />}
-        />
-        <Route path='/make' element={<Make />} />
-        <Route path='/mobile-main' element={<MobileMainPage />} />
-        <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
-        <Route path='/mobile-my-page' element={<MobileMyPage />} />
-        <Route path='/mobile-live' element={<MobileLivePage />} />
-        <Route path='/mobile-register' element={<MobileRegisterPage />} />
-        <Route path='/mobile-edit' element={<MobileEditPage />} />
-        <Route path='/mobile-estate-list' element={<MobileEstateList />} />
-        <Route
-          path='/mobile-live-setting'
-          element={<MobileLiveSettingPage />}
-        />
-        <Route
-          path='/mobile-chat'
-          element={
-            <MobileChatList
-              chatRooms={chatRooms}
-              isLoading={isLoading}
-              error={error}
-              onRetry={fetchChatRooms}
-              currentUserId={currentUserId}
-            />
-          }
-        />
-        <Route
-          path='/mobile-chat/:roomId'
-          element={<MobileChatRoom currentUserId={currentUserId} />}
-        />
-      </Routes>
-      {!isMobileChatRoute && renderChatInterface()}
-    </NotificationProvider>
+          <Route path='/desktop-my-page' element={<DesktopMyPage />} />
+          {/* Mobile Routes */}
+          <Route path='/mobile-login' element={<MobileLoginPage />} />
+          <Route
+            path='/mobile-additional-info'
+            element={<MobileAdditionalInfoPage />}
+          />
+          <Route path='/make' element={<Make />} />
+          <Route path='/mobile-main' element={<MobileMainPage />} />
+          <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
+          <Route path='/mobile-my-page' element={<MobileMyPage />} />
+          <Route path='/mobile-live' element={<MobileLivePage />} />
+          <Route path='/mobile-register' element={<MobileRegisterPage />} />
+          <Route path='/mobile-edit' element={<MobileEditPage />} />
+          <Route path='/mobile-estate-list' element={<MobileEstateList />} />
+          <Route
+            path='/mobile-live-setting'
+            element={<MobileLiveSettingPage />}
+          />
+          <Route
+            path='/mobile-chat'
+            element={
+              <MobileChatList
+                chatRooms={chatRooms}
+                isLoading={isLoading}
+                error={error}
+                onRetry={fetchChatRooms}
+                currentUserId={currentUserId}
+              />
+            }
+          />
+          <Route
+            path='/mobile-chat/:roomId'
+            element={<MobileChatRoom currentUserId={currentUserId} />}
+          />
+        </Routes>
+        {!isMobileChatRoute && renderChatInterface()}
+      </NotificationProvider>
     </div>
   );
 }

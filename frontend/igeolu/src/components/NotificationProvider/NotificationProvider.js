@@ -99,25 +99,22 @@ const NotificationProvider = ({ children, user, onInitialized }) => {
       console.log('⚠️ 사용자 정보 없음');
       return;
     }
-
-    let isInitialized = false;
-
+  
     const initialize = async () => {
       console.log('🚀 알림 시스템 초기화 시작');
-
+  
       const fetchSuccess = await fetchNotifications();
       if (!fetchSuccess) {
         console.error('❌ 초기 알림 목록 조회 실패');
         return;
       }
-
+  
       const socketSuccess = await initializeWebSocket();
       if (!socketSuccess) {
         console.error('❌ WebSocket 초기화 실패');
         return;
       }
-
-      isInitialized = true;
+  
       console.log('✅ 알림 시스템 초기화 완료');
       onInitialized?.();
     };
@@ -125,12 +122,10 @@ const NotificationProvider = ({ children, user, onInitialized }) => {
     initialize();
 
     return () => {
-      if (notificationSocketRef.current) {
+      if (notificationSocketRef.current && !user?.userId) {  // 로그아웃 시에만 연결 해제
         console.log('🔄 알림 시스템 정리 시작');
         try {
-          if (isInitialized) {
-            notificationSocketRef.current.disconnect();
-          }
+          notificationSocketRef.current.disconnect();
         } catch (error) {
           console.error('❌ 연결 해제 중 오류:', error);
         } finally {
