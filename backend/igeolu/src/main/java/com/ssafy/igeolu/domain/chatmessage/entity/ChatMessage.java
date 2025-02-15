@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +24,9 @@ public class ChatMessage {
 	private ObjectId id;
 	private Integer roomId;
 	private String content;
+
+	@Enumerated(EnumType.STRING)
+	private SenderType senderType;
 
 	private Integer userId;
 
