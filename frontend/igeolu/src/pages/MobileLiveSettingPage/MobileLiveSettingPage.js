@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./MobileLiveSettingPage.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import MobileBottomTab from "../../components/MobileBottomTab/MobileBottomTab";
+import ChatWebSocket from '../../services/webSocket/chatWebSocket';
 
 const API_BASE_URL = '/api';
 
@@ -11,8 +12,8 @@ const api = axios.create({
     headers: {
         'accept': '*/*',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-        'userId': '32'
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg',
+        'userId': '33'
     }
 });
 
@@ -20,6 +21,23 @@ const MobileLiveSettingPage = () => {
     const [properties, setProperties] = useState([]);
     const [selectedProperties, setSelectedProperties] = useState([]);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { roomId, userId } = location.state || {};
+    const chatSocketRef = useRef(null);
+
+    // 웹소켓 연결 설정
+  useEffect(() => {
+    if (roomId) {
+      chatSocketRef.current = new ChatWebSocket(roomId);
+      chatSocketRef.current.connect();
+    }
+    
+    return () => {
+      if (chatSocketRef.current) {
+        chatSocketRef.current.disconnect();
+      }
+    };
+  }, [roomId]);
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -55,18 +73,30 @@ const MobileLiveSettingPage = () => {
         }
 
         try {
-            console.log('Sending request to:', `${API_BASE_URL}/lives`);
-            
             const response = await api.post('/lives', {
                 propertyIds: selectedProperties.map(prop => prop.propertyId),
                 role: 'host'
             });
             
-            console.log('Full response:', response);
-            
             const { sessionId, token } = response.data;
             console.log('Session created successfully:', { sessionId, token });
+
+             // 웹소켓을 통한 시스템 메시지 전송
+      if (roomId && chatSocketRef.current) {
+        const messageData = {
+          roomId: roomId,
+          userId: userId,
+          content: `라이브 방송이 시작되었습니다!\n세션 ID: ${sessionId}\n방송 참여하기: /desktop-live-join?sessionId=${sessionId}`,
+          senderType: 'SYSTEM'
+        };
+
+        const sent = await chatSocketRef.current.sendMessage(messageData);
+        if (!sent) {
+          console.error('시스템 메시지 전송 실패');
+        }
+      }
             
+
             // MobileLivePage로 이동
             navigate('/mobile-live', { 
                 state: { 

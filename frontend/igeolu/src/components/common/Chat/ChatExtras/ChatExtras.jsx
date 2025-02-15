@@ -7,7 +7,13 @@ import reservationIcon from '../../../../assets/images/reservationButton.png';
 import AppointmentModal from '../AppointmentModal/AppointmentModal';
 import './ChatExtras.css';
 
-const ChatExtras = ({ isOpen, room, currentUserId, onClose, sendSystemMessage }) => {
+const ChatExtras = ({
+  isOpen,
+  room,
+  currentUserId,
+  onClose,
+  sendSystemMessage,
+}) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -23,29 +29,37 @@ const ChatExtras = ({ isOpen, room, currentUserId, onClose, sendSystemMessage })
     }, 300); // transition 지속 시간과 동일하게 설정
   };
 
-// isOpen이 변경될 때마다 애니메이션 상태 초기화
-useEffect(() => {
-  if (!isOpen) {
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 300);
-  }
-}, [isOpen]);
+  // isOpen이 변경될 때마다 애니메이션 상태 초기화
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 300);
+    }
+  }, [isOpen]);
 
+  const handleLiveClick = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      onClose();
+      navigate('/mobile-live-setting', {
+        state: {
+          roomId: room.roomId,
+          userId: currentUserId  // 필요한 경우 userId도 전달
+        }
+      });
+    }, 300);
+  };
 
   return (
     <>
-      <div className={`chat-extras ${isOpen ? 'open' : ''} ${isAnimating ? 'animating' : ''}`}>
+      <div
+        className={`chat-extras ${isOpen ? 'open' : ''} ${isAnimating ? 'animating' : ''}`}
+      >
         <div className='chat-extras-content'>
         <button 
             className='extra-button'
-            onClick={() => {
-              setIsAnimating(true);
-              setTimeout(() => {
-                onClose();
-                navigate('/mobile-live-setting');
-              }, 300);
-            }}
+            onClick={handleLiveClick}
           >
             <div className='icon-circle'>
               <img src={liveIcon} alt='라이브' />
