@@ -2,11 +2,26 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import MobileAlarm from '../../assets/images/알림아이콘.png';
 import { useNotification } from '../../contexts/NotificationContext';
+import NotificationApi from '../../services/NotificationApi';
 import './MobileTopBar.css';
 
 const MobileTopBar = ({ title, logoSrc }) => {
-  const { notifications, unreadCount, markAsRead } = useNotification();
+  const { notifications, unreadCount, markAsRead, updateNotifications } = useNotification();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+// 알림 삭제 핸들러 추가
+const handleDeleteNotification = async (e, notificationId) => {
+  e.stopPropagation(); // 상위 요소로의 이벤트 전파 방지
+  try {
+    await NotificationApi.deleteNotification(notificationId);
+    // 삭제 후 알림 목록 갱신
+    await updateNotifications();
+  } catch (error) {
+    console.error('알림 삭제 실패:', error);
+  }
+};
+
+
 
   const handleNotificationClick = () => {
     setIsNotificationOpen(!isNotificationOpen);
@@ -75,6 +90,13 @@ const MobileTopBar = ({ title, logoSrc }) => {
                     className={`mobile-notification-item ${!notification.isRead ? 'unread' : ''}`}
                     onClick={() => handleNotificationItemClick(notification.notificationId)}
                   >
+                    <button
+                      className="notification-delete-btn"
+                      onClick={(e) => handleDeleteNotification(e, notification.notificationId)}
+                      aria-label="알림 삭제"
+                    >
+                      ×
+                    </button>
                     <p className="notification-message">
                       {notification.message}
                     </p>
