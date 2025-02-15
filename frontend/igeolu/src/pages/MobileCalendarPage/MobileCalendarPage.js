@@ -59,6 +59,7 @@ function MobileCalendarPage() {
         scheduledAt: appointment.scheduledAt,
         memberName: appointment.memberName,
         title: appointment.title,
+        appointmentType: appointment.appointmentType,
       }));
       setGroupedAppointments(groupAppointmentsByDate(formattedAppointments));
     } catch (error) {
@@ -200,7 +201,7 @@ function MobileCalendarPage() {
   return (
     <div className='mobile-calendar-page-container'>
       <div className='mobile-calendar-page'>
-      <MobileTopBar title="캘린더" />
+        <MobileTopBar title='캘린더' />
         <div className='mobile-calendar-page__content'>
           <div className='mobile-calendar-page__calendar'>
             <Calendar
@@ -237,7 +238,11 @@ function MobileCalendarPage() {
                         className='schedule-item-container'
                       >
                         <div
-                          className='schedule-item'
+                          className={`schedule-item ${
+                            appointment.appointmentType === 'LIVE'
+                              ? 'type-live'
+                              : 'type-common'
+                          }`}
                           onTouchStart={(e) =>
                             handleTouchStart(appointment.appointmentId, e)
                           }
@@ -268,21 +273,29 @@ function MobileCalendarPage() {
                           </div>
                         </div>
                         <div className='schedule-actions'>
-  <button
-    className='edit-btn'
-    onClick={() => handleEdit(appointment)}
-  >
-    <img src={editIcon} alt="수정" className="action-icon" />
-    <span>수정</span>
-  </button>
-  <button
-    className='delete-btn'
-    onClick={() => handleDeleteClick(appointment)}
-  >
-    <img src={deleteIcon} alt="삭제" className="action-icon" />
-    <span>삭제</span>
-  </button>
-</div>
+                          <button
+                            className='edit-btn'
+                            onClick={() => handleEdit(appointment)}
+                          >
+                            <img
+                              src={editIcon}
+                              alt='수정'
+                              className='action-icon'
+                            />
+                            <span>수정</span>
+                          </button>
+                          <button
+                            className='delete-btn'
+                            onClick={() => handleDeleteClick(appointment)}
+                          >
+                            <img
+                              src={deleteIcon}
+                              alt='삭제'
+                              className='action-icon'
+                            />
+                            <span>삭제</span>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
