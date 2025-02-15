@@ -13,11 +13,26 @@ const MobileChatRoom = ({ currentUserId }) => {
   const [room, setRoom] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChatRoomOpen, setIsChatRoomOpen] = useState(false);
+
+  useEffect(() => {
+    setIsChatRoomOpen(true);
+    return () => setIsChatRoomOpen(false);
+  }, []);
+
+  // roomUpdate 핸들러 추가
+  const handleRoomUpdate = async (roomId) => {
+    try {
+      // 전체 방 목록을 다시 조회하는 대신 읽음 처리만 진행
+      await chatApi.markMessagesAsRead(roomId, currentUserId);
+    } catch (error) {
+      console.error('메시지 읽음 처리 실패:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        // 채팅방 목록을 가져와서 현재 roomId에 해당하는 방을 찾습니다
         const rooms = await chatApi.getChatRooms(currentUserId);
         const foundRoom = rooms.find((r) => r.roomId === Number(roomId));
 
@@ -50,10 +65,13 @@ const MobileChatRoom = ({ currentUserId }) => {
     <div className='mobile-chat-room-page-container'>
       <div className='mobile-chat-room'>
         <ChatRoom
-          room={room}
-          onBack={handleBack}
-          isMobile={true}
-          currentUserId={currentUserId}
+           room={room}
+           onBack={handleBack}
+           isMobile={true}
+           currentUserId={currentUserId}
+           activeRoomId={Number(roomId)}
+           onRoomUpdate={handleRoomUpdate}
+           isChatRoomOpen={isChatRoomOpen}
         />
       </div>
     </div>

@@ -39,6 +39,10 @@ import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage';
 import NotificationProvider from './components/NotificationProvider/NotificationProvider';
 
+// ------------- 개발용 유저 변경 버튼 ------------------
+import DevUserToggle from './components/DEVUSERTOGGLE';
+// ------------- 개발용 유저 변경 버튼 ------------------
+
 function App() {
   // === 2. State Management ===
   // Chat States
@@ -51,7 +55,10 @@ function App() {
   const roomsSocketRef = useRef(null);
   const [user, setUser] = useState(null);
   const [isAppMounted, setIsAppMounted] = useState(false);
-  const [isNotificationInitialized, setIsNotificationInitialized] = useState(false);
+  const [isNotificationInitialized, setIsNotificationInitialized] =
+    useState(false);
+  const [activeRoomId, setActiveRoomId] = useState(null);
+  const [isChatRoomOpen, setIsChatRoomOpen] = useState(false);
 
   // === 3. Route Management ===
   const location = useLocation();
@@ -61,16 +68,20 @@ function App() {
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
 
   // === 4. User Authentication (Development Mode) ===
-  useEffect(() => {
-    const devUser = { userId: 33, role: 'realtor' }; // 오승우
-    // const devUser = { userId: 35, role: 'member' }; // 이진형
-    setUser(devUser);
-    localStorage.setItem('user', JSON.stringify(devUser));
-    setIsUserInitialized(true);
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    const devUser = savedUser ? JSON.parse(savedUser) : { userId: 35, role: 'member' }; // 기본값으로 이진형
+    setUser(devUser);
+    setIsUserInitialized(true);
+  
     setIsAppMounted(true);
-  return () => setIsAppMounted(false);
+    return () => setIsAppMounted(false);
   }, []);
+
+  const handleDevUserChange = (newUser) => {
+    setUser(newUser);
+  };
 
   const currentUserId = user?.userId || null;
 
@@ -127,8 +138,21 @@ function App() {
   // const currentUserId = user?.userId || null;
 
   // === 5. Chat Room Management ===
-   // WebSocket 연결 및 채팅방 업데이트 관리
-   const handleRoomsUpdate = useCallback((updatedRooms) => {
+
+  const updateChatRoomInfo = useCallback(
+    async (roomId) => {
+      try {
+        // 전체 채팅방 목록을 새로 불러옵니다
+        const updatedRooms = await ChatApi.getChatRooms(user.userId);
+        setChatRooms(updatedRooms);
+      } catch (error) {
+        console.error('채팅방 정보 업데이트 실패:', error);
+      }
+    },
+    [user?.userId]
+  );
+
+  const handleRoomsUpdate = useCallback((updatedRooms) => {
     setChatRooms((prev) => {
       const mergedRooms = [...prev];
       updatedRooms.forEach((newRoom) => {
@@ -145,33 +169,47 @@ function App() {
 
   // WebSocket 연결 관리
   useEffect(() => {
-    if (!isAppMounted || !isUserInitialized || !user?.userId || !isNotificationInitialized) return;
+    if (
+      !isAppMounted ||
+      !isUserInitialized ||
+      !user?.userId ||
+      !isNotificationInitialized
+    )
+      return;
 
     const initializeWebSocket = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      if (roomsSocketRef.current?.isConnected) return;
+
       try {
-        if (!roomsSocketRef.current || !roomsSocketRef.current.isConnected) {
-          roomsSocketRef.current = new ChatRoomsWebSocket(
-            user.userId,
-            handleRoomsUpdate
-          );
-          await roomsSocketRef.current.connect();
-        }
+        // 1. 먼저 채팅방 목록을 가져옴
+        const rooms = await ChatApi.getChatRooms(user.userId);
+        setChatRooms(rooms);
+
+        // 2. WebSocket 연결 및 모든 채팅방 구독
+        roomsSocketRef.current = new ChatRoomsWebSocket(
+          user.userId,
+          async () => {
+            // 새 메시지 수신 시 채팅방 목록 갱신
+            const updatedRooms = await ChatApi.getChatRooms(user.userId);
+            setChatRooms(updatedRooms);
+          }
+        );
+
+        // 3. WebSocket 연결
+        await roomsSocketRef.current.connect();
+
+        // 4. 모든 채팅방 구독
+        roomsSocketRef.current.subscribeToChatRooms(rooms);
+
+        console.log('WebSocket 초기화 및 채팅방 구독 완료');
       } catch (error) {
+        console.error('WebSocket 초기화 실패:', error);
         setError('실시간 업데이트 연결에 실패했습니다.');
       }
     };
-  
-    initializeWebSocket();
 
-    return () => {
-      if (roomsSocketRef.current) {
-        roomsSocketRef.current.disconnect();
-        roomsSocketRef.current = null;
-      }
-    };
-  }, [user?.userId, isUserInitialized, isNotificationInitialized, handleRoomsUpdate]);
+    initializeWebSocket();
+  }, [user?.userId, isUserInitialized, isNotificationInitialized]);
 
   // 채팅방 목록 초기 로드
   const fetchChatRooms = useCallback(async () => {
@@ -198,18 +236,36 @@ function App() {
 
   // === 6. Event Handlers ===
   const handleToggleChat = () => setIsOpen(!isOpen);
-  const handleSelectRoom = (room) => setSelectedRoom(room);
-  const handleBack = () => setSelectedRoom(null);
-  const handleClose = async () => {
-    if (selectedRoom) {
-      try {
-        await ChatApi.markMessagesAsRead(selectedRoom.roomId, currentUserId);
-      } catch (error) {
-        console.error('메시지 읽음 처리 실패:', error);
-      }
-    }
+  const handleSelectRoom = (room) => {
+    setSelectedRoom(room);
+    setActiveRoomId(room.roomId);
+    setIsChatRoomOpen(true);  // 채팅방 열기
+  };
+  const handleBack = () => {
+    console.log('----------너 동작하니?')
+    setSelectedRoom(null);
+    setActiveRoomId(null);
+    setIsChatRoomOpen(false);  // 채팅방 닫기
+  };
+
+  const handleClose = () => {
     setIsOpen(false);
     setSelectedRoom(null);
+    setActiveRoomId(null);
+    setIsChatRoomOpen(false);  // 채팅방 닫기
+  };
+
+  useEffect(() => {
+    console.log('activeRoomId 변경:', activeRoomId);
+  }, [activeRoomId]);
+
+  // 로그아웃 핸들러에서 WebSocket 연결 해제
+  const handleLogout = () => {
+    if (roomsSocketRef.current) {
+      roomsSocketRef.current.disconnect();
+      roomsSocketRef.current = null;
+    }
+    // 로그아웃 관련 다른 처리들...
   };
 
   const chatModalProps = {
@@ -220,7 +276,7 @@ function App() {
     chatRooms,
     isLoading,
     error,
-    onRetry: fetchChatRooms
+    onRetry: fetchChatRooms,
   };
 
   // === 7. UI Rendering Methods ===
@@ -237,6 +293,9 @@ function App() {
                 room={selectedRoom}
                 onBack={handleBack}
                 currentUserId={user?.userId}
+                activeRoomId={activeRoomId}
+                onRoomUpdate={updateChatRoomInfo}
+                isChatRoomOpen={isChatRoomOpen}
               />
             )}
           </SlideLayout>
@@ -248,64 +307,66 @@ function App() {
   // === 8. Main Render ===
   return (
     <div className='App'>
-      <NotificationProvider 
-      user={user}
-      onInitialized={() => {
-        console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
-        setIsNotificationInitialized(true);
-      }}
-    >
-      <Routes>
-        {/* Desktop Routes */}
-        <Route path='/' element={<DesktopHome />} />
-        <Route path='/login' element={<DesktopLogin />} />
-        <Route path='/live' element={<DesktopLive />} />
-        <Route path='/live-join' element={<DesktopLiveJoinPage />} />
-        <Route
-          path='/desktop-room-search'
-          element={<DesktopRoomSearchPage />}
-        />
-        <Route path='/map' element={<Map />}></Route>
-        <Route path='/mypage' element={<DesktopMyPage />} />
+      <NotificationProvider
+        user={user}
+        onInitialized={() => {
+          // console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
+          setIsNotificationInitialized(true);
+        }}
+      >
+        {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
+        <DevUserToggle onUserChange={handleDevUserChange} /> 
+        <Routes>
+          {/* Desktop Routes */}
+          <Route path='/' element={<DesktopHome />} />
+          <Route path='/login' element={<DesktopLogin />} />
+          <Route path='/live' element={<DesktopLive />} />
+          <Route path='/live-join' element={<DesktopLiveJoinPage />} />
+          <Route
+            path='/desktop-room-search'
+            element={<DesktopRoomSearchPage />}
+          />
+          <Route path='/map' element={<Map />}></Route>
+          <Route path='/mypage' element={<DesktopMyPage />} />
 
-        <Route path='/desktop-my-page' element={<DesktopMyPage />} />
-        {/* Mobile Routes */}
-        <Route path='/mobile-login' element={<MobileLoginPage />} />
-        <Route
-          path='/mobile-additional-info'
-          element={<MobileAdditionalInfoPage />}
-        />
-        <Route path='/make' element={<Make />} />
-        <Route path='/mobile-main' element={<MobileMainPage />} />
-        <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
-        <Route path='/mobile-my-page' element={<MobileMyPage />} />
-        <Route path='/mobile-live' element={<MobileLivePage />} />
-        <Route path='/mobile-register' element={<MobileRegisterPage />} />
-        <Route path='/mobile-edit' element={<MobileEditPage />} />
-        <Route path='/mobile-estate-list' element={<MobileEstateList />} />
-        <Route
-          path='/mobile-live-setting'
-          element={<MobileLiveSettingPage />}
-        />
-        <Route
-          path='/mobile-chat'
-          element={
-            <MobileChatList
-              chatRooms={chatRooms}
-              isLoading={isLoading}
-              error={error}
-              onRetry={fetchChatRooms}
-              currentUserId={currentUserId}
-            />
-          }
-        />
-        <Route
-          path='/mobile-chat/:roomId'
-          element={<MobileChatRoom currentUserId={currentUserId} />}
-        />
-      </Routes>
-      {!isMobileChatRoute && renderChatInterface()}
-    </NotificationProvider>
+          <Route path='/desktop-my-page' element={<DesktopMyPage />} />
+          {/* Mobile Routes */}
+          <Route path='/mobile-login' element={<MobileLoginPage />} />
+          <Route
+            path='/mobile-additional-info'
+            element={<MobileAdditionalInfoPage />}
+          />
+          <Route path='/make' element={<Make />} />
+          <Route path='/mobile-main' element={<MobileMainPage />} />
+          <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
+          <Route path='/mobile-my-page' element={<MobileMyPage />} />
+          <Route path='/mobile-live' element={<MobileLivePage />} />
+          <Route path='/mobile-register' element={<MobileRegisterPage />} />
+          <Route path='/mobile-edit' element={<MobileEditPage />} />
+          <Route path='/mobile-estate-list' element={<MobileEstateList />} />
+          <Route
+            path='/mobile-live-setting'
+            element={<MobileLiveSettingPage />}
+          />
+          <Route
+            path='/mobile-chat'
+            element={
+              <MobileChatList
+                chatRooms={chatRooms}
+                isLoading={isLoading}
+                error={error}
+                onRetry={fetchChatRooms}
+                currentUserId={currentUserId}
+              />
+            }
+          />
+          <Route
+            path='/mobile-chat/:roomId'
+            element={<MobileChatRoom currentUserId={currentUserId} />}
+          />
+        </Routes>
+        {!isMobileChatRoute && renderChatInterface()}
+      </NotificationProvider>
     </div>
   );
 }

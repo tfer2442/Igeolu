@@ -59,15 +59,16 @@
     background-color: #ff4646;
     color: white;
     border-radius: 50%;
-    min-width: 18px;
+    width: 18px;
     height: 18px;
     font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 5px;
+    padding: 0;
     border: 2px solid #272626;
     font-weight: 500;
+    aspect-ratio: 1;
   }
 
   .mobile-notification-overlay {
@@ -150,12 +151,48 @@
     font-size: 14px;
     line-height: 1.5;
     color: #333;
+    padding-right: 28px;
   }
   
   .mobile-notification-item .notification-date {
     margin: 0;
     font-size: 12px;
     color: #666;
+  }
+
+  .mobile-notification-item {
+    position: relative;
+  }
+  
+  .notification-delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #E2E1E1;
+    border: none;
+    color: #666;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 1;
+  }
+  
+  .mobile-notification-item:hover .notification-delete-btn {
+    opacity: 1;
+  }
+  
+  .notification-delete-btn:hover {
+    background: #FF6B6B;
+    color: white;
   }
   
   .no-notifications {

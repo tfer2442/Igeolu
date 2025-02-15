@@ -4,10 +4,7 @@ import axios from 'axios';
 export const instance = axios.create({
   baseURL: 'https://i12d205.p.ssafy.io/api',
   headers: {
-    // 오승우 userId 33, role realtor
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg',
-    // 이진형 userId 35, role member
-    // 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE',
+    'Authorization': JSON.parse(localStorage.getItem('user'))?.token || 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE',
     'Content-Type': 'application/json',
   },
 });
@@ -15,11 +12,11 @@ export const instance = axios.create({
 // 요청 인터셉터
 instance.interceptors.request.use(
   (config) => {
-    console.log('📌 [Request]');
-    console.log('➡️ URL:', config.baseURL + config.url);
-    console.log('➡️ Method:', config.method);
-    console.log('➡️ Params:', config.params);
-    console.log('➡️ Data:', config.data);
+    // console.log('📌 [Request]');
+    // console.log('➡️ URL:', config.baseURL + config.url);
+    // console.log('➡️ Method:', config.method);
+    // console.log('➡️ Params:', config.params);
+    // console.log('➡️ Data:', config.data);
     return config;
   },
   (error) => {
@@ -56,8 +53,6 @@ const ChatApi = {
   getChatRooms: async (userId) => {
     try {
       const response = await instance.get('/chats', { params: { userId } });
-      // response가 배열인지 확인하고, 아니라면 빈 배열 반환
-      // return Array.isArray(response) ? response : [];
       return response
     } catch (error) {
       console.error('Error getting chat rooms:', error);

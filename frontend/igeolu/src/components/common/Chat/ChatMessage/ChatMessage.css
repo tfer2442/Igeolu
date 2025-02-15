@@ -101,3 +101,40 @@
 .received .message-time {
   text-align: left;
 }
+
+
+/* ChatMessage.css에 시스템 메시지 스타일 추가 */
+.message-wrapper.system {
+  /* 시스템 메시지는 중앙 정렬 */
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.message-content.system-content {
+  /* 프로필 이미지 공간 제거 */
+  margin-left: 0;
+}
+
+.message-bubble.system-bubble {
+  /* 시스템 메시지 말풍선 스타일 */
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.message-text.system-text {
+  /* 시스템 메시지 텍스트 스타일 */
+  color: #666;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* 시스템 메시지의 시간 표시 */
+.system .message-time {
+  color: #999;
+  font-size: 0.8em;
+  margin-top: 4px;
+  text-align: center;
+  display: block;
+}

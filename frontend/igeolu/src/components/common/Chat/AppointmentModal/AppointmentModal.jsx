@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
 import './AppointmentModal.css';
 
-const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
+const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage }) => {
   const [animationState, setAnimationState] = useState('entering');
   const [formData, setFormData] = useState({
     scheduledAt: '',
     title: '',
     memberId: roomInfo.userId,
     chatRoomId: roomInfo.roomId,
+    appointmentType: "LIVE",
   });
 
   const handleClose = useCallback(() => {
@@ -19,6 +20,13 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
       onClose();
     }, 300);
   }, [onClose]);
+
+  const handleTypeChange = (e) => {
+    setFormData({
+      ...formData,
+      appointmentType: e.target.checked ? "LIVE" : "COMMON"
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +41,18 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
       });
 
       console.log('Create appointment response:', response.data);
+
+      // 약속 생성 성공 시 시스템 메시지 전송
+      const appointmentDate = new Date(isoDate).toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      const systemMessage = `새로운 약속이 생성되었습니다.\n일시: ${appointmentDate}\n제목: ${formData.title}`;
+      await sendSystemMessage(systemMessage);
 
       const newAppointment = {
         appointmentId: response.data.appointmentId, // 이 부분이 제대로 들어오는지 확인
@@ -99,6 +119,16 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId }) => {
                 required
               />
             </div>
+            <div className='form-group checkbox-group'>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={formData.appointmentType === "LIVE"}
+                  onChange={handleTypeChange}
+                />
+                라이브 약속인가요?
+              </label>
+            </div>
             <div className='button-group'>
               <button type='submit'>생성</button>
               <button type='button' onClick={handleClose}>
@@ -121,6 +151,7 @@ AppointmentModal.propTypes = {
     userName: PropTypes.string.isRequired,
   }).isRequired,
   currentUserId: PropTypes.number.isRequired,
+  sendSystemMessage: PropTypes.func.isRequired,
 };
 
 export default AppointmentModal;

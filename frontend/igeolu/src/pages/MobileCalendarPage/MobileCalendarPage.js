@@ -59,12 +59,42 @@ function MobileCalendarPage() {
         scheduledAt: appointment.scheduledAt,
         memberName: appointment.memberName,
         title: appointment.title,
+        appointmentType: appointment.appointmentType,
       }));
       setGroupedAppointments(groupAppointmentsByDate(formattedAppointments));
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
     }
   }, [userId, groupAppointmentsByDate]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchAppointments();
+    }
+  }, [userId, fetchAppointments]);
+
+  // 오늘 날짜 또는 가장 가까운 날짜로 스크롤하는 효과
+  useEffect(() => {
+    if (Object.keys(groupedAppointments).length === 0) return;
+
+    const today = new Date();
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    // 모든 날짜 키를 가져와서 정렬
+    const dateKeys = Object.keys(groupedAppointments).sort();
+
+    // 오늘 날짜에 일정이 있는 경우
+    if (appointmentRefs.current[todayKey]) {
+      scrollToElement(appointmentRefs.current[todayKey]);
+      return;
+    }
+
+    // 오늘 이후의 가장 가까운 날짜 찾기
+    const futureDate = dateKeys.find((dateKey) => dateKey > todayKey);
+    if (futureDate && appointmentRefs.current[futureDate]) {
+      scrollToElement(appointmentRefs.current[futureDate]);
+    }
+  }, [groupedAppointments]);
 
   useEffect(() => {
     if (userId) {
@@ -200,7 +230,7 @@ function MobileCalendarPage() {
   return (
     <div className='mobile-calendar-page-container'>
       <div className='mobile-calendar-page'>
-      <MobileTopBar title="캘린더" />
+        <MobileTopBar title='캘린더' />
         <div className='mobile-calendar-page__content'>
           <div className='mobile-calendar-page__calendar'>
             <Calendar
@@ -237,7 +267,11 @@ function MobileCalendarPage() {
                         className='schedule-item-container'
                       >
                         <div
-                          className='schedule-item'
+                          className={`schedule-item ${
+                            appointment.appointmentType === 'LIVE'
+                              ? 'type-live'
+                              : 'type-common'
+                          }`}
                           onTouchStart={(e) =>
                             handleTouchStart(appointment.appointmentId, e)
                           }
@@ -268,21 +302,29 @@ function MobileCalendarPage() {
                           </div>
                         </div>
                         <div className='schedule-actions'>
-  <button
-    className='edit-btn'
-    onClick={() => handleEdit(appointment)}
-  >
-    <img src={editIcon} alt="수정" className="action-icon" />
-    <span>수정</span>
-  </button>
-  <button
-    className='delete-btn'
-    onClick={() => handleDeleteClick(appointment)}
-  >
-    <img src={deleteIcon} alt="삭제" className="action-icon" />
-    <span>삭제</span>
-  </button>
-</div>
+                          <button
+                            className='edit-btn'
+                            onClick={() => handleEdit(appointment)}
+                          >
+                            <img
+                              src={editIcon}
+                              alt='수정'
+                              className='action-icon'
+                            />
+                            <span>수정</span>
+                          </button>
+                          <button
+                            className='delete-btn'
+                            onClick={() => handleDeleteClick(appointment)}
+                          >
+                            <img
+                              src={deleteIcon}
+                              alt='삭제'
+                              className='action-icon'
+                            />
+                            <span>삭제</span>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

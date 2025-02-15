@@ -161,10 +161,16 @@
     transform: translateY(-50%);
     width: 3px;
     height: 70%;
-    background-color: #01ADFF;
     border-radius: 2px;
 }
 
+.schedule-item.type-live::before {
+    background-color: #FF6B6B;
+}
+
+.schedule-item.type-common::before {
+    background-color: #01ADFF;
+}
 .schedule-info {
     flex: 1;
     display: flex;
