@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
 import com.ssafy.igeolu.facade.chatmessage.dto.request.ChatMessagePostRequestDto;
+import com.ssafy.igeolu.facade.chatmessage.dto.response.ChatMessageWithMVCPostResponseDto;
 import com.ssafy.igeolu.facade.chatmessage.service.ChatMessageFacadeService;
 import com.ssafy.igeolu.facade.property.dto.request.DongcodesSearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.response.DongcodesSearchGetResponseDto;
@@ -40,7 +41,11 @@ public class StressController {
 	}
 
 	// WebFlux 스타일
-	@PostMapping("/api/pub/chats/messages")
+	@Operation(summary = "채팅 메시지 전송 With WebFlux(부하 테스트 비교용)")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@PostMapping("/api/pub/chats/messages/flux")
 	public Mono<ResponseEntity<Void>> receiveMessage(@RequestBody ChatMessagePostRequestDto request) {
 		// DB에 메시지 저장
 		return chatMessageFacadeService.saveChatMessage(request)
@@ -50,5 +55,21 @@ public class StressController {
 				// HTTP 200 OK 반환
 				return Mono.just(ResponseEntity.ok().build());
 			});
+	}
+
+	// WebMVC 스타일
+	@Operation(summary = "채팅 메시지 전송 With WebMVC(부하 테스트 비교용)")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@PostMapping("/api/pub/chats/messages/mvc")
+	public ResponseEntity<Void> receiveMessageWithMVC(@RequestBody ChatMessagePostRequestDto request) {
+		// DB에 메시지 저장
+		ChatMessageWithMVCPostResponseDto savedMessage = chatMessageFacadeService.saveChatMessageWithMVC(request);
+
+		// 채팅방 구독자들에게 메시지 전송
+		stompTemplate.convertAndSend("/api/sub/chats/" + request.getRoomId(), savedMessage);
+
+		return ResponseEntity.ok().build();
 	}
 }

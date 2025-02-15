@@ -3,10 +3,12 @@ package com.ssafy.igeolu.facade.chatmessage.service;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessage;
+import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessageWithMVC;
 import com.ssafy.igeolu.domain.chatmessage.service.ChatMessageService;
 import com.ssafy.igeolu.facade.chatmessage.dto.request.ChatMessagePostRequestDto;
 import com.ssafy.igeolu.facade.chatmessage.dto.response.ChatMessageGetResponseDto;
 import com.ssafy.igeolu.facade.chatmessage.dto.response.ChatMessagePostResponseDto;
+import com.ssafy.igeolu.facade.chatmessage.dto.response.ChatMessageWithMVCPostResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -16,43 +18,66 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 
-    private final ChatMessageService chatMessageService;
+	private final ChatMessageService chatMessageService;
 
-    @Override
-    public Flux<ChatMessageGetResponseDto> getChatMessageList(Integer roomId) {
-        Flux<ChatMessage> chatMessages = chatMessageService.getChatMessageList(roomId);
+	@Override
+	public Flux<ChatMessageGetResponseDto> getChatMessageList(Integer roomId) {
+		Flux<ChatMessage> chatMessages = chatMessageService.getChatMessageList(roomId);
 
-        return chatMessages.map(o -> ChatMessageGetResponseDto.builder()
-                .writerId(o.getUserId())
-                .senderType(o.getSenderType())
-                .content(o.getContent())
-                .createdAt(o.getCreatedAt())
-                .build());
-    }
+		return chatMessages.map(o -> ChatMessageGetResponseDto.builder()
+			.writerId(o.getUserId())
+			.senderType(o.getSenderType())
+			.content(o.getContent())
+			.createdAt(o.getCreatedAt())
+			.build());
+	}
 
-    @Override
-    public Mono<ChatMessagePostResponseDto> saveChatMessage(ChatMessagePostRequestDto request) {
+	@Override
+	public Mono<ChatMessagePostResponseDto> saveChatMessage(ChatMessagePostRequestDto request) {
 
-        ChatMessage chatMessage = ChatMessage.builder()
-                .roomId(request.getRoomId())
-                .userId(request.getWriterId())
-                .content(request.getContent())
-                .senderType(request.getSenderType())
-                .build();
+		ChatMessage chatMessage = ChatMessage.builder()
+			.roomId(request.getRoomId())
+			.userId(request.getWriterId())
+			.content(request.getContent())
+			.senderType(request.getSenderType())
+			.build();
 
-        return chatMessageService.saveChatMessage(chatMessage)
-                .map(m -> ChatMessagePostResponseDto.builder()
-                        .messageId(m.getId())
-                        .writerId(m.getUserId())
-                        .content(m.getContent())
-                        .senderType(m.getSenderType())
-                        .createdAt(m.getCreatedAt())
-                        .build());
-    }
+		return chatMessageService.saveChatMessage(chatMessage)
+			.map(m -> ChatMessagePostResponseDto.builder()
+				.messageId(m.getId())
+				.writerId(m.getUserId())
+				.content(m.getContent())
+				.senderType(m.getSenderType())
+				.createdAt(m.getCreatedAt())
+				.build());
+	}
 
-    @Override
-    public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
-        return chatMessageService.markMessagesAsRead(userId, roomId);
-    }
+	@Override
+	public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
+		return chatMessageService.markMessagesAsRead(userId, roomId);
+	}
 
+	// 부하 테스트용
+	@Override
+	public ChatMessageWithMVCPostResponseDto saveChatMessageWithMVC(ChatMessagePostRequestDto request) {
+
+		ChatMessageWithMVC chatMessageWithMVC = ChatMessageWithMVC.builder()
+			.roomId(request.getRoomId())
+			.userId(request.getWriterId())
+			.content(request.getContent())
+			.senderType(request.getSenderType())
+			.build();
+
+		// DB에 저장
+		ChatMessageWithMVC saved = chatMessageService.saveChatMessageWithMVC(chatMessageWithMVC);
+
+		// Response DTO 생성
+		return ChatMessageWithMVCPostResponseDto.builder()
+			.messageId(saved.getId())
+			.writerId(saved.getUserId())
+			.content(saved.getContent())
+			.senderType(saved.getSenderType())
+			.createdAt(saved.getCreatedAt())
+			.build();
+	}
 }
