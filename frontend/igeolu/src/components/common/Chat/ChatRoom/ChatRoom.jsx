@@ -213,6 +213,36 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId,
     onBack();
   };
 
+  /* 📌 시스템 메세지 전송 함수 */
+  const sendSystemMessage = async (content) => {
+    const messageData = {
+      roomId: room.roomId,
+      userId: currentUserId,
+      content: content,
+      senderType: "SYSTEM",
+    };
+  
+    try {
+      if (!chatSocketRef.current?.isConnected) {
+        console.log('WebSocket 재연결 시도');
+        await chatSocketRef.current?.connect();
+      }
+  
+      const sent = chatSocketRef.current?.sendMessage(messageData);
+      if (sent) {
+        console.log('시스템 메시지 전송 성공');
+        if (activeRoomId === room.roomId && isChatRoomOpen) {
+          await handleMarkAsRead();
+        }
+      } else {
+        setError('메시지 전송에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('WebSocket 메시지 전송 중 오류 발생:', error);
+      setError('메시지 전송에 실패했습니다.');
+    }
+  };
+
   return (
     <div className={`chat-room ${isMobile ? 'mobile' : ''}`}>
       {/* 📌 채팅방 헤더 */}
@@ -305,6 +335,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId,
           currentUserId={currentUserId}
           onClose={() => setIsExtrasOpen(false)}
           onAppointmentCreate
+          sendSystemMessage={sendSystemMessage}
         />
       </div>
     </div>

@@ -7,7 +7,7 @@ import reservationIcon from '../../../../assets/images/reservationButton.png';
 import AppointmentModal from '../AppointmentModal/AppointmentModal';
 import './ChatExtras.css';
 
-const ChatExtras = ({ isOpen, room, currentUserId, onClose }) => {
+const ChatExtras = ({ isOpen, room, currentUserId, onClose, sendSystemMessage }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -65,6 +65,7 @@ useEffect(() => {
           onClose={() => setIsModalOpen(false)}
           roomInfo={room}
           currentUserId={currentUserId}
+          sendSystemMessage={sendSystemMessage}
         />
       )}
     </>
@@ -76,6 +77,7 @@ ChatExtras.propTypes = {
   room: PropTypes.object.isRequired,
   currentUserId: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
+  sendSystemMessage: PropTypes.func.isRequired,
 };
 
 export default ChatExtras;
