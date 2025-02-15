@@ -28,9 +28,9 @@ instance.interceptors.request.use(
 // 응답 인터셉터
 instance.interceptors.response.use(
   (response) => {
-    // console.log('✅ [Response]');
-    // console.log('⬅️ Status:', response.status);
-    // console.log('⬅️ Data:', response.data);
+    console.log('✅ [Response]');
+    console.log('⬅️ Status:', response.status);
+    console.log('⬅️ Data:', response.data);
     return response.data;
   },
   (error) => {

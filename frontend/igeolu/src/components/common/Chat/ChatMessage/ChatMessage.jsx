@@ -12,11 +12,14 @@ const ChatMessage = ({
     profileUrl: ''
   }
 }) => {
+  const { content, createdAt, senderType } = message;
   const messageTime = format(new Date(message.createdAt), 'HH:mm');
 
+  const isSystemMessage = senderType === "SYSTEM";
+
   return (
-    <div className={`message-wrapper ${isCurrentUser ? 'sent' : 'received'}`}>
-      {!isCurrentUser && (
+   <div className={`message-wrapper ${isCurrentUser ? 'sent' : 'received'} ${isSystemMessage ? 'system' : ''}`}>
+      {!isCurrentUser && !isSystemMessage && (
         <div className="message-profile">
           {userProfile?.profileUrl ? (
             <img 
@@ -35,9 +38,9 @@ const ChatMessage = ({
           )}
         </div>
       )}
-      <div className="message-content">
-        <div className="message-bubble">
-          <p className="message-text">{message.content}</p>
+      <div className={`message-content ${isSystemMessage ? 'system-content' : ''}`}>
+        <div className={`message-bubble ${isSystemMessage ? 'system-bubble' : ''}`}>
+          <p className={`message-text ${isSystemMessage ? 'system-text' : ''}`}>{content}</p>
         </div>
         <span className="message-time">{messageTime}</span>
       </div>
@@ -50,7 +53,8 @@ ChatMessage.propTypes = {
   message: PropTypes.shape({
     userId: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired
+    createdAt: PropTypes.string.isRequired,
+    senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired
   }).isRequired,
   isCurrentUser: PropTypes.bool.isRequired,
   userProfile: PropTypes.shape({
