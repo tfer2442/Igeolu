@@ -46,7 +46,6 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Recording;
-import io.openvidu.java.client.RecordingLayout;
 import io.openvidu.java.client.RecordingMode;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
@@ -179,8 +178,6 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 		// 빌더를 통해 녹화 속성 객체 생성
 		RecordingProperties properties = new RecordingProperties.Builder()
 			.name(livePropertyId.toString())
-			.outputMode(Recording.OutputMode.COMPOSED)
-			.recordingLayout(RecordingLayout.CUSTOM)
 			.build();
 
 		try {
@@ -291,7 +288,6 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 			RecordingProperties recordingProperties = new RecordingProperties.Builder()
 				.outputMode(Recording.OutputMode.COMPOSED)
-				.recordingLayout(RecordingLayout.CUSTOM)
 				.frameRate(24)
 				.build();
 
@@ -312,7 +308,6 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 			ConnectionProperties connectionProps = new ConnectionProperties.Builder()
 				.type(ConnectionType.WEBRTC)
 				.role(OpenViduRole.MODERATOR) // host 설정
-				.data("publisher")
 				.build();
 
 			// 5. 세션에 연결 생성 후 토큰 발급
