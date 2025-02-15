@@ -72,16 +72,19 @@ export const detect = async (source, model, canvasRef) => {
 
     renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [xRatio, yRatio]);
 
-    const predictions = Array.from(scores_data).map((score, i) => ({
-      class: labels[classes_data[i]],
-      confidence: score,
-      bbox: [
-        boxes_data[i * 4] * xRatio,
-        boxes_data[i * 4 + 1] * yRatio,
-        boxes_data[i * 4 + 2] * xRatio,
-        boxes_data[i * 4 + 3] * yRatio
-      ]
-    }));
+    const SCORE_THRESHOLD = 0.4; // 30% threshold
+    const predictions = Array.from(scores_data)
+      .map((score, i) => ({
+        class: labels[classes_data[i]],
+        confidence: score,
+        bbox: [
+          boxes_data[i * 4] * xRatio,
+          boxes_data[i * 4 + 1] * yRatio,
+          boxes_data[i * 4 + 2] * xRatio,
+          boxes_data[i * 4 + 3] * yRatio
+        ]
+      }))
+      .filter(pred => pred.confidence >= SCORE_THRESHOLD); // 30% 미만 필터링
 
     return predictions;
   } catch (error) {

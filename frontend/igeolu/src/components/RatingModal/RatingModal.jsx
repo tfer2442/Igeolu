@@ -26,22 +26,22 @@ const RatingModal = ({ isOpen, onClose, sessionId }) => {
             stars.push(
                 <span
                     key={i}
-                    className="star-container"
+                    className="rating-modal__star-container"
                 >
                     <span
-                        className="star-half-clickable left"
+                        className="rating-modal__star-half-clickable rating-modal__star-half-clickable--left"
                         onClick={() => handleStarClick(halfValue)}
                     />
                     <span
-                        className="star-half-clickable right"
+                        className="rating-modal__star-half-clickable rating-modal__star-half-clickable--right"
                         onClick={() => handleStarClick(value)}
                     />
                     {filled ? (
-                        <FaStar className="star filled" />
+                        <FaStar className="rating-modal__star" />
                     ) : halfFilled ? (
-                        <FaStarHalfAlt className="star half" />
+                        <FaStarHalfAlt className="rating-modal__star" />
                     ) : (
-                        <FaRegStar className="star empty" />
+                        <FaRegStar className="rating-modal__star rating-modal__star--empty" />
                     )}
                 </span>
             );
@@ -95,24 +95,24 @@ const RatingModal = ({ isOpen, onClose, sessionId }) => {
 
     return (
         <div className="rating-modal-overlay">
-            <div className="rating-modal">
-                <h2>라이브 평가하기</h2>
-                <p>중개사님의 라이브는 어떠셨나요?</p>
-                <div className="stars-container">
+            <div className="rating-modal__container">
+                <h2 className="rating-modal__title">라이브 평가하기</h2>
+                <p className="rating-modal__subtitle">중개사님의 라이브는 어떠셨나요?</p>
+                <div className="rating-modal__stars-container">
                     {renderStars()}
                 </div>
-                <p className="rating-value">{rating}점</p>
-                <div className="modal-buttons">
+                <p className="rating-modal__rating-value">{rating}점</p>
+                <div className="rating-modal__buttons">
                     <button 
-                        onClick={handleSubmit} 
-                        className="submit-button"
+                        className="rating-modal__submit-button"
+                        onClick={handleSubmit}
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? '제출 중...' : '평가 완료'}
                     </button>
                     <button 
-                        onClick={onClose} 
-                        className="cancel-button"
+                        className="rating-modal__cancel-button"
+                        onClick={onClose}
                         disabled={isSubmitting}
                     >
                         취소

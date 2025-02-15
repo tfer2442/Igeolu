@@ -3,11 +3,20 @@ import PropTypes from 'prop-types';
 import './Memo2.css';
 import axios from 'axios';
 
-function Memo2({ sessionId }) {
+function Memo2({ sessionId, selectedMemoText, setSelectedMemoText }) {
     const [properties, setProperties] = useState([]);
     const [selectedProperty, setSelectedProperty] = useState(null);
-    const [memoText, setMemoText] = useState('');
     const [memosByProperty, setMemosByProperty] = useState({});
+
+    // selectedMemoText가 변경될 때마다 메모 텍스트 업데이트
+    useEffect(() => {
+        if (selectedMemoText !== undefined) {
+            setMemosByProperty(prev => ({
+                ...prev,
+                [selectedProperty?.livePropertyId]: selectedMemoText
+            }));
+        }
+    }, [selectedMemoText, selectedProperty]);
 
     // 매물 목록 불러오기
     useEffect(() => {
@@ -37,14 +46,9 @@ function Memo2({ sessionId }) {
             return;
         }
 
-        setMemosByProperty(prev => ({
-            ...prev,
-            [selectedProperty.livePropertyId]: memoText
-        }));
-
         try {
             await axios.put(`/api/live-properties/${selectedProperty.livePropertyId}/memo`, {
-                memo: memoText
+                memo: selectedMemoText
             }, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,8 +67,7 @@ function Memo2({ sessionId }) {
         const selectedId = e.target.value;
         const property = properties.find(p => p.livePropertyId === parseInt(selectedId));
         setSelectedProperty(property);
-        
-        setMemoText(memosByProperty[selectedId] || '');
+        setSelectedMemoText(memosByProperty[selectedId] || '');
     };
 
     return (
@@ -77,15 +80,15 @@ function Memo2({ sessionId }) {
                 >
                     {properties.map(property => (
                         <option key={property.livePropertyId} value={property.livePropertyId}>
-                            {property.deposit?.toLocaleString()}/{property.monthlyRent?.toLocaleString()}
+                            {property.address || '주소 없음'}
                         </option>
                     ))}
                 </select>
             </div>
             <div className='memo-content'>
                 <textarea
-                    value={memoText}
-                    onChange={(e) => setMemoText(e.target.value)}
+                    value={selectedMemoText || ''}
+                    onChange={(e) => setSelectedMemoText(e.target.value)}
                     placeholder="메모를 입력하세요"
                     className='memo-textarea'
                 />
@@ -100,7 +103,9 @@ function Memo2({ sessionId }) {
 }
 
 Memo2.propTypes = {
-    sessionId: PropTypes.string.isRequired
+    sessionId: PropTypes.string.isRequired,
+    selectedMemoText: PropTypes.string,
+    setSelectedMemoText: PropTypes.func.isRequired
 };
 
 export default Memo2;

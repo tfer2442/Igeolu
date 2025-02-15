@@ -13,6 +13,7 @@ export const renderBoxes = (canvasRef, boxes_data, scores_data, classes_data, ra
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // clean canvas
 
   const colors = new Colors();
+  const SCORE_THRESHOLD = 0.4; 
 
   // font configs
   const font = `${Math.max(
@@ -23,7 +24,9 @@ export const renderBoxes = (canvasRef, boxes_data, scores_data, classes_data, ra
   ctx.textBaseline = "top";
 
   for (let i = 0; i < scores_data.length; ++i) {
-    // filter based on class threshold
+    // 30% 미만인 객체는 건너뛰기
+    if (scores_data[i] < SCORE_THRESHOLD) continue;
+
     const klass = labels[classes_data[i]];
     const color = colors.get(classes_data[i]);
     const score = (scores_data[i] * 100).toFixed(1);

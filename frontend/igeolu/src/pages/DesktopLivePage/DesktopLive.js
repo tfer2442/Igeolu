@@ -42,6 +42,8 @@ function DesktopLive() {
   const detectionCanvasRef = useRef(null);
   const [model, setModel] = useState(null);
   const [displayedQuestions, setDisplayedQuestions] = useState(new Set());
+  const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
+  const [selectedMemoText, setSelectedMemoText] = useState('');
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -342,6 +344,11 @@ function DesktopLive() {
     if (subscriberVideoRef.current && model && detectionCanvasRef.current) {
       const videoElement = subscriberVideoRef.current;
       
+      // 캔버스 visibility 제어
+      if (detectionCanvasRef.current) {
+        detectionCanvasRef.current.style.visibility = showDetectionOverlay ? 'visible' : 'hidden';
+      }
+      
       const detectFrame = async () => {
         if (!videoElement.paused && !videoElement.ended) {
           try {
@@ -352,27 +359,23 @@ function DesktopLive() {
             );
             
             if (predictions && predictions.length > 0) {
-              // predictions에서 필요한 데이터 추출
-              const boxes_data = predictions.flatMap(pred => pred.bbox);
-              const scores_data = predictions.map(pred => pred.confidence);
-              const classes_data = predictions.map(pred => labels.indexOf(pred.class));
-              
-              // 비디오와 캔버스 크기에 따른 비율 계산
-              const xRatio = videoElement.videoWidth / detectionCanvasRef.current.width;
-              const yRatio = videoElement.videoHeight / detectionCanvasRef.current.height;
-              
-              // renderBoxes 함수를 사용하여 감지된 객체를 캔버스에 그립니다
-              renderBoxes(
-                detectionCanvasRef.current,
-                boxes_data,
-                scores_data,
-                classes_data,
-                [xRatio, yRatio]
-              );
-              
-              
+              if (showDetectionOverlay) {
+                const boxes_data = predictions.flatMap(pred => pred.bbox);
+                const scores_data = predictions.map(pred => pred.confidence);
+                const classes_data = predictions.map(pred => labels.indexOf(pred.class));
+                
+                const xRatio = videoElement.videoWidth / detectionCanvasRef.current.width;
+                const yRatio = videoElement.videoHeight / detectionCanvasRef.current.height;
+                
+                renderBoxes(
+                  detectionCanvasRef.current,
+                  boxes_data,
+                  scores_data,
+                  classes_data,
+                  [xRatio, yRatio]
+                );
+              }
 
-              // objectQuestions 사용하도록 수정
               predictions.forEach(pred => {
                 const detectedClass = pred.class;
                 const questions = objectQuestions[detectedClass];
@@ -403,7 +406,16 @@ function DesktopLive() {
         });
       }
     }
-  }, [model, subscriberVideoRef.current, detectionCanvasRef.current]);
+  }, [model, subscriberVideoRef.current, detectionCanvasRef.current, showDetectionOverlay]);
+
+  // 질문 클릭 핸들러 추가
+  const handleQuestionClick = (question) => {
+    setSelectedMemoText((prevText) => {
+      // 이전 텍스트가 있으면 줄바꿈 추가
+      const prefix = prevText ? prevText + '\n' : '';
+      return prefix + question;
+    });
+  };
 
   return (
     <div className="desktop-live-page">
@@ -426,6 +438,16 @@ function DesktopLive() {
                     ref={detectionCanvasRef}
                     className="detection-canvas"
                   />
+                  <button 
+                    className="overlay-toggle-button"
+                    onClick={() => {
+                      console.log('Toggle button clicked. Current state:', showDetectionOverlay);
+                      setShowDetectionOverlay(!showDetectionOverlay);
+                      console.log('New state will be:', !showDetectionOverlay);
+                    }}
+                  >
+                    {showDetectionOverlay ? '객체 인식 끄기' : '객체 인식 켜기'}
+                  </button>
                 </div>
               </div>
             ))}
@@ -435,7 +457,12 @@ function DesktopLive() {
               <p>AI 체크리스트</p>
               <div className="ai-questions-list">
                 {Array.from(displayedQuestions).map((question, index) => (
-                  <div key={index} className="ai-question-item">
+                  <div 
+                    key={index} 
+                    className="ai-question-item"
+                    onClick={() => handleQuestionClick(question)}
+                    style={{ cursor: 'pointer' }}  // 클릭 가능함을 표시
+                  >
                     {question}
                   </div>
                 ))}
@@ -450,12 +477,12 @@ function DesktopLive() {
                     <div className="property-left-content">
                       <span className="property-number">{index + 1}</span>
                       <div className="property-info">
+                        <p className="property-address">
+                          {property.address || "주소 없음"}
+                        </p>
                         <p className="property-price">
                           {property.deposit?.toLocaleString()} / 
                           {property.monthlyRent?.toLocaleString()}
-                        </p>
-                        <p className="property-description">
-                          {property.description || "설명 없음"}
                         </p>
                       </div>
                     </div>
@@ -475,7 +502,11 @@ function DesktopLive() {
         </div>
         <div className='desktop-live-page__right-content'>
           <div className='desktop-live-page__right-content__memo'>
-            <Memo2 sessionId={sessionId} />
+            <Memo2 
+              sessionId={sessionId} 
+              selectedMemoText={selectedMemoText}
+              setSelectedMemoText={setSelectedMemoText}
+            />
           </div>
           <div className='desktop-live-page__right-content__my-cam'>
             {publisher && (
