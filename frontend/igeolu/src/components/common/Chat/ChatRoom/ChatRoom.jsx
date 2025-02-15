@@ -157,6 +157,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId, activeRoomId,
       roomId: room.roomId,
       userId: currentUserId,
       content: trimmedMessage,
+      senderType: "USER",
     };
 
     try {

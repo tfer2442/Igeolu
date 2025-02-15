@@ -39,6 +39,10 @@ import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage';
 import NotificationProvider from './components/NotificationProvider/NotificationProvider';
 
+// ------------- 개발용 유저 변경 버튼 ------------------
+import DevUserToggle from './components/DEVUSERTOGGLE';
+// ------------- 개발용 유저 변경 버튼 ------------------
+
 function App() {
   // === 2. State Management ===
   // Chat States
@@ -64,16 +68,20 @@ function App() {
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
 
   // === 4. User Authentication (Development Mode) ===
-  useEffect(() => {
-    // const devUser = { userId: 33, role: 'realtor' }; // 오승우
-    const devUser = { userId: 35, role: 'member' }; // 이진형
-    setUser(devUser);
-    localStorage.setItem('user', JSON.stringify(devUser));
-    setIsUserInitialized(true);
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    const devUser = savedUser ? JSON.parse(savedUser) : { userId: 35, role: 'member' }; // 기본값으로 이진형
+    setUser(devUser);
+    setIsUserInitialized(true);
+  
     setIsAppMounted(true);
     return () => setIsAppMounted(false);
   }, []);
+
+  const handleDevUserChange = (newUser) => {
+    setUser(newUser);
+  };
 
   const currentUserId = user?.userId || null;
 
@@ -306,6 +314,8 @@ function App() {
           setIsNotificationInitialized(true);
         }}
       >
+        {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
+        <DevUserToggle onUserChange={handleDevUserChange} /> 
         <Routes>
           {/* Desktop Routes */}
           <Route path='/' element={<DesktopHome />} />

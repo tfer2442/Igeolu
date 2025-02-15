@@ -84,15 +84,15 @@ class ChatWebSocket extends BaseWebSocket {
       this.subscription = this.stompClient.subscribe(
         subscriptionPath,
         (message) => {
-          // console.log('구독으로 메시지 수신:', {
-          //   messageData: message,
-          //   subscription: this.subscription,
-          //   isConnected: this.stompClient.connected
-          // });
+          console.log('구독으로 메시지 수신:', {
+            messageData: message,
+            subscription: this.subscription,
+            isConnected: this.stompClient.connected
+          });
 
           try {
             const parsedMessage = JSON.parse(message.body);
-            // console.log('파싱된 메시지:', parsedMessage);
+            console.log('파싱된 메시지:', parsedMessage);
             this.onMessageReceived(parsedMessage, this.isActive);
           } catch (error) {
             console.error('메시지 파싱 실패:', error);
@@ -128,6 +128,7 @@ class ChatWebSocket extends BaseWebSocket {
           roomId: this.roomId,
           writerId: messageData.userId,
           content: messageData.content,
+          senderType: messageData.senderType,
         }),
       });
       return true;
