@@ -114,10 +114,6 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		User user = userService.getUserById(userId);
 		List<Property> properties = propertyService.getPropertyList(user);
 
-		if (properties.isEmpty()) {
-			throw new CustomException(ErrorCode.PROPERTY_NOT_FOUND);
-		}
-
 		return properties.stream()
 			.map(PropertyMapper::toDto)
 			.collect(Collectors.toList());
