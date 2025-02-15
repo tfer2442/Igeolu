@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import com.ssafy.igeolu.domain.dongcodes.entity.Dongcodes;
 import com.ssafy.igeolu.domain.dongcodes.entity.EsSigungu;
 import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
+import com.ssafy.igeolu.facade.property.dto.response.DongcodesSearchGetResponseDto;
 
 public interface DongcodesService {
 
@@ -20,4 +21,6 @@ public interface DongcodesService {
 	List<DongResponseDto> getDongList(String sidoName, String gugunName);
 
 	List<EsSigungu> searchSigungu(String keyword, Pageable pageable);
+	
+	List<DongcodesSearchGetResponseDto> searchDongcodes(String keyword, Pageable pageable);
 }
