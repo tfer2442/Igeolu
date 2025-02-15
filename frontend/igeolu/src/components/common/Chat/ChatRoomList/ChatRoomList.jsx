@@ -6,9 +6,9 @@ import { formatChatTime } from '../../../../utils/dateFormat';
 import defaultProfile from '../../../../assets/images/defaultProfileImageIMSI2.png';
 
 const ChatRoomList = ({ rooms, onSelectRoom, isMobile = false, defaultProfileImage = defaultProfile }) => {
-  useEffect(() => {
-    console.log('rooms 데이터 확인:', rooms);
-  }, [rooms]);
+  // useEffect(() => {
+  //   console.log('rooms 데이터 확인:', rooms);
+  // }, [rooms]);
 
   const noun = isMobile ? " 세입자님" : " 중개인님"
 

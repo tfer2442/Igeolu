@@ -15,7 +15,8 @@ import MobileLoadingSpinner from '../../../LoadingSpinner/MobileLoadingSpinner';
  * - WebSocket을 통해 실시간 업데이트 지원
  * - 메시지 입력 및 전송 기능 포함
  */
-const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
+const ChatRoom = ({ room, onBack, isMobile, currentUserId, activeRoomId,
+  onRoomUpdate, isChatRoomOpen }) => {
   // currentUserId props
   /* 📌 상태 관리 */
   const [messages, setMessages] = useState([]); // 채팅 메시지 목록
@@ -45,46 +46,56 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
     }, 50);
   }, []);
 
-  /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 */
-  // 1. useCallback으로 함수들을 메모이제이션
-  const handleNewMessage = useCallback(
-    async (message) => {
-      setMessages((prev) => {
-        const isDuplicate = prev.some(
-          (m) =>
-            m.content === message.content &&
-            m.writerId === message.writerId &&
-            m.createdAt === message.createdAt
-        );
-
-        if (isDuplicate) return prev;
-        return [...prev, message];
+  /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 및 조건부 읽음 처리 */
+  const handleNewMessage = useCallback(async (message) => {
+    setMessages((prev) => {
+      const isDuplicate = prev.some(
+        (m) =>
+          m.content === message.content &&
+          m.writerId === message.writerId &&
+          m.createdAt === message.createdAt
+      );
+  
+      if (isDuplicate) return prev;
+      return [...prev, message];
+    });
+  
+    // 채팅방이 실제로 열려있고, 현재 활성화된 방일 때만 읽음 처리
+    console.log('------------', isChatRoomOpen)
+    if (!isChatRoomOpen || !activeRoomId || activeRoomId !== room.roomId) {
+      console.log('채팅방이 비활성화 상태입니다:', {
+        isChatRoomOpen,
+        activeRoomId,
+        currentRoomId: room.roomId
       });
+      return;
+    }
+  
+    try {
+      await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+      console.log('메시지 읽음 처리 완료 (수신)');
+      await onRoomUpdate(room.roomId);
+    } catch (error) {
+      console.error('메시지 읽음 처리 실패:', error);
+    }
+  
+    scrollToBottom();
+  }, [room.roomId, currentUserId, activeRoomId, isChatRoomOpen, onRoomUpdate]);
 
-      // 새 메시지 수신 시 읽음 처리 추가
-      try {
-        await chatApi.markMessagesAsRead(room.roomId, currentUserId);
-      } catch (error) {
-        console.error('메시지 읽음 처리 실패:', error);
-      }
 
-      scrollToBottom();
-    },
-    [room.roomId, currentUserId]
-  ); // 의존성 배열에 필요한 값들 추가
-
-  /* 📌 기존 메시지 불러오기 */
+  /* 📌 기존 메시지 불러오기 및 읽음 처리 */
   const fetchMessages = useCallback(async () => {
     try {
       const response = await chatApi.getChatMessages(room.roomId);
       setMessages(response || []);
 
-      // 2. 메시지를 성공적으로 불러온 후 읽음 처리를 합니다
+      // 채팅방 입장 시 읽음 처리
       try {
         await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+        // 읽음 처리 후 채팅방 목록 업데이트
+        await onRoomUpdate(room.roomId);
+        console.log('채팅방 입장 시 메시지 읽음 처리 완료');
       } catch (markError) {
-        // 읽음 처리 실패는 사용자 경험에 크게 영향을 주지 않으므로
-        // 조용히 에러 로깅만 합니다
         console.error('메시지 읽음 처리 실패:', markError);
       }
 
@@ -94,10 +105,16 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [room.roomId, scrollToBottom]);
+  }, [room.roomId, currentUserId, scrollToBottom, onRoomUpdate]);
 
-  /* 📌 채팅방 초기화 및 WebSocket 연결 */
-  useEffect(() => {
+   /* 📌 채팅방 초기화 및 WebSocket 연결 */
+   useEffect(() => {
+    console.log('채팅방 컴포넌트 마운트/업데이트:', {
+      roomId: room.roomId,
+      activeRoomId,
+      isActive: activeRoomId === room.roomId
+    });
+
     let isSubscribed = true;
     const wsRef = chatSocketRef.current;
 
@@ -125,14 +142,17 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
 
     initializeChat();
 
-    // cleanup 함수
     return () => {
+      console.log('채팅방 컴포넌트 언마운트:', {
+        roomId: room.roomId,
+        activeRoomId
+      });
       isSubscribed = false;
       if (wsRef) {
         wsRef.disconnect();
       }
     };
-  }, [room.roomId]); // room.roomId만 의존성으로 사용
+  }, [room.roomId, activeRoomId]);
 
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {
@@ -154,13 +174,16 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
       const sent = chatSocketRef.current?.sendMessage(messageData);
       if (sent) {
         console.log('메시지 전송 성공');
-        setNewMessage(''); // 입력창만 비우기
-
-        // 메시지 전송 성공 시 읽음 처리 추가
-        try {
-          await chatApi.markMessagesAsRead(room.roomId, currentUserId);
-        } catch (markError) {
-          console.error('메시지 읽음 처리 실패:', markError);
+        setNewMessage('');
+        
+        // 현재 활성화된 채팅방인 경우에만 읽음 처리
+        if (activeRoomId === room.roomId) {
+          try {
+            await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+            console.log('메시지 읽음 처리 완료 (발신)');
+          } catch (markError) {
+            console.error('메시지 읽음 처리 실패:', markError);
+          }
         }
       } else {
         setError('메시지 전송에 실패했습니다.');
@@ -291,6 +314,8 @@ ChatRoom.propTypes = {
   onBack: PropTypes.func.isRequired, // 뒤로 가기 버튼 핸들러
   isMobile: PropTypes.bool, // 모바일 여부
   currentUserId: PropTypes.number.isRequired, // PropTypes 추가
+  activeRoomId: PropTypes.number,
+  onRoomUpdate: PropTypes.func.isRequired,
 };
 
 export default ChatRoom;

@@ -53,6 +53,8 @@ function App() {
   const [isAppMounted, setIsAppMounted] = useState(false);
   const [isNotificationInitialized, setIsNotificationInitialized] =
     useState(false);
+  const [activeRoomId, setActiveRoomId] = useState(null);
+  const [isChatRoomOpen, setIsChatRoomOpen] = useState(false);
 
   // === 3. Route Management ===
   const location = useLocation();
@@ -63,8 +65,8 @@ function App() {
 
   // === 4. User Authentication (Development Mode) ===
   useEffect(() => {
-    const devUser = { userId: 33, role: 'realtor' }; // 오승우
-    // const devUser = { userId: 35, role: 'member' }; // 이진형
+    // const devUser = { userId: 33, role: 'realtor' }; // 오승우
+    const devUser = { userId: 35, role: 'member' }; // 이진형
     setUser(devUser);
     localStorage.setItem('user', JSON.stringify(devUser));
     setIsUserInitialized(true);
@@ -128,7 +130,20 @@ function App() {
   // const currentUserId = user?.userId || null;
 
   // === 5. Chat Room Management ===
-  // WebSocket 연결 및 채팅방 업데이트 관리
+
+  const updateChatRoomInfo = useCallback(
+    async (roomId) => {
+      try {
+        // 전체 채팅방 목록을 새로 불러옵니다
+        const updatedRooms = await ChatApi.getChatRooms(user.userId);
+        setChatRooms(updatedRooms);
+      } catch (error) {
+        console.error('채팅방 정보 업데이트 실패:', error);
+      }
+    },
+    [user?.userId]
+  );
+
   const handleRoomsUpdate = useCallback((updatedRooms) => {
     setChatRooms((prev) => {
       const mergedRooms = [...prev];
@@ -213,19 +228,28 @@ function App() {
 
   // === 6. Event Handlers ===
   const handleToggleChat = () => setIsOpen(!isOpen);
-  const handleSelectRoom = (room) => setSelectedRoom(room);
-  const handleBack = () => setSelectedRoom(null);
-  const handleClose = async () => {
-    if (selectedRoom) {
-      try {
-        await ChatApi.markMessagesAsRead(selectedRoom.roomId, currentUserId);
-      } catch (error) {
-        console.error('메시지 읽음 처리 실패:', error);
-      }
-    }
+  const handleSelectRoom = (room) => {
+    setSelectedRoom(room);
+    setActiveRoomId(room.roomId);
+    setIsChatRoomOpen(true);  // 채팅방 열기
+  };
+  const handleBack = () => {
+    console.log('----------너 동작하니?')
+    setSelectedRoom(null);
+    setActiveRoomId(null);
+    setIsChatRoomOpen(false);  // 채팅방 닫기
+  };
+
+  const handleClose = () => {
     setIsOpen(false);
     setSelectedRoom(null);
+    setActiveRoomId(null);
+    setIsChatRoomOpen(false);  // 채팅방 닫기
   };
+
+  useEffect(() => {
+    console.log('activeRoomId 변경:', activeRoomId);
+  }, [activeRoomId]);
 
   // 로그아웃 핸들러에서 WebSocket 연결 해제
   const handleLogout = () => {
@@ -261,6 +285,9 @@ function App() {
                 room={selectedRoom}
                 onBack={handleBack}
                 currentUserId={user?.userId}
+                activeRoomId={activeRoomId}
+                onRoomUpdate={updateChatRoomInfo}
+                isChatRoomOpen={isChatRoomOpen}
               />
             )}
           </SlideLayout>
@@ -275,7 +302,7 @@ function App() {
       <NotificationProvider
         user={user}
         onInitialized={() => {
-          console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
+          // console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
           setIsNotificationInitialized(true);
         }}
       >
