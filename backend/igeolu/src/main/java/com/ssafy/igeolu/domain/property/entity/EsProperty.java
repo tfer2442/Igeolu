@@ -70,8 +70,8 @@ public class EsProperty {
 	@Field(type = FieldType.Date, name = "updated_at")
 	private String updatedAt;
 
-	@Field(type = FieldType.Long, name = "user_id")
-	private Long userId;
+	@Field(type = FieldType.Integer, name = "user_id")
+	private Integer userId;
 
 	@Field(type = FieldType.Keyword, name = "image_urls")
 	private List<String> imageUrls;

@@ -36,6 +36,7 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 			.roomId(request.getRoomId())
 			.userId(request.getWriterId())
 			.content(request.getContent())
+			.senderType(request.getSenderType())
 			.build();
 
 		return chatMessageService.saveChatMessage(chatMessage)
@@ -43,6 +44,7 @@ public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 				.messageId(m.getId())
 				.writerId(m.getUserId())
 				.content(m.getContent())
+				.senderType(m.getSenderType())
 				.createdAt(m.getCreatedAt())
 				.build());
 	}
