@@ -148,6 +148,9 @@ function App() {
     if (!isAppMounted || !isUserInitialized || !user?.userId || !isNotificationInitialized) return;
 
     const initializeWebSocket = async () => {
+
+      if (roomsSocketRef.current?.isConnected) return;
+
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       try {
@@ -166,12 +169,12 @@ function App() {
     initializeWebSocket();
 
     return () => {
-      if (roomsSocketRef.current) {
+      if (roomsSocketRef.current && !isAppMounted) {
         roomsSocketRef.current.disconnect();
         roomsSocketRef.current = null;
       }
     };
-  }, [user?.userId, isUserInitialized, isNotificationInitialized, handleRoomsUpdate]);
+  }, [user?.userId, isUserInitialized, isNotificationInitialized]);
 
   // 채팅방 목록 초기 로드
   const fetchChatRooms = useCallback(async () => {
