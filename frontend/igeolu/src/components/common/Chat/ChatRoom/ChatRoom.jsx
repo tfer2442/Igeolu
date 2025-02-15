@@ -26,7 +26,9 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
   const chatSocketRef = useRef(null); // WebSocket 참조
   const messagesEndRef = useRef(null); // 메시지 목록 끝 위치 참조
 
-  const LoadingSpinner = isMobile ? MobileLoadingSpinner : DesktopLoadingSpinner;
+  const LoadingSpinner = isMobile
+    ? MobileLoadingSpinner
+    : DesktopLoadingSpinner;
 
   /* 📌 추가 기능 토글 */
   const toggleExtras = () => {
@@ -45,21 +47,31 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
 
   /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 */
   // 1. useCallback으로 함수들을 메모이제이션
-  const handleNewMessage = useCallback((message) => {
-    setMessages((prev) => {
-      const isDuplicate = prev.some(
-        (m) =>
-          m.content === message.content &&
-          m.writerId === message.writerId &&
-          m.createdAt === message.createdAt
-      );
+  const handleNewMessage = useCallback(
+    async (message) => {
+      setMessages((prev) => {
+        const isDuplicate = prev.some(
+          (m) =>
+            m.content === message.content &&
+            m.writerId === message.writerId &&
+            m.createdAt === message.createdAt
+        );
 
-      if (isDuplicate) return prev;
-      return [...prev, message];
-    });
+        if (isDuplicate) return prev;
+        return [...prev, message];
+      });
 
-    scrollToBottom();
-  }, []); // scrollToBottom만 의존성으로 필요
+      // 새 메시지 수신 시 읽음 처리 추가
+      try {
+        await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+      } catch (error) {
+        console.error('메시지 읽음 처리 실패:', error);
+      }
+
+      scrollToBottom();
+    },
+    [room.roomId, currentUserId]
+  ); // 의존성 배열에 필요한 값들 추가
 
   /* 📌 기존 메시지 불러오기 */
   const fetchMessages = useCallback(async () => {
@@ -122,8 +134,6 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
     };
   }, [room.roomId]); // room.roomId만 의존성으로 사용
 
-
-
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {
     const trimmedMessage = newMessage.trim();
@@ -145,6 +155,13 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
       if (sent) {
         console.log('메시지 전송 성공');
         setNewMessage(''); // 입력창만 비우기
+
+        // 메시지 전송 성공 시 읽음 처리 추가
+        try {
+          await chatApi.markMessagesAsRead(room.roomId, currentUserId);
+        } catch (markError) {
+          console.error('메시지 읽음 처리 실패:', markError);
+        }
       } else {
         setError('메시지 전송에 실패했습니다.');
       }
@@ -163,39 +180,34 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId }) => {
   };
 
   /* 📌 뒤로가기 읽은 메세지 마크크 처리 */
-  const handleBackWithMarkRead = async () => {
-    try {
-      await chatApi.markMessagesAsRead(room.roomId, currentUserId);
-      onBack();
-    } catch (error) {
-      console.error('메시지 읽음 처리 실패:', error);
-      // 읽음 처리가 실패하더라도 뒤로가기는 실행
-      onBack();
-    }
+  const handleBack = () => {
+    onBack();
   };
 
   return (
     <div className={`chat-room ${isMobile ? 'mobile' : ''}`}>
       {/* 📌 채팅방 헤더 */}
       <header className='chat-room-header'>
-      <button
-  onClick={handleBackWithMarkRead}
-  className='chat-back-button'
-  aria-label='채팅방 목록으로 돌아가기'
->
+        <button
+          onClick={handleBack}
+          className='chat-back-button'
+          aria-label='채팅방 목록으로 돌아가기'
+        >
           ←
         </button>
         <h2 className='chat-room-title'>{room.userName}</h2>
       </header>
 
       {/* 📌 메시지 목록 */}
-      <div className={`chat-input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}>
+      <div
+        className={`chat-input-wrapper ${isExtrasOpen ? 'extras-open' : ''}`}
+      >
         <div className='messages-container'>
-        {isLoading ? (
-            <LoadingSpinner 
-              size="medium"
+          {isLoading ? (
+            <LoadingSpinner
+              size='medium'
               fullScreen={false}
-              backgroundColor="transparent"
+              backgroundColor='transparent'
               showText={false}
             />
           ) : error ? (
