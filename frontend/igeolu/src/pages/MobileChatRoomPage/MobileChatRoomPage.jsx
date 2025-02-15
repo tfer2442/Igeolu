@@ -14,10 +14,22 @@ const MobileChatRoom = ({ currentUserId }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // roomUpdate 핸들러 추가
+  const handleRoomUpdate = async (roomId) => {
+    try {
+      const rooms = await chatApi.getChatRooms(currentUserId);
+      const updatedRoom = rooms.find((r) => r.roomId === Number(roomId));
+      if (updatedRoom) {
+        setRoom(updatedRoom);
+      }
+    } catch (error) {
+      console.error('방 업데이트 실패:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        // 채팅방 목록을 가져와서 현재 roomId에 해당하는 방을 찾습니다
         const rooms = await chatApi.getChatRooms(currentUserId);
         const foundRoom = rooms.find((r) => r.roomId === Number(roomId));
 
@@ -54,6 +66,9 @@ const MobileChatRoom = ({ currentUserId }) => {
           onBack={handleBack}
           isMobile={true}
           currentUserId={currentUserId}
+          activeRoomId={Number(roomId)}  // 추가
+          onRoomUpdate={handleRoomUpdate}  // 추가
+          isChatRoomOpen={true}  // 추가: 모바일에서는 항상 채팅방이 열려있는 상태
         />
       </div>
     </div>

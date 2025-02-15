@@ -231,9 +231,17 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId,
       const sent = chatSocketRef.current?.sendMessage(messageData);
       if (sent) {
         console.log('시스템 메시지 전송 성공');
-        if (activeRoomId === room.roomId && isChatRoomOpen) {
-          await handleMarkAsRead();
-        }
+        // 읽음 처리를 확실히 하기 위해 약간의 지연 추가
+        setTimeout(async () => {
+          if (activeRoomId === room.roomId && isChatRoomOpen) {
+            try {
+              await handleMarkAsRead();
+              await onRoomUpdate(room.roomId);  // roomUpdate 추가
+            } catch (error) {
+              console.error('Failed to mark system message as read:', error);
+            }
+          }
+        }, 100);
       } else {
         setError('메시지 전송에 실패했습니다.');
       }

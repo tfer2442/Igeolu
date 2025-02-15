@@ -21,6 +21,13 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     }, 300);
   }, [onClose]);
 
+  const handleTypeChange = (e) => {
+    setFormData({
+      ...formData,
+      appointmentType: e.target.checked ? "LIVE" : "COMMON"
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -111,6 +118,16 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
                 }
                 required
               />
+            </div>
+            <div className='form-group checkbox-group'>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={formData.appointmentType === "LIVE"}
+                  onChange={handleTypeChange}
+                />
+                라이브 약속인가요?
+              </label>
             </div>
             <div className='button-group'>
               <button type='submit'>생성</button>
