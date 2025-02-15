@@ -44,6 +44,10 @@ function DesktopLive() {
   const [displayedQuestions, setDisplayedQuestions] = useState(new Set());
   const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
   const [selectedMemoText, setSelectedMemoText] = useState('');
+  const [hostLocation, setHostLocation] = useState(null);
+  const [map, setMap] = useState(null);
+  const mapContainer = useRef(null);
+  const [hostAddress, setHostAddress] = useState('');
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -329,12 +333,29 @@ function DesktopLive() {
     }
   }, [sessionId]);
 
-  // 시그널 리스너 추가
+  // signal 리스너 useEffect 수정
   useEffect(() => {
     if (session) {
+      // 기존 property-completed 시그널 핸들러
       session.on('signal:property-completed', (event) => {
-        const { propertyId } = JSON.parse(event.data);
-        setCompletedProperties(prev => new Set([...prev, propertyId]));
+        try {
+          const data = JSON.parse(event.data);
+          const { propertyId, location } = data;
+          
+          // 완료된 속성 업데이트
+          setCompletedProperties(prev => new Set([...prev, propertyId]));
+          
+          // 위치 정보 업데이트
+          if (location) {
+            setHostLocation({
+              latitude: location.latitude,
+              longitude: location.longitude,
+              accuracy: location.accuracy
+            });
+          }
+        } catch (error) {
+          console.error('Error processing property-completed signal:', error);
+        }
       });
     }
   }, [session]);
@@ -417,6 +438,60 @@ function DesktopLive() {
     });
   };
 
+  // 지도 초기화를 위한 useEffect 추가
+  useEffect(() => {
+    if (window.kakao && mapContainer.current && !map) {
+      const options = {
+        center: new window.kakao.maps.LatLng(35.8714354, 128.601445), // 대구 중심 좌표
+        level: 3
+      };
+      const newMap = new window.kakao.maps.Map(mapContainer.current, options);
+      setMap(newMap);
+    }
+  }, [mapContainer, map]);
+
+  // hostLocation이 변경될 때마다 지도 위치 업데이트
+  useEffect(() => {
+    if (map && hostLocation?.latitude && hostLocation?.longitude) {
+      const hostPosition = new window.kakao.maps.LatLng(
+        hostLocation.latitude,
+        hostLocation.longitude
+      );
+      
+      map.setCenter(hostPosition);
+      map.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.TRAFFIC);
+      
+      const marker = new window.kakao.maps.Marker({
+        position: hostPosition,
+        map: map
+      });
+
+      // 좌표를 주소로 변환
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.coord2Address(hostLocation.longitude, hostLocation.latitude, (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const address = result[0].address.address_name;
+          setHostAddress(address);
+        }
+      });
+
+      // 정확도 원 그리기
+      if (hostLocation.accuracy) {
+        const circle = new window.kakao.maps.Circle({
+          center: hostPosition,
+          radius: hostLocation.accuracy,
+          strokeWeight: 1,
+          strokeColor: '#01ADFF',
+          strokeOpacity: 0.7,
+          strokeStyle: 'solid',
+          fillColor: '#01ADFF',
+          fillOpacity: 0.2,
+          map: map
+        });
+      }
+    }
+  }, [map, hostLocation]);
+
   return (
     <div className="desktop-live-page">
       <DesktopLiveAndMyPage />
@@ -485,6 +560,21 @@ function DesktopLive() {
                   </div>
                 ))}
               </div>
+            </div>
+            
+            <div className='desktop-live-page__left-content__bottom-content__host-location'>
+              <div className='desktop-live-page__left-content__bottom-content__host-location__address'>
+                <p>호스트 위치 : {hostAddress || '현재 전달받은 위치가 없습니다.'}</p>
+              </div>
+              <div 
+                ref={mapContainer}
+                style={{
+                  width: 'calc(100% - 20px)',
+                  height: '290px',
+                  borderRadius: '8px',
+                 
+                }}
+              />
             </div>
           </div>
         </div>

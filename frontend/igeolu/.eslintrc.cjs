@@ -30,5 +30,6 @@ module.exports = {
     'jsx-a11y/media-has-caption': 'off',
     'no-unused-vars': 'warn',
     'react/prop-types': 'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
   },
 };

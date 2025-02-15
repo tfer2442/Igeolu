@@ -20,9 +20,9 @@
 /* Content Section */
 .memo-content {
     width: 100%;
-    height: 70%;
+    height: 40%;
     flex: 1;
-    margin: 10px 0 15px 0;
+    margin: 10px 0 10px 0;
 }
 
 
