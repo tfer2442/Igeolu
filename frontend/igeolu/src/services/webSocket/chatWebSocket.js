@@ -2,18 +2,17 @@
 import BaseWebSocket from './baseWebSocket';
 
 class ChatWebSocket extends BaseWebSocket {
-  constructor(roomId, onMessageReceived, activeRoomId) {
+  constructor(roomId, onMessageReceived) {
     super();
     this.roomId = roomId;
     this.onMessageReceived = onMessageReceived;
-    this.activeRoomId = activeRoomId;
     this.isActive = false;
   }
 
-  // 채팅방 활성화 상태를 설정하는 메서드 추가
   setActive(isActive) {
+    // 활성화 상태가 변경될 때마다 로그
+    console.log(`ChatWebSocket: Room ${this.roomId} active state changed to:`, isActive);
     this.isActive = isActive;
-    console.log(`Chat room ${this.roomId} active state changed to:`, isActive);
   }
 
   // chatWebSocket.js
@@ -59,43 +58,30 @@ class ChatWebSocket extends BaseWebSocket {
   }
 
   handleMessage(message) {
-    if (!this.isActive) {
-      console.log(`Chat room ${this.roomId} is inactive, skipping message processing`);
-      return;
-    }
-    this.onMessageReceived(message);
+    // 현재 채팅방의 활성화 상태와 함께 메시지 전달
+    console.log(`ChatWebSocket: Handling message for room ${this.roomId}, isActive:`, this.isActive);
+    this.onMessageReceived(message, this.isActive);
   }
 
   // ChatWebSocket.js에 로그 추가
   subscribeToMessages() {
     if (!this.stompClient || !this.isConnected) {
-      console.error('구독 실패: WebSocket 연결되지 않음');
+      console.error('ChatWebSocket: Subscription failed - not connected');
       return;
     }
 
     try {
       const subscriptionPath = `/api/sub/chats/${this.roomId}`;
-      // console.log('메시지 구독 시도:', {
-      //   path: subscriptionPath,
-      //   roomId: this.roomId
-      // });
-
-      // 구독 설정
+      console.log(`ChatWebSocket: Subscribing to ${subscriptionPath}`);
+      
       this.subscription = this.stompClient.subscribe(
         subscriptionPath,
         (message) => {
-          console.log('구독으로 메시지 수신:', {
-            messageData: message,
-            subscription: this.subscription,
-            isConnected: this.stompClient.connected
-          });
-
           try {
             const parsedMessage = JSON.parse(message.body);
-            console.log('파싱된 메시지:', parsedMessage);
-            this.onMessageReceived(parsedMessage, this.isActive);
+            this.handleMessage(parsedMessage);
           } catch (error) {
-            console.error('메시지 파싱 실패:', error);
+            console.error('ChatWebSocket: Message parsing failed:', error);
           }
         },
         {
@@ -104,20 +90,17 @@ class ChatWebSocket extends BaseWebSocket {
         }
       );
 
-      // console.log('구독 설정 완료:', {
-      //   subscriptionId: this.subscription.id,
-      //   active: this.subscription.active,
-      //   path: subscriptionPath
-      // });
+      console.log(`ChatWebSocket: Successfully subscribed to room ${this.roomId}`);
     } catch (error) {
-      console.error('구독 설정 중 오류:', error);
+      console.error('ChatWebSocket: Subscription setup failed:', error);
       throw error;
     }
   }
 
+
   sendMessage(messageData) {
     if (!this.stompClient || !this.isConnected) {
-      console.warn('메시지 전송 실패: WebSocket 연결되지 않음');
+      console.warn('ChatWebSocket: Message send failed - not connected');
       return false;
     }
 
@@ -133,10 +116,11 @@ class ChatWebSocket extends BaseWebSocket {
       });
       return true;
     } catch (error) {
-      console.error('메시지 전송 실패:', error);
+      console.error('ChatWebSocket: Message send failed:', error);
       return false;
     }
   }
+
 
   disconnect() {
     if (this.subscription) {
