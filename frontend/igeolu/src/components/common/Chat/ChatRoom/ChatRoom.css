@@ -97,6 +97,7 @@
   align-items: center;
   padding: 12px;
   gap: 8px;
+  padding-right: 16px;
   position: relative; /* 변경 */
 }
 
@@ -149,19 +150,15 @@
 /* 📌 메시지 전송 버튼 스타일 (↑ 버튼) */
 .send-button {
   position: absolute;
-  right: 20px; /* 조정 */
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   width: 32px;
   height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
   border: none;
   cursor: pointer;
-  background-color: #01adff;
-  color: white;
+  background: url('/src/assets/images/sendMessageButton.png') no-repeat center;
+  background-size: contain;
   border-radius: 50%;
 }
 
@@ -171,17 +168,25 @@
   opacity: 0.9;
 }
 
+.send-button:disabled {
+  background: url('/src/assets/images/sendMessageButtonDisable.png') no-repeat center;
+  background-size: contain;
+  cursor: not-allowed;
+}
+
 /* 📌 모바일에서 버튼 색상 반전 */
-.chat-room.mobile .extras-toggle-button,
-.chat-room.mobile .send-button {
+.chat-room.mobile .extras-toggle-button {
   background-color: white;   /* 흰색 배경 */
   color: #01adff;           /* 파란색 아이콘 */
 }
 
+.chat-room.mobile .send-button {
+  background-color: transparent;
+}
+
 /* 📌 전송 버튼 아이콘 스타일 */
 .send-button::before {
-  content: "↑";
-  font-size: 18px;
+  content: none;
 }
 
 /* 📌 추가 기능 섹션 스타일 */
