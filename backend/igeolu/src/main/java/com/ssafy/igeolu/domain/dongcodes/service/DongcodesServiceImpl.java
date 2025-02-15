@@ -53,6 +53,7 @@ public class DongcodesServiceImpl implements DongcodesService {
 		return esSigunguRepository.searchSigungu(keyword, pageable);
 	}
 
+	// 부하 테스트용 메서드
 	@Override
 	public List<DongcodesSearchGetResponseDto> searchDongcodes(String keyword, Pageable pageable) {
 		// 키워드가 두 글자 이상이면 첫 두 글자를 토큰으로 사용, 아니면 그대로 사용

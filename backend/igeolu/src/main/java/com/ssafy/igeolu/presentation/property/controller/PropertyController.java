@@ -16,13 +16,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.igeolu.domain.dongcodes.service.DongcodesService;
-import com.ssafy.igeolu.facade.property.dto.request.DongcodesSearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.SigunguSearchGetRequestDto;
-import com.ssafy.igeolu.facade.property.dto.response.DongcodesSearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
@@ -41,7 +38,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/properties")
 public class PropertyController {
 	private final PropertyFacadeService propertyFacadeService;
-	private final DongcodesService dongcodesService;
 
 	@Operation(summary = "매물 등록", description = "매물을 등록합니다.")
 	@ApiResponses(value = {
@@ -136,14 +132,4 @@ public class PropertyController {
 		return propertyFacadeService.searchSigunguBy(request);
 	}
 
-	@Operation(summary = "시군구 검색어 자동 완성 (부하 테스트 비교용)",
-		description = "시군구에 대한 검색어 자동 완성 리스트를 반환합니다."
-			+ "가중치를 부여하여 가장 적합한 시군구를 우선으로 정렬해서 반환합니다.")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "정상 처리"),
-	})
-	@GetMapping("/sigungu/search/test")
-	public List<DongcodesSearchGetResponseDto> searchPropertiesTest(DongcodesSearchGetRequestDto request) {
-		return dongcodesService.searchDongcodes(request.getKeyword(), request.toPageable());
-	}
 }

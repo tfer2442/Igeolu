@@ -4,8 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessage;
+import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessageWithMVC;
 import com.ssafy.igeolu.domain.chatmessage.entity.UserRoomStatus;
 import com.ssafy.igeolu.domain.chatmessage.repository.ChatMessageRepository;
+import com.ssafy.igeolu.domain.chatmessage.repository.ChatMessageWithMVCRepository;
 import com.ssafy.igeolu.domain.chatmessage.repository.UserRoomStatusRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,9 @@ import reactor.core.publisher.Mono;
 @Transactional
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
-
 	private final ChatMessageRepository chatMessageRepository;
 	private final UserRoomStatusRepository userRoomStatusRepository;
+	private final ChatMessageWithMVCRepository chatMessageWithMVCRepository;
 
 	@Override
 	public Flux<ChatMessage> getChatMessageList(Integer id) {
@@ -74,5 +76,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	@Override
 	public Mono<ChatMessage> getLastMessage(Integer roomId) {
 		return chatMessageRepository.findTopByRoomIdOrderByIdDesc(roomId);
+	}
+
+	@Override
+	public ChatMessageWithMVC saveChatMessageWithMVC(ChatMessageWithMVC chatMessageWithMVC) {
+		return chatMessageWithMVCRepository.save(chatMessageWithMVC);
 	}
 }
