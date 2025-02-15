@@ -422,6 +422,7 @@ function DesktopLive() {
       <DesktopLiveAndMyPage />
       <div className='desktop-live-page__content'>
         <div className='desktop-live-page__left-content'>
+          <div className='desktop-live-page__left-content__top-content'>
           <div className='desktop-live-page__left-content__live-video'>
             {subscribers.map((sub, i) => (
               <div key={i} className="subscriber-video-container">
@@ -452,22 +453,9 @@ function DesktopLive() {
               </div>
             ))}
           </div>
+          </div>
           <div className='desktop-live-page__left-content__bottom-content'>
-            <div className='desktop-live-page__left-content__bottom-content__ai-checklist'>
-              <p>AI 체크리스트</p>
-              <div className="ai-questions-list">
-                {Array.from(displayedQuestions).map((question, index) => (
-                  <div 
-                    key={index} 
-                    className="ai-question-item"
-                    onClick={() => handleQuestionClick(question)}
-                    style={{ cursor: 'pointer' }}  // 클릭 가능함을 표시
-                  >
-                    {question}
-                  </div>
-                ))}
-              </div>
-            </div>
+            
             <div className='desktop-live-page__left-content__bottom-content__live-order-list'>
               <p>매물 순서</p>
               <div className="property-list">
@@ -501,6 +489,21 @@ function DesktopLive() {
           </div>
         </div>
         <div className='desktop-live-page__right-content'>
+        <div className='desktop-live-page__left-content__bottom-content__ai-checklist'>
+              <p>AI 체크리스트</p>
+              <div className="ai-questions-list">
+                {Array.from(displayedQuestions).map((question, index) => (
+                  <div 
+                    key={index} 
+                    className="ai-question-item"
+                    onClick={() => handleQuestionClick(question)}
+                    style={{ cursor: 'pointer' }}  // 클릭 가능함을 표시
+                  >
+                    {question}
+                  </div>
+                ))}
+              </div>
+            </div>
           <div className='desktop-live-page__right-content__memo'>
             <Memo2 
               sessionId={sessionId} 
