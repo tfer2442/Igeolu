@@ -361,26 +361,60 @@ function MobileLivePage() {
         
         try {
             const currentProperty = properties[currentPropertyIndex];
+            
+            // 위치 정보 가져오기 시도 로그
+            console.log('Getting geolocation...');
+            
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => resolve(pos),
+                    (error) => reject(error),
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            });
+
+            // 위치 정보 획득 성공 로그
+            console.log('Geolocation obtained:', {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy
+            });
+
+            const signalData = {
+                propertyId: currentProperty.livePropertyId,
+                completedAt: new Date().toISOString(),
+                location: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    accuracy: position.coords.accuracy
+                }
+            };
+
+            // 시그널 전송 시도 로그
+            console.log('Sending signal with data:', signalData);
+            
             await session.signal({
-                data: JSON.stringify({
-                    propertyId: currentProperty.livePropertyId,
-                    completedAt: new Date().toISOString()
-                }),
+                data: JSON.stringify(signalData),
                 type: 'property-completed'
             });
             
-            console.log(`Property ${currentProperty.livePropertyId} marked as completed`);
+            console.log('Signal sent successfully');
             
-            // 마지막 매물인 경우에도 시그널은 보내지만 인덱스는 변경하지 않음
             if (currentPropertyIndex < properties.length - 1) {
                 const nextIndex = currentPropertyIndex + 1;
                 setCurrentLivePropertyId(properties[nextIndex].livePropertyId);
-                console.log('Changed to property ID:', properties[nextIndex].livePropertyId);
                 setCurrentPropertyIndex(nextIndex);
             }
         } catch (error) {
-            console.error('Error sending property completion signal:', error);
-            alert('매물 상태 업데이트 중 오류가 발생했습니다.');
+            if (error.code === error.PERMISSION_DENIED) {
+                console.error('Geolocation permission denied:', error);
+            } else {
+                console.error('Error in handleNextProperty:', error);
+            }
         }
     };
 

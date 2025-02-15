@@ -11,7 +11,7 @@
     z-index: 1000;
 }
 
-.rating-modal {
+.rating-modal__container {
     background-color: white;
     padding: 2rem;
     border-radius: 10px;
@@ -20,7 +20,19 @@
     text-align: center;
 }
 
-.stars-container {
+.rating-modal__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.rating-modal__subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.rating-modal__stars-container {
     margin: 20px 0;
     font-size: 32px;
     display: flex;
@@ -28,22 +40,22 @@
     gap: 8px;
 }
 
-.star-container {
+.rating-modal__star-container {
     position: relative;
     display: inline-block;
 }
 
-.star {
+.rating-modal__star {
     color: #ffd700;
     position: relative;
     z-index: 1;
 }
 
-.star.empty {
+.rating-modal__star--empty {
     color: #e4e5e9;
 }
 
-.star-half-clickable {
+.rating-modal__star-half-clickable {
     position: absolute;
     top: 0;
     width: 50%;
@@ -52,41 +64,71 @@
     z-index: 2;
 }
 
-.star-half-clickable.left {
+.rating-modal__star-half-clickable--left {
     left: 0;
 }
 
-.star-half-clickable.right {
+.rating-modal__star-half-clickable--right {
     right: 0;
 }
 
-.rating-value {
+.rating-modal__rating-value {
     font-size: 18px;
     margin: 10px 0;
     font-weight: bold;
 }
 
-.modal-buttons {
+.rating-modal__buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 12px;
+    margin-top: 24px;
 }
 
-.submit-button, .cancel-button {
-    padding: 8px 20px;
-    border-radius: 5px;
+.rating-modal__submit-button {
+    width: 100px;
+    height: 40px;
+    padding: 0;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-}
-
-.submit-button {
-    background-color: #007bff;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3182F6;
     color: white;
 }
 
-.cancel-button {
-    background-color: #6c757d;
-    color: white;
+.rating-modal__cancel-button {
+    width: 100px;
+    height: 40px;
+    padding: 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2F4F6;
+    color: #4E5968;
+}
+
+.rating-modal__submit-button:hover {
+    background-color: #1b64da;
+}
+
+.rating-modal__cancel-button:hover {
+    background-color: #e1e4e8;
+}
+
+.rating-modal__submit-button:disabled,
+.rating-modal__cancel-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
