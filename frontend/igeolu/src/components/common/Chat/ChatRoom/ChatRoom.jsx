@@ -47,7 +47,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId, activeRoomId,
   }, []);
 
   /* 📌 새로운 메시지를 수신했을 때 상태 업데이트 및 조건부 읽음 처리 */
-  const handleNewMessage = useCallback(async (message) => {
+  const handleNewMessage = useCallback(async (message, isActive) => {
     setMessages((prev) => {
       const isDuplicate = prev.some(
         (m) =>
@@ -60,17 +60,8 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId, activeRoomId,
       return [...prev, message];
     });
   
-    // 채팅방이 실제로 열려있고, 현재 활성화된 방일 때만 읽음 처리
-    console.log('------------', isChatRoomOpen)
-    if (!isChatRoomOpen || !activeRoomId || activeRoomId !== room.roomId) {
-      console.log('채팅방이 비활성화 상태입니다:', {
-        isChatRoomOpen,
-        activeRoomId,
-        currentRoomId: room.roomId
-      });
-      return;
-    }
-  
+    // 채팅방이 활성화 상태일 때만 읽음 처리
+  if (isActive) {
     try {
       await chatApi.markMessagesAsRead(room.roomId, currentUserId);
       console.log('메시지 읽음 처리 완료 (수신)');
@@ -78,9 +69,12 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId, activeRoomId,
     } catch (error) {
       console.error('메시지 읽음 처리 실패:', error);
     }
-  
-    scrollToBottom();
-  }, [room.roomId, currentUserId, activeRoomId, isChatRoomOpen, onRoomUpdate]);
+  } else {
+    console.log('채팅방이 비활성화 상태입니다. 읽음 처리를 건너뜁니다.');
+  }
+
+  scrollToBottom();
+}, [room.roomId, currentUserId, onRoomUpdate]);
 
 
   /* 📌 기존 메시지 불러오기 및 읽음 처리 */
@@ -282,6 +276,7 @@ const ChatRoom = ({ room, onBack, isMobile, currentUserId, activeRoomId,
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             rows={1}
+            maxLength={1000}
           />
           <button
             onClick={handleSendMessage}

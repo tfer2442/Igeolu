@@ -93,7 +93,7 @@ class ChatWebSocket extends BaseWebSocket {
           try {
             const parsedMessage = JSON.parse(message.body);
             // console.log('파싱된 메시지:', parsedMessage);
-            this.handleMessage(parsedMessage);
+            this.onMessageReceived(parsedMessage, this.isActive);
           } catch (error) {
             console.error('메시지 파싱 실패:', error);
           }
