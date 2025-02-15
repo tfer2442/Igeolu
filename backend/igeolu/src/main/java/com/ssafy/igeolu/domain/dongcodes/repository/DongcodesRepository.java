@@ -31,6 +31,7 @@ public interface DongcodesRepository extends JpaRepository<Dongcodes, String> {
 	List<Dongcodes> findByDongCodeContainingOrSidoNameContainingOrGugunNameContainingOrDongNameContaining(
 		String dongCode, String sidoName, String gugunName, String dongName, Pageable pageable);
 
+	// 부하 테스트용 메서드
 	@Query(value = "SELECT d.*, " +
 		"  ( " +
 		// dong_name에 대한 점수 계산
