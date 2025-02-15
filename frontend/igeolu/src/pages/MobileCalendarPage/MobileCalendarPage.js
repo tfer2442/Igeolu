@@ -73,6 +73,35 @@ function MobileCalendarPage() {
     }
   }, [userId, fetchAppointments]);
 
+  // 오늘 날짜 또는 가장 가까운 날짜로 스크롤하는 효과
+  useEffect(() => {
+    if (Object.keys(groupedAppointments).length === 0) return;
+
+    const today = new Date();
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    // 모든 날짜 키를 가져와서 정렬
+    const dateKeys = Object.keys(groupedAppointments).sort();
+
+    // 오늘 날짜에 일정이 있는 경우
+    if (appointmentRefs.current[todayKey]) {
+      scrollToElement(appointmentRefs.current[todayKey]);
+      return;
+    }
+
+    // 오늘 이후의 가장 가까운 날짜 찾기
+    const futureDate = dateKeys.find((dateKey) => dateKey > todayKey);
+    if (futureDate && appointmentRefs.current[futureDate]) {
+      scrollToElement(appointmentRefs.current[futureDate]);
+    }
+  }, [groupedAppointments]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchAppointments();
+    }
+  }, [userId, fetchAppointments]);
+
   const scrollToElement = (element, duration = 500) => {
     if (!element) return;
 
