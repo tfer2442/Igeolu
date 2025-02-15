@@ -16,42 +16,43 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ChatMessageFacadeServiceImpl implements ChatMessageFacadeService {
 
-	private final ChatMessageService chatMessageService;
+    private final ChatMessageService chatMessageService;
 
-	@Override
-	public Flux<ChatMessageGetResponseDto> getChatMessageList(Integer roomId) {
-		Flux<ChatMessage> chatMessages = chatMessageService.getChatMessageList(roomId);
+    @Override
+    public Flux<ChatMessageGetResponseDto> getChatMessageList(Integer roomId) {
+        Flux<ChatMessage> chatMessages = chatMessageService.getChatMessageList(roomId);
 
-		return chatMessages.map(o -> ChatMessageGetResponseDto.builder()
-			.writerId(o.getUserId())
-			.content(o.getContent())
-			.createdAt(o.getCreatedAt())
-			.build());
-	}
+        return chatMessages.map(o -> ChatMessageGetResponseDto.builder()
+                .writerId(o.getUserId())
+                .senderType(o.getSenderType())
+                .content(o.getContent())
+                .createdAt(o.getCreatedAt())
+                .build());
+    }
 
-	@Override
-	public Mono<ChatMessagePostResponseDto> saveChatMessage(ChatMessagePostRequestDto request) {
+    @Override
+    public Mono<ChatMessagePostResponseDto> saveChatMessage(ChatMessagePostRequestDto request) {
 
-		ChatMessage chatMessage = ChatMessage.builder()
-			.roomId(request.getRoomId())
-			.userId(request.getWriterId())
-			.content(request.getContent())
-			.senderType(request.getSenderType())
-			.build();
+        ChatMessage chatMessage = ChatMessage.builder()
+                .roomId(request.getRoomId())
+                .userId(request.getWriterId())
+                .content(request.getContent())
+                .senderType(request.getSenderType())
+                .build();
 
-		return chatMessageService.saveChatMessage(chatMessage)
-			.map(m -> ChatMessagePostResponseDto.builder()
-				.messageId(m.getId())
-				.writerId(m.getUserId())
-				.content(m.getContent())
-				.senderType(m.getSenderType())
-				.createdAt(m.getCreatedAt())
-				.build());
-	}
+        return chatMessageService.saveChatMessage(chatMessage)
+                .map(m -> ChatMessagePostResponseDto.builder()
+                        .messageId(m.getId())
+                        .writerId(m.getUserId())
+                        .content(m.getContent())
+                        .senderType(m.getSenderType())
+                        .createdAt(m.getCreatedAt())
+                        .build());
+    }
 
-	@Override
-	public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
-		return chatMessageService.markMessagesAsRead(userId, roomId);
-	}
+    @Override
+    public Mono<Void> markMessagesAsRead(Integer userId, Integer roomId) {
+        return chatMessageService.markMessagesAsRead(userId, roomId);
+    }
 
 }
