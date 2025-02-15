@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import './DesktopMainPageNav.css';
 import UserControllerApi from '../../services/UserControllerApi';
 import { useNotification } from '../../contexts/NotificationContext';
+import NotificationApi from '../../services/NotificationApi';
 
 const NAV_ITEMS = [
   { id: 1, title: '방찾기', path: '/map?type=room' },
@@ -18,8 +19,21 @@ function DesktopMainPageNav() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(defaultProfile);
-  const { notifications, unreadCount, markAsRead } = useNotification();
+  const { notifications, unreadCount, markAsRead, updateNotifications } = useNotification();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  
+
+  // 알림 삭제 핸들러 추가
+  const handleDeleteNotification = async (e, notificationId) => {
+    e.stopPropagation(); // 상위 요소로의 이벤트 전파 방지
+    try {
+      await NotificationApi.deleteNotification(notificationId);
+      // 삭제 후 알림 목록 갱신
+      await updateNotifications();
+    } catch (error) {
+      console.error('알림 삭제 실패:', error);
+    }
+  };
 
   // 알림 클릭 핸들러
   const handleNotificationClick = async (notificationId) => {
@@ -161,6 +175,19 @@ function DesktopMainPageNav() {
                             handleNotificationClick(notification.notificationId)
                           }
                         >
+                          <button
+                            className='notification-delete-btn'
+                            onClick={(e) =>
+                              handleDeleteNotification(
+                                e,
+                                notification.notificationId
+                              )
+                            }
+                            aria-label='알림 삭제'
+                          >
+                            ×
+                          </button>
+
                           <p className='notification-message'>
                             {notification.message}
                           </p>

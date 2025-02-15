@@ -10,24 +10,21 @@ const NotificationProvider = ({ children, user, onInitialized }) => {
   const notificationSocketRef = useRef(null);
 
   // 알림 목록 조회
-  const fetchNotifications = async () => {
-    try {
-      const notificationList = await NotificationApi.getNotifications();
-      // console.log('📌 초기 알림 목록:', notificationList);
-      setNotifications(notificationList);
-
-      const unreadNotifications = notificationList.filter(
-        (notification) => !notification.isRead
-      );
-      setUnreadCount(unreadNotifications.length);
-      // console.log('📌 읽지 않은 알림 개수:', unreadNotifications.length);
-      return true;
-    } catch (error) {
-      // console.error('❌ 알림 목록 조회 실패:', error);
-      return false;
-    }
-  };
-
+  // fetchNotifications 함수를 updateNotifications로 이름 변경하고 외부에서 접근 가능하도록 변경
+const updateNotifications = async () => {
+  try {
+    const notificationList = await NotificationApi.getNotifications();
+    setNotifications(notificationList);
+    const unreadNotifications = notificationList.filter(
+      (notification) => !notification.isRead
+    );
+    setUnreadCount(unreadNotifications.length);
+    return true;
+  } catch (error) {
+    console.error('알림 목록 조회 실패:', error);
+    return false;
+  }
+};
   // WebSocket을 통한 실시간 알림 처리
   const handleNotification = (notification) => {
     // console.log('🔔 새로운 알림 도착 전 상태:', {
@@ -103,7 +100,7 @@ const NotificationProvider = ({ children, user, onInitialized }) => {
     const initialize = async () => {
       // console.log('🚀 알림 시스템 초기화 시작');
   
-      const fetchSuccess = await fetchNotifications();
+      const fetchSuccess = await updateNotifications();
       if (!fetchSuccess) {
         // console.error('❌ 초기 알림 목록 조회 실패');
         return;
@@ -142,6 +139,7 @@ const NotificationProvider = ({ children, user, onInitialized }) => {
         notifications,
         unreadCount,
         markAsRead,
+        updateNotifications
       }}
     >
       {children}
