@@ -43,7 +43,9 @@ const MobileTopBar = ({ title, logoSrc }) => {
           <button className="mobile-top-bar__alarm-button" onClick={handleNotificationClick}>
             <img src={MobileAlarm} alt='알림' className='mobile-top-bar__alarm' />
             {unreadCount > 0 && (
-              <span className='mobile-notification-badge'>{unreadCount}</span>
+              <span className='mobile-notification-badge'>
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
             )}
           </button>
         </div>
