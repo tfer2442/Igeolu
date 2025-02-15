@@ -274,6 +274,7 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 				.approvalDate(p.getApprovalDate()) // LocalDate 변환
 				.monthlyRent(p.getMonthlyRent())
 				.deposit(p.getDeposit())
+				.userId(p.getUserId())
 				.currentFloor(p.getCurrentFloor())
 				.totalFloors(p.getTotalFloors())
 				.address(p.getAddress())

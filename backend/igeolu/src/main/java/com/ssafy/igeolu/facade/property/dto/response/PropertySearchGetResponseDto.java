@@ -20,6 +20,8 @@ public class PropertySearchGetResponseDto {
 
 	private Integer monthlyRent;
 
+	private Integer userId;
+
 	private Integer deposit;
 
 	private LocalDate approvalDate;
