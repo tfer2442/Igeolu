@@ -1,4 +1,3 @@
-// src/components/common/Chat/AppointmentModal/AppointmentModal.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { appointmentAPI } from '../../../../services/AppointmentApi';
@@ -6,6 +5,7 @@ import './AppointmentModal.css';
 
 const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage }) => {
   const [animationState, setAnimationState] = useState('entering');
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     scheduledAt: '',
     title: '',
@@ -13,6 +13,21 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     chatRoomId: roomInfo.roomId,
     appointmentType: "LIVE",
   });
+
+  // 현재 시각의 ISO string을 생성하고 초 단위를 00으로 설정
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    now.setSeconds(0, 0);
+    
+    // 브라우저의 datetime-local input이 기대하는 형식으로 변환
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
 
   const handleClose = useCallback(() => {
     setAnimationState('exiting');
@@ -28,8 +43,31 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     });
   };
 
+  const validateDateTime = (dateTimeStr) => {
+    // datetime-local의 값은 이미 사용자의 로컬 시간대로 들어옴
+    const selectedDate = new Date(dateTimeStr);
+    const now = new Date();
+    return selectedDate > now;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 선택된 시각이 현재보다 과거인지 확인
+    if (!validateDateTime(formData.scheduledAt)) {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      setError(`${formatter.format(now)} 이후의 시간을 선택해주세요.`);
+      return;
+    }
+
     try {
       const localDate = new Date(formData.scheduledAt);
       const offset = localDate.getTimezoneOffset() * 60000;
@@ -42,7 +80,6 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
 
       console.log('Create appointment response:', response.data);
 
-      // 약속 생성 성공 시 시스템 메시지 전송
       const appointmentDate = new Date(isoDate).toLocaleString('ko-KR', {
         year: 'numeric',
         month: 'long',
@@ -55,7 +92,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
       await sendSystemMessage(systemMessage);
 
       const newAppointment = {
-        appointmentId: response.data.appointmentId, // 이 부분이 제대로 들어오는지 확인
+        appointmentId: response.data.appointmentId,
         scheduledAt: isoDate,
         title: formData.title,
         opponentName: roomInfo.userName,
@@ -67,6 +104,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
       handleClose();
     } catch (error) {
       console.error('Failed to create appointment:', error);
+      setError('약속 생성에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -97,14 +135,18 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
         <div className='appointment-modal-content'>
           <h2>약속 생성</h2>
           <form onSubmit={handleSubmit}>
+            {error && <div className="error-message">{error}</div>}
             <div className='appointment-form-group'>
               <label htmlFor='scheduledAt'>날짜 및 시간</label>
               <input
                 type='datetime-local'
+                id='scheduledAt'
                 value={formData.scheduledAt}
-                onChange={(e) =>
-                  setFormData({ ...formData, scheduledAt: e.target.value })
-                }
+                min={getCurrentDateTime()}
+                onChange={(e) => {
+                  setFormData({ ...formData, scheduledAt: e.target.value });
+                  setError(''); // 새로운 시간 선택 시 에러 메시지 초기화
+                }}
                 required
               />
             </div>
@@ -112,6 +154,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
               <label htmlFor='title'>제목</label>
               <input
                 type='text'
+                id='title'
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
