@@ -10,6 +10,16 @@ const PropertySlider = ({ properties, onPropertyClick }) => {
     return numPrice.toLocaleString();
   };
 
+  if (!properties || properties.length === 0) {
+    return (
+      <div className="mypage-property-slider-container">
+        <div className="mypage-property-empty">
+          등록된 매물이 없습니다
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mypage-property-slider-container">
       <div className="mypage-property-slider">

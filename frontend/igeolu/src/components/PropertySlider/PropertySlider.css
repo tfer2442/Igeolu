@@ -4,6 +4,19 @@
   margin: 20px 0;
 }
 
+.mypage-property-empty {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e2e1e1;
+  border-radius: 8px;
+  color: #666;
+  font-size: 16px;
+  background-color: #f8f8f8;
+}
+
 .mypage-property-slider {
   width: 100%;
   overflow-x: auto;
@@ -38,7 +51,7 @@
 }
 
 .mypage-property-slide {
-  flex: 0 0 154px;
+  flex: 0 0 178px;
   cursor: pointer;
 }
 
@@ -47,8 +60,8 @@
   border: 1px solid #e2e1e1;
   border-radius: 8px;
   background-color: white;
-  width: 154px;
-  height: 180px;
+  width: 178px;
+  height: 220px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -56,8 +69,8 @@
 
 .mypage-property-image {
   width: 100%;
-  height: 110px;
-  flex: 0 0 110px;
+  height: 160px;
+  flex: 0 0 160px;
   border-bottom: 1px solid #e2e1e1;
 }
 
@@ -71,8 +84,8 @@
 
 .mypage-property-info {
   padding: 8px 10px;
-  height: 70px;
-  flex: 0 0 70px;
+  height: 60px;
+  flex: 0 0 60px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -242,7 +242,7 @@ function DesktopMyPage() {
       </div>
 
       <div className='user-info-record'>
-        <p>내가 본 라이브 매물</p>
+        {/* <p>내가 본 라이브 매물</p> */}
         {isLoading ? (
           <p className='loading-message'>라이브 목록을 불러오는 중입니다...</p>
         ) : liveData.length > 0 ? (
