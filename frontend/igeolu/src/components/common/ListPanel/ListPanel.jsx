@@ -1,4 +1,3 @@
-
 // ListPanel.jsx
 import React from 'react';
 import { Building2, MapPin, Home } from 'lucide-react';
@@ -11,9 +10,9 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
 
   const formatFloorInfo = (currentFloor, totalFloors) => {
     if (currentFloor && totalFloors) {
-        return `${currentFloor}층 / 전체 ${totalFloors}층`;
+      return `${currentFloor}층 / 전체 ${totalFloors}층`;
     } else if (currentFloor) {
-        return `${currentFloor}층`;
+      return `${currentFloor}층`;
     }
     return '-';
   };
@@ -22,15 +21,15 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
     <div className='list-panel'>
       <div className='list-panel-header'>
         {type === 'room' ? (
-          <div className="header-content">
+          <div className='header-content'>
             <Home size={20} />
-            <span className="header-title">원룸 목록</span>
+            <span className='header-title'>원룸 목록</span>
             <span className='result-count'>총 {items.length}건</span>
           </div>
         ) : (
-          <div className="header-content">
+          <div className='header-content'>
             <Building2 size={20} />
-            <span className="header-title">공인중개사 목록</span>
+            <span className='header-title'>공인중개사 목록</span>
             <span className='result-count'>총 {items.length}건</span>
           </div>
         )}
@@ -39,48 +38,57 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
         <div className='list-items'>
           {items.length > 0 ? (
             items.map((item) => (
-              <div 
-                key={type === 'room' ? item.propertyId : item.userId}
+              <div
+                key={`${type}-${type === 'room' ? item.propertyId : item.userId}`}
                 className='list-item'
                 onClick={() => onItemClick(item)}
               >
                 {type === 'room' ? (
-                  <div className="property-list-item">
-                    <div className="property-image">
+                  <div className='property-list-item'>
+                    <div className='property-image'>
                       {item.images && item.images.length > 0 ? (
-                        <img 
-                          src={item.images[0]} 
-                          alt="매물 이미지"
-                          className="room-image"
+                        <img
+                          src={item.images[0]}
+                          alt='매물 이미지'
+                          className='room-image'
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = '/room-placeholder.jpg';
                           }}
                         />
                       ) : (
-                        <div className="no-image">이미지 없음</div>
+                        <div className='no-image'>이미지 없음</div>
                       )}
                     </div>
                     <div className='property-list-item-content'>
                       <div className='property-list-price'>
-                        <span className='deposit'>{item.deposit?.toLocaleString()}만원</span>
-                        <span className='monthly-rent'>{item.monthlyRent?.toLocaleString()}만원</span>
+                        <span className='deposit'>
+                          {item.deposit?.toLocaleString()}만원
+                        </span>
+                        <span className='monthly-rent'>
+                          {item.monthlyRent?.toLocaleString()}만원
+                        </span>
                       </div>
                       <div className='property-list-info'>
                         <span className='address'>{item.address}</span>
                         <div className='property-specs'>
                           <span>{item.area}㎡</span>
                           <span className='spec-divider'>|</span>
-                          <span>{formatFloorInfo(item.currentFloor, item.totalFloors)}</span>
+                          <span>
+                            {formatFloorInfo(
+                              item.currentFloor,
+                              item.totalFloors
+                            )}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className='agent-item'>
-                    <img 
-                      src={item.profileImage || '/default-agent.png'} 
-                      alt={item.username} 
+                    <img
+                      src={item.profileImage || '/default-agent.png'}
+                      alt={item.username}
                       className='agent-image'
                       onError={(e) => {
                         e.target.onerror = null;
@@ -91,7 +99,7 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                       <span className='agent-name'>{item.username}</span>
                       <p className='agent-title'>{item.title}</p>
                       <p className='agent-content'>{item.content}</p>
-                      <div className="agent-address-info">
+                      <div className='agent-address-info'>
                         <MapPin size={16} />
                         <p className='agent-address'>{item.address}</p>
                       </div>

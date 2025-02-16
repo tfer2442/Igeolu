@@ -1,7 +1,7 @@
 // src/components/DesktopNav/DesktopMapPageNav.jsx
+import { Link, useSearchParams } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import defaultProfile from '../../assets/images/defaultProfileImageIMSI.png';
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './DesktopMapPageNav.css';
@@ -16,6 +16,9 @@ const NAV_ITEMS = [
 ];
 
 function DesktopMapPageNav({ onLoginSigninClick, children }) {
+    const [searchParams] = useSearchParams();
+    const currentType = searchParams.get('type');
+
     const [user, setUser] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -111,7 +114,11 @@ function DesktopMapPageNav({ onLoginSigninClick, children }) {
             <div className='desktop-map-nav__right'>
                 <div className='desktop-map-nav__right-links'>
                     {NAV_ITEMS.map((item) => (
-                        <Link to={item.path} key={item.id}>
+                        <Link 
+                            to={item.path} 
+                            key={item.id}
+                            className={item.path.includes(currentType) ? 'active' : ''}
+                        >
                             {item.title}
                         </Link>
                     ))}
