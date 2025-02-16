@@ -46,6 +46,7 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Recording;
+import io.openvidu.java.client.RecordingLayout;
 import io.openvidu.java.client.RecordingMode;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
@@ -177,6 +178,8 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 		// 빌더를 통해 녹화 속성 객체 생성
 		RecordingProperties properties = new RecordingProperties.Builder()
+			.outputMode(Recording.OutputMode.COMPOSED)
+			.recordingLayout(RecordingLayout.CUSTOM)
 			.name(livePropertyId.toString())
 			.build();
 
@@ -288,6 +291,7 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 
 			RecordingProperties recordingProperties = new RecordingProperties.Builder()
 				.outputMode(Recording.OutputMode.COMPOSED)
+				.recordingLayout(RecordingLayout.CUSTOM)
 				.frameRate(24)
 				.build();
 
