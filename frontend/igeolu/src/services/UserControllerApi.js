@@ -27,17 +27,14 @@ const UserControllerApi = {
   },
 
   // 프로필 이미지 업데이트
-  updateProfileImage: async (file) => {
+  updateProfileImage: async (formData) => {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const response = await instance.put('/users/me/profile', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      return response;
+      return response.data;
     } catch (error) {
       console.error('Error updating profile image:', error);
       throw error;

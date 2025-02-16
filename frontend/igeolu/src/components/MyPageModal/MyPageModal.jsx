@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import PropTypes from 'prop-types';
 import './MyPageModal.css';
 import LiveControllerApi from '../../services/LiveControllerApi';
+import { FaRobot } from 'react-icons/fa';
 
 const MyPageModal = ({ property, onClose }) => {
   const [summary, setSummary] = useState('');
@@ -125,6 +126,7 @@ const MyPageModal = ({ property, onClose }) => {
                           onClick={handleLoadSummary}
                           className="load-summary-button"
                         >
+                          <FaRobot style={{ marginRight: '8px' }} />
                           요약 정보 불러오기
                         </button>
                       )}

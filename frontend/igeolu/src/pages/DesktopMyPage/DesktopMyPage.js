@@ -10,6 +10,7 @@ import UserControllerApi from '../../services/UserControllerApi';
 import MyPageModal from '../../components/MyPageModal/MyPageModal';
 import PropertySlider from '../../components/PropertySlider/PropertySlider';
 import { appointmentAPI } from '../../services/AppointmentApi';
+import { FaCamera } from 'react-icons/fa';
 
 function DesktopMyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -142,6 +143,34 @@ function DesktopMyPage() {
     );
   };
 
+  const handleImageUpdate = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 파일 유효성 검사
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    // 파일 크기 제한 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);  // 'profileImage'를 'file'로 수정
+
+      await UserControllerApi.updateProfileImage(formData);
+      await fetchUserInfo();
+    } catch (error) {
+      console.error('Error updating profile image:', error);
+      alert('프로필 이미지 업데이트에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   return (
     <div className='desktop-my-page'>
       <DesktopLiveAndMyPage />
@@ -153,6 +182,16 @@ function DesktopMyPage() {
               src={userInfo?.imageUrl || defaultProfile}
               alt='프로필 이미지'
             />
+            <label htmlFor="profile-image-input" className="image-edit-button">
+              <FaCamera />
+              <input
+                type="file"
+                id="profile-image-input"
+                accept="image/*"
+                onChange={handleImageUpdate}
+                style={{ display: 'none' }}
+              />
+            </label>
           </div>
           <div className='user-info-content-text'>
             <div className='user-info-content-text-name'>
