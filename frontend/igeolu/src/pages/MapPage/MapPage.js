@@ -465,6 +465,38 @@ function MapPage() {
         setSelectedOptions(options);
     };
 
+    const handleSwitchToAgent = async (userId) => {
+        try {
+            // 공인중개사 메뉴로 전환
+            setActiveMenu('agent');
+            
+            // 모든 공인중개사 목록 가져오기
+            const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+            const targetAgent = response.data.find(realtor => realtor.userId === userId);
+            
+            if (targetAgent) {
+                const agentWithType = {
+                    ...targetAgent,
+                    type: 'agent'
+                };
+                
+                // 검색 결과를 해당 공인중개사만 포함하도록 설정
+                setSearchResults([agentWithType]);
+                setSelectedItem(agentWithType);
+                
+                if (targetAgent.latitude && targetAgent.longitude) {
+                    updateMapCenter({
+                        lat: parseFloat(targetAgent.latitude),
+                        lng: parseFloat(targetAgent.longitude)
+                    });
+                    setMapLevel(3);
+                }
+            }
+        } catch (error) {
+            console.error('Error switching to agent view:', error);
+        }
+    };
+
     return (
         <div className='desktop-map-page'>
             <DesktopMapPageNav onLoginSigninClick={() => console.log('로그인 |회원가입')}>
@@ -520,6 +552,7 @@ function MapPage() {
                             onViewProperties={handleViewProperties}
                             view={detailPanelView}
                             setView={setDetailPanelView}
+                            onSwitchToAgent={handleSwitchToAgent}  // 이 줄 추가
                         />
                         <div className='map-container'>
                             <div className='map-content'>
