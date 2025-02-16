@@ -12,6 +12,7 @@ import com.ssafy.igeolu.domain.appointment.entity.Appointment;
 import com.ssafy.igeolu.domain.appointment.service.AppointmentService;
 import com.ssafy.igeolu.domain.notification.entity.Notification;
 import com.ssafy.igeolu.domain.notification.service.NotificationService;
+import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.facade.notification.dto.response.AppointmentNotificationResponseDto;
 import com.ssafy.igeolu.oauth.service.SecurityService;
 
@@ -194,5 +195,12 @@ public class NotificationFacadeServiceImpl implements NotificationFacadeService 
 	public void removeNotification(Integer notificationId) {
 		Notification notification = notificationService.getNotification(notificationId);
 		notificationService.removeNotification(notification);
+	}
+
+	@Override
+	@Transactional
+	public void updateAllReadingStatus() {
+		User currentUser = securityService.getUserEntity();
+		notificationService.markAllNotificationsAsRead(currentUser);
 	}
 }

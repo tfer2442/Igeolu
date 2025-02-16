@@ -31,6 +31,17 @@ public class NotificationController {
 		return ResponseEntity.ok(notificationFacadeService.getNotifications());
 	}
 
+	@Operation(summary = "일괄 알림 읽음 처리", description = "모든 알림을 읽음 처리합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "정상 처리"),
+	})
+	@PatchMapping("/api/notifications")
+	public ResponseEntity<Void> updateAllReadingStatus() {
+		notificationFacadeService.updateAllReadingStatus();
+
+		return ResponseEntity.ok().build();
+	}
+
 	@Operation(summary = "알림 읽음 처리", description = "알림을 읽음 처리합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
