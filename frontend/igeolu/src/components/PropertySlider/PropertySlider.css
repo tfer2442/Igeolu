@@ -1,115 +1,105 @@
 /* src/components/PropertySlider/PropertySlider.css */
-.property-slider-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 564px;
-    margin: 20px 0;
-  }
-  
-  .property-slider {
-    width: 484px; /* 564px - (좌우 버튼 공간 40px * 2) */
-    overflow: hidden;
-    margin: 0 40px;
-  }
-  
-  .property-slider-track {
-    display: flex;
-    gap: 8px; /* 카드 사이의 간격 줄임 */
-    transition: transform 0.3s ease;
-  }
-  
-  .property-slide {
-    flex: 0 0 115px; /* (484px - 간격 24px) / 4 = 약 115px */
-    cursor: pointer;
-  }
-  
-  .property-slide-content {
-    position: relative;
-    border: 1px solid #e2e1e1;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.2s;
-    background-color: white;
-    width: 115px;
-    height: 160px; /* 높이도 비율에 맞게 조정 */
-  }
-  
-  .property-image {
-    width: 100%;
-    height: 115px; /* 1:1 비율 */
-    overflow: hidden;
-  }
-  
-  .property-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .property-info {
-    padding: 8px;
-    height: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .property-name {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 4px;
-    /* 1줄 말줄임 처리 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .property-actions {
-    display: flex;
-    flex-direction: column; /* 세로로 배치 변경 */
-    gap: 4px;
-    font-size: 12px;
-    color: #666;
-  }
-  
-  .property-highlight-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: #007bff;
-  }
+.mypage-property-slider-container {
+  width: 564px;
+  margin: 20px 0;
+}
 
-.slider-button {
-  position: absolute;
-  background-color: white;
-  border: 1px solid #e2e1e1;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+.mypage-property-slider {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #01ADFF #e8f7ff;
+}
+
+/* 웹킷 기반 브라우저를 위한 스크롤바 스타일링 */
+.mypage-property-slider::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mypage-property-slider::-webkit-scrollbar-track {
+  background: #e8f7ff;
+  border-radius: 3px;
+}
+
+.mypage-property-slider::-webkit-scrollbar-thumb {
+  background: #01ADFF;
+  border-radius: 3px;
+}
+
+.mypage-property-slider::-webkit-scrollbar-thumb:hover {
+  background: #0088cc;
+}
+
+.mypage-property-slider-track {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 12px;
+  padding: 4px 0;
+  min-width: min-content;
+}
+
+.mypage-property-slide {
+  flex: 0 0 154px;
   cursor: pointer;
-  transition: all 0.2s;
-  z-index: 1;
 }
 
-.slider-button:hover:not(:disabled) {
-  background-color: #f5f5f5;
+.mypage-property-slide-content {
+  position: relative;
+  border: 1px solid #e2e1e1;
+  border-radius: 8px;
+  background-color: white;
+  width: 154px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.slider-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.mypage-property-image {
+  width: 100%;
+  height: 110px;
+  flex: 0 0 110px;
+  border-bottom: 1px solid #e2e1e1;
 }
 
-.slider-button.prev {
-  left: 0;
+.mypage-property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
-.slider-button.next {
-  right: 0;
+.mypage-property-info {
+  padding: 8px 10px;
+  height: 70px;
+  flex: 0 0 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+}
+
+.mypage-property-description {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+.mypage-property-price {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 호버 효과 */
+.mypage-property-slide-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
 }
