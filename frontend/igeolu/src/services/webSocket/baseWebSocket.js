@@ -30,17 +30,18 @@ class BaseWebSocket {
           this.stompClient = null;
         }
 
-        const token = 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg';
+        // const token = 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMzLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAzMDEzLCJleHAiOjE3NDAxMTI2MTN9.s6tgPhKV61WYbIbjPHPg6crY0gFvc0T-RhQJ-bGVGWg';
         
         this.stompClient = new Client({
           webSocketFactory: () => {
-            const wsUrl = `${this.SOCKET_URL}?token=${token}`;
+            const wsUrl = `${this.SOCKET_URL}`;
+            // const wsUrl = `${this.SOCKET_URL}?token=${token}`;
             // console.log('연결 시도 URL:', wsUrl);
             return new WebSocket(wsUrl);
           },
           reconnectDelay: 5000,
-          heartbeatIncoming: 4000,
-          heartbeatOutgoing: 4000,
+          heartbeatIncoming: 10000,
+          heartbeatOutgoing: 10000,
           debug: function(str) {
             // console.log('STOMP 디버그:', str); // websocket ping-pong 확인용
           },
