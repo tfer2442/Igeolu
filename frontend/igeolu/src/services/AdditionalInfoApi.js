@@ -2,13 +2,20 @@
 import axios from 'axios';
 
 // 백엔드 API 요청
-const submitInstance = axios.create({
+// export const instance = axios.create({
+//   baseURL: 'https://i12d205.p.ssafy.io/api',
+//   headers: {
+//     'Authorization': JSON.parse(localStorage.getItem('user'))?.token || 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE',
+//     'Content-Type': 'application/json',
+//   },
+// });
+
+export const submitInstance = axios.create({
   baseURL: 'https://i12d205.p.ssafy.io/api',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    // 최재영 38 ROLE_INCOMPLETE_REALTOR
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM4LCJyb2xlIjoiUk9MRV9JTkNPTVBMRVRFX1JFQUxUT1IiLCJpYXQiOjE3MzkyNDc2NzYsImV4cCI6MTc0MDQ1NzI3Nn0.vjWL_6w0MYPqe6aNMe4NNa4A2-q60uG9MxD1_rYjM4o'
-  }
+  },
 });
 
 submitInstance.interceptors.request.use(
