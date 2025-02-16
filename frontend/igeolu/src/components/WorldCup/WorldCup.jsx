@@ -152,9 +152,11 @@ function WorldCup({ properties = [], isOpen, onClose }) {
                     <div className="world-cup-modal">
                         <div className="world-cup-modal__container">   
                             <div className="world-cup-modal__header">
-                                <h2>매물 월드컵 {round}강</h2>
-                                <div>
-                                    {!winner && `${Math.floor(winners.length + 1)}/${round/2} 매치`}
+                                <div className="world-cup-modal__title">
+                                    <h2>매물 월드컵 {round === 2 ? '결승' : `${round}강`}</h2>
+                                    <div className="world-cup-modal__match-count">
+                                        {!winner && `${Math.floor(winners.length + 1)}/${round/2} 매치`}
+                                    </div>
                                 </div>
                                 <button 
                                     className="world-cup-modal__close-button" 
@@ -176,9 +178,9 @@ function WorldCup({ properties = [], isOpen, onClose }) {
                                                     />
                                                 )}
                                             </div>
-                                            <p>{(winner.deposit ?? 0).toLocaleString()}원 / {(winner.monthlyRent ?? 0).toLocaleString()}원</p>
-                                            <p>{winner.address || '주소 정보 없음'}</p>
-                                            <p>{winner.description || '소개 정보 없음'}</p>
+                                            <p style={{fontSize: '20px', marginTop: '10px',fontWeight: 'bold'}}>{(winner.deposit ?? 0).toLocaleString()} / {(winner.monthlyRent ?? 0).toLocaleString()}</p>
+                                            <p style={{fontSize: '14px'}}>{winner.address || '주소 정보 없음'}</p>
+                                            <p style={{fontSize: '14px'}}>{winner.description || '소개 정보 없음'}</p>
                                         </div>
                                         <button 
                                             className="world-cup-modal__restart-button" 
@@ -243,9 +245,9 @@ function WorldCup({ properties = [], isOpen, onClose }) {
                                                         )}
                                                     </div>
                                                 )}
-                                                <p>{(property.deposit ?? 0).toLocaleString()}원 / {(property.monthlyRent ?? 0).toLocaleString()}원</p>
-                                                <p>{property.address || '주소 정보 없음'}</p>
-                                                <p>{property.description || '소개 정보 없음'}</p>
+                                                <p style={{fontSize: '20px', marginTop: '30px',fontWeight: 'bold'}}>{(property.deposit ?? 0).toLocaleString()} / {(property.monthlyRent ?? 0).toLocaleString()}</p>
+                                                <p style={{fontSize: '14px'}}>{property.address || '주소 정보 없음'}</p>
+                                                <p style={{fontSize: '14px'}}>{property.description || '소개 정보 없음'}</p>
                                             </div>
                                         ))}
                                         <div className="vs-text">VS</div>

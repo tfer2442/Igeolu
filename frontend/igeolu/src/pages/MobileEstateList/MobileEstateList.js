@@ -52,7 +52,7 @@ function MobileEstateList() {
                             <div className="mobile-estate-list-page__content-info">
                                 <div className="mobile-estate-list-page__content-info-text">
                                     <p id="deposit-and-monthly-rent">
-                                        {(property.deposit ?? 0).toLocaleString()}원 / {(property.monthlyRent ?? 0).toLocaleString()}원
+                                        {(property.deposit ?? 0).toLocaleString()} / {(property.monthlyRent ?? 0).toLocaleString()}
                                     </p>
                                     <p id="address">{property.address || '주소 정보 없음'}</p>
                                 </div>
