@@ -7,7 +7,7 @@ import './DesktopMainPageNav.css';
 import UserControllerApi from '../../services/UserControllerApi';
 import { useNotification } from '../../contexts/NotificationContext';
 import NotificationApi from '../../services/NotificationApi';
-import { useUser } from '../../contexts/UserContext'; 
+import { useUser } from '../../contexts/UserContext';
 
 const NAV_ITEMS = [
   { id: 1, title: '방찾기', path: '/map?type=room' },
@@ -20,9 +20,9 @@ function DesktopMainPageNav() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(defaultProfile);
-  const { notifications, unreadCount, markAsRead, updateNotifications } = useNotification();
+  const { notifications, unreadCount, markAsRead, updateNotifications } =
+    useNotification();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  
 
   // 알림 삭제 핸들러 추가
   const handleDeleteNotification = async (e, notificationId) => {
@@ -86,7 +86,7 @@ function DesktopMainPageNav() {
   };
 
   const handleLogoutConfirm = () => {
-    logout();  // UserContext의 logout 함수 사용
+    logout(); // UserContext의 logout 함수 사용
     setProfileImage(defaultProfile);
     setIsModalOpen(false);
   };
@@ -97,6 +97,15 @@ function DesktopMainPageNav() {
 
   const closeDropdown = () => {
     setIsDropdownOpen(false);
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await NotificationApi.markAllAsRead();
+      await updateNotifications(); // 알림 목록 갱신
+    } catch (error) {
+      console.error('모든 알림 읽음 처리 실패:', error);
+    }
   };
 
   return (
@@ -148,12 +157,22 @@ function DesktopMainPageNav() {
                 <div className='notification-dropdown'>
                   <div className='notification-header'>
                     <h3>알림</h3>
-                    <button
-                      className='close-button'
-                      onClick={() => setIsNotificationOpen(false)}
-                    >
-                      ×
-                    </button>
+                    <div className='notification-header-actions'>
+                      {notifications.length > 0 && (
+                        <button
+                          className='mark-all-read-button'
+                          onClick={handleMarkAllAsRead}
+                        >
+                          모두 읽음
+                        </button>
+                      )}
+                      <button
+                        className='close-button'
+                        onClick={() => setIsNotificationOpen(false)}
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
                   <div className='notification-list'>
                     {notifications.length === 0 ? (

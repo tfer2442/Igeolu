@@ -82,7 +82,7 @@ const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
         <div className='appointment-modal-content'>
           <h2>약속 수정</h2>
           <form onSubmit={handleSubmit}>
-            <div className='form-group'>
+            <div className='editappointment-form-group'>
               <label htmlFor='editScheduledAt'>날짜 및 시간</label>
               <input
                 id='editScheduledAt'
@@ -94,7 +94,7 @@ const EditAppointmentModal = ({ appointment, onClose, onUpdate }) => {
                 required
               />
             </div>
-            <div className='form-group'>
+            <div className='editappointment-form-group'>
               <label htmlFor='editTitle'>제목</label>
               <input
                 id='editTitle'

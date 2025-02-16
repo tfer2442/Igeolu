@@ -1,366 +1,389 @@
 /* src/components/DesktopNav/DesktopMapPageNav.css */
 .desktop-map-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 90%;
-    height: 10%;
-    margin: 0 auto;
-    margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  height: 10%;
+  margin: 0 auto;
+  margin-top: 20px;
 }
 
 .desktop-map-nav__left {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .desktop-map-nav__right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .desktop-map-nav__right-links a {
-    text-decoration: none;
-    color: black;
-    font-size: 16px;
-    margin-left: 10px;
-    padding: 8px 20px;
-    border-radius: 50px;
-    transition: all 0.3s ease;
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  margin-left: 10px;
+  padding: 8px 20px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
 }
 
 .desktop-map-nav__right-links a:hover {
-    color: #01ADFF;
-    background-color: rgba(1, 173, 255, 0.1);
+  color: #01adff;
+  background-color: rgba(1, 173, 255, 0.1);
 }
 
 .desktop-map-nav__login-signin-btn {
-    border: 1px solid #E2E1E1;
-    border-radius: 5px;
-    font-size: 16px;
-    color: black;
-    cursor: pointer;
-    background-color: white;
-    font-weight: 600;
-    width: 145px;
-    height: 40px;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  border: 1px solid #e2e1e1;
+  border-radius: 5px;
+  font-size: 16px;
+  color: black;
+  cursor: pointer;
+  background-color: white;
+  font-weight: 600;
+  width: 145px;
+  height: 40px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .desktop-map-nav__login-signin-btn:hover {
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Profile and Notification Styles */
 .profile-container {
-    position: relative;
+  position: relative;
 }
 
 .profile-actions {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 100;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 100;
 }
 
 .notification-button {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid #e2e1e1;
-    background-color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    transition: all 0.2s ease;
-    position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e2e1e1;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .notification-button svg {
-    color: #666;
-    transition: all 0.2s ease;
+  color: #666;
+  transition: all 0.2s ease;
 }
 
 .notification-button:hover {
-    border-color: #01adff;
-    background-color: rgba(1, 173, 255, 0.1);
+  border-color: #01adff;
+  background-color: rgba(1, 173, 255, 0.1);
 }
 
 .notification-button:hover svg {
-    color: #01adff;
+  color: #01adff;
 }
 
 .notification-badge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: #ff4646;
-    color: white;
-    border-radius: 50%;
-    min-width: 18px;
-    height: 18px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 5px;
-    border: 2px solid white;
-    font-weight: 500;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4646;
+  color: white;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  border: 2px solid white;
+  font-weight: 500;
 }
 
 .notification-dropdown {
-    position: absolute;
-    top: 48px;
-    right: -10px;
-    width: 360px;
-    max-height: 480px;
-    background-color: white;
-    border: 1px solid #E2E1E1;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
+  position: absolute;
+  top: 48px;
+  right: -10px;
+  width: 360px;
+  max-height: 480px;
+  background-color: white;
+  border: 1px solid #e2e1e1;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
 }
 
 .notification-dropdown::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    right: 25px;
-    width: 14px;
-    height: 14px;
-    background-color: white;
-    border-left: 1px solid #e2e1e1;
-    border-top: 1px solid #e2e1e1;
-    transform: rotate(45deg);
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 25px;
+  width: 14px;
+  height: 14px;
+  background-color: white;
+  border-left: 1px solid #e2e1e1;
+  border-top: 1px solid #e2e1e1;
+  transform: rotate(45deg);
 }
 
 .notification-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #E2E1E1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e1e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .notification-list {
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-    max-height: 400px;
-    background-color: #fafafa;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: 400px;
+  background-color: #fafafa;
 }
 
 .notification-list::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .notification-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
 .notification-list::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
+  background: #ccc;
+  border-radius: 4px;
 }
 
 .notification-list::-webkit-scrollbar-thumb:hover {
-    background: #999;
+  background: #999;
 }
 
 .notification-item {
-    padding: 16px 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    background-color: white;
-    border-bottom: 1px solid #E2E1E1;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background-color: white;
+  border-bottom: 1px solid #e2e1e1;
 }
 
 .notification-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .notification-item:hover {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
 .notification-item.unread {
-    background-color: #EBF5FF;
+  background-color: #ebf5ff;
 }
 
 .notification-item.unread:hover {
-    background-color: #E3F0FF;
+  background-color: #e3f0ff;
 }
 
 .notification-item:hover .notification-delete-btn {
-    opacity: 1;
+  opacity: 1;
 }
 
 .notification-delete-btn:hover {
-    background: #FF6B6B;
-    color: white;
+  background: #ff6b6b;
+  color: white;
 }
 
 .notification-message {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    color: #333;
-    line-height: 1.5;
-    padding-right: 28px;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  padding-right: 28px;
 }
 
 .notification-date {
-    margin: 0;
-    font-size: 12px;
-    color: #666;
+  margin: 0;
+  font-size: 12px;
+  color: #666;
 }
 
 .notification-delete-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #E2E1E1;
-    border: none;
-    color: #666;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    opacity: 0;
-    transition: all 0.2s ease;
-    z-index: 1;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e2e1e1;
+  border: none;
+  color: #666;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 1;
 }
 
 .profile-button {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    padding: 0;
-    border: 1px solid #e2e1e1;
-    background: white;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.2s ease;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 0;
+  border: 1px solid #e2e1e1;
+  background: white;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
 }
 
 .profile-button:hover {
-    border-color: #01adff;
+  border-color: #01adff;
 }
 
 .profile-button img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .dropdown-menu {
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background-color: white;
-    border: 1px solid #e2e1e1;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    min-width: 150px;
-    z-index: 100;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #e2e1e1;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  z-index: 100;
 }
 
 .dropdown-menu a,
 .dropdown-menu button {
-    display: block;
-    width: 100%;
-    padding: 12px 16px;
-    text-align: left;
-    border: none;
-    background: none;
-    color: black;
-    font-size: 14px;
-    text-decoration: none;
-    cursor: pointer;
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border: none;
+  background: none;
+  color: black;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .dropdown-menu a:hover,
 .dropdown-menu button:hover {
-    background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
 /* Modal Styles */
 .logout-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
 
 .logout-modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 280px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 280px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .logout-modal h3 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    font-weight: 600;
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .logout-modal p {
-    margin: 0 0 16px 0;
-    color: #666;
-    font-size: 14px;
+  margin: 0 0 16px 0;
+  color: #666;
+  font-size: 14px;
 }
 
 .modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
 
 .modal-buttons button {
-    padding: 6px 16px;
-    border-radius: 4px;
-    font-size: 13px;
-    cursor: pointer;
-    border: none;
-    min-width: 60px;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  min-width: 60px;
 }
 
 .modal-buttons button:first-child {
-    background-color: #01adff;
-    color: white;
+  background-color: #01adff;
+  color: white;
 }
 
 .modal-buttons button:last-child {
-    background-color: #f5f5f5;
-    color: #666;
+  background-color: #f5f5f5;
+  color: #666;
 }
 
 .modal-buttons button:hover {
-    opacity: 0.9;
+  opacity: 0.9;
+}
+
+.notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mark-all-read-button {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #666;
+  background: none;
+  border: 1px solid #e2e1e1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mark-all-read-button:hover {
+  background-color: #f5f5f5;
+  color: #01adff;
+  border-color: #01adff;
 }

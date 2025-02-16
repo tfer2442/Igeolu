@@ -77,3 +77,83 @@
   .mobile-kakao-button:hover {
     background-color: #0099E6;
   }
+
+  /* 기존 CSS는 유지하고 아래 스타일을 추가합니다 */
+
+.mobile-login-form {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 24px;
+}
+
+.mobile-form-group {
+  margin-bottom: 16px;
+}
+
+.mobile-login-input {
+  width: 100%;
+  padding: 16px;
+  background-color: #333333;
+  border: 1px solid #424242;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.mobile-login-input::placeholder {
+  color: #9F9F9F;
+}
+
+.mobile-login-input:focus {
+  border-color: #FEE500;
+  background-color: #3A3A3A;
+}
+
+.mobile-login-submit-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: white;
+  color: #272626;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.mobile-login-submit-btn:hover {
+  background-color: #F5F5F5;
+}
+
+.mobile-divider {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  gap: 16px;
+}
+
+.mobile-divider::before,
+.mobile-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #424242;
+}
+
+.mobile-divider span {
+  color: #9F9F9F;
+  font-size: 14px;
+}
+
+.mobile-error-message {
+  color: #FF6B6B;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 16px;
+}

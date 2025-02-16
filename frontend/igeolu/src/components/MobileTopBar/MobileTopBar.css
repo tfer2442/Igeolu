@@ -1,210 +1,237 @@
 /* src/components/MobileTopBar/MobileTopBar.css */
 .mobile-top-bar {
-    width: 100%;  /* 전체 너비를 사용하도록 수정 */
-    padding: 0 20px; /* 양쪽 여백을 padding으로 처리 */
-    height: 80px;
-    margin-top: max(44px, env(safe-area-inset-top));
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    background: #272626;
-    z-index: 10;
+  width: 100%;
+  padding: 0 20px;
+  height: 80px;
+  margin-top: max(44px, env(safe-area-inset-top));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: #272626;
+  z-index: 10;
 }
 
 .mobile-top-bar__title {
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .mobile-top-bar__logo {
-    height: 50px;
-    width: auto;
+  height: 50px;
+  width: auto;
 }
 
 .mobile-top-bar__alarm {
-    width: 24px;  /* 알림 아이콘 크기 지정 */
-    height: 24px;
-    object-fit: contain;  /* 이미지 비율 유지 */
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
-/* iOS 안전 영역 지원 */
 @supports (padding: max(0px)) {
-    .mobile-top-bar {
-        padding-top: env(safe-area-inset-top);
-    }
+  .mobile-top-bar {
+      padding-top: env(safe-area-inset-top);
+  }
 }
 
 .notification-wrapper {
-    position: relative;
-  }
-  
-  .mobile-top-bar__alarm-button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .mobile-notification-badge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: #ff4646;
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 2px solid #272626;
-    font-weight: 500;
-    aspect-ratio: 1;
-  }
+  position: relative;
+}
 
-  .mobile-notification-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
-  
-  .mobile-notification-drawer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    animation: slideUp 0.3s ease-out;
-  }
-  
-  @keyframes slideUp {
-    from {
+.mobile-top-bar__alarm-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4646;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid #272626;
+  font-weight: 500;
+  aspect-ratio: 1;
+}
+
+.mobile-notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.mobile-notification-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #272626;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
       transform: translateY(100%);
-    }
-    to {
+  }
+  to {
       transform: translateY(0);
-    }
   }
-  
-  .mobile-notification-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #E2E1E1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .mobile-notification-header h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-  }
-  
-  .mobile-notification-header .close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #666;
-    padding: 0 8px;
-    cursor: pointer;
-  }
-  
-  .mobile-notification-list {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    background-color: #fafafa;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  
-  .mobile-notification-item {
-    padding: 16px 20px;
-    background-color: white;
-    border-bottom: 1px solid #E2E1E1;
-    cursor: pointer;
-  }
-  
-  .mobile-notification-item.unread {
-    background-color: #EBF5FF;
-  }
-  
-  .mobile-notification-item .notification-message {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #333;
-    padding-right: 28px;
-  }
-  
-  .mobile-notification-item .notification-date {
-    margin: 0;
-    font-size: 12px;
-    color: #666;
-  }
+}
 
-  .mobile-notification-item {
-    position: relative;
-  }
-  
-  .notification-delete-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #E2E1E1;
-    border: none;
-    color: #666;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    opacity: 0;
-    transition: all 0.2s ease;
-    z-index: 1;
-  }
-  
-  .mobile-notification-item:hover .notification-delete-btn {
-    opacity: 1;
-  }
-  
-  .notification-delete-btn:hover {
-    background: #FF6B6B;
-    color: white;
-  }
-  
-  .no-notifications {
-    padding: 32px 20px;
-    text-align: center;
-    color: #666;
-    font-size: 14px;
-  }
-  
-  /* iOS 안전 영역 지원 */
-  @supports (padding: max(0px)) {
-    .mobile-notification-drawer {
+.mobile-notification-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #403F3F;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-notification-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.mobile-notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mark-all-read-button {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #9F9F9F;
+  background: none;
+  border: 1px solid #403F3F;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mark-all-read-button:hover {
+  background-color: #2F2E2E;
+  color: #01adff;
+  border-color: #01adff;
+}
+
+.mobile-notification-header .close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #9F9F9F;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.mobile-notification-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: #272626;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-notification-item {
+  padding: 16px 20px;
+  background-color: #2F2E2E;
+  border-bottom: 1px solid #403F3F;
+  cursor: pointer;
+  position: relative;
+}
+
+.mobile-notification-item.unread {
+  background-color: #1E1D1D;
+}
+
+.mobile-notification-item .notification-message {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: white;
+  padding-right: 28px;
+}
+
+.mobile-notification-item .notification-date {
+  margin: 0;
+  font-size: 12px;
+  color: #9F9F9F;
+}
+
+.notification-delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #403F3F;
+  border: none;
+  color: #9F9F9F;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.mobile-notification-item:hover .notification-delete-btn {
+  opacity: 1;
+}
+
+.notification-delete-btn:hover {
+  background: #FF6B6B;
+  color: white;
+}
+
+.no-notifications {
+  padding: 32px 20px;
+  text-align: center;
+  color: #9F9F9F;
+  font-size: 14px;
+}
+
+@supports (padding: max(0px)) {
+  .mobile-notification-drawer {
       padding-bottom: max(16px, env(safe-area-inset-bottom));
-    }
   }
+}
+
+@media (hover: none) {
+  .mark-all-read-button:active {
+      background-color: #2F2E2E;
+      color: #01adff;
+      border-color: #01adff;
+  }
+}

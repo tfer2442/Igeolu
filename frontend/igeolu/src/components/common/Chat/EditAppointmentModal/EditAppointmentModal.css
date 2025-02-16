@@ -92,18 +92,18 @@
     font-size: 18px;
   }
   
-  .form-group {
+  .editappointment-form-group {
     margin-bottom: 20px;
   }
   
-  .form-group label {
+  .editappointment-form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
     color: #ffffff;
   }
   
-  .form-group input {
+  .editappointment-form-group input {
     width: 100%;
     padding: 12px;
     background: #333333;
@@ -112,13 +112,13 @@
     color: white;
   }
   
-  .form-group input:focus {
+  .editappointment-form-group input:focus {
     outline: none;
     border-color: #01adff;
   }
   
   /* 날짜 선택 캘린더 아이콘 커스텀 */
-  .form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  .editappointment-form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     opacity: 0.7;
     cursor: pointer;

@@ -97,7 +97,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
         <div className='appointment-modal-content'>
           <h2>약속 생성</h2>
           <form onSubmit={handleSubmit}>
-            <div className='form-group'>
+            <div className='appointment-form-group'>
               <label htmlFor='scheduledAt'>날짜 및 시간</label>
               <input
                 type='datetime-local'
@@ -108,7 +108,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
                 required
               />
             </div>
-            <div className='form-group'>
+            <div className='appointment-form-group'>
               <label htmlFor='title'>제목</label>
               <input
                 type='text'
@@ -119,7 +119,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
                 required
               />
             </div>
-            <div className='form-group checkbox-group'>
+            <div className='appointment-form-group checkbox-group'>
               <label>
                 <input
                   type='checkbox'

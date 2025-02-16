@@ -58,7 +58,7 @@ function DesktopLiveAndMyPage({ onLoginSigninClick }) {
 
   useEffect(() => {
     if (user) {
-        console.log('Navigation user state:', user);
+      console.log('Navigation user state:', user);
       const fetchUserInfo = async () => {
         try {
           const response = await UserControllerApi.getUserInfo(user.userId);
@@ -90,6 +90,15 @@ function DesktopLiveAndMyPage({ onLoginSigninClick }) {
     logout(); // UserContext의 logout 함수 사용
     setProfileImage(defaultProfile);
     setIsModalOpen(false);
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await NotificationApi.markAllAsRead();
+      await updateNotifications(); // 알림 목록 갱신
+    } catch (error) {
+      console.error('모든 알림 읽음 처리 실패:', error);
+    }
   };
 
   const closeModal = () => {
@@ -148,12 +157,22 @@ function DesktopLiveAndMyPage({ onLoginSigninClick }) {
                   <div className='notification-dropdown'>
                     <div className='notification-header'>
                       <h3>알림</h3>
-                      <button
-                        className='close-button'
-                        onClick={() => setIsNotificationOpen(false)}
-                      >
-                        ×
-                      </button>
+                      <div className='notification-header-actions'>
+                        {notifications.length > 0 && (
+                          <button
+                            className='mark-all-read-button'
+                            onClick={handleMarkAllAsRead}
+                          >
+                            모두 읽음
+                          </button>
+                        )}
+                        <button
+                          className='close-button'
+                          onClick={() => setIsNotificationOpen(false)}
+                        >
+                          ×
+                        </button>
+                      </div>
                     </div>
                     <div className='notification-list'>
                       {notifications.length === 0 ? (
