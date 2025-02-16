@@ -337,35 +337,13 @@ function MapPage() {
         setSelectedItem(null);
         setPropertyMarkers([]);
         setInitialProperties([]);
+        setSearchResults([]); // 이전 검색 결과 초기화
         if (menuType === 'agent') {
             fetchRealtors();
         } else {
             fetchSearchResults();
         }
     };
-
-    // const handleItemClick = (item, isPropertyMarker = false) => {
-    //     if (selectedItem && detailPanelView === 'propertyDetail') {
-    //         return;
-    //     }
-
-    //     if (isPropertyMarker) {
-    //         setSelectedItem({
-    //             ...item,
-    //             type: 'room'
-    //         });
-    //     } else {
-    //         setSelectedItem(item);
-    //     }
-
-    //     if (item && item.latitude && item.longitude) {
-    //         updateMapCenter({
-    //             lat: parseFloat(item.latitude),
-    //             lng: parseFloat(item.longitude)
-    //         });
-    //         setMapLevel(3);
-    //     }
-    // };
 
     const handleItemClick = (item, isPropertyMarker = false) => {
         if (selectedItem && detailPanelView === 'propertyDetail') {
