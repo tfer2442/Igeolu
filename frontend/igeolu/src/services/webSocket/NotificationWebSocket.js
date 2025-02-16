@@ -94,7 +94,7 @@ class NotificationWebSocket extends BaseWebSocket {
         }
       );
 
-      // console.log('✅ 알림 구독 완료');
+      console.log('✅ 알림 구독 완료');
     } catch (error) {
       console.error('❌ 알림 구독 중 오류:', error);
       throw error;
@@ -110,16 +110,21 @@ class NotificationWebSocket extends BaseWebSocket {
       if (this.stompClient) {
         const originalOnWebSocketClose = this.stompClient.onWebSocketClose;
         this.stompClient.onWebSocketClose = (event) => {
-          console.log('⚠️ WebSocket 연결 종료:', {
-            code: event.code,
-            reason: event.reason || '이유 없음',
-            wasClean: event.wasClean,
-            timestamp: new Date().toISOString(),
-          });
+          // console.log('⚠️ WebSocket 연결 종료:', {
+          //   code: event.code,
+          //   reason: event.reason || '이유 없음',
+          //   wasClean: event.wasClean,
+          //   timestamp: new Date().toISOString(),
+          // });
 
           // code 1006으로 연결이 종료된 경우 재연결 시도
           if (event.code === 1006) {
-            console.log('🔄 Code 1006으로 인한 연결 종료, 재연결 시도...');
+            // console.log('🔄 Code 1006으로 인한 연결 종료, 재연결 시도...');
+            this.reconnect();
+          }
+
+          if (event.code === 1002) {
+            // console.log('🔄 Code 1002으로 인한 연결 종료, 재연결 시도...');
             this.reconnect();
           }
 
@@ -138,7 +143,7 @@ class NotificationWebSocket extends BaseWebSocket {
   disconnect() {
     if (this.subscription) {
       try {
-        console.log('🔄 알림 구독 해제');
+        // console.log('🔄 알림 구독 해제');
         this.subscription.unsubscribe();
       } catch (error) {
         console.error('❌ 구독 해제 중 오류:', error);

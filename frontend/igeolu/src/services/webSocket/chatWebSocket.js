@@ -11,7 +11,7 @@ class ChatWebSocket extends BaseWebSocket {
 
   setActive(isActive) {
     // 활성화 상태가 변경될 때마다 로그
-    console.log(`ChatWebSocket: Room ${this.roomId} active state changed to:`, isActive);
+    // console.log(`ChatWebSocket: Room ${this.roomId} active state changed to:`, isActive);
     this.isActive = isActive;
   }
 
@@ -59,7 +59,7 @@ class ChatWebSocket extends BaseWebSocket {
 
   handleMessage(message) {
     // 현재 채팅방의 활성화 상태와 함께 메시지 전달
-    console.log(`ChatWebSocket: Handling message for room ${this.roomId}, isActive:`, this.isActive);
+    // console.log(`ChatWebSocket: Handling message for room ${this.roomId}, isActive:`, this.isActive);
     this.onMessageReceived(message, this.isActive);
   }
 
@@ -72,7 +72,7 @@ class ChatWebSocket extends BaseWebSocket {
 
     try {
       const subscriptionPath = `/api/sub/chats/${this.roomId}`;
-      console.log(`ChatWebSocket: Subscribing to ${subscriptionPath}`);
+      // console.log(`ChatWebSocket: Subscribing to ${subscriptionPath}`);
       
       this.subscription = this.stompClient.subscribe(
         subscriptionPath,
@@ -90,7 +90,7 @@ class ChatWebSocket extends BaseWebSocket {
         }
       );
 
-      console.log(`ChatWebSocket: Successfully subscribed to room ${this.roomId}`);
+      // console.log(`ChatWebSocket: Successfully subscribed to room ${this.roomId}`);
     } catch (error) {
       console.error('ChatWebSocket: Subscription setup failed:', error);
       throw error;
@@ -138,7 +138,7 @@ class ChatWebSocket extends BaseWebSocket {
 
   subscribe() {
     if (this.subscription) {
-      console.log('이미 구독 중입니다.');
+      // console.log('이미 구독 중입니다.');
       return;
     }
     this.subscribeToMessages();

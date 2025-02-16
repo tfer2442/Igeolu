@@ -12,7 +12,7 @@ class ChatRoomsWebSocket extends BaseWebSocket {
   // 모든 채팅방 구독
   subscribeToChatRooms(chatRooms) {
     if (!this.stompClient || !this.isConnected) {
-      console.log('WebSocket이 연결되지 않았습니다.');
+      // console.log('WebSocket이 연결되지 않았습니다.');
       return;
     }
 
@@ -65,11 +65,11 @@ class ChatRoomsWebSocket extends BaseWebSocket {
 
   // 연결 해제 시 모든 구독 정리
   disconnect() {
-    console.log('WebSocket 연결 해제 중...');
+    // console.log('WebSocket 연결 해제 중...');
     this.subscriptions.forEach((subscription, key) => {
       try {
         subscription.unsubscribe();
-        console.log(`구독 해제 완료: ${key}`);
+        // console.log(`구독 해제 완료: ${key}`);
       } catch (error) {
         console.error(`구독 해제 실패 (${key}):`, error);
       }
