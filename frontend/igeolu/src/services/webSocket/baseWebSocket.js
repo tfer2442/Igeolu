@@ -9,23 +9,23 @@ class BaseWebSocket {
   }
 
   async connect() {
-    console.log('WebSocket 연결 시도 시작...', {
-      currentStatus: {
-        isConnected: this.isConnected,
-        hasStompClient: !!this.stompClient,
-        stompConnected: this.stompClient?.connected
-      }
-    });
+    // console.log('WebSocket 연결 시도 시작...', {
+    //   currentStatus: {
+    //     isConnected: this.isConnected,
+    //     hasStompClient: !!this.stompClient,
+    //     stompConnected: this.stompClient?.connected
+    //   }
+    // });
 
     if (this.isConnected && this.stompClient?.connected) {
-      console.log('이미 연결된 상태입니다.');
+      // console.log('이미 연결된 상태입니다.');
       return;
     }
 
     return new Promise((resolve, reject) => {
       try {
         if (this.stompClient) {
-          console.log('기존 연결 정리 중...');
+          // console.log('기존 연결 정리 중...');
           this.stompClient.deactivate();
           this.stompClient = null;
         }
@@ -36,17 +36,17 @@ class BaseWebSocket {
           webSocketFactory: () => {
             const wsUrl = `${this.SOCKET_URL}`;
             // const wsUrl = `${this.SOCKET_URL}?token=${token}`;
-            console.log('연결 시도 URL:', wsUrl);
+            // console.log('연결 시도 URL:', wsUrl);
             return new WebSocket(wsUrl);
           },
           reconnectDelay: 5000,
           heartbeatIncoming: 10000,
           heartbeatOutgoing: 10000,
           debug: function(str) {
-            console.log('STOMP 디버그:', str); // websocket ping-pong 확인용
+            // console.log('STOMP 디버그:', str); // websocket ping-pong 확인용
           },
           onConnect: () => {
-            console.log('STOMP 연결 성공');
+            // console.log('STOMP 연결 성공');
             this.isConnected = true;
             resolve();
           },
@@ -59,12 +59,12 @@ class BaseWebSocket {
             console.error('WebSocket 에러:', event);
           },
           onWebSocketClose: (event) => {
-            console.log('WebSocket 연결 종료:', event);
+            // console.log('WebSocket 연결 종료:', event);
             this.isConnected = false;
           }
         });
 
-        console.log('STOMP 클라이언트 설정 완료, 활성화 시도...');
+        // console.log('STOMP 클라이언트 설정 완료, 활성화 시도...');
         this.stompClient.activate();
       } catch (error) {
         this.isConnected = false;
@@ -75,24 +75,24 @@ class BaseWebSocket {
   }
 
   disconnect() {
-    console.log('WebSocket 연결 해제 시도:', {
-      hasStompClient: !!this.stompClient,
-      isConnected: this.isConnected,
-      stompConnected: this.stompClient?.connected
-    });
+    // console.log('WebSocket 연결 해제 시도:', {
+    //   hasStompClient: !!this.stompClient,
+    //   isConnected: this.isConnected,
+    //   stompConnected: this.stompClient?.connected
+    // });
 
     if (this.stompClient) {
       try {
         if (this.stompClient.connected) {
           this.stompClient.deactivate();
-          console.log('STOMP 클라이언트 비활성화 완료');
+          // console.log('STOMP 클라이언트 비활성화 완료');
         }
       } catch (error) {
-        console.error('연결 해제 중 에러:', error);
+        // console.error('연결 해제 중 에러:', error);
       } finally {
         this.isConnected = false;
         this.stompClient = null;
-        console.log('연결 상태 초기화 완료');
+        // console.log('연결 상태 초기화 완료');
       }
     }
   }
