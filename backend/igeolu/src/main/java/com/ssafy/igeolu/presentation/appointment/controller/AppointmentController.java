@@ -60,7 +60,7 @@ public class AppointmentController {
 	@PutMapping("/{appointmentId}")
 	public ResponseEntity<Void> updateAppointment(
 		@PathVariable("appointmentId") Integer appointmentId,
-		@RequestBody AppointmentPutRequestDto request) {
+		@RequestBody @Valid AppointmentPutRequestDto request) {
 		appointmentFacadeService.updateAppointment(appointmentId, request);
 		return ResponseEntity.noContent().build();
 	}
