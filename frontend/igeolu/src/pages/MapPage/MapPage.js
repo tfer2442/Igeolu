@@ -309,10 +309,137 @@ function MapPage() {
         }
     }, [deposit, monthlyRent, selectedOptions, initialProperties]);
 
-    const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
+    // const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
+    //     setSelectedCity(sidoName);
+    //     setSelectedDistrict(gugunName);
+    //     setSelectedNeighborhood(dongName);
+    // };
+
+    const handleLocationSearch = async ({ sidoName, gugunName, dongName }) => {
+        console.log('MapPage - handleLocationSearch called with:', { sidoName, gugunName, dongName });
+        console.log('MapPage - Current activeMenu:', activeMenu);
+        
+        // 주소로 좌표 검색하여 지도 이동
+        if (sidoName && gugunName) {
+            try {
+                const fullAddress = `${sidoName} ${gugunName} ${dongName || ''}`.trim();
+                console.log('MapPage - Searching coordinates for address:', fullAddress);
+                const coordinates = await searchCoordinates(fullAddress);
+                if (coordinates) {
+                    updateMapCenter(coordinates);
+                    setMapLevel(3);
+                }
+            } catch (error) {
+                console.error('Error getting coordinates:', error);
+            }
+        }
+    
+        // 상태 업데이트
         setSelectedCity(sidoName);
         setSelectedDistrict(gugunName);
         setSelectedNeighborhood(dongName);
+    
+        // 검색 결과 업데이트
+        try {
+            if (activeMenu === 'room') {
+                // 원룸 검색
+                await fetchSearchResults();
+            } else {
+                // 공인중개사 검색
+                let response = null;
+                
+                // MapPage.js - handleLocationSearch 함수 내부의 dong 정보 조회 부분 수정
+                if (dongName) {
+                    try {
+                        // API 호출 전 파라미터 출력
+                        console.log('MapPage - Original parameters:', {
+                            sidoName,
+                            gugunName,
+                            dongName
+                        });
+
+                        // URL에 직접 파라미터 포함
+                        const requestUrl = `${API_BASE_URL}/api/dongs?sidoName=${sidoName}&gugunName=${gugunName}`;
+                        console.log('MapPage - Requesting dongs with URL:', requestUrl);
+
+                        // API 호출
+                        const dongResponse = await axios.get(requestUrl);
+                        
+                        // 응답 데이터 확인
+                        console.log('MapPage - Full dong API response:', dongResponse);
+                        console.log('MapPage - Fetched dong list:', dongResponse.data);
+                        
+                        // MapPage.js - handleLocationSearch 함수의 동 처리 부분 수정
+                        if (dongResponse.data && dongResponse.data.length > 0) {
+                            // 동 이름 비교를 위한 정규화
+                            const normalizedDongName = dongName.replace(/\s+/g, '').toLowerCase();
+                            const selectedDong = dongResponse.data.find(dong => {
+                                const dongNameToCompare = (dong.dongName || dong.name || '').replace(/\s+/g, '').toLowerCase();
+                                console.log('MapPage - Comparing dong names:', {
+                                    searchFor: normalizedDongName,
+                                    current: dongNameToCompare,
+                                    rawDong: dong
+                                });
+                                return dongNameToCompare === normalizedDongName;
+                            });
+                            
+                            console.log('MapPage - Selected dong info:', selectedDong);
+                            
+                            if (selectedDong) {
+                                // dongCode, dongcode 모두 확인
+                                const dongCode = selectedDong.dongCode || selectedDong.dongcode;
+                                if (dongCode) {
+                                    console.log('MapPage - Found dongCode:', dongCode);
+                                    
+                                    // 해당 동의 공인중개사 목록 조회
+                                    console.log('MapPage - Fetching realtors for dongCode:', dongCode);
+                                    response = await axios.get(`${API_BASE_URL}/api/users/${dongCode}/realtors`);
+                                    console.log('MapPage - Fetched realtors for dong:', response.data.length);
+                                } else {
+                                    console.log('MapPage - No dongCode/dongcode found in:', selectedDong);
+                                    console.log('MapPage - Available properties:', Object.keys(selectedDong));
+                                }
+                            }
+                        } else {
+                            // API 호출은 성공했지만 결과가 없는 경우
+                            console.log('MapPage - No dongs found. Trying alternative approach...');
+                            
+                            // 전체 공인중개사 목록 조회로 폴백
+                            console.log('MapPage - Fetching all realtors as fallback');
+                            response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching dong info:', error);
+                        if (error.response) {
+                            console.log('MapPage - Error response:', {
+                                status: error.response.status,
+                                data: error.response.data
+                            });
+                        }
+                    }
+                }
+                
+                // 동 코드를 찾지 못했거나 동이 선택되지 않은 경우 전체 목록 조회
+                if (!response) {
+                    console.log('MapPage - Fetching all realtors');
+                    response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+                }
+    
+                const realtors = response.data.map(realtor => ({
+                    ...realtor,
+                    type: 'agent'
+                }));
+                
+                console.log('MapPage - Setting searchResults with realtors:', realtors.length);
+                setSearchResults(realtors);
+                setSelectedItem(null);
+                setPropertyMarkers([]);
+            }
+        } catch (error) {
+            console.error('Error updating search results:', error);
+            setSearchResults([]);
+            setPropertyMarkers([]);
+        }
     };
 
     const handleMenuClick = (menuType) => {
