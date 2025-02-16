@@ -31,7 +31,7 @@ class ChatRoomsWebSocket extends BaseWebSocket {
       `/api/sub/chats/${this.userId}`,
       (message) => {
         try {
-          // console.log('사용자 업데이트 수신:', message);
+          console.log('사용자 업데이트 수신:', message);
           this.onUpdateCallback();
         } catch (error) {
           console.error('메시지 파싱 실패:', error);
@@ -44,16 +44,16 @@ class ChatRoomsWebSocket extends BaseWebSocket {
   // 개별 채팅방 구독
   subscribeToRoom(roomId) {
     if (this.subscriptions.has(`room-${roomId}`)) {
-      // console.log(`채팅방 ${roomId}는 이미 구독 중입니다.`);
+      console.log(`채팅방 ${roomId}는 이미 구독 중입니다.`);
       return;
     }
 
-    // console.log(`채팅방 ${roomId} 구독 시작`);
+    console.log(`채팅방 ${roomId} 구독 시작`);
     const subscription = this.stompClient.subscribe(
       `/api/sub/chats/${roomId}`,
       (message) => {
         try {
-          // console.log(`채팅방 ${roomId} 메시지 수신:`, message);
+          console.log(`채팅방 ${roomId} 메시지 수신:`, message);
           this.onUpdateCallback();
         } catch (error) {
           console.error('메시지 파싱 실패:', error);

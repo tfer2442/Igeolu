@@ -29,11 +29,11 @@ class ChatWebSocket extends BaseWebSocket {
           throw new Error('STOMP connection check failed');
         }
 
-        // console.log('채팅 WebSocket 연결 성공:', {
-        //   isConnected: this.isConnected,
-        //   stompConnected: this.stompClient?.connected,
-        //   roomId: this.roomId
-        // });
+        console.log('채팅 WebSocket 연결 성공:', {
+          isConnected: this.isConnected,
+          stompConnected: this.stompClient?.connected,
+          roomId: this.roomId
+        });
 
         // 구독 시도
         await this.subscribeToMessages();
