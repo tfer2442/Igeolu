@@ -13,6 +13,7 @@
     flex-direction: column;
     margin-top: 20px;
     width: 564px;
+    height: 325px;
   }
   
   .user-info p {
@@ -57,7 +58,14 @@
     width: 100%;
     padding: 0 20px;
   }
-  
+  .user-info-content-text-name p{
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .user-info-content-social p{
+    font-size: 16px;
+    font-weight: 500;
+  }
   .user-info-content-social img {
     width: 20px;
     height: 20px;
@@ -69,7 +77,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin-top: 20px;
+    margin-top: 30px;
     width: 564px;
   }
   
@@ -88,12 +96,37 @@
     height: 45px;
   }
   
+  .user-info-schedule-list {
+    max-height: 170px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  /* 웹킷 기반 브라우저를 위한 스크롤바 스타일링 (선택사항) */
+  .user-info-schedule-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .user-info-schedule-list::-webkit-scrollbar-track {
+    background: #e8f7ff;
+    border-radius: 3px;
+  }
+  
+  .user-info-schedule-list::-webkit-scrollbar-thumb {
+    background: #01ADFF;
+    border-radius: 3px;
+  }
+  
+  .user-info-schedule-list::-webkit-scrollbar-thumb:hover {
+    background: #0088cc;
+  }
+  
   /* 매물 목록 섹션 */
   .user-info-record {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin-top: 20px;
+    margin-top: 30px;
     width: 564px;
   }
   

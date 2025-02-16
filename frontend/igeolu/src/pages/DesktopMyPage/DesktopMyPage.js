@@ -90,7 +90,11 @@ function DesktopMyPage() {
   
       const { userId } = JSON.parse(cachedUser);
       const response = await appointmentAPI.getAppointments(userId);
-      setAppointments(response.data);
+      // 날짜순으로 정렬 (최신 날짜가 위로)
+      const sortedAppointments = response.data.sort((a, b) => 
+        new Date(a.scheduledAt) - new Date(b.scheduledAt)
+      );
+      setAppointments(sortedAppointments);
     } catch (error) {
       console.error('Error fetching appointments:', error);
     }
@@ -168,15 +172,17 @@ function DesktopMyPage() {
           <p>라이브일정</p>
           <p>공인중개사</p>
         </div>
-        {appointments.map((appointment) => (
-          <div
-            key={appointment.appointmentId}
-            className='user-info-schedule-content'
-          >
-            <p>{formatDate(appointment.scheduledAt)}</p>
-            <p>{appointment.realtorName}</p>
-          </div>
-        ))}
+        <div className='user-info-schedule-list'>
+          {appointments.map((appointment) => (
+            <div
+              key={appointment.appointmentId}
+              className='user-info-schedule-content'
+            >
+              <p>{formatDate(appointment.scheduledAt)}</p>
+              <p>{appointment.realtorName}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className='user-info-record'>
