@@ -1,4 +1,4 @@
-package com.ssafy.igeolu.presentation.stress;
+package com.ssafy.igeolu.presentation.test;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-public class StressController {
+public class TestController {
 	private final DongcodesService dongcodesService;
 	private final ChatMessageFacadeService chatMessageFacadeService;
 	private final SimpMessageSendingOperations stompTemplate;
