@@ -10,7 +10,7 @@ import UserControllerApi from '../../services/UserControllerApi';
 import MyPageModal from '../../components/MyPageModal/MyPageModal';
 import PropertySlider from '../../components/PropertySlider/PropertySlider';
 import { appointmentAPI } from '../../services/AppointmentApi';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera, FaTimes } from 'react-icons/fa';
 
 function DesktopMyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -171,6 +171,16 @@ function DesktopMyPage() {
     }
   };
 
+  const handleImageDelete = async () => {
+    try {
+      await UserControllerApi.deleteProfileImage();
+      await fetchUserInfo();
+    } catch (error) {
+      console.error('Error deleting profile image:', error);
+      alert('프로필 이미지 삭제에 실패했습니다.');
+    }
+  };
+
   return (
     <div className='desktop-my-page'>
       <DesktopLiveAndMyPage />
@@ -178,10 +188,17 @@ function DesktopMyPage() {
         <p>회원정보</p>
         <div className='user-info-content'>
           <div className='user-info-content-img'>
-            <img
-              src={userInfo?.imageUrl || defaultProfile}
-              alt='프로필 이미지'
-            />
+            <div className="profile-image-container">
+              <img
+                src={userInfo?.imageUrl || defaultProfile}
+                alt='프로필 이미지'
+              />
+              {userInfo?.imageUrl && (
+                <div className="delete-overlay">
+                  <FaTimes className="delete-icon" onClick={handleImageDelete} />
+                </div>
+              )}
+            </div>
             <label htmlFor="profile-image-input" className="image-edit-button">
               <FaCamera />
               <input
