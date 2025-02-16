@@ -41,7 +41,7 @@ spring:
 kakao:
   logout:
     redirect:
-      uri: "https://i12d205.p.ssafy.io/api/logout"
+      uri: "https://i12d205.p.ssafy.io"
 
 openvidu:
   url: ENC(dHcH9uvYd42Efm/FQf80vH9Q/1a6pRNBZX4YRNISN+t15bmSVSWCGA==)
