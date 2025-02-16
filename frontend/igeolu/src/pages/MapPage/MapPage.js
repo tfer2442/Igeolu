@@ -202,84 +202,6 @@ function MapPage() {
         }
     };
 
-    // 공인중개사 목록 가져오기
-    // const fetchRealtors = async () => {
-    //     try {
-    //         // 지역 필터가 모두 설정되지 않은 경우 전체 공인중개사 목록 조회
-    //         if (!selectedCity || !selectedDistrict || !selectedNeighborhood) {
-    //             const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
-    //             const realtors = response.data.map(realtor => ({
-    //                 ...realtor,
-    //                 type: 'agent'
-    //             }));
-                
-    //             setSearchResults(realtors);
-    //             setPropertyMarkers([]);
-                
-    //             if (realtors.length > 0) {
-    //                 const firstItem = realtors[0];
-    //                 if (firstItem.latitude && firstItem.longitude) {
-    //                     updateMapCenter({
-    //                         lat: parseFloat(firstItem.latitude),
-    //                         lng: parseFloat(firstItem.longitude)
-    //                     });
-    //                     setMapLevel(5);
-    //                 }
-    //             }
-    //             return;
-    //         }
-
-    //         // 지역 필터가 설정된 경우 해당 지역의 공인중개사 목록 조회
-    //         const selectedDong = neighborhoods.find(n => 
-    //             n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
-    //         );
-
-    //         const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
-
-    //         if (!dongCode) {
-    //             setSearchResults([]);
-    //             setPropertyMarkers([]);
-    //             return;
-    //         }
-
-    //         const response = await axios.get(`${API_BASE_URL}/api/users/${dongCode}/realtors`);
-            
-    //         const realtors = response.data.map(realtor => ({
-    //             ...realtor,
-    //             type: 'agent',
-    //             dongCode: dongCode,
-    //             dongName: selectedNeighborhood
-    //         }));
-            
-    //         setSearchResults(realtors);
-    //         setPropertyMarkers([]);
-
-    //         if (realtors.length > 0) {
-    //             const firstItem = realtors[0];
-    //             if (firstItem.latitude && firstItem.longitude) {
-    //                 updateMapCenter({
-    //                     lat: parseFloat(firstItem.latitude),
-    //                     lng: parseFloat(firstItem.longitude)
-    //                 });
-    //                 setMapLevel(5);
-    //             } else {
-    //                 const fullAddress = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood}`;
-    //                 try {
-    //                     const coordinates = await searchCoordinates(fullAddress);
-    //                     updateMapCenter(coordinates);
-    //                     setMapLevel(5);
-    //                 } catch (error) {
-    //                     console.error('Error getting coordinates:', error);
-    //                     updateMapCenter(DEFAULT_CENTER);
-    //                 }
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching realtors:', error);
-    //         setSearchResults([]);
-    //         setPropertyMarkers([]);
-    //     }
-    // };
 
     const fetchRealtors = async () => {
         try {
@@ -406,30 +328,31 @@ function MapPage() {
         }
     };
 
-    const handleItemClick = (item, isPropertyMarker = false) => {
-        if (selectedItem && detailPanelView === 'propertyDetail') {
-            return;
-        }
-    
-        const isRoom = item.type === 'room' || activeMenu === 'room';
-    
-        if (isPropertyMarker || isRoom) {
+
+    const handleItemClick = (item, isPropertyMarker = false, view, setView) => {
+        // 매물 마커를 클릭한 경우이거나 원룸 메뉴인 경우
+        if (isPropertyMarker || item.type === 'room' || activeMenu === 'room') {
             const roomItem = {
                 ...item,
                 type: 'room'
             };
             setSelectedItem(roomItem);
-            setPropertyMarkers([roomItem]);  // 선택된 매물만 마커로 표시
+            setPropertyMarkers([roomItem]);
             setInitialProperties([]);
         } else {
-            // 공인중개사를 선택한 경우
-            setSelectedItem(item);
-            // 공인중개사의 위치를 마커로 표시
+            // 공인중개사를 클릭한 경우
+            // 현재 매물 상세보기 상태라면 view를 main으로 리셋
+            if (view === 'propertyDetail') {
+                setView('main');
+            }
+            
+            const agentItem = {
+                ...item,
+                type: 'agent'
+            };
+            setSelectedItem(agentItem);
             if (item.latitude && item.longitude) {
-                setPropertyMarkers([{
-                    ...item,
-                    type: 'agent'
-                }]);
+                setPropertyMarkers([agentItem]);
             }
             setInitialProperties([]);
         }
@@ -535,38 +458,6 @@ function MapPage() {
         setSelectedOptions(options);
     };
 
-    // const handleSwitchToAgent = async (userId) => {
-    //     try {
-    //         // 공인중개사 메뉴로 전환
-    //         setActiveMenu('agent');
-            
-    //         // 모든 공인중개사 목록 가져오기
-    //         const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
-    //         const targetAgent = response.data.find(realtor => realtor.userId === userId);
-            
-    //         if (targetAgent) {
-    //             const agentWithType = {
-    //                 ...targetAgent,
-    //                 type: 'agent'
-    //             };
-                
-    //             // 검색 결과를 해당 공인중개사만 포함하도록 설정
-    //             setSearchResults([agentWithType]);
-    //             setSelectedItem(agentWithType);
-                
-    //             if (targetAgent.latitude && targetAgent.longitude) {
-    //                 updateMapCenter({
-    //                     lat: parseFloat(targetAgent.latitude),
-    //                     lng: parseFloat(targetAgent.longitude)
-    //                 });
-    //                 setMapLevel(3);
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error switching to agent view:', error);
-    //     }
-    // };
-
     const handleSwitchToAgent = async (userId) => {
         try {
             // 1. 공인중개사 정보를 가져옴
@@ -658,7 +549,7 @@ function MapPage() {
                     <div className='right-content-inner'>
                         <ListPanel 
                             type={activeMenu}
-                            onItemClick={handleItemClick}
+                            onItemClick={(item) => handleItemClick(item, false, detailPanelView, setDetailPanelView)}
                             items={searchResults}
                         />
                         <DetailPanel 

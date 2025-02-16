@@ -52,6 +52,18 @@ const DetailPanel = ({
     }, [isVisible, setView]);
 
     useEffect(() => {
+        // data가 변경되면 (새로운 공인중개사가 선택되면)
+        if (data) {
+            // 매물 상세보기 상태에서 공인중개사 정보로 전환될 때
+            if (data.type === 'agent') {
+                setView('main');
+                setSelectedProperty(null);
+                setProperties([]);
+            }
+        }
+    }, [data]);
+
+    useEffect(() => {
         if (data && data.type !== 'room') {
             setView('main');
             setSelectedProperty(null);
