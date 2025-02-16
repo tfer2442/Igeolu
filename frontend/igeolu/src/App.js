@@ -38,6 +38,7 @@ import ChatRoomsWebSocket from './services/webSocket/chatRoomsWebSocket';
 import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage';
 import NotificationProvider from './components/NotificationProvider/NotificationProvider';
+import {UserProvider} from './contexts/UserContext'
 
 // ------------- 개발용 유저 변경 버튼 ------------------
 import DevUserToggle from './components/DEVUSERTOGGLE';
@@ -71,16 +72,19 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    const devUser = savedUser ? JSON.parse(savedUser) : { userId: 35, role: 'member' }; // 기본값으로 이진형
+    const devUser = savedUser
+      ? JSON.parse(savedUser)
+      : { userId: 35, role: 'member' };
     setUser(devUser);
     setIsUserInitialized(true);
-  
+
     setIsAppMounted(true);
     return () => setIsAppMounted(false);
   }, []);
 
   const handleDevUserChange = (newUser) => {
     setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser)); // localStorage도 업데이트
   };
 
   const currentUserId = user?.userId || null;
@@ -239,25 +243,29 @@ function App() {
   const handleSelectRoom = (room) => {
     setSelectedRoom(room);
     setActiveRoomId(room.roomId);
-    setIsChatRoomOpen(true);  // 채팅방 열기
+    setIsChatRoomOpen(true); // 채팅방 열기
   };
   const handleBack = () => {
-    console.log('----------너 동작하니?')
+    console.log('----------너 동작하니?');
     setSelectedRoom(null);
     setActiveRoomId(null);
-    setIsChatRoomOpen(false);  // 채팅방 닫기
+    setIsChatRoomOpen(false); // 채팅방 닫기
   };
 
   const handleClose = () => {
     setIsOpen(false);
     setSelectedRoom(null);
     setActiveRoomId(null);
-    setIsChatRoomOpen(false);  // 채팅방 닫기
+    setIsChatRoomOpen(false); // 채팅방 닫기
   };
 
   useEffect(() => {
     console.log('activeRoomId 변경:', activeRoomId);
   }, [activeRoomId]);
+
+  const handleLoginClick = () => {
+    window.location.href = '/login';
+  };
 
   // 로그아웃 핸들러에서 WebSocket 연결 해제
   const handleLogout = () => {
@@ -307,66 +315,75 @@ function App() {
   // === 8. Main Render ===
   return (
     <div className='App'>
-      <NotificationProvider
-        user={user}
-        onInitialized={() => {
-          // console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
-          setIsNotificationInitialized(true);
-        }}
-      >
-        {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
-        <DevUserToggle onUserChange={handleDevUserChange} /> 
-        <Routes>
-          {/* Desktop Routes */}
-          <Route path='/' element={<DesktopHome />} />
-          <Route path='/login' element={<DesktopLogin />} />
-          <Route path='/live' element={<DesktopLive />} />
-          <Route path='/live-join' element={<DesktopLiveJoinPage />} />
-          <Route
-            path='/desktop-room-search'
-            element={<DesktopRoomSearchPage />}
-          />
-          <Route path='/map' element={<Map />}></Route>
-          <Route path='/mypage' element={<DesktopMyPage />} />
+      <UserProvider>
+        <NotificationProvider
+          user={user}
+          onInitialized={() => {
+            // console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
+            setIsNotificationInitialized(true);
+          }}
+        >
+          {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
+          <DevUserToggle onUserChange={handleDevUserChange} />
+          <Routes>
+            <Route path='/' element={<DesktopHome />} />
+            <Route path='/login' element={<DesktopLogin />} />
+            <Route 
+              path='/live' 
+              element={<DesktopLive onLoginSigninClick={handleLoginClick} />} 
+            />
+            <Route 
+              path='/live-join' 
+              element={<DesktopLiveJoinPage onLoginSigninClick={handleLoginClick} />} 
+            />
+            <Route 
+              path='/map' 
+              element={<Map onLoginSigninClick={handleLoginClick} />} 
+            />
+            <Route 
+              path='/mypage' 
+              element={<DesktopMyPage onLoginSigninClick={handleLoginClick} />} 
+            />
 
-          <Route path='/desktop-my-page' element={<DesktopMyPage />} />
-          {/* Mobile Routes */}
-          <Route path='/mobile-login' element={<MobileLoginPage />} />
-          <Route
-            path='/mobile-additional-info'
-            element={<MobileAdditionalInfoPage />}
-          />
-          <Route path='/make' element={<Make />} />
-          <Route path='/mobile-main' element={<MobileMainPage />} />
-          <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
-          <Route path='/mobile-my-page' element={<MobileMyPage />} />
-          <Route path='/mobile-live' element={<MobileLivePage />} />
-          <Route path='/mobile-register' element={<MobileRegisterPage />} />
-          <Route path='/mobile-edit' element={<MobileEditPage />} />
-          <Route path='/mobile-estate-list' element={<MobileEstateList />} />
-          <Route
-            path='/mobile-live-setting'
-            element={<MobileLiveSettingPage />}
-          />
-          <Route
-            path='/mobile-chat'
-            element={
-              <MobileChatList
-                chatRooms={chatRooms}
-                isLoading={isLoading}
-                error={error}
-                onRetry={fetchChatRooms}
-                currentUserId={currentUserId}
-              />
-            }
-          />
-          <Route
-            path='/mobile-chat/:roomId'
-            element={<MobileChatRoom currentUserId={currentUserId} />}
-          />
-        </Routes>
-        {!isMobileChatRoute && renderChatInterface()}
-      </NotificationProvider>
+            <Route path='/desktop-my-page' element={<DesktopMyPage />} />
+            {/* Mobile Routes */}
+            <Route path='/mobile-login' element={<MobileLoginPage />} />
+            <Route
+              path='/mobile-additional-info'
+              element={<MobileAdditionalInfoPage />}
+            />
+            <Route path='/make' element={<Make />} />
+            <Route path='/mobile-main' element={<MobileMainPage />} />
+            <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
+            <Route path='/mobile-my-page' element={<MobileMyPage />} />
+            <Route path='/mobile-live' element={<MobileLivePage />} />
+            <Route path='/mobile-register' element={<MobileRegisterPage />} />
+            <Route path='/mobile-edit' element={<MobileEditPage />} />
+            <Route path='/mobile-estate-list' element={<MobileEstateList />} />
+            <Route
+              path='/mobile-live-setting'
+              element={<MobileLiveSettingPage />}
+            />
+            <Route
+              path='/mobile-chat'
+              element={
+                <MobileChatList
+                  chatRooms={chatRooms}
+                  isLoading={isLoading}
+                  error={error}
+                  onRetry={fetchChatRooms}
+                  currentUserId={currentUserId}
+                />
+              }
+            />
+            <Route
+              path='/mobile-chat/:roomId'
+              element={<MobileChatRoom currentUserId={currentUserId} />}
+            />
+          </Routes>
+          {!isMobileChatRoute && renderChatInterface()}
+        </NotificationProvider>
+      </UserProvider>
     </div>
   );
 }

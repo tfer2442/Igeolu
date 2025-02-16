@@ -7,6 +7,7 @@ import './DesktopMainPageNav.css';
 import UserControllerApi from '../../services/UserControllerApi';
 import { useNotification } from '../../contexts/NotificationContext';
 import NotificationApi from '../../services/NotificationApi';
+import { useUser } from '../../contexts/UserContext'; 
 
 const NAV_ITEMS = [
   { id: 1, title: '방찾기', path: '/map?type=room' },
@@ -15,7 +16,7 @@ const NAV_ITEMS = [
 ];
 
 function DesktopMainPageNav() {
-  const [user, setUser] = useState(null);
+  const { user, logout } = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(defaultProfile);
@@ -56,29 +57,23 @@ function DesktopMainPageNav() {
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-
-      // 사용자 정보 가져오기
+    if (user) {
       const fetchUserInfo = async () => {
         try {
-          const response = await UserControllerApi.getUserInfo(
-            parsedUser.userId
-          );
+          const response = await UserControllerApi.getUserInfo(user.userId);
           if (response.imageUrl) {
             setProfileImage(response.imageUrl);
           }
         } catch (error) {
           console.error('Error fetching user info:', error);
-          // 에러 발생 시 기본 이미지 유지
         }
       };
 
       fetchUserInfo();
+    } else {
+      setProfileImage(defaultProfile);
     }
-  }, []);
+  }, [user]);
 
   const handleProfileClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -91,10 +86,9 @@ function DesktopMainPageNav() {
   };
 
   const handleLogoutConfirm = () => {
-    localStorage.removeItem('user');
-    setUser(null);
+    logout();  // UserContext의 logout 함수 사용
     setProfileImage(defaultProfile);
-    window.location.href = 'https://i12d205.p.ssafy.io/api/logout';
+    setIsModalOpen(false);
   };
 
   const closeModal = () => {
