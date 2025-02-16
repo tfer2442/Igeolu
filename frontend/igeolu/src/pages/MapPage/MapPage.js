@@ -361,7 +361,16 @@ function MapPage() {
             setPropertyMarkers([roomItem]);  // 선택된 매물만 마커로 표시
             setInitialProperties([]);
         } else {
+            // 공인중개사를 선택한 경우
             setSelectedItem(item);
+            // 공인중개사의 위치를 마커로 표시
+            if (item.latitude && item.longitude) {
+                setPropertyMarkers([{
+                    ...item,
+                    type: 'agent'
+                }]);
+            }
+            setInitialProperties([]);
         }
     
         if (item && item.latitude && item.longitude) {
