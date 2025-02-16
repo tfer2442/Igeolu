@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.notification.entity.Notification;
 import com.ssafy.igeolu.domain.notification.repository.NotificationRepository;
+import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
 
@@ -35,5 +36,10 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void removeNotification(Notification notification) {
 		notificationRepository.delete(notification);
+	}
+
+	@Override
+	public void markAllNotificationsAsRead(User user) {
+		notificationRepository.markAllAsReadByUser(user);
 	}
 }
