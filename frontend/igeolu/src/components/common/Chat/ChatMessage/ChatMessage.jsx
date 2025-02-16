@@ -12,13 +12,13 @@ const ChatMessage = ({
   isCurrentUser,
   userProfile = {
     userName: '',
-    profileUrl: ''
-  }
+    profileUrl: '',
+  },
 }) => {
   const navigate = useNavigate(); // useNavigate 추가
   const { content, createdAt, senderType } = message;
   const messageTime = format(new Date(message.createdAt), 'HH:mm');
-  const isSystemMessage = senderType === "SYSTEM";
+  const isSystemMessage = senderType === 'SYSTEM';
 
   const handleJoinLive = async (sessionId) => {
     try {
@@ -38,51 +38,66 @@ const ChatMessage = ({
   };
 
   const renderContent = () => {
-    if (message.senderType === 'SYSTEM' && message.content.includes('세션 ID:')) {
-      const sessionId = message.content.match(/세션 ID: (.*)/)[1];
-      return (
-        <div>
-          <p>라이브 방송이 시작되었습니다!</p>
-          <button 
-            className="live-join-button"
-            onClick={() => handleJoinLive(sessionId)}
-          >
-            방송 참여하기
-          </button>
-        </div>
-      );
+    if (message.senderType === 'SYSTEM') {
+      if (message.content.includes('세션 ID:')) {
+        const sessionId = message.content.match(/세션 ID: (.*)/)[1];
+        return (
+          <div data-type='live'>
+            <p>라이브 방송이 시작되었습니다!</p>
+            <button
+              className='live-join-button'
+              onClick={() => handleJoinLive(sessionId)}
+            >
+              방송 참여하기
+            </button>
+          </div>
+        );
+      } else if (message.content.includes('새로운 약속')) {
+        return <div data-type='schedule'>{message.content}</div>;
+      }
     }
     return message.content;
   };
 
   return (
-   <div className={`message-wrapper ${isCurrentUser ? 'sent' : 'received'} ${isSystemMessage ? 'system' : ''}`}>
+    <div
+      className={`message-wrapper ${isCurrentUser ? 'sent' : 'received'} ${isSystemMessage ? 'system' : ''}`}
+    >
       {!isCurrentUser && !isSystemMessage && (
-        <div className="message-profile">
+        <div className='message-profile'>
           {userProfile?.profileUrl ? (
-            <img 
-              src={userProfile.profileUrl} 
-              alt={`${userProfile.userName} 프로필`} 
-              className="profile-image"
+            <img
+              src={userProfile.profileUrl}
+              alt={`${userProfile.userName} 프로필`}
+              className='profile-image'
               onError={(e) => {
                 e.target.onerror = null; // 무한 루프 방지
                 e.target.src = defaultProfile;
               }}
             />
           ) : (
-            <div className="profile-placeholder">
+            <div className='profile-placeholder'>
               {userProfile?.userName?.charAt(0)}
             </div>
           )}
         </div>
       )}
-      <div className={`message-content ${isSystemMessage ? 'system-content' : ''}`}>
-        <div className={`message-bubble ${isSystemMessage ? 'system-bubble' : ''}`}>
-          <div className={`message-text ${isSystemMessage ? 'system-text' : ''}`}>
-            {renderContent()}
-          </div>
-        </div>
-        <span className="message-time">{messageTime}</span>
+      <div
+        className={`message-content ${isSystemMessage ? 'system-content' : ''}`}
+      >
+        <div className={`message-bubble ${isSystemMessage ? 'system-bubble' : ''}`}
+     data-type={isSystemMessage ? (message.content.includes('세션 ID:') ? 'live' : 'schedule') : undefined}>
+  {isSystemMessage && (
+    <div className="system-message-header">
+      알림 메세지
+    </div>
+  )}
+  <div className={`message-text ${isSystemMessage ? 'system-text' : ''}`}
+       data-type={isSystemMessage ? (message.content.includes('세션 ID:') ? 'live' : 'schedule') : undefined}>
+    {renderContent()}
+  </div>
+</div>
+        <span className='message-time'>{messageTime}</span>
       </div>
     </div>
   );
@@ -94,13 +109,13 @@ ChatMessage.propTypes = {
     userId: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
-    senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired
+    senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired,
   }).isRequired,
   isCurrentUser: PropTypes.bool.isRequired,
   userProfile: PropTypes.shape({
     userName: PropTypes.string,
-    profileUrl: PropTypes.string
-  })
+    profileUrl: PropTypes.string,
+  }),
 };
 
 export default ChatMessage;
