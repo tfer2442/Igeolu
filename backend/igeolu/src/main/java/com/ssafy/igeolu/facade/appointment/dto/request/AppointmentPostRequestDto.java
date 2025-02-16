@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.ssafy.igeolu.domain.appointment.entity.AppointmentType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import lombok.Data;
 public class AppointmentPostRequestDto {
 
 	@Schema(description = "약속 시각")
+	@Future(message = "약속 시각은 현재 이후의 시간이어야 합니다.")
 	private LocalDateTime scheduledAt;
 
 	@Schema(description = "약속 내용")
