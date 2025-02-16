@@ -41,7 +41,7 @@ import NotificationProvider from './components/NotificationProvider/Notification
 import {UserProvider} from './contexts/UserContext'
 
 // ------------- 개발용 유저 변경 버튼 ------------------
-import DevUserToggle from './components/DEVUSERTOGGLE';
+// import DevUserToggle from './components/DEVUSERTOGGLE';
 // ------------- 개발용 유저 변경 버튼 ------------------
 
 function App() {
@@ -70,76 +70,61 @@ function App() {
 
   // === 4. User Authentication (Development Mode) ===
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    const devUser = savedUser
-      ? JSON.parse(savedUser)
-      : { userId: 35, role: 'member' };
-    setUser(devUser);
-    setIsUserInitialized(true);
-
-    setIsAppMounted(true);
-    return () => setIsAppMounted(false);
-  }, []);
-
-  const handleDevUserChange = (newUser) => {
-    setUser(newUser);
-    localStorage.setItem('user', JSON.stringify(newUser)); // localStorage도 업데이트
-  };
-
-  const currentUserId = user?.userId || null;
-
-  // === 4. User Authentication ===
   // useEffect(() => {
-  //   const handleUserAuthentication = async () => {
-  //     const cachedUser = localStorage.getItem('user');
+  //   const savedUser = localStorage.getItem('user');
+  //   const devUser = savedUser
+  //     ? JSON.parse(savedUser)
+  //     : { userId: 35, role: 'member' };
+  //   setUser(devUser);
+  //   setIsUserInitialized(true);
 
-  //     if (!cachedUser || cachedUser === 'null' || cachedUser === 'undefined') {
-  //       console.warn('로그인된 사용자가 없습니다.');
-  //       localStorage.removeItem('user');
-  //       return;
-  //     }
-
-  //     const parsedUser = JSON.parse(cachedUser);
-  //     if (!parsedUser.userId) {
-  //       console.warn('유효하지 않은 사용자 데이터입니다.');
-  //       localStorage.removeItem('user');
-  //       return;
-  //     }
-
-  //     try {
-  //       const response = await fetch(
-  //         'https://i12d205.p.ssafy.io/api/users/me',
-  //         {
-  //           method: 'GET',
-  //           credentials: 'include',
-  //           withCredentials: true,
-  //         }
-  //       );
-  //       const data = await response.json();
-
-  //       if (data.userId) {
-  //         setUser({ userId: data.userId, role: data.role });
-  //         localStorage.setItem(
-  //           'user',
-  //           JSON.stringify({
-  //             userId: data.userId,
-  //             role: data.role,
-  //           })
-  //         );
-  //       } else {
-  //         localStorage.removeItem('user');
-  //         setUser(null);
-  //       }
-  //     } catch (err) {
-  //       console.error('Error fetching user:', err);
-  //     }
-  //   };
-
-  //   handleUserAuthentication();
+  //   setIsAppMounted(true);
+  //   return () => setIsAppMounted(false);
   // }, []);
 
   // const currentUserId = user?.userId || null;
+
+  // === 4. User Authentication ===
+  useEffect(() => {
+    const handleUserAuthentication = async () => {
+      try {
+        const response = await fetch('https://i12d205.p.ssafy.io/api/users/me', {
+          method: 'GET',
+          credentials: 'include',
+          withCredentials: true,
+        });
+        
+        if (!response.ok) {
+          throw new Error('Authentication failed');
+        }
+  
+        const data = await response.json();
+  
+        if (data.userId) {
+          setUser({ userId: data.userId, role: data.role });
+          localStorage.setItem('user', JSON.stringify({
+            userId: data.userId,
+            role: data.role,
+          }));
+          setIsUserInitialized(true);
+        } else {
+          localStorage.removeItem('user');
+          setUser(null);
+          setIsUserInitialized(true);
+        }
+      } catch (err) {
+        console.error('Error fetching user:', err);
+        localStorage.removeItem('user');
+        setUser(null);
+        setIsUserInitialized(true);
+      }
+    };
+  
+    handleUserAuthentication();
+  }, []);
+  
+
+  const currentUserId = user?.userId || null;
 
   // === 5. Chat Room Management ===
 
