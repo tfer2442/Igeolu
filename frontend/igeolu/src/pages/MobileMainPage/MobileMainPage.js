@@ -1,3 +1,4 @@
+// src/pages/MobileMainPage/MobileMainPage/js
 import './MobileMainPage.css';
 import { useState, useEffect, useRef } from 'react';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
@@ -8,8 +9,9 @@ import RealEstateEdit from '../../components/RealEstateEdit/RealEstateEdit';
 import poster1 from '../../assets/images/포스터1.jpg';
 import poster2 from '../../assets/images/포스터2.jpg';
 import poster3 from '../../assets/images/포스터3.jpg';
-import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
+import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner';
 import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
+import { appointmentAPI } from '../../services/AppointmentApi';
 
 function MobileMainPage() {
   const [realtorInfo, setRealtorInfo] = useState({
@@ -24,6 +26,7 @@ function MobileMainPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [todayAppointments, setTodayAppointments] = useState([]);
 
   // ------------ 공지 관련 ------------
   const [currentPoster, setCurrentPoster] = useState(0);
@@ -96,6 +99,64 @@ function MobileMainPage() {
   // ------------ 공지 관련 ------------
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const cachedUser = localStorage.getItem('user');
+        if (!cachedUser) {
+          setError('로그인 정보를 찾을 수 없습니다');
+          return;
+        }
+
+        const { userId } = JSON.parse(cachedUser);
+
+        // 공인중개사 정보 가져오기
+        const realtorResponse = await fetch(
+          `https://i12d205.p.ssafy.io/api/users/${userId}/realtor`,
+          {
+            method: 'GET',
+            credentials: 'include',
+          }
+        );
+
+        if (!realtorResponse.ok) {
+          throw new Error('공인중개사 정보를 가져오는데 실패했습니다');
+        }
+
+        const realtorData = await realtorResponse.json();
+        setRealtorInfo(realtorData);
+
+        // 예약 정보 가져오기
+        const appointmentsResponse = await appointmentAPI.getAppointments();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // 오늘 날짜의 예약만 필터링
+        const todayAppointments = appointmentsResponse.data.filter(
+          (appointment) => {
+            const appointmentDate = new Date(appointment.scheduledAt);
+            appointmentDate.setHours(0, 0, 0, 0);
+            return appointmentDate.getTime() === today.getTime();
+          }
+        );
+
+        // 시간순으로 정렬
+        todayAppointments.sort(
+          (a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt)
+        );
+
+        setTodayAppointments(todayAppointments);
+      } catch (err) {
+        setError(err.message);
+        console.error('데이터 조회 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const fetchRealtorInfo = async () => {
       try {
         const cachedUser = localStorage.getItem('user');
@@ -133,10 +194,29 @@ function MobileMainPage() {
   if (loading) return <LoadingSpinner />;
   if (error) return <div>에러: {error}</div>;
 
+  const formatDate = (date) => {
+    return date
+      .toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\. /g, '.')
+      .slice(0, -1);
+  };
+
+  const formatTime = (dateString) => {
+    return new Date(dateString).toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+
   return (
     <div className='mobile-main-page-container'>
       <div className='mobile-main-page'>
-      <MobileTopBar logoSrc={MobileLogo} />
+        <MobileTopBar logoSrc={MobileLogo} />
         <div className='mobile-main-page__top-name'>
           <div className='mobile-main-page__top-name-left'>
             <p id='Name'>{realtorInfo.username}</p>
@@ -144,11 +224,22 @@ function MobileMainPage() {
           </div>
         </div>
         <div className='mobile-main-page__today-live-schedule'>
-          <p>오늘의 라이브 일정</p>
+        <p>오늘의 일정</p>
           <div className='mobile-main-page__today-live-schedule-content'>
-            {/* 수정예정 */}
-            <p id='Date'>2025.01.31</p>
-            <p id='reserve-time'>9:30분 xxx님과의 라이브 예약</p>
+            <p id='Date'>{formatDate(new Date())}</p>
+            {todayAppointments.length > 0 ? (
+              todayAppointments.map((appointment, index) => (
+                <div key={index}>
+                  <p id='reserve-time'>
+                    {formatTime(appointment.scheduledAt)}분 {appointment.memberName}님과의 
+                    {appointment.appointmentType === 'LIVE' ? ' 라이브' : ' 일반'} 예약
+                  </p>
+                  <p id='appointment-title'>{appointment.title}</p>
+                </div>
+              ))
+            ) : (
+              <p id='reserve-time'>오늘은 일정이 없네요!</p>
+            )}
           </div>
         </div>
         <div className='mobile-main-page__real-estate'>
