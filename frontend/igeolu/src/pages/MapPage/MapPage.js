@@ -309,12 +309,6 @@ function MapPage() {
         }
     }, [deposit, monthlyRent, selectedOptions, initialProperties]);
 
-    // const handleLocationSearch = ({ sidoName, gugunName, dongName }) => {
-    //     setSelectedCity(sidoName);
-    //     setSelectedDistrict(gugunName);
-    //     setSelectedNeighborhood(dongName);
-    // };
-
     const handleLocationSearch = async ({ sidoName, gugunName, dongName }) => {
         console.log('MapPage - handleLocationSearch called with:', { sidoName, gugunName, dongName });
         console.log('MapPage - Current activeMenu:', activeMenu);
@@ -442,19 +436,54 @@ function MapPage() {
         }
     };
 
-    const handleMenuClick = (menuType) => {
+    const handleMenuClick = async (menuType) => {
+        console.log('MapPage - handleMenuClick called with:', menuType);
         setActiveMenu(menuType);
         setSelectedItem(null);
         setPropertyMarkers([]);
         setInitialProperties([]);
         setSearchResults([]); // 이전 검색 결과 초기화
+    
         if (menuType === 'agent') {
-            fetchRealtors();
+            try {
+                console.log('MapPage - Fetching all realtors');
+                const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+                console.log('MapPage - Fetched realtors:', response.data.length);
+                
+                // 유효한 좌표가 있는 공인중개사만 필터링
+                const validRealtors = response.data.filter(realtor => 
+                    realtor && typeof realtor.latitude === 'number' && 
+                    typeof realtor.longitude === 'number' &&
+                    !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
+                );
+                
+                console.log('MapPage - Valid realtors with coordinates:', validRealtors.length);
+                
+                const realtorsWithType = validRealtors.map(realtor => ({
+                    ...realtor,
+                    type: 'agent'
+                }));
+    
+                setSearchResults(realtorsWithType);
+                setPropertyMarkers(realtorsWithType);
+    
+                // 첫 번째 유효한 공인중개사의 위치로 지도 중심 이동
+                if (validRealtors.length > 0) {
+                    updateMapCenter({
+                        lat: parseFloat(validRealtors[0].latitude),
+                        lng: parseFloat(validRealtors[0].longitude)
+                    });
+                    setMapLevel(7); // 전체 보기에 적합한 줌 레벨로 조정
+                }
+            } catch (error) {
+                console.error('MapPage - Error fetching realtors:', error);
+                setSearchResults([]);
+                setPropertyMarkers([]);
+            }
         } else {
             fetchSearchResults();
         }
     };
-
 
     const handleItemClick = (item, isPropertyMarker = false, view, setView) => {
         // 매물 마커를 클릭한 경우이거나 원룸 메뉴인 경우
@@ -563,17 +592,56 @@ function MapPage() {
         setSelectedNeighborhood(e.target.value);
     };
 
-    const handleReset = () => {
+    const handleReset = async () => {
+        console.log('MapPage - handleReset called');
         setSelectedCity('');
         setSelectedDistrict('');
         setSelectedNeighborhood('');
         setDeposit(null);
         setMonthlyRent(null);
         setSelectedOptions([]);
-        setPropertyMarkers([]);
         setInitialProperties([]);
-        updateMapCenter(DEFAULT_CENTER);
-        setMapLevel(3);
+    
+        if (activeMenu === 'agent') {
+            try {
+                console.log('MapPage - Fetching all realtors after reset');
+                const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+                console.log('MapPage - Fetched realtors after reset:', response.data.length);
+                
+                // 유효한 좌표가 있는 공인중개사만 필터링
+                const validRealtors = response.data.filter(realtor => 
+                    realtor && typeof realtor.latitude === 'number' && 
+                    typeof realtor.longitude === 'number' &&
+                    !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
+                );
+                
+                console.log('MapPage - Valid realtors with coordinates after reset:', validRealtors.length);
+                
+                const realtorsWithType = validRealtors.map(realtor => ({
+                    ...realtor,
+                    type: 'agent'
+                }));
+    
+                setSearchResults(realtorsWithType);
+                setPropertyMarkers(realtorsWithType);
+    
+                if (validRealtors.length > 0) {
+                    updateMapCenter({
+                        lat: parseFloat(validRealtors[0].latitude),
+                        lng: parseFloat(validRealtors[0].longitude)
+                    });
+                    setMapLevel(7);
+                }
+            } catch (error) {
+                console.error('MapPage - Error fetching realtors after reset:', error);
+                setSearchResults([]);
+                setPropertyMarkers([]);
+            }
+        } else {
+            setPropertyMarkers([]);
+            updateMapCenter(DEFAULT_CENTER);
+            setMapLevel(3);
+        }
     };
 
     const handlePriceChange = (newDeposit, newMonthlyRent) => {
@@ -726,7 +794,7 @@ function MapPage() {
                                         );
                                     })}
                                 
-                                    {/* 선택된 매물의 마커 */}
+                                    
                                     {propertyMarkers.map((item, index) => {
                                         if (!item?.latitude || !item?.longitude) return null;
                                         
