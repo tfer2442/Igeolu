@@ -70,7 +70,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.POST, "/api/chats").hasAnyRole("MEMBER")
 				.requestMatchers("/api/lives/{liveId}/rating/**").hasAnyRole("MEMBER")
 				.requestMatchers("/api/users/me/info", "/api/logout", "/api/login/**", "/api/test/login", "/v3/api-docs/**", "/api/swagger-ui/**", "/error").permitAll() // swagger open
-				.requestMatchers("/file/**", "/api/**").authenticated()
+				.requestMatchers("/file/**", "/api/**").permitAll()
 				.anyRequest().authenticated());
 
 		//csrf disable
