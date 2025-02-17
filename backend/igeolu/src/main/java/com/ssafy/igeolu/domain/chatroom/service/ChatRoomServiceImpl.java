@@ -73,25 +73,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	@Override
 	public void updateChatRoomStatus(ChatRoom chatRoom, User user) {
 
-		// 현재 고객만 남아있는 상태의 경우, 고객이 검증후 나가기
-		if (chatRoom.getRoomStatus() == RoomStatus.MEMBER && chatRoom.getMember().equals(user)) {
-			chatRoom.setRoomStatus(RoomStatus.NONE);
-		}
-
-		// 현재 중개사만 남아있는 경우, 중개사 검증후 나가기
-		if (chatRoom.getRoomStatus() == RoomStatus.REALTOR && chatRoom.getRealtor().equals(user)) {
-			chatRoom.setRoomStatus(RoomStatus.NONE);
-		}
-
-		// 둘다 남아있는경우, 로그인 유저에따라 상태변경
-		if (chatRoom.getRoomStatus() == RoomStatus.BOTH) {
-			if (chatRoom.getMember().equals(user)) {
-				chatRoom.setRoomStatus(RoomStatus.REALTOR);
-			}
-
-			if (chatRoom.getRealtor().equals(user)) {
-				chatRoom.setRoomStatus(RoomStatus.MEMBER);
-			}
-		}
+		chatRoom.setRoomStatus(switch (chatRoom.getRoomStatus()) {
+			case BOTH -> chatRoom.getMember().equals(user) ? RoomStatus.REALTOR
+				: chatRoom.getRealtor().equals(user) ? RoomStatus.MEMBER
+				: RoomStatus.BOTH;
+			case MEMBER -> chatRoom.getMember().equals(user) ? RoomStatus.NONE : RoomStatus.MEMBER;
+			case REALTOR -> chatRoom.getRealtor().equals(user) ? RoomStatus.NONE : RoomStatus.REALTOR;
+			default -> chatRoom.getRoomStatus();
+		});
 	}
 }
