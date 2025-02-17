@@ -235,6 +235,12 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 				.build();
 		}
 
+		if (liveProperty.getRecordingId() == null) {
+			return SummaryPostResponseDto.builder()
+				.summary("녹화 없음")
+				.build();
+		}
+
 		// 요약을 한 적이 없다면, STT + AI 요약 실행
 
 		// 필요에 따라 NestRequestEntity의 옵션을 설정할 수 있습니다.
