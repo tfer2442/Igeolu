@@ -167,7 +167,7 @@ function MapPage() {
   const fetchSearchResults = async () => {
     try {
       const params = new URLSearchParams();
-
+  
       if (selectedCity) params.append('sidoName', selectedCity);
       if (selectedDistrict) params.append('gugunName', selectedDistrict);
       if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
@@ -176,7 +176,7 @@ function MapPage() {
       if (selectedOptions?.length > 0) {
         params.append('optionIds', selectedOptions.join(','));
       }
-
+  
       const response = await axios.get(
         `${API_BASE_URL}/api/properties/search`,
         {
@@ -186,23 +186,37 @@ function MapPage() {
           },
         }
       );
-
+  
       const validResults = response.data.filter(
         (item) =>
           item &&
           typeof item.latitude === 'number' &&
           typeof item.longitude === 'number'
       );
-
+  
       setSearchResults(validResults);
       setPropertyMarkers([]);
-
+  
+      // 검색 결과가 있을 경우 첫 번째 결과의 위치로 이동
       if (validResults.length > 0) {
         updateMapCenter({
           lat: parseFloat(validResults[0].latitude),
           lng: parseFloat(validResults[0].longitude),
         });
         setMapLevel(5);
+      } 
+      // 검색 결과가 없지만 지역이 선택된 경우, 선택된 지역의 좌표로 이동
+      else if (selectedCity && selectedDistrict) {
+        try {
+          const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood || ''}`.trim();
+          const coordinates = await searchCoordinates(address);
+          if (coordinates) {
+            updateMapCenter(coordinates);
+            setMapLevel(5);
+          }
+        } catch (error) {
+          console.error('Error getting coordinates for selected location:', error);
+        }
       }
     } catch (error) {
       console.error('Error fetching search results:', error);
@@ -266,13 +280,156 @@ function MapPage() {
 
   useEffect(() => {
     if (activeMenu === 'room') {
-      fetchSearchResults();
+      const fetchAndUpdateResults = async () => {
+        try {
+          const params = new URLSearchParams();
+
+          if (selectedCity) params.append('sidoName', selectedCity);
+          if (selectedDistrict) params.append('gugunName', selectedDistrict);
+          if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
+          if (deposit) params.append('maxDeposit', deposit);
+          if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
+          if (selectedOptions?.length > 0) {
+            params.append('optionIds', selectedOptions.join(','));
+          }
+
+          const response = await axios.get(
+            `${API_BASE_URL}/api/properties/search`,
+            {
+              params: params,
+              paramsSerializer: {
+                indexes: null,
+              },
+            }
+          );
+
+          const validResults = response.data.filter(
+            (item) =>
+              item &&
+              typeof item.latitude === 'number' &&
+              typeof item.longitude === 'number'
+          );
+
+          setSearchResults(validResults);
+          
+          // 현재 선택된 매물이 검색 결과에 없는 경우에만 DetailPanel 닫기
+          if (selectedItem && selectedItem.type === 'room') {
+            const itemExists = validResults.some(
+              item => item.propertyId === selectedItem.propertyId
+            );
+            if (!itemExists) {
+              setSelectedItem(null);
+              setDetailPanelView('main');
+            }
+          }
+
+          // 검색 결과가 있는 경우
+          if (validResults.length > 0) {
+            updateMapCenter({
+              lat: parseFloat(validResults[0].latitude),
+              lng: parseFloat(validResults[0].longitude),
+            });
+            setMapLevel(5);
+          } 
+          // 검색 결과가 없지만 지역이 선택된 경우
+          else if (selectedCity && selectedDistrict) {
+            try {
+              const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood || ''}`.trim();
+              const coordinates = await searchCoordinates(address);
+              if (coordinates) {
+                updateMapCenter(coordinates);
+                setMapLevel(5);
+              }
+            } catch (error) {
+              console.error('Error getting coordinates for selected location:', error);
+            }
+          }
+          // 검색 결과도 없고 지역도 선택되지 않은 경우
+          else {
+            updateMapCenter(DEFAULT_CENTER);
+            setMapLevel(3);
+          }
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+          setSearchResults([]);
+          updateMapCenter(DEFAULT_CENTER);
+          setMapLevel(3);
+        }
+      };
+  
+      fetchAndUpdateResults();
     } else if (activeMenu === 'agent') {
-      fetchRealtors();
+      // 공인중개사 메뉴일 때의 로직
+      const fetchFilteredRealtors = async () => {
+        try {
+          let response;
+          if (selectedCity && selectedDistrict && selectedNeighborhood) {
+            // 동까지 선택된 경우의 로직
+            try {
+              const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood}`;
+              const coordinates = await searchCoordinates(address);
+              
+              if (coordinates) {
+                updateMapCenter(coordinates);
+                setMapLevel(3);
+              }
+  
+              const selectedDong = neighborhoods.find(n => 
+                n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
+              );
+              const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
+              
+              if (dongCode) {
+                response = await axios.get(`${API_BASE_URL}/api/users/${dongCode}/realtors`);
+              }
+            } catch (error) {
+              console.error('Error fetching dong realtors:', error);
+            }
+          }
+          
+          if (!response) {
+            response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+          }
+  
+          const validRealtors = response.data
+            .filter(realtor => 
+              realtor && 
+              typeof realtor.latitude === 'number' && 
+              typeof realtor.longitude === 'number'
+            )
+            .map(realtor => ({
+              ...realtor,
+              type: 'agent'
+            }));
+  
+          setSearchResults(validRealtors);
+          
+          // 현재 선택된 공인중개사가 검색 결과에 없는 경우에만 DetailPanel 닫기
+          if (selectedItem && selectedItem.type === 'agent') {
+            const itemExists = validRealtors.some(
+              realtor => realtor.userId === selectedItem.userId
+            );
+            if (!itemExists) {
+              setSelectedItem(null);
+              setDetailPanelView('main');
+            }
+          }
+  
+          if (!selectedCity && validRealtors.length > 0) {
+            updateMapCenter({
+              lat: parseFloat(validRealtors[0].latitude),
+              lng: parseFloat(validRealtors[0].longitude)
+            });
+            setMapLevel(7);
+          }
+        } catch (error) {
+          console.error('Error fetching realtors:', error);
+          setSearchResults([]);
+        }
+      };
+  
+      fetchFilteredRealtors();
     }
-    setSelectedItem(null);
-    setPropertyMarkers([]);
-    setInitialProperties([]);
   }, [
     selectedCity,
     selectedDistrict,
@@ -370,6 +527,7 @@ function MapPage() {
   };
 
   const handleLocationSearch = async ({ sidoName, gugunName, dongName }) => {
+    // 지도 이동
     if (sidoName && gugunName) {
       try {
         const fullAddress = `${sidoName} ${gugunName} ${dongName || ''}`.trim();
@@ -382,15 +540,57 @@ function MapPage() {
         console.error('Error getting coordinates:', error);
       }
     }
-
+  
+    // 상태 업데이트
     setSelectedCity(sidoName);
     setSelectedDistrict(gugunName);
     setSelectedNeighborhood(dongName);
-
+  
     try {
       if (activeMenu === 'room') {
-        await fetchSearchResults();
+        const params = new URLSearchParams();
+      
+        if (sidoName) params.append('sidoName', sidoName);
+        if (gugunName) params.append('gugunName', gugunName);
+        if (dongName) params.append('dongName', dongName);
+        if (deposit) params.append('maxDeposit', deposit);
+        if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
+        if (selectedOptions?.length > 0) {
+          params.append('optionIds', selectedOptions.join(','));
+        }
+  
+        const response = await axios.get(
+          `${API_BASE_URL}/api/properties/search`,
+          {
+            params: params,
+            paramsSerializer: {
+              indexes: null,
+            },
+          }
+        );
+  
+        const validResults = response.data.filter(
+          (item) =>
+            item &&
+            typeof item.latitude === 'number' &&
+            typeof item.longitude === 'number' &&
+            !isNaN(item.latitude) && 
+            !isNaN(item.longitude)
+        );
+  
+        setSearchResults(validResults);
+        setSelectedItem(null);
+        setPropertyMarkers([]);
+  
+        if (validResults.length > 0) {
+          updateMapCenter({
+            lat: parseFloat(validResults[0].latitude),
+            lng: parseFloat(validResults[0].longitude)
+          });
+          setMapLevel(5);
+        }
       } else {
+        // 공인중개사 메뉴일 때의 로직
         let response = null;
         
         if (dongName) {
@@ -420,7 +620,7 @@ function MapPage() {
         if (!response) {
           response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
         }
-
+  
         const realtors = response.data.map(realtor => ({
           ...realtor,
           type: 'agent'
@@ -444,8 +644,15 @@ function MapPage() {
         type: 'room'
       };
       setSelectedItem(roomItem);
-      setPropertyMarkers([roomItem]);
-      setInitialProperties([]);
+      // 매물 마커 설정
+      if (roomItem.latitude && roomItem.longitude) {
+        setPropertyMarkers([roomItem]);
+        updateMapCenter({
+          lat: parseFloat(roomItem.latitude),
+          lng: parseFloat(roomItem.longitude)
+        });
+        setMapLevel(3);
+      }
     } else {
       if (view === 'propertyDetail') {
         setView('main');
@@ -456,58 +663,122 @@ function MapPage() {
         type: 'agent'
       };
       setSelectedItem(agentItem);
-      if (item.latitude && item.longitude) {
+      // 공인중개사 마커 설정
+      if (agentItem.latitude && agentItem.longitude) {
         setPropertyMarkers([agentItem]);
+        updateMapCenter({
+          lat: parseFloat(agentItem.latitude),
+          lng: parseFloat(agentItem.longitude)
+        });
+        setMapLevel(3);
       }
-      setInitialProperties([]);
-    }
-
-    if (item && item.latitude && item.longitude) {
-      updateMapCenter({
-        lat: parseFloat(item.latitude),
-        lng: parseFloat(item.longitude),
-      });
-      setMapLevel(3);
     }
   };
 
-  const handleDetailClose = () => {
+  const handleDetailClose = async (type) => {
     setSelectedItem(null);
-    setPropertyMarkers([]);
+    
+    if (type === 'agent') {
+        try {
+            // 전체 공인중개사 목록 가져오기
+            const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+            const validRealtors = response.data.filter(realtor => 
+                realtor && 
+                typeof realtor.latitude === 'number' && 
+                typeof realtor.longitude === 'number' &&
+                !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
+            );
+            
+            const realtorsWithType = validRealtors.map(realtor => ({
+                ...realtor,
+                type: 'agent'
+            }));
+
+            setPropertyMarkers(realtorsWithType);
+
+            // 전체 공인중개사가 잘 보이도록 지도 중심과 레벨 조정
+            if (validRealtors.length > 0) {
+                updateMapCenter({
+                    lat: parseFloat(validRealtors[0].latitude),
+                    lng: parseFloat(validRealtors[0].longitude)
+                });
+                setMapLevel(7); // 더 넓은 시야를 위해 레벨 조정
+            }
+        } catch (error) {
+            console.error('Error fetching realtors:', error);
+            setPropertyMarkers([]);
+        }
+    } else {
+        // 원룸 메뉴인 경우 전체 검색 결과 마커 표시
+        if (searchResults.length > 0) {
+            setPropertyMarkers(searchResults);
+            updateMapCenter({
+                lat: parseFloat(searchResults[0].latitude),
+                lng: parseFloat(searchResults[0].longitude)
+            });
+            setMapLevel(5);
+        } else {
+            setPropertyMarkers([]);
+            updateMapCenter(DEFAULT_CENTER);
+            setMapLevel(3);
+        }
+    }
+    
     setInitialProperties([]);
   };
 
-  const handleViewProperties = async (realtorId, selectedPropertyId = null) => {
+
+  const handleViewProperties = async (realtorId, selectedPropertyId = null, propertiesData = null, isBack = false) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/properties/realtor/${realtorId}`);
+      // 데이터 가져오기
+      const properties = propertiesData || (await axios.get(`${API_BASE_URL}/api/properties/realtor/${realtorId}`)).data;
       
-      const validResults = response.data.filter(
+      const validResults = properties.filter(
         item => item && 
         typeof item.latitude === 'number' && 
         typeof item.longitude === 'number' &&
         !isNaN(item.latitude) && !isNaN(item.longitude)
       );
-
+  
       if (selectedPropertyId) {
+        // 특정 매물이 선택된 경우
         const selectedProperty = validResults.find(item => item.propertyId === selectedPropertyId);
         if (selectedProperty) {
           setPropertyMarkers([selectedProperty]);
           setInitialProperties([selectedProperty]);
-          updateMapCenter({
+          const center = {
             lat: parseFloat(selectedProperty.latitude),
             lng: parseFloat(selectedProperty.longitude)
-          });
+          };
+          updateMapCenter(center);
+          setMapCenter(center);
           setMapLevel(3);
         }
       } else {
+        // 전체 매물 목록을 보여주는 경우
         setInitialProperties(validResults);
         setPropertyMarkers(validResults);
+        
         if (validResults.length > 0) {
-          updateMapCenter({
-            lat: parseFloat(validResults[0].latitude),
-            lng: parseFloat(validResults[0].longitude)
-          });
-          setMapLevel(5);
+          // 뒤로가기인 경우 더 넓은 시야로 보여주기
+          if (isBack) {
+            // 모든 마커가 보이도록 중심점과 확대 레벨 조정
+            const center = {
+              lat: parseFloat(validResults[0].latitude),
+              lng: parseFloat(validResults[0].longitude)
+            };
+            updateMapCenter(center);
+            setMapCenter(center);
+            setMapLevel(5); // 더 넓은 시야를 위해 레벨 조정
+          } else {
+            const center = {
+              lat: parseFloat(validResults[0].latitude),
+              lng: parseFloat(validResults[0].longitude)
+            };
+            updateMapCenter(center);
+            setMapCenter(center);
+            setMapLevel(5);
+          }
         }
       }
     } catch (error) {

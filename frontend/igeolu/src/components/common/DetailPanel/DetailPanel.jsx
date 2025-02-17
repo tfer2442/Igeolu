@@ -92,18 +92,20 @@ const DetailPanel = ({
         }
     };
 
+
     const handleViewProperties = async () => {
         try {
-            const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
-                params: { userId: data.userId }
-            });
-            setProperties(response.data);
-            setView('propertyList');
-            onViewProperties(data.userId);
+          const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
+            params: { userId: data.userId }
+          });
+          setProperties(response.data);
+          setView('propertyList');
+          // 응답 데이터도 함께 전달
+          onViewProperties(data.userId, null, response.data);  
         } catch (error) {
-            console.error('Error fetching properties:', error);
-            setProperties([]);
-            setView('propertyList');
+          console.error('Error fetching properties:', error);
+          setProperties([]);
+          setView('propertyList');
         }
     };
 
@@ -111,7 +113,7 @@ const DetailPanel = ({
         setSelectedProperty(property);
         setView('propertyDetail');
         setCurrentImageIndex(0);
-        onViewProperties(data.userId, property.propertyId);
+        onViewProperties(data.userId, property.propertyId, properties);
     };
 
     const handleNextImage = (e) => {
@@ -224,11 +226,12 @@ const DetailPanel = ({
                                 if (view === 'propertyDetail') {
                                     setView('propertyList');
                                     setSelectedProperty(null);
-                                    onViewProperties(data.userId, null, true);
+                                    // 모든 매물 마커를 다시 표시
+                                    onViewProperties(data.userId, null, properties, true);
                                 } else {
                                     setView('main');
                                     setSelectedProperty(null);
-                                    onViewProperties(data.userId, null, true);
+                                    onViewProperties(data.userId, null, null, true);
                                 }
                             }}
                         >
@@ -243,8 +246,8 @@ const DetailPanel = ({
                             setSelectedProperty(null);
                             setProperties([]);
                         } else if (type === 'agent') {
-                            // 공인중개사 메뉴는 기존대로 처리
-                            onClose();
+                            // 공인중개사 메뉴는 전체 공인중개사 마커 표시를 위해 type을 전달
+                            onClose('agent');
                             setView('main');
                             setSelectedProperty(null);
                             setProperties([]);
