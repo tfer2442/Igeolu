@@ -223,4 +223,9 @@
     font-size: 14px;
 }
 
+.property-nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
