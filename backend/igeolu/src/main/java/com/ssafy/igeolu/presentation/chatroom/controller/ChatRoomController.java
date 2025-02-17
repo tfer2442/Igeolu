@@ -2,9 +2,10 @@ package com.ssafy.igeolu.presentation.chatroom.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,5 +48,15 @@ public class ChatRoomController {
 	public ResponseEntity<List<ChatRoomListGetResponseDto>> getChatRoomList(ChatRoomListGetRequestDto request) {
 		List<ChatRoomListGetResponseDto> responses = chatRoomFacadeService.getChatRoomList(request);
 		return ResponseEntity.ok().body(responses);
+	}
+
+	@Operation(summary = "채팅방 나가기", description = "채팅을 나갑니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "204", description = "정상 처리"),
+	})
+	@DeleteMapping("/{chatRoomId}")
+	public ResponseEntity<List<ChatRoomListGetResponseDto>> deleteChatRoom(@PathVariable Integer chatRoomId) {
+		chatRoomFacadeService.leaveChatRoom(chatRoomId);
+		return ResponseEntity.noContent().build();
 	}
 }

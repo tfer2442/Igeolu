@@ -14,4 +14,8 @@ public interface ChatRoomService {
 	List<ChatRoom> getChatRoomList(User user);
 
 	User getOpponentUser(ChatRoom chatRoom, User user);
+
+	void leaveChatRoom(ChatRoom chatRoom);
+
+	void updateChatRoomStatus(ChatRoom chatRoom, User user);
 }
