@@ -81,17 +81,26 @@ const MobileChatRoom = ({ currentUserId: propCurrentUserId }) => {
   useEffect(() => {
     const fetchRoomData = async () => {
       if (!currentUserId) {
-        return; // 사용자 ID가 없으면 데이터 로드하지 않음
+        return;
       }
-
+  
       try {
-        const rooms = await chatApi.getChatRooms(currentUserId);
+        // localStorage에서 role 가져오기
+        const savedUser = localStorage.getItem('user');
+        const userRole = savedUser ? JSON.parse(savedUser).role : null;
+  
+        if (!userRole) {
+          throw new Error('사용자 권한을 찾을 수 없습니다.');
+        }
+  
+        // role 함께 전달
+        const rooms = await chatApi.getChatRooms(currentUserId, userRole);
         const foundRoom = rooms.find((r) => r.roomId === Number(roomId));
-
+  
         if (!foundRoom) {
           throw new Error('채팅방을 찾을 수 없습니다.');
         }
-
+  
         setRoom(foundRoom);
         await chatApi.markMessagesAsRead(roomId, currentUserId);
       } catch (error) {
@@ -101,7 +110,7 @@ const MobileChatRoom = ({ currentUserId: propCurrentUserId }) => {
         setIsLoading(false);
       }
     };
-
+  
     if (currentUserId) {
       fetchRoomData();
     }
