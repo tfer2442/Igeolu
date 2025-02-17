@@ -65,14 +65,20 @@ export function UserProvider({ children, initialUser, onUserChange }) {
   // 로그아웃 핸들러
   const logout = async () => {
     try {
-      // 로그아웃 API 호출
-      await fetch('https://i12d205.p.ssafy.io/api/users/logout', {
-        method: 'POST',
+      const response = await fetch('https://i12d205.p.ssafy.io/api/logout', {
+        method: 'GET',
         credentials: 'include',
+        withCredentials: true,
       });
+      
+      if (response.ok) {
+        const data = await response.json();
+        alert(JSON.stringify(data));
+      }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('API 요청 실패:', error);
     } finally {
+      // 로컬 상태 정리
       setUser(null);
       localStorage.removeItem('user');
       if (onUserChange) {
