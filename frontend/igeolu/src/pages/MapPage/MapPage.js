@@ -458,8 +458,15 @@ function MapPage() {
         type: 'room'
       };
       setSelectedItem(roomItem);
-      setPropertyMarkers([roomItem]);
-      setInitialProperties([]);
+      // 매물 마커 설정
+      if (roomItem.latitude && roomItem.longitude) {
+        setPropertyMarkers([roomItem]);
+        updateMapCenter({
+          lat: parseFloat(roomItem.latitude),
+          lng: parseFloat(roomItem.longitude)
+        });
+        setMapLevel(3);
+      }
     } else {
       if (view === 'propertyDetail') {
         setView('main');
@@ -470,18 +477,15 @@ function MapPage() {
         type: 'agent'
       };
       setSelectedItem(agentItem);
-      if (item.latitude && item.longitude) {
+      // 공인중개사 마커 설정
+      if (agentItem.latitude && agentItem.longitude) {
         setPropertyMarkers([agentItem]);
+        updateMapCenter({
+          lat: parseFloat(agentItem.latitude),
+          lng: parseFloat(agentItem.longitude)
+        });
+        setMapLevel(3);
       }
-      setInitialProperties([]);
-    }
-
-    if (item && item.latitude && item.longitude) {
-      updateMapCenter({
-        lat: parseFloat(item.latitude),
-        lng: parseFloat(item.longitude),
-      });
-      setMapLevel(3);
     }
   };
 
@@ -491,37 +495,58 @@ function MapPage() {
     setInitialProperties([]);
   };
 
-  const handleViewProperties = async (realtorId, selectedPropertyId = null) => {
+
+  const handleViewProperties = async (realtorId, selectedPropertyId = null, propertiesData = null, isBack = false) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/properties/realtor/${realtorId}`);
+      // 데이터 가져오기
+      const properties = propertiesData || (await axios.get(`${API_BASE_URL}/api/properties/realtor/${realtorId}`)).data;
       
-      const validResults = response.data.filter(
+      const validResults = properties.filter(
         item => item && 
         typeof item.latitude === 'number' && 
         typeof item.longitude === 'number' &&
         !isNaN(item.latitude) && !isNaN(item.longitude)
       );
-
+  
       if (selectedPropertyId) {
+        // 특정 매물이 선택된 경우
         const selectedProperty = validResults.find(item => item.propertyId === selectedPropertyId);
         if (selectedProperty) {
           setPropertyMarkers([selectedProperty]);
           setInitialProperties([selectedProperty]);
-          updateMapCenter({
+          const center = {
             lat: parseFloat(selectedProperty.latitude),
             lng: parseFloat(selectedProperty.longitude)
-          });
+          };
+          updateMapCenter(center);
+          setMapCenter(center);
           setMapLevel(3);
         }
       } else {
+        // 전체 매물 목록을 보여주는 경우
         setInitialProperties(validResults);
         setPropertyMarkers(validResults);
+        
         if (validResults.length > 0) {
-          updateMapCenter({
-            lat: parseFloat(validResults[0].latitude),
-            lng: parseFloat(validResults[0].longitude)
-          });
-          setMapLevel(5);
+          // 뒤로가기인 경우 더 넓은 시야로 보여주기
+          if (isBack) {
+            // 모든 마커가 보이도록 중심점과 확대 레벨 조정
+            const center = {
+              lat: parseFloat(validResults[0].latitude),
+              lng: parseFloat(validResults[0].longitude)
+            };
+            updateMapCenter(center);
+            setMapCenter(center);
+            setMapLevel(5); // 더 넓은 시야를 위해 레벨 조정
+          } else {
+            const center = {
+              lat: parseFloat(validResults[0].latitude),
+              lng: parseFloat(validResults[0].longitude)
+            };
+            updateMapCenter(center);
+            setMapCenter(center);
+            setMapLevel(5);
+          }
         }
       }
     } catch (error) {
