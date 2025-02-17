@@ -457,28 +457,27 @@ function MobileEditPage() {
             <div className='selected-address'>선택된 주소: {address}</div>
           )}
         </div>
-        <div className='mobile-edit-page__option'>
-          <div className='option-label' onClick={toggleOptions}>
-            <span>옵션</span>
-            <span>{optionsVisible ? '▲' : '▼'}</span>
-          </div>
-          {optionsVisible && (
-            <div className='options-container'>
-              {optionsList.map((option) => (
-                <span
-                  key={option.optionId}
-                  className={`option-item ${selectedOptions.some((opt) => opt.optionId === option.optionId) ? 'selected' : ''}`}
-                  onClick={() => toggleOption(option)}
-                >
-                  {option.optionName}
-                </span>
-              ))}
+        <div className="mobile-edit-page__option">
+            <div className="mobile-edit-page__option-label">
+                <span>옵션</span>
             </div>
-          )}
-          <div className='selected-options'>
-            {selectedOptions.map((option) => option.optionName).join(', ')}
-          </div>
+            <div className="mobile-edit-page__options-container">
+                {optionsList.map((option) => (
+                    <span
+                        key={option.optionId}
+                        className={`mobile-edit-page__option-item ${
+                            selectedOptions.some((opt) => opt.optionId === option.optionId) 
+                            ? 'mobile-edit-page__option-item--selected' 
+                            : ''
+                        }`}
+                        onClick={() => toggleOption(option)}
+                    >
+                        {option.optionName}
+                    </span>
+                ))}
+            </div>
         </div>
+   
         <div className='button-container'>
           <input
             type='submit'

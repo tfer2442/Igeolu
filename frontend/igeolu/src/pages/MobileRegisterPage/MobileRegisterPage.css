@@ -503,3 +503,9 @@
     color: red;
     margin-top: 4px;
 }
+
+
+/* 모든 input에 패딩 추가 */
+.mobile-register-page input {
+    padding-left: 10px;
+}
