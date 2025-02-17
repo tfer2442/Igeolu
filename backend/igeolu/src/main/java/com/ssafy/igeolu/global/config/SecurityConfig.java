@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -63,8 +64,13 @@ public class SecurityConfig {
 		// Servers
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/api/my").authenticated()
-				.requestMatchers("/file/**", "/api/**", "/v3/api-docs/**").permitAll() // swagger open
+				.requestMatchers("/api/live-properties/{livePropertyId}/stop", "/api/live-properties/{livePropertyId}/start").hasAnyRole("REALTOR")
+				.requestMatchers(HttpMethod.POST, "/api/lives").hasAnyRole("REALTOR")
+				.requestMatchers(HttpMethod.PUT, "/api/users/{userId}/realtor").hasAnyRole("REALTOR")
+				.requestMatchers(HttpMethod.POST, "/api/chats").hasAnyRole("MEMBER")
+				.requestMatchers("/api/lives/{liveId}/rating/**").hasAnyRole("MEMBER")
+				.requestMatchers("/api/users/me/info", "/api/logout", "/api/login/**", "/api/test/login", "/v3/api-docs/**", "/api/swagger-ui/**", "/error").permitAll() // swagger open
+				.requestMatchers("/file/**", "/api/**").authenticated()
 				.anyRequest().authenticated());
 
 		//csrf disable
