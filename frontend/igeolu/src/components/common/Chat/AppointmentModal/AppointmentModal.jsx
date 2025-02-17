@@ -69,25 +69,27 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     }
 
     try {
+      // 로컬 시간을 그대로 ISO 문자열로 변환
       const localDate = new Date(formData.scheduledAt);
-      const offset = localDate.getTimezoneOffset() * 60000;
-      const isoDate = new Date(localDate.getTime() - offset).toISOString();
-
+      const isoDate = localDate.toISOString();
+  
       const response = await appointmentAPI.createAppointment({
         ...formData,
         scheduledAt: isoDate,
       });
-
+  
       console.log('Create appointment response:', response.data);
-
-      const appointmentDate = new Date(isoDate).toLocaleString('ko-KR', {
+  
+      // 시스템 메시지용 날짜 포맷팅
+      const appointmentDate = new Date(formData.scheduledAt).toLocaleString('ko-KR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        hour12: false
       });
-      
+        
       const systemMessage = `새로운 약속이 생성되었습니다.\n일시: ${appointmentDate}\n제목: ${formData.title}`;
       await sendSystemMessage(systemMessage);
 
