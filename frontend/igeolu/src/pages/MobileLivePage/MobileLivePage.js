@@ -29,6 +29,8 @@ function MobileLivePage() {
     const [currentLivePropertyId, setCurrentLivePropertyId] = useState(null);
     const [recordingId, setRecordingId] = useState(null);
     const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
+    const [watchId, setWatchId] = useState(null);
+    const LOCATION_UPDATE_INTERVAL = 10000; // 10초
 
     useEffect(() => {
         const getVideoDevices = async () => {
@@ -222,6 +224,64 @@ function MobileLivePage() {
         };
     }, [sessionId, token, role]);
 
+    useEffect(() => {
+        let locationInterval;
+
+        const startLocationTracking = () => {
+            if (role === 'host' && session) {
+                // 위치 추적 시작
+                const id = navigator.geolocation.watchPosition(
+                    async (position) => {
+                        try {
+                            const locationData = {
+                                propertyId: currentLivePropertyId,
+                                timestamp: new Date().toISOString(),
+                                location: {
+                                    latitude: position.coords.latitude,
+                                    longitude: position.coords.longitude,
+                                    accuracy: position.coords.accuracy
+                                }
+                            };
+
+                            await session.signal({
+                                data: JSON.stringify(locationData),
+                                type: 'host-location-update'
+                            });
+                        } catch (error) {
+                            console.error('Error sending location signal:', error);
+                        }
+                    },
+                    (error) => {
+                        console.error('Geolocation error:', error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+                setWatchId(id);
+            }
+        };
+
+        const stopLocationTracking = () => {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                setWatchId(null);
+            }
+        };
+
+        // 세션이 연결되면 위치 추적 시작
+        if (session && role === 'host') {
+            startLocationTracking();
+        }
+
+        // 컴포넌트 언마운트 시 정리
+        return () => {
+            stopLocationTracking();
+        };
+    }, [session, role, currentLivePropertyId]);
+
     const toggleMicrophone = () => {
         if (publisher) {
             publisher.publishAudio(!isMicOn);
@@ -376,61 +436,13 @@ function MobileLivePage() {
         const properties = propertyList[liveId]?.sort((a, b) => a.livePropertyId - b.livePropertyId) || [];
         
         try {
-            const currentProperty = properties[currentPropertyIndex];
-            
-            // 위치 정보 가져오기 시도 로그
-            console.log('Getting geolocation...');
-            
-            const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => resolve(pos),
-                    (error) => reject(error),
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 5000,
-                        maximumAge: 0
-                    }
-                );
-            });
-
-            // 위치 정보 획득 성공 로그
-            console.log('Geolocation obtained:', {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                accuracy: position.coords.accuracy
-            });
-
-            const signalData = {
-                propertyId: currentProperty.livePropertyId,
-                completedAt: new Date().toISOString(),
-                location: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    accuracy: position.coords.accuracy
-                }
-            };
-
-            // 시그널 전송 시도 로그
-            console.log('Sending signal with data:', signalData);
-            
-            await session.signal({
-                data: JSON.stringify(signalData),
-                type: 'property-completed'
-            });
-            
-            console.log('Signal sent successfully');
-            
             if (currentPropertyIndex < properties.length - 1) {
                 const nextIndex = currentPropertyIndex + 1;
                 setCurrentLivePropertyId(properties[nextIndex].livePropertyId);
                 setCurrentPropertyIndex(nextIndex);
             }
         } catch (error) {
-            if (error.code === error.PERMISSION_DENIED) {
-                console.error('Geolocation permission denied:', error);
-            } else {
-                console.error('Error in handleNextProperty:', error);
-            }
+            console.error('Error in handleNextProperty:', error);
         }
     };
 
@@ -527,6 +539,11 @@ function MobileLivePage() {
                                                 <button 
                                                     className="property-nav-button"
                                                     onClick={() => handleNextProperty(live.liveId)}
+                                                    disabled={isRecording}
+                                                    style={{ 
+                                                        opacity: isRecording ? 0.5 : 1,
+                                                        cursor: isRecording ? 'not-allowed' : 'pointer'
+                                                    }}
                                                 >
                                                     <MdNavigateNext size={20} />
                                                 </button>
