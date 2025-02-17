@@ -20,6 +20,7 @@ const DetailPanel = ({
     const [properties, setProperties] = useState([]);
     const [optionsData, setOptionsData] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
     useEffect(() => {
         const fetchOptions = async () => {
             if (data?.options && Array.isArray(data.options)) {
@@ -52,9 +53,7 @@ const DetailPanel = ({
     }, [isVisible, setView]);
 
     useEffect(() => {
-        // data가 변경되면 (새로운 공인중개사가 선택되면)
         if (data) {
-            // 매물 상세보기 상태에서 공인중개사 정보로 전환될 때
             if (data.type === 'agent') {
                 setView('main');
                 setSelectedProperty(null);
@@ -92,20 +91,18 @@ const DetailPanel = ({
         }
     };
 
-
     const handleViewProperties = async () => {
         try {
-          const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
-            params: { userId: data.userId }
-          });
-          setProperties(response.data);
-          setView('propertyList');
-          // 응답 데이터도 함께 전달
-          onViewProperties(data.userId, null, response.data);  
+            const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
+                params: { userId: data.userId }
+            });
+            setProperties(response.data);
+            setView('propertyList');
+            onViewProperties(data.userId, null, response.data);
         } catch (error) {
-          console.error('Error fetching properties:', error);
-          setProperties([]);
-          setView('propertyList');
+            console.error('Error fetching properties:', error);
+            setProperties([]);
+            setView('propertyList');
         }
     };
 
@@ -226,7 +223,6 @@ const DetailPanel = ({
                                 if (view === 'propertyDetail') {
                                     setView('propertyList');
                                     setSelectedProperty(null);
-                                    // 모든 매물 마커를 다시 표시
                                     onViewProperties(data.userId, null, properties, true);
                                 } else {
                                     setView('main');
@@ -240,13 +236,11 @@ const DetailPanel = ({
                     )}
                     <button className='detail-close-button' onClick={() => {
                         if (type === 'room') {
-                            // 원룸 메뉴일 때만 기존 상태 초기화
                             onClose();
                             setView('main');
                             setSelectedProperty(null);
                             setProperties([]);
                         } else if (type === 'agent') {
-                            // 공인중개사 메뉴는 전체 공인중개사 마커 표시를 위해 type을 전달
                             onClose('agent');
                             setView('main');
                             setSelectedProperty(null);
@@ -313,98 +307,95 @@ const DetailPanel = ({
                             )}
                         </div>
                     </div>
-                    ) : view === 'propertyDetail' ? (
-                        <div className='detail-panel-section'>
-                            <div className='property-image-slider'>
-                                <ImageSlider images={selectedProperty?.images} />
+                ) : view === 'propertyDetail' ? (
+                    <div className='detail-panel-section'>
+                        <div className='property-image-slider'>
+                            <ImageSlider images={selectedProperty?.images} />
+                        </div>
+                        <div className='property-detail-info'>
+                            <div className='property-price-info'>
+                                <div className='price-row'>
+                                    <span className='price-label'>보증금</span>
+                                    <span className='price-value'>{selectedProperty?.deposit?.toLocaleString()}만원</span>
+                                </div>
+                                <div className='price-row'>
+                                    <span className='price-label'>월세</span>
+                                    <span className='price-value'>{selectedProperty?.monthlyRent?.toLocaleString()}만원</span>
+                                </div>
                             </div>
-                            <div className='property-detail-info'>
-                                <div className='property-price-info'>
-                                    <div className='price-row'>
-                                        <span className='price-label'>보증금</span>
-                                        <span className='price-value'>{selectedProperty?.deposit?.toLocaleString()}만원</span>
-                                    </div>
-                                    <div className='price-row'>
-                                        <span className='price-label'>월세</span>
-                                        <span className='price-value'>{selectedProperty?.monthlyRent?.toLocaleString()}만원</span>
-                                    </div>
+                            <div className='property-basic-info'>
+                                <div className='info-item'>
+                                    <span className='info-label'>주소</span>
+                                    <span className='info-value'>{selectedProperty?.address}</span>
                                 </div>
-                                <div className='property-basic-info'>
-                                    <div className='info-item'>
-                                        <span className='info-label'>주소</span>
-                                        <span className='info-value'>{selectedProperty?.address}</span>
-                                    </div>
-                                    <div className='info-item'>
-                                        <span className='info-label'>면적</span>
-                                        <span className='info-value'>{selectedProperty?.area}㎡ ({Math.floor(selectedProperty?.area * 0.3025)}평)</span>
-                                    </div>
-                                    <div className='info-item'>
-                                        <span className='info-label'>층수</span>
-                                        <span className='info-value'>
-                                            {formatFloorInfo(selectedProperty?.currentFloor, selectedProperty?.totalFloors)}
-                                        </span>
-                                    </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>면적</span>
+                                    <span className='info-value'>{selectedProperty?.area}㎡ ({Math.floor(selectedProperty?.area * 0.3025)}평)</span>
                                 </div>
-                                <div className='property-options'>
-                                    <h5>옵션 정보</h5>
-                                    <div className='options-list'>
-                                        {renderOptions()}
-                                    </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>층수</span>
+                                    <span className='info-value'>
+                                        {formatFloorInfo(selectedProperty?.currentFloor, selectedProperty?.totalFloors)}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className='property-options'>
+                                <h5>옵션 정보</h5>
+                                <div className='options-list'>
+                                    {renderOptions()}
                                 </div>
                             </div>
                         </div>
-                        ) : displayType === 'room' ? (
-                            <div className='detail-panel-section'>
-                                <div className='property-image-slider'>
-                                    <ImageSlider images={data?.images} />
+                    </div>
+                ) : displayType === 'room' ? (
+                    <div className='detail-panel-section'>
+                        <div className='property-image-slider'>
+                            <ImageSlider images={data?.images} />
+                        </div>
+                        <div className='property-detail-info'>
+                            <div className='property-price-info'>
+                                <div className='price-row'>
+                                    <span className='price-label'>보증금</span>
+                                    <span className='price-value'>{data?.deposit?.toLocaleString()}만원</span>
                                 </div>
-                                <div className='property-detail-info'>
-                                    <div className='property-price-info'>
-                                        <div className='price-row'>
-                                            <span className='price-label'>보증금</span>
-                                            <span className='price-value'>{data?.deposit?.toLocaleString()}만원</span>
-                                        </div>
-                                        <div className='price-row'>
-                                            <span className='price-label'>월세</span>
-                                            <span className='price-value'>{data?.monthlyRent?.toLocaleString()}만원</span>
-                                        </div>
-                                    </div>
-                                    <div className='property-basic-info'>
-                                        <div className='info-item'>
-                                            <span className='info-label'>주소</span>
-                                            <span className='info-value'>{data?.address}</span>
-                                        </div>
-                                        <div className='info-item'>
-                                            <span className='info-label'>면적</span>
-                                            <span className='info-value'>{data?.area}㎡ ({Math.floor(data?.area * 0.3025)}평)</span>
-                                        </div>
-                                        <div className='info-item'>
-                                            <span className='info-label'>층수</span>
-                                            <span className='info-value'>
-                                                {formatFloorInfo(data?.currentFloor, data?.totalFloors)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className='property-options'>
-                                        <h5>옵션 정보</h5>
-                                        <div className='options-list'>
-                                            {renderOptions()}
-                                        </div>
-                                    </div>
-
-
-                                    <button 
-                                        className='view-properties-button'
-                                        onClick={() => onSwitchToAgent(data.userId)}
-                                    >
-                                        <Building2 size={20} />
-                                        공인중개사 정보 보기
-                                    </button>
-
-
+                                <div className='price-row'>
+                                    <span className='price-label'>월세</span>
+                                    <span className='price-value'>{data?.monthlyRent?.toLocaleString()}만원</span>
                                 </div>
                             </div>
-                            ) : (
+                            <div className='property-basic-info'>
+                                <div className='info-item'>
+                                    <span className='info-label'>주소</span>
+                                    <span className='info-value'>{data?.address}</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>면적</span>
+                                    <span className='info-value'>{data?.area}㎡ ({Math.floor(data?.area * 0.3025)}평)</span>
+                                </div>
+                                <div className='info-item'>
+                                    <span className='info-label'>층수</span>
+                                    <span className='info-value'>
+                                        {formatFloorInfo(data?.currentFloor, data?.totalFloors)}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className='property-options'>
+                                <h5>옵션 정보</h5>
+                                <div className='options-list'>
+                                    {renderOptions()}
+                                </div>
+                            </div>
+
+                            <button 
+                                className='view-properties-button'
+                                onClick={() => onSwitchToAgent(data.userId)}
+                            >
+                                <Building2 size={20} />
+                                공인중개사 정보 보기
+                            </button>
+                        </div>
+                    </div>
+                ) : (
                     <div className='detail-panel-section'>
                         <div className='agent-profile-card'>
                             <div className='agent-profile-header'>
@@ -423,39 +414,41 @@ const DetailPanel = ({
                                     <h4 className='agent-name'>{data?.username}</h4>
                                     <p className='agent-title'>{data?.title}</p>
                                     <div className='agent-stats'>
-                                        <div className='stat-item'>
+                                        <div className='agent-stat-row'>
                                             <span className='stat-label'>평점</span>
-                                            <div className='stat-value'>
-                                                <RatingStars rating={data?.ratingAvg} />
+                                            <div className='rating-value'>
+                                                <RatingStars rating={data?.ratingAvg || 0} />
                                             </div>
                                         </div>
-                                        <div className='stat-item'>
-                                            <span className='stat-label'>방송 횟수</span>
+                                        <div className='agent-stat-row'>
+                                            <span className='stat-label'>방송</span>
                                             <div className='live-count'>
-                                                <span className="live-count-number">{data?.liveCount || 0}</span>
-                                                <span>회</span>
+                                                <span className="live-count-value">{data?.liveCount || 0}</span>
+                                                <span className="live-count-text">회</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className='agent-content-section'>
-                                <p className='agent-description'>{data?.content}</p>
-                            </div>
+                            {data?.content && (
+                                <div className='agent-content-section'>
+                                    <p className='agent-description'>{data.content}</p>
+                                </div>
+                            )}
 
                             <div className='agent-info-grid'>
                                 <div className='info-grid-item'>
                                     <span className='info-grid-label'>등록번호</span>
-                                    <span className='info-grid-value'>{data?.registrationNumber}</span>
+                                    <span className='info-grid-value'>{data?.registrationNumber || '-'}</span>
                                 </div>
                                 <div className='info-grid-item'>
                                     <span className='info-grid-label'>연락처</span>
-                                    <span className='info-grid-value'>{data?.tel}</span>
+                                    <span className='info-grid-value'>{data?.tel || '-'}</span>
                                 </div>
-                                <div className='info-grid-item full-width'>
+                                <div className='info-grid-item'>
                                     <span className='info-grid-label'>주소</span>
-                                    <span className='info-grid-value'>{data?.address}</span>
+                                    <span className='info-grid-value'>{data?.address || '-'}</span>
                                 </div>
                             </div>
 

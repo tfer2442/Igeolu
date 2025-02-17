@@ -175,7 +175,6 @@ function MobileLivePage() {
 
         const fetchLiveList = async () => {
             try {
-<<<<<<< HEAD
                 // const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
                 //     headers: {
                 //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
@@ -186,15 +185,6 @@ function MobileLivePage() {
                 const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`);
                 
                 
-=======
-                const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
-                    headers: {
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-                        'userId': '32'
-                    }
-                });
-                // const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`);
->>>>>>> reborn
                 setLiveList([{ liveId: sessionId }]);
                 
                 const properties = propertyResponse.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
