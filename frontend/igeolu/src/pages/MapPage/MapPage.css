@@ -70,7 +70,7 @@
 }
 
 .filter-worldcup-container {
-    margin-left: auto; /* 오른쪽 정렬 */
+    margin-right: auto; /* 왼쪽 정렬 */
 }
 
 
