@@ -13,7 +13,6 @@ import DesktopRoomSearchPage from './pages/DesktopRoomSearchPage/DesktopRoomSear
 import DesktopMyPage from './pages/DesktopMyPage/DesktopMyPage';
 
 // Mobile Pages
-import Make from './pages/MobileLivePage/Make';
 import MobileMainPage from './pages/MobileMainPage/MobileMainPage';
 import MobileCalendarPage from './pages/MobileCalendarPage/MobileCalendarPage';
 import MobileMyPage from './pages/MobileMyPage/MobileMyPage';
