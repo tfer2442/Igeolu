@@ -11,7 +11,7 @@ public interface ChatRoomFacadeService {
 
 	ChatRoomPostResponseDto createChatRoom(ChatRoomPostRequestDto request);
 
-	List<ChatRoomListGetResponseDto> getChatRoomList(ChatRoomListGetRequestDto request);
+	List<ChatRoomListGetResponseDto> getChatRoomList();
 
 	void leaveChatRoom(Integer chatRoomId);
 }

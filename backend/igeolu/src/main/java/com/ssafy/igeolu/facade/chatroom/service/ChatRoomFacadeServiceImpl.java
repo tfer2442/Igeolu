@@ -47,7 +47,7 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 	}
 
 	@Override
-	public List<ChatRoomListGetResponseDto> getChatRoomList(ChatRoomListGetRequestDto request) {
+	public List<ChatRoomListGetResponseDto> getChatRoomList() {
 
 		User user = userService.getUserById(securityService.getCurrentUser().getUserId());
 

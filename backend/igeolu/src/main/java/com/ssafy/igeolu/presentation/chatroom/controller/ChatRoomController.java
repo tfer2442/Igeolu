@@ -45,8 +45,8 @@ public class ChatRoomController {
 		@ApiResponse(responseCode = "200", description = "정상 처리"),
 	})
 	@GetMapping("")
-	public ResponseEntity<List<ChatRoomListGetResponseDto>> getChatRoomList(ChatRoomListGetRequestDto request) {
-		List<ChatRoomListGetResponseDto> responses = chatRoomFacadeService.getChatRoomList(request);
+	public ResponseEntity<List<ChatRoomListGetResponseDto>> getChatRoomList() {
+		List<ChatRoomListGetResponseDto> responses = chatRoomFacadeService.getChatRoomList();
 		return ResponseEntity.ok().body(responses);
 	}
 
