@@ -20,4 +20,7 @@ public interface ChatMessageRepository extends ReactiveMongoRepository<ChatMessa
 
 	// ObjectId의 타임스탬프를 기준으로 내림차순 정렬하여 가장 최근 메시지 가져오기
 	Mono<ChatMessage> findTopByRoomIdOrderByIdDesc(Integer roomId);
+
+	// 채팅방 메세지 삭제
+	Mono<Void> deleteByRoomId(Integer roomId);
 }
