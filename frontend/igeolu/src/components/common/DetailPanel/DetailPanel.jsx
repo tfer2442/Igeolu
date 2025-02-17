@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft, ChevronLeft, ChevronRight, Building2, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 import './DetailPanel.css';
-import RatingStars from '../RatingStars/RatingStarts';
+import RatingStars from '../RatingStars/RatingStars';
 
 const DetailPanel = ({ 
     isVisible, 
