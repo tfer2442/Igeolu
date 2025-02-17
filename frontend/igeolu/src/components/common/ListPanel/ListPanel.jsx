@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// ListPanel.jsx
-=======
-
->>>>>>> feature/S12P11D205-334-move-realtor
 import React from 'react';
 import { Building2, MapPin, Home } from 'lucide-react';
 import './ListPanel.css';
@@ -20,21 +15,6 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
   return (
     <div className='list-panel'>
       <div className='list-panel-header'>
-<<<<<<< HEAD
-        {type === 'room' ? (
-          <div className='header-content'>
-            <Home size={20} />
-            <span className='header-title'>원룸 목록</span>
-            <span className='result-count'>총 {items.length}건</span>
-          </div>
-        ) : (
-          <div className='header-content'>
-            <Building2 size={20} />
-            <span className='header-title'>공인중개사 목록</span>
-            <span className='result-count'>총 {items.length}건</span>
-          </div>
-        )}
-=======
         <div className="header-content">
           {type === 'room' ? <Home size={20} /> : <Building2 size={20} />}
           <span className="header-title">
@@ -42,7 +22,6 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
           </span>
           <span className='result-count'>총 {items.length}건</span>
         </div>
->>>>>>> feature/S12P11D205-334-move-realtor
       </div>
       
       <div className='list-panel-content'>
@@ -54,33 +33,6 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                 className='list-item'
                 onClick={() => onItemClick(item)}
               >
-<<<<<<< HEAD
-                {type === 'room' ? (
-                  <div className='property-list-item'>
-                    <div className='property-image'>
-                      {item.images && item.images.length > 0 ? (
-                        <img
-                          src={item.images[0]}
-                          alt='매물 이미지'
-                          className='room-image'
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = '/room-placeholder.jpg';
-                          }}
-                        />
-                      ) : (
-                        <div className='no-image'>이미지 없음</div>
-                      )}
-                    </div>
-                    <div className='property-list-item-content'>
-                      <div className='property-list-price'>
-                        <span className='deposit'>
-                          {item.deposit?.toLocaleString()}만원
-                        </span>
-                        <span className='monthly-rent'>
-                          {item.monthlyRent?.toLocaleString()}만원
-                        </span>
-=======
                 <div className="item-image-container">
                   <img 
                     src={type === 'room' ? 
@@ -104,51 +56,18 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                       <div className='item-price'>
                         <span className='price-value'>{item.deposit?.toLocaleString()}만원</span>
                         <span className='price-value'>{item.monthlyRent?.toLocaleString()}만원</span>
->>>>>>> feature/S12P11D205-334-move-realtor
                       </div>
                       <div className='item-details'>
                         <div className='item-specs'>
                           <span>{item.area}㎡</span>
-<<<<<<< HEAD
-                          <span className='spec-divider'>|</span>
-                          <span>
-                            {formatFloorInfo(
-                              item.currentFloor,
-                              item.totalFloors
-                            )}
-                          </span>
-=======
                           <span>|</span>
                           <span>{formatFloorInfo(item.currentFloor, item.totalFloors)}</span>
->>>>>>> feature/S12P11D205-334-move-realtor
                         </div>
                         <div className='item-address'>
                           <MapPin size={16} />
                           <span>{item.address}</span>
                         </div>
                       </div>
-<<<<<<< HEAD
-                    </div>
-                  </div>
-                ) : (
-                  <div className='agent-item'>
-                    <img
-                      src={item.profileImage || '/default-agent.png'}
-                      alt={item.username}
-                      className='agent-image'
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/default-agent.png';
-                      }}
-                    />
-                    <div className='agent-info'>
-                      <span className='agent-name'>{item.username}</span>
-                      <p className='agent-title'>{item.title}</p>
-                      <p className='agent-content'>{item.content}</p>
-                      <div className='agent-address-info'>
-                        <MapPin size={16} />
-                        <p className='agent-address'>{item.address}</p>
-=======
                     </>
                   ) : (
                     <>
@@ -159,7 +78,6 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                           <MapPin size={16} />
                           <span>{item.address}</span>
                         </div>
->>>>>>> feature/S12P11D205-334-move-realtor
                       </div>
                     </>
                   )}
