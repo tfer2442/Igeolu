@@ -12,4 +12,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 	List<ChatRoom> findByMember(User member);
 
 	List<ChatRoom> findByRealtor(User realtor);
+
+	Boolean existsByMemberAndRealtor(User member, User realtor);
+
 }
