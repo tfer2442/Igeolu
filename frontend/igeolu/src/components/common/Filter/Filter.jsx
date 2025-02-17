@@ -156,39 +156,42 @@ const Filter = ({
             />
           </button>
 
-          <button 
-            className={`price-filter-button ${isPriceDropdownOpen ? 'active' : ''}`}
-            onClick={() => {
-              setIsPriceDropdownOpen(!isPriceDropdownOpen);
-              setIsLocationDropdownOpen(false);
-              setIsOptionDropdownOpen(false);
-            }}
-          >
-            <Wallet size={18} />
-            <span className="price-text">{getDisplayPrice()}</span>
-            <ChevronDown 
-              size={18} 
-              className={`chevron-icon ${isPriceDropdownOpen ? 'rotate' : ''}`}
-            />
-          </button>
+          {activeMenu !== 'agent' && (
+            <>
+              <button 
+                className={`price-filter-button ${isPriceDropdownOpen ? 'active' : ''}`}
+                onClick={() => {
+                  setIsPriceDropdownOpen(!isPriceDropdownOpen);
+                  setIsLocationDropdownOpen(false);
+                  setIsOptionDropdownOpen(false);
+                }}
+              >
+                <Wallet size={18} />
+                <span className="price-text">{getDisplayPrice()}</span>
+                <ChevronDown 
+                  size={18} 
+                  className={`chevron-icon ${isPriceDropdownOpen ? 'rotate' : ''}`}
+                />
+              </button>
 
-          <button 
-            className={`option-filter-button ${isOptionDropdownOpen ? 'active' : ''}`}
-            onClick={() => {
-              setIsOptionDropdownOpen(!isOptionDropdownOpen);
-              setIsLocationDropdownOpen(false);
-              setIsPriceDropdownOpen(false);
-            }}
-          >
-            <Settings size={18} />
-            <span className="option-text">{getDisplayOptions()}</span>
-            <ChevronDown 
-              size={18} 
-              className={`chevron-icon ${isOptionDropdownOpen ? 'rotate' : ''}`}
-            />
-          </button>
+              <button 
+                className={`option-filter-button ${isOptionDropdownOpen ? 'active' : ''}`}
+                onClick={() => {
+                  setIsOptionDropdownOpen(!isOptionDropdownOpen);
+                  setIsLocationDropdownOpen(false);
+                  setIsPriceDropdownOpen(false);
+                }}
+              >
+                <Settings size={18} />
+                <span className="option-text">{getDisplayOptions()}</span>
+                <ChevronDown 
+                  size={18} 
+                  className={`chevron-icon ${isOptionDropdownOpen ? 'rotate' : ''}`}
+                />
+              </button>
+            </>
+          )}
 
-          {/* 전체 초기화 버튼 */}
           <button 
             className="reset-all-button"
             onClick={handleAllReset}
@@ -215,26 +218,30 @@ const Filter = ({
           setIsLocationDropdownOpen={setIsLocationDropdownOpen}
         />
 
-        <PriceDropdownPanel
-          isOpen={isPriceDropdownOpen}
-          deposit={tempDeposit}
-          monthlyRent={tempMonthlyRent}
-          onDepositChange={setTempDeposit}
-          onMonthlyRentChange={setTempMonthlyRent}
-          onApply={handlePriceApply}
-          onReset={handlePriceReset}
-          setIsPriceDropdownOpen={setIsPriceDropdownOpen}
-        />
+        {activeMenu !== 'agent' && (
+          <>
+            <PriceDropdownPanel
+              isOpen={isPriceDropdownOpen}
+              deposit={tempDeposit}
+              monthlyRent={tempMonthlyRent}
+              onDepositChange={setTempDeposit}
+              onMonthlyRentChange={setTempMonthlyRent}
+              onApply={handlePriceApply}
+              onReset={handlePriceReset}
+              setIsPriceDropdownOpen={setIsPriceDropdownOpen}
+            />
 
-        <OptionDropdownPanel
-          isOpen={isOptionDropdownOpen}
-          options={options}
-          selectedOptions={tempOptions}
-          onOptionToggle={handleOptionToggle}
-          onApply={handleOptionApply}
-          onReset={handleOptionReset}
-          setIsOptionDropdownOpen={setIsOptionDropdownOpen}
-        />
+            <OptionDropdownPanel
+              isOpen={isOptionDropdownOpen}
+              options={options}
+              selectedOptions={tempOptions}
+              onOptionToggle={handleOptionToggle}
+              onApply={handleOptionApply}
+              onReset={handleOptionReset}
+              setIsOptionDropdownOpen={setIsOptionDropdownOpen}
+            />
+          </>
+        )}
       </div>
     </div>
   );

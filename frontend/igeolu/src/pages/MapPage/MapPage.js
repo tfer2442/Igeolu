@@ -906,25 +906,26 @@ function MapPage() {
         </div>
         
         <div className='right-content'>
-          <div className='filter-container'>
-            <Filter 
-              selectedCity={selectedCity}
-              selectedDistrict={selectedDistrict}
-              selectedNeighborhood={selectedNeighborhood}
-              cities={cities}
-              districts={districts}
-              neighborhoods={neighborhoods}
-              onCityChange={handleCityChange}
-              onDistrictChange={handleDistrictChange}
-              onNeighborhoodChange={handleNeighborhoodChange}
-              onReset={handleReset}
-              onPriceChange={handlePriceChange}
-              onOptionsChange={handleOptionsChange}
-              deposit={deposit}
-              monthlyRent={monthlyRent}
-              selectedOptions={selectedOptions}
-              activeMenu={activeMenu}
-            />
+        <div className='filter-container'>
+          <Filter 
+            selectedCity={selectedCity}
+            selectedDistrict={selectedDistrict}
+            selectedNeighborhood={selectedNeighborhood}
+            cities={cities}
+            districts={districts}
+            neighborhoods={neighborhoods}
+            onCityChange={handleCityChange}
+            onDistrictChange={handleDistrictChange}
+            onNeighborhoodChange={handleNeighborhoodChange}
+            onReset={handleReset}
+            onPriceChange={handlePriceChange}
+            onOptionsChange={handleOptionsChange}
+            deposit={deposit}
+            monthlyRent={monthlyRent}
+            selectedOptions={selectedOptions}
+            activeMenu={activeMenu}
+          />
+          {activeMenu !== 'agent' && (
             <div className="filter-worldcup-container">
               <WorldCup 
                 properties={searchResults}
@@ -933,7 +934,8 @@ function MapPage() {
                 onSelectWinner={handleWorldCupWinner}
               />
             </div>
-          </div>
+          )}
+        </div>
           <div className='right-content-inner'>
             <ListPanel 
               type={activeMenu}
