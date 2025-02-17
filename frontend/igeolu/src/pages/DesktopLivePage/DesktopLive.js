@@ -17,13 +17,8 @@ import { renderBoxes } from '../../utils/renderBox';
 import { objectQuestions } from '../../utils/questions.js';
 
 // axios 기본 설정 추가
-// axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
-// axios.defaults.headers.common['Content-Type'] = 'application/json';
-
-// axios 기본 설정
-axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
-
 
 function DesktopLive() {
   const location = useLocation();
@@ -72,57 +67,28 @@ function DesktopLive() {
     }
   };
 
-  // // 세션 나가기
-  // const leaveSession = async () => {
-  //   try {
-  //     // 토큰 정보 로깅
-  //     const authToken = axios.defaults.headers.common['Authorization'];
-  //     console.log('Current Authorization Token:', authToken);
-      
-  //     // API 요청 시 헤더 정보 로깅
-  //     console.log('Request Headers:', {
-  //       Authorization: authToken,
-  //       'Content-Type': axios.defaults.headers.common['Content-Type']
-  //     });
-      
-  //     // 평점 등록 자격 확인 및 응답 로깅
-  //     const response = await axios.get(`/api/lives/${sessionId}/rating/eligibility`);
-  //     console.log('Rating eligibility response:', response.data);
-      
-  //     if (response.data) {
-  //       // 평점 등록 자격이 있는 경우 모달 표시
-  //       setShowRatingModal(true);
-  //     } else {
-  //       // 자격이 없는 경우 바로 세션 종료
-  //       if (session) {
-  //         session.disconnect();
-  //         window.location.href = '/';
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking rating eligibility:', error);
-  //     console.error('Error details:', {
-  //       status: error.response?.status,
-  //       data: error.response?.data,
-  //       headers: error.response?.headers
-  //     });
-  //     // 에러 발생 시 세션 종료
-  //     if (session) {
-  //       session.disconnect();
-  //       window.location.href = '/';
-  //     }
-  //   }
-  // };
-
   // 세션 나가기
   const leaveSession = async () => {
     try {
+      // 토큰 정보 로깅
+      const authToken = axios.defaults.headers.common['Authorization'];
+      console.log('Current Authorization Token:', authToken);
+      
+      // API 요청 시 헤더 정보 로깅
+      console.log('Request Headers:', {
+        Authorization: authToken,
+        'Content-Type': axios.defaults.headers.common['Content-Type']
+      });
+      
+      // 평점 등록 자격 확인 및 응답 로깅
       const response = await axios.get(`/api/lives/${sessionId}/rating/eligibility`);
       console.log('Rating eligibility response:', response.data);
       
       if (response.data) {
+        // 평점 등록 자격이 있는 경우 모달 표시
         setShowRatingModal(true);
       } else {
+        // 자격이 없는 경우 바로 세션 종료
         if (session) {
           session.disconnect();
           window.location.href = '/';
@@ -135,6 +101,7 @@ function DesktopLive() {
         data: error.response?.data,
         headers: error.response?.headers
       });
+      // 에러 발생 시 세션 종료
       if (session) {
         session.disconnect();
         window.location.href = '/';
@@ -346,47 +313,27 @@ function DesktopLive() {
     };
   }, [token, sessionId]);
 
-  // useEffect(() => {
-  //   const fetchProperties = async () => {
-  //     try {
-  //       const response = await axios.get(`/api/lives/${sessionId}/properties`, {
-  //         headers: {
-  //           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
-  //         }
-  //       });
-  //       // livePropertyId 기준으로 정렬
-  //       const properties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
-  //       console.log('Sorted properties:', properties);
-  //       setPropertyList(properties);
-  //     } catch (error) {
-  //       console.error('Error fetching properties:', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get(`/api/lives/${sessionId}/properties`, {
+          headers: {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+          }
+        });
+        // livePropertyId 기준으로 정렬
+        const properties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
+        console.log('Sorted properties:', properties);
+        setPropertyList(properties);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      }
+    };
 
-  //   if (sessionId) {
-  //     fetchProperties();
-  //   }
-  // }, [sessionId]);
-
-// 매물 목록 불러오기
-useEffect(() => {
-  const fetchProperties = async () => {
-    try {
-      const response = await axios.get(`/api/lives/${sessionId}/properties`);
-      // livePropertyId 기준으로 정렬
-      const properties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
-      console.log('Sorted properties:', properties);
-      setPropertyList(properties);
-    } catch (error) {
-      console.error('Error fetching properties:', error);
+    if (sessionId) {
+      fetchProperties();
     }
-  };
-
-  if (sessionId) {
-    fetchProperties();
-  }
-}, [sessionId]);
-
+  }, [sessionId]);
 
   // signal 리스너 useEffect 수정
   useEffect(() => {
