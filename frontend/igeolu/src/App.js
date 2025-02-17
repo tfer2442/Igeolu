@@ -138,7 +138,7 @@ function App() {
     async (roomId) => {
       try {
         // 전체 채팅방 목록을 새로 불러옵니다
-        const updatedRooms = await ChatApi.getChatRooms(user.userId);
+        const updatedRooms = await ChatApi.getChatRooms(user.userId, user.role);
         setChatRooms(updatedRooms);
       } catch (error) {
         console.error('채팅방 정보 업데이트 실패:', error);
@@ -177,7 +177,7 @@ function App() {
 
       try {
         // 1. 먼저 채팅방 목록을 가져옴
-        const rooms = await ChatApi.getChatRooms(user.userId);
+        const rooms = await ChatApi.getChatRooms(user.userId, user.role);
         setChatRooms(rooms);
 
         // 2. WebSocket 연결 및 모든 채팅방 구독
@@ -208,12 +208,12 @@ function App() {
 
   // 채팅방 목록 초기 로드
   const fetchChatRooms = useCallback(async () => {
-    if (!user?.userId) return;
-
+    if (!user?.userId || !user?.role) return;
+  
     try {
       setIsLoading(true);
       setError(null);
-      const response = await ChatApi.getChatRooms(user.userId);
+      const response = await ChatApi.getChatRooms(user.userId, user.role); // role 전달
       setChatRooms(response);
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');
@@ -221,7 +221,7 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [user?.userId]);
+  }, [user?.userId, user?.role]);
 
   useEffect(() => {
     if (isUserInitialized && user?.userId) {
