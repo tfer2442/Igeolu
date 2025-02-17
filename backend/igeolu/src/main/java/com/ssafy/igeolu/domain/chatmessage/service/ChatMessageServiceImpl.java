@@ -15,7 +15,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
 	private final ChatMessageRepository chatMessageRepository;

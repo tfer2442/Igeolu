@@ -40,6 +40,8 @@ springdoc:
   swagger-ui:
     path: /api/swagger-ui.html
 
+server:
+  forward-headers-strategy: framework
 # clova stt
 clova:
   api:
