@@ -1,17 +1,29 @@
 /* src/components/common/ChatMessage/ChatMessage.css */
 
 /* 📌 기본 레이아웃 */
-.message-wrapper {
+/* .message-wrapper {
   display: flex;
   align-items: flex-end;
-  margin: 8px 0;
+  margin: 12px 0;
   gap: 8px;
+} */
+
+.message-wrapper {
+  margin: 8px 0;
+  display: flex;
 }
 
 .message-content {
   display: flex;
   align-items: flex-end;
   gap: 6px;
+}
+
+/* 사용자 콘텐츠 컨테이너 */
+.message-user-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* 📌 메시지 방향 */
@@ -27,11 +39,25 @@
   justify-content: flex-start;
 }
 
+
+
 /* 📌 프로필 영역 */
 .message-profile {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
+}
+
+/* 프로필 컨테이너 수정 */
+.message-profile-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+/* 받은 메시지의 경우 프로필 컨테이너 왼쪽 정렬 */
+.received .message-profile-container {
+  align-items: center;
 }
 
 .profile-image {
@@ -39,6 +65,13 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* 프로필 이름 스타일 */
+.profile-name {
+  font-size: 13px;
+  color: #495057;
+  display: block;
 }
 
 .profile-placeholder {

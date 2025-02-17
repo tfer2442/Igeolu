@@ -63,42 +63,58 @@ const ChatMessage = ({
     <div
       className={`message-wrapper ${isCurrentUser ? 'sent' : 'received'} ${isSystemMessage ? 'system' : ''}`}
     >
-      {!isCurrentUser && !isSystemMessage && (
-        <div className='message-profile'>
-          {userProfile?.profileUrl ? (
-            <img
-              src={userProfile.profileUrl}
-              alt={`${userProfile.userName} 프로필`}
-              className='profile-image'
-              onError={(e) => {
-                e.target.onerror = null; // 무한 루프 방지
-                e.target.src = defaultProfile;
-              }}
-            />
-          ) : (
-            <div className='profile-placeholder'>
-              {userProfile?.userName?.charAt(0)}
-            </div>
-          )}
+      {/* 시스템 메시지 */}
+      {isSystemMessage && (
+        <div className='message-content system-content'>
+          <div className='message-bubble system-bubble'>
+            <div className='system-message-header'>알림 메세지</div>
+            <div className='message-text system-text'>{renderContent()}</div>
+          </div>
+          <span className='message-time'>{messageTime}</span>
         </div>
       )}
-      <div
-        className={`message-content ${isSystemMessage ? 'system-content' : ''}`}
-      >
-        <div className={`message-bubble ${isSystemMessage ? 'system-bubble' : ''}`}
-     data-type={isSystemMessage ? (message.content.includes('세션 ID:') ? 'live' : 'schedule') : undefined}>
-  {isSystemMessage && (
-    <div className="system-message-header">
-      알림 메세지
-    </div>
-  )}
-  <div className={`message-text ${isSystemMessage ? 'system-text' : ''}`}
-       data-type={isSystemMessage ? (message.content.includes('세션 ID:') ? 'live' : 'schedule') : undefined}>
-    {renderContent()}
-  </div>
-</div>
-        <span className='message-time'>{messageTime}</span>
-      </div>
+  
+      {/* 받은 메시지 */}
+      {!isCurrentUser && !isSystemMessage && (
+        <div className='message-profile-container'>
+          <div className='message-profile'>
+            {userProfile?.profileUrl ? (
+              <img
+                src={userProfile.profileUrl}
+                alt={`${userProfile.userName} 프로필`}
+                className='profile-image'
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultProfile;
+                }}
+              />
+            ) : (
+              <div className='profile-placeholder'>
+                {userProfile?.userName?.charAt(0)}
+              </div>
+            )}
+          </div>
+          <div className='message-user-content'>
+            <span className='profile-name'>{userProfile?.userName}</span>
+            <div className='message-content'>
+              <div className='message-bubble'>
+                <div className='message-text'>{renderContent()}</div>
+              </div>
+              <span className='message-time'>{messageTime}</span>
+            </div>
+          </div>
+        </div>
+      )}
+  
+      {/* 보낸 메시지 */}
+      {isCurrentUser && !isSystemMessage && (
+        <div className='message-content'>
+          <div className='message-bubble'>
+            <div className='message-text'>{renderContent()}</div>
+          </div>
+          <span className='message-time'>{messageTime}</span>
+        </div>
+      )}
     </div>
   );
 };
