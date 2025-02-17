@@ -8,6 +8,9 @@ import axios from 'axios';
 
 import './MobileLivePage.css';
 
+// axios 기본 설정
+axios.defaults.withCredentials = true;
+
 function MobileLivePage() {
     const location = useLocation();
     const { sessionId, token, role } = location.state;  // 백엔드에서 받은 token 사용
@@ -171,12 +174,15 @@ function MobileLivePage() {
 
         const fetchLiveList = async () => {
             try {
-                const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
-                    headers: {
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-                        'userId': '32'
-                    }
-                });
+                // const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
+                //     headers: {
+                //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
+                //         'userId': '32'
+                //     }
+                // });
+
+                const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`);
+                
                 
                 setLiveList([{ liveId: sessionId }]);
                 
@@ -281,13 +287,17 @@ function MobileLivePage() {
                     console.log('Starting recording for property:', currentLivePropertyId);
                     console.log('Session ID:', sessionId);
                     
+                    // const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/start`, {
+                    //     sessionId: sessionId
+                    // }, {
+                    //     headers: {
+                    //         'Content-Type': 'application/json',
+                    //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+                    //     }
+                    // });
+
                     const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/start`, {
                         sessionId: sessionId
-                    }, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
-                        }
                     });
                     
                     if (response.data && response.data.id) {
@@ -314,15 +324,21 @@ function MobileLivePage() {
                     livePropertyId: currentLivePropertyId
                 });
                 
+                // const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/stop`, {
+                //     sessionId: sessionId,
+                //     recordingId: recordingId,
+                //     livePropertyId: currentLivePropertyId
+                // }, {
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+                //     }
+                // });
+
                 const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/stop`, {
                     sessionId: sessionId,
                     recordingId: recordingId,
                     livePropertyId: currentLivePropertyId
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
-                    }
                 });
                 
                 console.log('Recording stopped successfully. Response:', response.data);

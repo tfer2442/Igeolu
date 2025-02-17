@@ -95,3 +95,33 @@
   display: flex;
   gap: 0.5rem;
 }
+
+
+
+
+
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.reset-all-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.reset-all-button:hover {
+  background-color: #f5f5f5;
+  border-color: #d1d1d1;
+}

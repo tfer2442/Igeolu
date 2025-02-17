@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { MapPin, ChevronDown, Wallet, Settings } from 'lucide-react';
+import { MapPin, ChevronDown, Wallet, Settings, RotateCcw } from 'lucide-react';
 import LocationDropdownPanel from './LocationDropdownPanel';
 import PriceDropdownPanel from './PriceDropdownPanel';
 import OptionDropdownPanel from './OptionDropdownPanel';
@@ -23,7 +23,7 @@ const Filter = ({
   deposit,
   monthlyRent,
   selectedOptions,
-  activeMenu // 추가: 현재 활성화된 메뉴
+  activeMenu
 }) => {
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
@@ -131,6 +131,9 @@ const Filter = ({
     setTempDeposit(null);
     setTempMonthlyRent(null);
     setTempOptions([]);
+    setIsLocationDropdownOpen(false);
+    setIsPriceDropdownOpen(false);
+    setIsOptionDropdownOpen(false);
   };
 
   return (
@@ -183,6 +186,16 @@ const Filter = ({
               size={18} 
               className={`chevron-icon ${isOptionDropdownOpen ? 'rotate' : ''}`}
             />
+          </button>
+
+          {/* 전체 초기화 버튼 */}
+          <button 
+            className="reset-all-button"
+            onClick={handleAllReset}
+            title="모든 필터 초기화"
+          >
+            <RotateCcw size={16} />
+            <span>초기화</span>
           </button>
         </div>
 

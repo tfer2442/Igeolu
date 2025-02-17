@@ -38,7 +38,7 @@ import ChatRoomsWebSocket from './services/webSocket/chatRoomsWebSocket';
 import ChatApi from './services/ChatApi';
 import Map from './pages/MapPage/MapPage';
 import NotificationProvider from './components/NotificationProvider/NotificationProvider';
-import {UserProvider} from './contexts/UserContext'
+import { UserProvider } from './contexts/UserContext';
 
 // ------------- 개발용 유저 변경 버튼 ------------------
 // import DevUserToggle from './components/DEVUSERTOGGLE';
@@ -88,24 +88,30 @@ function App() {
   useEffect(() => {
     const handleUserAuthentication = async () => {
       try {
-        const response = await fetch('https://i12d205.p.ssafy.io/api/users/me', {
-          method: 'GET',
-          credentials: 'include',
-          withCredentials: true,
-        });
-        
+        const response = await fetch(
+          'https://i12d205.p.ssafy.io/api/users/me',
+          {
+            method: 'GET',
+            credentials: 'include',
+            withCredentials: true,
+          }
+        );
+
         if (!response.ok) {
           throw new Error('Authentication failed');
         }
-  
+
         const data = await response.json();
-  
+
         if (data.userId) {
           setUser({ userId: data.userId, role: data.role });
-          localStorage.setItem('user', JSON.stringify({
-            userId: data.userId,
-            role: data.role,
-          }));
+          localStorage.setItem(
+            'user',
+            JSON.stringify({
+              userId: data.userId,
+              role: data.role,
+            })
+          );
           setIsUserInitialized(true);
         } else {
           localStorage.removeItem('user');
@@ -119,10 +125,9 @@ function App() {
         setIsUserInitialized(true);
       }
     };
-  
+
     handleUserAuthentication();
   }, []);
-  
 
   const currentUserId = user?.userId || null;
 
@@ -318,21 +323,23 @@ function App() {
           <Routes>
             <Route path='/' element={<DesktopHome />} />
             <Route path='/login' element={<DesktopLogin />} />
-            <Route 
-              path='/live' 
-              element={<DesktopLive onLoginSigninClick={handleLoginClick} />} 
+            <Route
+              path='/live'
+              element={<DesktopLive onLoginSigninClick={handleLoginClick} />}
             />
-            <Route 
-              path='/live-join' 
-              element={<DesktopLiveJoinPage onLoginSigninClick={handleLoginClick} />} 
+            <Route
+              path='/live-join'
+              element={
+                <DesktopLiveJoinPage onLoginSigninClick={handleLoginClick} />
+              }
             />
-            <Route 
-              path='/map' 
-              element={<Map onLoginSigninClick={handleLoginClick} />} 
+            <Route
+              path='/map'
+              element={<Map onLoginSigninClick={handleLoginClick} />}
             />
-            <Route 
-              path='/mypage' 
-              element={<DesktopMyPage onLoginSigninClick={handleLoginClick} />} 
+            <Route
+              path='/mypage'
+              element={<DesktopMyPage onLoginSigninClick={handleLoginClick} />}
             />
 
             <Route path='/desktop-my-page' element={<DesktopMyPage />} />

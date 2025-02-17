@@ -7,6 +7,9 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdditionalInfoAPI from '../../services/AdditionalInfoApi';
 
+// axios 기본 설정
+axios.defaults.withCredentials = true;
+
 function MobileEditPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -211,14 +214,24 @@ function MobileEditPage() {
         console.log(pair[0], pair[1]);
       }
 
+      // const response = await axios.put(
+      //   `/api/properties/${propertyData.propertyId}`,
+      //   formData,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //       Authorization:
+      //         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
+      //     },
+      //   }
+      // );
+
       const response = await axios.put(
         `/api/properties/${propertyData.propertyId}`,
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
           },
         }
       );
@@ -234,32 +247,53 @@ function MobileEditPage() {
     }
   };
 
+  // const handleDelete = async () => {
+  //   if (window.confirm('정말로 이 매물을 삭제하시겠습니까?')) {
+  //     try {
+  //       console.log('삭제 시도:', propertyData.propertyId); // 디버깅 로그
+
+  //       const response = await axios.delete(
+  //         `/api/properties/${propertyData.propertyId}`,
+  //         {
+  //           headers: {
+  //             Authorization:
+  //               'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
+  //           },
+  //         }
+  //       );
+
+  //       console.log('삭제 응답:', response); // 디버깅 로그
+
+  //       if (response.status === 204) {
+  //         alert('매물이 성공적으로 삭제되었습니다.');
+  //         console.log('네비게이션 시도'); // 디버깅 로그
+  //         navigate('/mobile-estate-list', { replace: true });
+  //         console.log('네비게이션 완료'); // 디버깅 로그
+  //       }
+  //     } catch (error) {
+  //       console.error('매물 삭제 실패:', error);
+  //       console.error('에러 응답:', error.response?.data); // 상세 에러 정보
+  //       alert(
+  //         `매물 삭제에 실패했습니다. ${error.response?.data?.message || ''}`
+  //       );
+  //     }
+  //   }
+  // };
+
   const handleDelete = async () => {
     if (window.confirm('정말로 이 매물을 삭제하시겠습니까?')) {
       try {
-        console.log('삭제 시도:', propertyData.propertyId); // 디버깅 로그
-
         const response = await axios.delete(
-          `/api/properties/${propertyData.propertyId}`,
-          {
-            headers: {
-              Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-            },
-          }
+          `/api/properties/${propertyData.propertyId}`
         );
-
-        console.log('삭제 응답:', response); // 디버깅 로그
 
         if (response.status === 204) {
           alert('매물이 성공적으로 삭제되었습니다.');
-          console.log('네비게이션 시도'); // 디버깅 로그
           navigate('/mobile-estate-list', { replace: true });
-          console.log('네비게이션 완료'); // 디버깅 로그
         }
       } catch (error) {
         console.error('매물 삭제 실패:', error);
-        console.error('에러 응답:', error.response?.data); // 상세 에러 정보
+        console.error('에러 응답:', error.response?.data);
         alert(
           `매물 삭제에 실패했습니다. ${error.response?.data?.message || ''}`
         );
@@ -267,15 +301,34 @@ function MobileEditPage() {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchOptions = async () => {
+  //     try {
+  //       const response = await axios.get('/api/options', {
+  //         headers: {
+  //           Authorization:
+  //             'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
+  //         },
+  //       });
+  //       console.log('옵션 목록 응답:', response.data);
+  //       setOptionsList(response.data);
+
+  //       if (propertyData && propertyData.options) {
+  //         console.log('설정할 옵션:', propertyData.options);
+  //         setSelectedOptions(propertyData.options);
+  //       }
+  //     } catch (error) {
+  //       console.error('옵션 목록을 불러오는데 실패했습니다:', error);
+  //     }
+  //   };
+
+  //   fetchOptions();
+  // }, [propertyData]);
+
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const response = await axios.get('/api/options', {
-          headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-          },
-        });
+        const response = await axios.get('/api/options');
         console.log('옵션 목록 응답:', response.data);
         setOptionsList(response.data);
 

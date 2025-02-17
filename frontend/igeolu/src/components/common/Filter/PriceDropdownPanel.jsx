@@ -59,16 +59,16 @@ const PriceDropdownPanel = ({
                        <input
                            type="range"
                            min="0"
-                           max="5000"
+                           max="1000"
                            step="10"
                            value={maxDeposit || 0}
                            onChange={handleMaxDepositChange}
                            className="price-range-slider"
                        />
                        <div className="price-range-labels">
-                           <span>0</span>
-                           <span>2500만원</span>
-                           <span>5000만원</span>
+                           <span>0만원</span>
+                           <span>500만원</span>
+                           <span>1000만원</span>
                        </div>
                    </div>
 
@@ -87,7 +87,7 @@ const PriceDropdownPanel = ({
                            className="price-range-slider"
                        />
                        <div className="price-range-labels">
-                           <span>0</span>
+                           <span>0만원</span>
                            <span>150만원</span>
                            <span>300만원</span>
                        </div>

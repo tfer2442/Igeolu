@@ -225,7 +225,8 @@ function DesktopMyPage() {
 
       <div className='user-info-schedule'>
         <div className='user-info-schedule-title'>
-          <p>라이브일정</p>
+          <p>일정</p>
+          <p>내용</p>
           <p>공인중개사</p>
         </div>
         <div className='user-info-schedule-list'>
@@ -234,7 +235,13 @@ function DesktopMyPage() {
               key={appointment.appointmentId}
               className='user-info-schedule-content'
             >
-              <p>{formatDate(appointment.scheduledAt)}</p>
+              <div className="date-container">
+                <p>{formatDate(appointment.scheduledAt)}</p>
+                {appointment.appointmentType === "LIVE" && (
+                  <span className="live-badge">LIVE</span>
+                )}
+              </div>
+              <p>{appointment.title || '일정 내용 없음'}</p>
               <p>{appointment.realtorName}</p>
             </div>
           ))}
@@ -242,7 +249,7 @@ function DesktopMyPage() {
       </div>
 
       <div className='user-info-record'>
-        <p>내가 본 라이브 매물</p>
+        {/* <p>내가 본 라이브 매물</p> */}
         {isLoading ? (
           <p className='loading-message'>라이브 목록을 불러오는 중입니다...</p>
         ) : liveData.length > 0 ? (

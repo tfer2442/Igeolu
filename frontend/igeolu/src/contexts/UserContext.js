@@ -1,4 +1,3 @@
-// src/contexts/UserContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
@@ -8,22 +7,51 @@ export function UserProvider({ children, initialUser, onUserChange }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 초기 마운트시 localStorage에서 사용자 정보 가져오기
-    const initializeUser = () => {
-      // initialUser가 있으면 그것을 사용, 없으면 localStorage 확인
-      if (initialUser) {
-        setUser(initialUser);
-      } else {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
+    const handleUserAuthentication = async () => {
+      try {
+        const response = await fetch(
+          'https://i12d205.p.ssafy.io/api/users/me',
+          {
+            method: 'GET',
+            credentials: 'include',
+            withCredentials: true,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Authentication failed');
         }
+
+        const data = await response.json();
+
+        if (data.userId) {
+          const userData = { userId: data.userId, role: data.role };
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+          if (onUserChange) {
+            onUserChange(userData);
+          }
+        } else {
+          localStorage.removeItem('user');
+          setUser(null);
+          if (onUserChange) {
+            onUserChange(null);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching user:', err);
+        localStorage.removeItem('user');
+        setUser(null);
+        if (onUserChange) {
+          onUserChange(null);
+        }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
-    initializeUser();
-  }, [initialUser]);
+    handleUserAuthentication();
+  }, [onUserChange]);
 
   // 로그인 핸들러
   const login = (userData) => {
@@ -35,13 +63,29 @@ export function UserProvider({ children, initialUser, onUserChange }) {
   };
 
   // 로그아웃 핸들러
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    if (onUserChange) {
-      onUserChange(null);
+  const logout = async () => {
+    try {
+      const response = await fetch('https://i12d205.p.ssafy.io/api/logout', {
+        method: 'GET',
+        credentials: 'include',
+        withCredentials: true,
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        alert(JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error('API 요청 실패:', error);
+    } finally {
+      // 로컬 상태 정리
+      setUser(null);
+      localStorage.removeItem('user');
+      if (onUserChange) {
+        onUserChange(null);
+      }
+      window.location.href = '/';
     }
-    window.location.href = 'https://i12d205.p.ssafy.io/api/logout';
   };
 
   // 사용자 정보 업데이트 핸들러

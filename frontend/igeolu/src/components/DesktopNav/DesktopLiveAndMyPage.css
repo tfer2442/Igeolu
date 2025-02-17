@@ -355,3 +355,26 @@
 .modal-buttons button:hover {
   opacity: 0.9;
 }
+
+.notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mark-all-read-button {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #666;
+  background: none;
+  border: 1px solid #e2e1e1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mark-all-read-button:hover {
+  background-color: #f5f5f5;
+  color: #01adff;
+  border-color: #01adff;
+}

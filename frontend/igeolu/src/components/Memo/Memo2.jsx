@@ -22,7 +22,10 @@ function Memo2({ sessionId, selectedMemoText, setSelectedMemoText }) {
     useEffect(() => {
         const fetchProperties = async () => {
             try {
-                const response = await axios.get(`/api/lives/${sessionId}/properties`);
+                const response = await axios.get(`/api/lives/${sessionId}/properties`, {
+                    withCredentials: true
+                });
+                // const response = await axios.get(`/api/lives/${sessionId}/properties`);
                 // livePropertyId 기준으로 정렬
                 const sortedProperties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
                 setProperties(sortedProperties);
@@ -46,21 +49,39 @@ function Memo2({ sessionId, selectedMemoText, setSelectedMemoText }) {
             return;
         }
 
+
         try {
-            await axios.put(`/api/live-properties/${selectedProperty.livePropertyId}/memo`, {
-                memo: selectedMemoText
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+            await axios.put(
+                `/api/live-properties/${selectedProperty.livePropertyId}/memo`,
+                { memo: selectedMemoText },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
                 }
-            });
+            );
             console.log('메모가 저장되었습니다.');
         } catch (error) {
             console.error('메모 저장 실패:', error);
             alert('메모 저장에 실패했습니다.');
         }
     };
+    //     try {
+    //         await axios.put(`/api/live-properties/${selectedProperty.livePropertyId}/memo`, {
+    //             memo: selectedMemoText
+    //         }, {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
+    //             }
+    //         });
+    //         console.log('메모가 저장되었습니다.');
+    //     } catch (error) {
+    //         console.error('메모 저장 실패:', error);
+    //         alert('메모 저장에 실패했습니다.');
+    //     }
+    // };
 
     // 매물 선택 변경 핸들러
     const handlePropertyChange = (e) => {

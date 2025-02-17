@@ -79,7 +79,19 @@ const NotificationApi = {
       console.error('Error deleting notification:', error);
       throw error;
     }
+  },
+  
+  // 모든 알림 읽음 처리
+  markAllAsRead: async () => {
+    try {
+      const response = await instance.patch('/notifications');
+      return response;
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+      throw error;
+    }
   }
+
 };
 
 export default NotificationApi;

@@ -1,260 +1,309 @@
 /* src/pages/DesktopMyPage/DesktopMyPage.css */
 .desktop-my-page {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  /* 회원 정보 섹션 */
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    width: 564px;
-    height: 325px;
-  }
-  
-  .user-info p {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .user-info-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    height: 325px;
-    border: 1px solid #e2e1e1;
-  }
-  
-  .user-info-content-img {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    overflow: visible;
-  }
-  
-  .user-info-content-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-  
-  .image-edit-button {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(1, 173, 255, 0.9);
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    z-index: 1;
-  }
-  
-  .image-edit-button:hover {
-    background-color: rgba(1, 173, 255, 1);
-    transform: scale(1.1);
-  }
-  
-  .image-edit-button svg {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .user-info-content-text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    width: 100%;
-  }
-  
-  .user-info-content-text-name,
-  .user-info-content-social {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0 20px;
-  }
-  .user-info-content-text-name p{
-    font-size: 16px;
-    font-weight: 500;
-  }
-  .user-info-content-social p{
-    font-size: 16px;
-    font-weight: 500;
-  }
-  .user-info-content-social img {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-  }
-  
-  /* 라이브 일정 섹션 */
-  .user-info-schedule {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-top: 30px;
-    width: 564px;
-  }
-  
-  .user-info-schedule-title {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    border-bottom: 1px solid #e2e1e1;
-    height: 30px;
-  }
-  
-  .user-info-schedule-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 45px;
-  }
-  
-  .user-info-schedule-list {
-    max-height: 170px;
-    overflow-y: auto;
-    padding-right: 10px;
-  }
-  
-  /* 웹킷 기반 브라우저를 위한 스크롤바 스타일링 (선택사항) */
-  .user-info-schedule-list::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .user-info-schedule-list::-webkit-scrollbar-track {
-    background: #e8f7ff;
-    border-radius: 3px;
-  }
-  
-  .user-info-schedule-list::-webkit-scrollbar-thumb {
-    background: #01ADFF;
-    border-radius: 3px;
-  }
-  
-  .user-info-schedule-list::-webkit-scrollbar-thumb:hover {
-    background: #0088cc;
-  }
-  
-  /* 매물 목록 섹션 */
-  .user-info-record {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-top: 30px;
-    width: 564px;
-  }
-  
-  .live-properties-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  .property-card {
-    border: 1px solid #e2e1e1;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .property-card:hover {
-    transform: translateY(-2px);
-  }
-  
-  .property-image {
-    width: 100%;
-    height: 180px;
-    overflow: hidden;
-  }
-  
-  .property-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .property-info {
-    padding: 15px;
-  }
-  
-  .property-name {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-  
-  .property-actions {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .loading-message {
-    text-align: center;
-    font-size: 18px;
-    color: #666;
-    margin: 20px 0;
-  }
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .profile-image-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
+/* 회원 정보 섹션 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  width: 564px;
+  height: 325px;
+}
 
-  .profile-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
+.user-info p {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
-  .delete-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    cursor: pointer;
-  }
+.user-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 325px;
+  border: 1px solid #e2e1e1;
+}
 
-  .profile-image-container:hover .delete-overlay {
-    opacity: 1;
-  }
+.user-info-content-img {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: visible;
+}
 
-  .delete-icon {
-    color: white;
-    font-size: 24px;
-    transition: transform 0.2s ease-in-out;
-  }
+.user-info-content-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-  .delete-overlay:hover .delete-icon {
-    transform: scale(1.2);
-  }
+.image-edit-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(1, 173, 255, 0.9);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
+}
+
+.image-edit-button:hover {
+  background-color: rgba(1, 173, 255, 1);
+  transform: scale(1.1);
+}
+
+.image-edit-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.user-info-content-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.user-info-content-text-name,
+.user-info-content-social {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 20px;
+}
+.user-info-content-text-name p {
+  font-size: 16px;
+  font-weight: 500;
+}
+.user-info-content-social p {
+  font-size: 16px;
+  font-weight: 500;
+}
+.user-info-content-social img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+/* 라이브 일정 섹션 */
+.user-info-schedule {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-top: 30px;
+  width: 564px;
+}
+
+.user-info-schedule-title {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 0.8fr;  /* 일정 열 넓히고 공인중개사 열 축소 */
+  column-gap: 20px;
+  width: 100%;
+  border-bottom: 1px solid #e2e1e1;
+  height: 30px;
+  padding: 0 16px;
+}
+
+.user-info-schedule-content {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 0.8fr;  /* 동일한 비율 적용 */
+  column-gap: 20px;
+  align-items: center;
+  height: 45px;
+  padding: 0 16px;
+}
+
+/* 모든 셀에 대한 기본 스타일 */
+.user-info-schedule-title p,
+.user-info-schedule-content p,
+.user-info-schedule-content .date-container {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-info-schedule-list {
+  max-height: 170px;
+  overflow-y: auto;
+  margin-right: -6px;  /* 스크롤바 공간만큼 마진 추가 */
+}
+
+/* 중간 열(내용)에 대한 스타일 */
+.user-info-schedule-content p:nth-child(2),
+.user-info-schedule-title p:nth-child(2) {
+  text-align: left;  /* 왼쪽 정렬 */
+  padding: 0;
+}
+
+/* 공인중개사 열 정렬 */
+.user-info-schedule-title p:last-child,
+.user-info-schedule-content p:last-child {
+  text-align: left;  /* 왼쪽 정렬로 통일 */
+}
+
+/* 스크롤바 항상 표시 */
+.user-info-schedule-list {
+  scrollbar-gutter: stable;  /* 스크롤바 공간 항상 확보 */
+}
+
+/* 웹킷 기반 브라우저를 위한 스크롤바 스타일링 (선택사항) */
+.user-info-schedule-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.user-info-schedule-list::-webkit-scrollbar-track {
+  background: #e8f7ff;
+  border-radius: 3px;
+}
+
+.user-info-schedule-list::-webkit-scrollbar-thumb {
+  background: #01adff;
+  border-radius: 3px;
+}
+
+.user-info-schedule-list::-webkit-scrollbar-thumb:hover {
+  background: #0088cc;
+}
+
+/* 매물 목록 섹션 */
+.user-info-record {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-top: 30px;
+  width: 564px;
+}
+
+.live-properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.property-card {
+  border: 1px solid #e2e1e1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.property-card:hover {
+  transform: translateY(-2px);
+}
+
+.property-image {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.property-info {
+  padding: 15px;
+}
+
+.property-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.property-actions {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  margin: 20px 0;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.delete-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.profile-image-container:hover .delete-overlay {
+  opacity: 1;
+}
+
+.delete-icon {
+  color: white;
+  font-size: 24px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.delete-overlay:hover .delete-icon {
+  transform: scale(1.2);
+}
+
+.date-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-badge {
+  background-color: #FF0000;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+}

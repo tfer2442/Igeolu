@@ -7,23 +7,71 @@ import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner
 import chatApi from '../../services/ChatApi';
 import './MobileChatRoomPage.css';
 
-const MobileChatRoom = ({ currentUserId }) => {
+const MobileChatRoom = ({ currentUserId: propCurrentUserId }) => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatRoomOpen, setIsChatRoomOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(propCurrentUserId);
+
+  // 사용자 인증 상태 확인
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        // localStorage에서 사용자 정보 확인
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          const { userId } = JSON.parse(savedUser);
+          setCurrentUserId(userId);
+          return;
+        }
+
+        // localStorage에 없다면 API 호출
+        const response = await fetch('https://i12d205.p.ssafy.io/api/users/me', {
+          method: 'GET',
+          credentials: 'include',
+          withCredentials: true,
+        });
+
+        if (!response.ok) {
+          throw new Error('Authentication failed');
+        }
+
+        const data = await response.json();
+        if (data.userId) {
+          setCurrentUserId(data.userId);
+          localStorage.setItem('user', JSON.stringify({
+            userId: data.userId,
+            role: data.role,
+          }));
+        } else {
+          throw new Error('User not found');
+        }
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        navigate('/mobile-login');
+      }
+    };
+
+    if (!currentUserId) {
+      checkAuthStatus();
+    }
+  }, [currentUserId, navigate]);
 
   useEffect(() => {
     setIsChatRoomOpen(true);
     return () => setIsChatRoomOpen(false);
   }, []);
 
-  // roomUpdate 핸들러 추가
   const handleRoomUpdate = async (roomId) => {
+    if (!currentUserId) {
+      console.error('User ID not available');
+      return;
+    }
+
     try {
-      // 전체 방 목록을 다시 조회하는 대신 읽음 처리만 진행
       await chatApi.markMessagesAsRead(roomId, currentUserId);
     } catch (error) {
       console.error('메시지 읽음 처리 실패:', error);
@@ -32,6 +80,10 @@ const MobileChatRoom = ({ currentUserId }) => {
 
   useEffect(() => {
     const fetchRoomData = async () => {
+      if (!currentUserId) {
+        return; // 사용자 ID가 없으면 데이터 로드하지 않음
+      }
+
       try {
         const rooms = await chatApi.getChatRooms(currentUserId);
         const foundRoom = rooms.find((r) => r.roomId === Number(roomId));
@@ -50,14 +102,17 @@ const MobileChatRoom = ({ currentUserId }) => {
       }
     };
 
-    fetchRoomData();
+    if (currentUserId) {
+      fetchRoomData();
+    }
   }, [roomId, currentUserId]);
 
   const handleBack = () => {
     navigate('/mobile-chat');
   };
 
-  if (isLoading) return <LoadingSpinner />;
+  // 사용자 인증 확인 중에는 로딩 표시
+  if (!currentUserId || isLoading) return <LoadingSpinner />;
   if (error) return <div className='error-message'>{error}</div>;
   if (!room) return null;
 
@@ -65,13 +120,13 @@ const MobileChatRoom = ({ currentUserId }) => {
     <div className='mobile-chat-room-page-container'>
       <div className='mobile-chat-room'>
         <ChatRoom
-           room={room}
-           onBack={handleBack}
-           isMobile={true}
-           currentUserId={currentUserId}
-           activeRoomId={Number(roomId)}
-           onRoomUpdate={handleRoomUpdate}
-           isChatRoomOpen={isChatRoomOpen}
+          room={room}
+          onBack={handleBack}
+          isMobile={true}
+          currentUserId={currentUserId}
+          activeRoomId={Number(roomId)}
+          onRoomUpdate={handleRoomUpdate}
+          isChatRoomOpen={isChatRoomOpen}
         />
       </div>
     </div>
@@ -79,7 +134,7 @@ const MobileChatRoom = ({ currentUserId }) => {
 };
 
 MobileChatRoom.propTypes = {
-  currentUserId: PropTypes.number.isRequired,
+  currentUserId: PropTypes.number,
 };
 
 export default MobileChatRoom;
