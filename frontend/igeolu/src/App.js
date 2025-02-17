@@ -87,6 +87,7 @@ function App() {
   useEffect(() => {
     const handleUserAuthentication = async () => {
       try {
+        setIsAppMounted(true);
         const response = await fetch(
           'https://i12d205.p.ssafy.io/api/users/me',
           {
@@ -126,6 +127,7 @@ function App() {
     };
 
     handleUserAuthentication();
+    return () => setIsAppMounted(false);
   }, []);
 
   const currentUserId = user?.userId || null;
