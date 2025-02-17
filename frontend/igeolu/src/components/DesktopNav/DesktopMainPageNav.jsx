@@ -16,7 +16,7 @@ const NAV_ITEMS = [
 ];
 
 function DesktopMainPageNav() {
-  const { user, logout } = useUser();
+  const { user, logout, isLoading } = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(defaultProfile);
@@ -107,6 +107,24 @@ function DesktopMainPageNav() {
       console.error('모든 알림 읽음 처리 실패:', error);
     }
   };
+
+  if (isLoading) {
+    return <nav className="desktop-main-nav">
+      <div className='desktop-main-nav__left-logo'>
+        <Link to='/'>
+          <img src={logo} alt='logo' />
+        </Link>
+      </div>
+
+      <div className='desktop-main-nav__middle-links'>
+        {NAV_ITEMS.map((item) => (
+          <Link to={item.path} key={item.id}>
+            {item.title}
+          </Link>
+        ))}
+      </div>
+    </nav>;
+  }
 
   return (
     <nav className='desktop-main-nav'>
