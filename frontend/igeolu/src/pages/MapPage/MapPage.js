@@ -827,6 +827,47 @@ function MapPage() {
     }
   };
 
+  const handleWorldCupWinner = async (winner) => {
+    setActiveMenu('room');
+    
+    try {
+      // 전체 매물 목록 다시 가져오기
+      const response = await axios.get(
+        `${API_BASE_URL}/api/properties/search`
+      );
+  
+      const validResults = response.data.filter(
+        (item) =>
+          item &&
+          typeof item.latitude === 'number' &&
+          typeof item.longitude === 'number'
+      );
+  
+      setSearchResults(validResults);
+      setSelectedItem({ ...winner, type: 'room' });
+      
+      if (winner.latitude && winner.longitude) {
+        setPropertyMarkers([winner]);
+        updateMapCenter({
+          lat: parseFloat(winner.latitude),
+          lng: parseFloat(winner.longitude)
+        });
+        setMapLevel(3);
+      }
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      setSelectedItem({ ...winner, type: 'room' });
+      if (winner.latitude && winner.longitude) {
+        setPropertyMarkers([winner]);
+        updateMapCenter({
+          lat: parseFloat(winner.latitude),
+          lng: parseFloat(winner.longitude)
+        });
+        setMapLevel(3);
+      }
+    }
+  };
+
   const handleCityChange = (e) => {
     setSelectedCity(e.target.value);
     setSelectedDistrict('');
@@ -865,33 +906,36 @@ function MapPage() {
         </div>
         
         <div className='right-content'>
-          <div className='filter-container'>
-            <Filter 
-              selectedCity={selectedCity}
-              selectedDistrict={selectedDistrict}
-              selectedNeighborhood={selectedNeighborhood}
-              cities={cities}
-              districts={districts}
-              neighborhoods={neighborhoods}
-              onCityChange={handleCityChange}
-              onDistrictChange={handleDistrictChange}
-              onNeighborhoodChange={handleNeighborhoodChange}
-              onReset={handleReset}
-              onPriceChange={handlePriceChange}
-              onOptionsChange={handleOptionsChange}
-              deposit={deposit}
-              monthlyRent={monthlyRent}
-              selectedOptions={selectedOptions}
-              activeMenu={activeMenu}
-            />
+        <div className='filter-container'>
+          <Filter 
+            selectedCity={selectedCity}
+            selectedDistrict={selectedDistrict}
+            selectedNeighborhood={selectedNeighborhood}
+            cities={cities}
+            districts={districts}
+            neighborhoods={neighborhoods}
+            onCityChange={handleCityChange}
+            onDistrictChange={handleDistrictChange}
+            onNeighborhoodChange={handleNeighborhoodChange}
+            onReset={handleReset}
+            onPriceChange={handlePriceChange}
+            onOptionsChange={handleOptionsChange}
+            deposit={deposit}
+            monthlyRent={monthlyRent}
+            selectedOptions={selectedOptions}
+            activeMenu={activeMenu}
+          />
+          {activeMenu !== 'agent' && (
             <div className="filter-worldcup-container">
               <WorldCup 
                 properties={searchResults}
                 isOpen={isWorldCupOpen}
                 onClose={() => setIsWorldCupOpen(false)}
+                onSelectWinner={handleWorldCupWinner}
               />
             </div>
-          </div>
+          )}
+        </div>
           <div className='right-content-inner'>
             <ListPanel 
               type={activeMenu}
