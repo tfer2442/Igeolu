@@ -54,7 +54,7 @@ public class ChatRoomController {
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "204", description = "정상 처리"),
 	})
-	@DeleteMapping("/{chatRoomId}")
+	@DeleteMapping("/{chatRoomId}/exit")
 	public ResponseEntity<List<ChatRoomListGetResponseDto>> deleteChatRoom(@PathVariable Integer chatRoomId) {
 		chatRoomFacadeService.leaveChatRoom(chatRoomId);
 		return ResponseEntity.noContent().build();
