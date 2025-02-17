@@ -278,25 +278,6 @@ function MapPage() {
     }
   };
 
-  // useEffect(() => {
-  //   if (activeMenu === 'room') {
-  //     fetchSearchResults();
-  //   } else if (activeMenu === 'agent') {
-  //     fetchRealtors();
-  //   }
-  //   setSelectedItem(null);
-  //   setPropertyMarkers([]);
-  //   setInitialProperties([]);
-  // }, [
-  //   selectedCity,
-  //   selectedDistrict,
-  //   selectedNeighborhood,
-  //   activeMenu,
-  //   deposit,
-  //   monthlyRent,
-  //   selectedOptions,
-  // ]);
-
   useEffect(() => {
     if (activeMenu === 'room') {
       fetchSearchResults();
@@ -464,6 +445,7 @@ function MapPage() {
   };
 
   const handleLocationSearch = async ({ sidoName, gugunName, dongName }) => {
+    // 지도 이동
     if (sidoName && gugunName) {
       try {
         const fullAddress = `${sidoName} ${gugunName} ${dongName || ''}`.trim();
@@ -476,15 +458,57 @@ function MapPage() {
         console.error('Error getting coordinates:', error);
       }
     }
-
+  
+    // 상태 업데이트
     setSelectedCity(sidoName);
     setSelectedDistrict(gugunName);
     setSelectedNeighborhood(dongName);
-
+  
     try {
       if (activeMenu === 'room') {
-        await fetchSearchResults();
+        const params = new URLSearchParams();
+      
+        if (sidoName) params.append('sidoName', sidoName);
+        if (gugunName) params.append('gugunName', gugunName);
+        if (dongName) params.append('dongName', dongName);
+        if (deposit) params.append('maxDeposit', deposit);
+        if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
+        if (selectedOptions?.length > 0) {
+          params.append('optionIds', selectedOptions.join(','));
+        }
+  
+        const response = await axios.get(
+          `${API_BASE_URL}/api/properties/search`,
+          {
+            params: params,
+            paramsSerializer: {
+              indexes: null,
+            },
+          }
+        );
+  
+        const validResults = response.data.filter(
+          (item) =>
+            item &&
+            typeof item.latitude === 'number' &&
+            typeof item.longitude === 'number' &&
+            !isNaN(item.latitude) && 
+            !isNaN(item.longitude)
+        );
+  
+        setSearchResults(validResults);
+        setSelectedItem(null);
+        setPropertyMarkers([]);
+  
+        if (validResults.length > 0) {
+          updateMapCenter({
+            lat: parseFloat(validResults[0].latitude),
+            lng: parseFloat(validResults[0].longitude)
+          });
+          setMapLevel(5);
+        }
       } else {
+        // 공인중개사 메뉴일 때의 로직
         let response = null;
         
         if (dongName) {
@@ -514,7 +538,7 @@ function MapPage() {
         if (!response) {
           response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
         }
-
+  
         const realtors = response.data.map(realtor => ({
           ...realtor,
           type: 'agent'
