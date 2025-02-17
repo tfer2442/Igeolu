@@ -26,6 +26,7 @@ function MobileLivePage() {
     const [currentLivePropertyId, setCurrentLivePropertyId] = useState(null);
     const [recordingId, setRecordingId] = useState(null);
     const [currentVideoDevice, setCurrentVideoDevice] = useState(null);
+    const [watchId, setWatchId] = useState(null);
 
     useEffect(() => {
         const getVideoDevices = async () => {
@@ -177,7 +178,7 @@ function MobileLivePage() {
                         'userId': '32'
                     }
                 });
-                
+                // const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`);
                 setLiveList([{ liveId: sessionId }]);
                 
                 const properties = propertyResponse.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
@@ -215,6 +216,51 @@ function MobileLivePage() {
             }
         };
     }, [sessionId, token, role]);
+
+    useEffect(() => {
+        // 세션이 연결되어 있고 호스트인 경우에만 위치 추적 시작
+        if (session && role === 'host') {
+            const locationWatchId = navigator.geolocation.watchPosition(
+                async (position) => {
+                    try {
+                        const locationData = {
+                            type: 'host-location',
+                            location: {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                accuracy: position.coords.accuracy
+                            },
+                            timestamp: new Date().toISOString()
+                        };
+
+                        await session.signal({
+                            data: JSON.stringify(locationData),
+                            type: 'location-update'
+                        });
+                    } catch (error) {
+                        console.error('Error sending location signal:', error);
+                    }
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 4000 // 3초 이전의 캐시된 위치까지만 사용
+                }
+            );
+
+            setWatchId(locationWatchId);
+
+            // cleanup function
+            return () => {
+                if (locationWatchId) {
+                    navigator.geolocation.clearWatch(locationWatchId);
+                }
+            };
+        }
+    }, [session, role]); // session과 role이 변경될 때만 실행
 
     const toggleMicrophone = () => {
         if (publisher) {
@@ -289,6 +335,9 @@ function MobileLivePage() {
                             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
                         }
                     });
+                    // const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/start`, {
+                    //     sessionId: sessionId
+                    // });
                     
                     if (response.data && response.data.id) {
                         console.log('Recording started successfully. Full response:', response.data);
@@ -324,6 +373,11 @@ function MobileLivePage() {
                         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
                     }
                 });
+                // const response = await axios.post(`/api/live-properties/${currentLivePropertyId}/stop`, {
+                //     sessionId: sessionId,
+                //     recordingId: recordingId,
+                //     livePropertyId: currentLivePropertyId
+                // });
                 
                 console.log('Recording stopped successfully. Response:', response.data);
                 setRecordingId(null);
@@ -362,47 +416,15 @@ function MobileLivePage() {
         try {
             const currentProperty = properties[currentPropertyIndex];
             
-            // 위치 정보 가져오기 시도 로그
-            console.log('Getting geolocation...');
-            
-            const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => resolve(pos),
-                    (error) => reject(error),
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 5000,
-                        maximumAge: 0
-                    }
-                );
-            });
-
-            // 위치 정보 획득 성공 로그
-            console.log('Geolocation obtained:', {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                accuracy: position.coords.accuracy
-            });
-
             const signalData = {
                 propertyId: currentProperty.livePropertyId,
-                completedAt: new Date().toISOString(),
-                location: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    accuracy: position.coords.accuracy
-                }
+                completedAt: new Date().toISOString()
             };
-
-            // 시그널 전송 시도 로그
-            console.log('Sending signal with data:', signalData);
             
             await session.signal({
                 data: JSON.stringify(signalData),
                 type: 'property-completed'
             });
-            
-            console.log('Signal sent successfully');
             
             if (currentPropertyIndex < properties.length - 1) {
                 const nextIndex = currentPropertyIndex + 1;
@@ -410,11 +432,7 @@ function MobileLivePage() {
                 setCurrentPropertyIndex(nextIndex);
             }
         } catch (error) {
-            if (error.code === error.PERMISSION_DENIED) {
-                console.error('Geolocation permission denied:', error);
-            } else {
-                console.error('Error in handleNextProperty:', error);
-            }
+            console.error('Error in handleNextProperty:', error);
         }
     };
 
@@ -504,7 +522,6 @@ function MobileLivePage() {
                                                 <button 
                                                     className="property-nav-button completed"
                                                     onClick={() => handleNextProperty(live.liveId)}
-                                                    disabled={isRecording}
                                                 >
                                                     완료
                                                 </button>
@@ -512,7 +529,6 @@ function MobileLivePage() {
                                                 <button 
                                                     className="property-nav-button"
                                                     onClick={() => handleNextProperty(live.liveId)}
-                                                    disabled={isRecording}
                                                 >
                                                     <MdNavigateNext size={20} />
                                                 </button>
