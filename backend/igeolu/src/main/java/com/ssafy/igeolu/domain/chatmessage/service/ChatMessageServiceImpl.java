@@ -78,6 +78,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	}
 
 	@Override
+	public Mono<Void> deleteAllMessagesByRoomId(Integer roomId) {
+		return chatMessageRepository.deleteByRoomId(roomId);
+	}
+
+	@Override
 	public ChatMessageWithMVC saveChatMessageWithMVC(ChatMessageWithMVC chatMessageWithMVC) {
 		return chatMessageWithMVCRepository.save(chatMessageWithMVC);
 	}

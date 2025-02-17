@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.igeolu.domain.chatroom.entity.ChatRoom;
+import com.ssafy.igeolu.domain.chatroom.entity.RoomStatus;
 import com.ssafy.igeolu.domain.chatroom.repository.ChatRoomRepository;
 import com.ssafy.igeolu.domain.user.entity.Role;
 import com.ssafy.igeolu.domain.user.entity.User;
@@ -62,5 +63,23 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		}
 
 		throw new RuntimeException("잘못된 상대방 입니다.");
+	}
+
+	@Override
+	public void leaveChatRoom(ChatRoom chatRoom) {
+		chatRoomRepository.delete(chatRoom);
+	}
+
+	@Override
+	public void updateChatRoomStatus(ChatRoom chatRoom, User user) {
+
+		chatRoom.setRoomStatus(switch (chatRoom.getRoomStatus()) {
+			case BOTH -> chatRoom.getMember().equals(user) ? RoomStatus.REALTOR
+				: chatRoom.getRealtor().equals(user) ? RoomStatus.MEMBER
+				: RoomStatus.BOTH;
+			case MEMBER -> chatRoom.getMember().equals(user) ? RoomStatus.NONE : RoomStatus.MEMBER;
+			case REALTOR -> chatRoom.getRealtor().equals(user) ? RoomStatus.NONE : RoomStatus.REALTOR;
+			default -> chatRoom.getRoomStatus();
+		});
 	}
 }
