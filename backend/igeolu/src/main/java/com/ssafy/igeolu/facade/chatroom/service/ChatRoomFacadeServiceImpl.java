@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessage;
 import com.ssafy.igeolu.domain.chatmessage.service.ChatMessageService;
 import com.ssafy.igeolu.domain.chatroom.entity.ChatRoom;
+import com.ssafy.igeolu.domain.chatroom.entity.RoomStatus;
 import com.ssafy.igeolu.domain.chatroom.service.ChatRoomService;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.domain.user.service.UserService;
@@ -87,5 +88,20 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
 			)
 			.sorted((o1, o2) -> o2.getUpdatedAt().compareTo(o1.getUpdatedAt()))
 			.toList();
+	}
+
+	@Override
+	public void leaveChatRoom(Integer chatRoomId) {
+
+		ChatRoom chatRoom = chatRoomService.getChatRoom(chatRoomId);
+		User user = securityService.getUserEntity();
+
+		// 채팅방 상태 변경
+		chatRoomService.updateChatRoomStatus(chatRoom, user);
+
+		if (chatRoom.getRoomStatus() == RoomStatus.NONE) {
+			chatMessageService.deleteAllMessagesByRoomId(chatRoomId).subscribe();
+			chatRoomService.leaveChatRoom(chatRoom);
+		}
 	}
 }

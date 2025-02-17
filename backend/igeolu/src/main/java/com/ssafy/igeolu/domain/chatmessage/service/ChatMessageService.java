@@ -17,6 +17,8 @@ public interface ChatMessageService {
 
 	Mono<ChatMessage> getLastMessage(Integer roomId);
 
+	Mono<Void> deleteAllMessagesByRoomId(Integer roomId);
+
 	// 채팅 메시지 With MVC (부하 테스트용)
 	ChatMessageWithMVC saveChatMessageWithMVC(ChatMessageWithMVC chatMessageWithMVC);
 }
