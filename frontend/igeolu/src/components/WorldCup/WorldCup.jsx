@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './WorldCup.css';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-function WorldCup({ properties = [], isOpen, onClose }) {
+function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentImageIndexes, setCurrentImageIndexes] = useState({});
     const [round, setRound] = useState(16); // 16강, 8강, 4강, 결승
@@ -182,12 +182,40 @@ function WorldCup({ properties = [], isOpen, onClose }) {
                                             <p style={{fontSize: '14px'}}>{winner.address || '주소 정보 없음'}</p>
                                             <p style={{fontSize: '14px'}}>{winner.description || '소개 정보 없음'}</p>
                                         </div>
-                                        <button 
+                                        {/* <button 
                                             className="world-cup-modal__restart-button" 
                                             onClick={resetWorldCup}
                                         >
                                             다시하기
                                         </button>
+                                        <button
+                                            className="world-cup-modal__property-button"
+                                            onClick={() => {
+                                                onSelectWinner(winner);
+                                                handleCloseModal();
+                                            }}
+                                        >
+                                            매물보기
+                                        </button> */}
+
+                                        <div className="winner-buttons-container">
+                                            <button 
+                                                className="world-cup-modal__restart-button" 
+                                                onClick={resetWorldCup}
+                                            >
+                                                다시하기
+                                            </button>
+                                            <button
+                                                className="world-cup-modal__property-button"
+                                                onClick={() => {
+                                                    onSelectWinner(winner);
+                                                    handleCloseModal();
+                                                }}
+                                            >
+                                                매물보기
+                                            </button>
+                                        </div>
+
                                     </div>
                                 ) : (
                                     <div className="world-cup-modal__vs-container">
