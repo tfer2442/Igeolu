@@ -1,4 +1,4 @@
-.modal-overlay {
+.mypage-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   z-index: 1000;
 }
 
-.modal-container {
+.mypage-modal-container {
   background-color: white;
   border-radius: 8px;
   width: 90%;
@@ -21,7 +21,7 @@
   position: relative;
 }
 
-.modal-header {
+.mypage-modal-header {
   padding: 16px 20px;
   border-bottom: 1px solid #eee;
   display: flex;
@@ -29,7 +29,7 @@
   align-items: center;
 }
 
-.modal-header h2 {
+.mypage-modal-header h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
@@ -78,7 +78,7 @@
   box-shadow: none;
 }
 
-.modal-content {
+.mypage-modal-content {
   padding: 20px;
 }
 

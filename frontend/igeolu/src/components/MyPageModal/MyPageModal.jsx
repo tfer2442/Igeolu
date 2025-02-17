@@ -61,16 +61,16 @@ const MyPageModal = ({ property, onClose }) => {
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        <div className="modal-header">
+    <div className="mypage-modal-overlay">
+      <div className="mypage-modal-container">
+        <div className="mypage-modal-header">
           <h2>{property.description}</h2>
           <button onClick={onClose} className="close-button">
             <X size={24} />
           </button>
         </div>
 
-        <div className="modal-content">
+        <div className="mypage-modal-content">
           <div className="content-main">
             <div className="video-container">
               {recordingInfo?.url ? (

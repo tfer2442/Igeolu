@@ -8,6 +8,7 @@ import ChatExtras from '../ChatExtras/ChatExtras';
 import './ChatRoom.css';
 import DesktopLoadingSpinner from '../../../LoadingSpinner/DesktopLoadingSpinner';
 import MobileLoadingSpinner from '../../../LoadingSpinner/MobileLoadingSpinner';
+import { LogOut } from 'lucide-react'; // lucide-react 아이콘 import
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -33,6 +34,7 @@ const ChatRoom = ({
   const [error, setError] = useState(null); // 에러 상태
   const chatSocketRef = useRef(null); // WebSocket 참조
   const messagesEndRef = useRef(null); // 메시지 목록 끝 위치 참조
+  const [showExitModal, setShowExitModal] = useState(false);
 
   const isRoomActive = activeRoomId === room.roomId && isChatRoomOpen;
 
@@ -194,6 +196,22 @@ const ChatRoom = ({
     handleMarkAsRead,
     scrollToBottom,
   ]);
+
+  const handleExitRoom = () => {
+    setShowExitModal(true);
+  };
+
+  const handleConfirmExit = async () => {
+    try {
+      await chatApi.exitChatRoom(room.roomId);
+      setShowExitModal(false);
+      onBack();
+    } catch (error) {
+      console.error('채팅방 나가기 실패:', error);
+      setError('채팅방 나가기에 실패했습니다.');
+    }
+  };
+
   /* 📌 메시지 전송 핸들러 */
   const handleSendMessage = async () => {
     const trimmedMessage = newMessage.trim();
@@ -286,7 +304,37 @@ const ChatRoom = ({
           ←
         </button>
         <h2 className='chat-room-title'>{room.userName}</h2>
+        <button
+          onClick={handleExitRoom}
+          className='chat-exit-button'
+          aria-label='채팅방 나가기'
+        >
+          <LogOut size={20} />
+        </button>
       </header>
+
+      {/* 나가기 확인 모달 */}
+      {showExitModal && (
+        <div className='chatroom-modal-overlay'>
+          <div className='chatroom-modal-content'>
+            <p>채팅방을 나가시겠습니까?</p>
+            <div className='chatroom-modal-buttons'>
+              <button
+                onClick={handleConfirmExit}
+                className='chatroom-modal-button confirm'
+              >
+                예
+              </button>
+              <button
+                onClick={() => setShowExitModal(false)}
+                className='chatroom-modal-button cancel'
+              >
+                아니오
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 📌 메시지 목록 */}
       <div
@@ -392,10 +440,9 @@ ChatRoom.propTypes = {
       writerId: PropTypes.number.isRequired,
       content: PropTypes.string.isRequired,
       createdAt: PropTypes.string.isRequired,
-      senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired
+      senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired,
     })
-  )
-  
+  ),
 };
 
 export default ChatRoom;

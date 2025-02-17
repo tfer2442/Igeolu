@@ -30,14 +30,14 @@
 
 /* 📌 헤더 스타일 */
 .chat-room-header {
-  position: relative; /* 💡 고정되지 않고 정상적으로 보이도록 조정 */
+  position: relative;
   padding: 1rem;
   background-color: #FFFFFF;
   border-bottom: 1px solid #343434;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  z-index: 10; /* 💡 다른 요소들보다 위에 있도록 설정 */
+  justify-content: space-between; /* 변경: 요소들 사이 간격 균등 분배 */
+  z-index: 10;
 }
 
 /* 📌 뒤로 가기 버튼 스타일 */
@@ -50,13 +50,37 @@
   color: #000000;
 }
 
+/* 📌 채팅방 나가기 버튼 스타일 */
+.chat-exit-button {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #000000; /* 뒤로가기 버튼과 동일한 색상 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-exit-button:hover {
+  opacity: 0.7;
+}
+
+/* 📌 모바일에서 나가기 버튼 색상 변경 */
+.chat-room.mobile .chat-exit-button {
+  color: white; /* 모바일에서는 뒤로가기 버튼처럼 흰색으로 변경 */
+}
+
 /* 📌 채팅방 제목 스타일 */
 .chat-room-title {
   margin: 0;
   font-size: 1rem;
   color: #000000;
-  flex-grow: 1;
+  text-align: center; /* 추가: 텍스트 중앙 정렬 */
+  flex: 1; /* 추가: 남은 공간 차지 */
 }
+
+
 
 /* 📌 모바일에서 헤더 텍스트 색상 변경 */
 .chat-room.mobile .chat-room-title,
@@ -270,4 +294,68 @@
 
 .chat-room.mobile .loading-state{
   background-color: #272626;
+}
+
+/* 📌 모달 오버레이 */
+.chatroom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 📌 모달 컨텐츠 */
+.chatroom-modal-content {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.chat-room.mobile .modal-content {
+  background-color: #272626;
+  color: white;
+}
+
+/* 📌 모달 버튼 컨테이너 */
+.chatroom-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* 📌 모달 버튼 */
+.chatroom-modal-button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.chatroom-modal-button.confirm {
+  background-color: #01adff;
+  color: white;
+}
+
+.chatroom-modal-button.cancel {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.chat-room.mobile .chatroom-modal-button.cancel {
+  background-color: #4b5563;
+  color: white;
+}
+
+/* 호버 효과 */
+.chatroom-modal-button:hover {
+  opacity: 0.9;
 }

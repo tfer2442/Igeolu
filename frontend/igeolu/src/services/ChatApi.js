@@ -117,6 +117,17 @@ const ChatApi = {
       throw error;
     }
   },
+
+  exitChatRoom: async (chatRoomId) => {
+    try {
+      const response = await instance.delete(`/chats/${chatRoomId}/exit`);
+      // 204 상태코드는 응답 body가 없으므로 성공 여부만 반환
+      return true;
+    } catch (error) {
+      console.error('Error exiting chat room:', error);
+      throw error;
+    }
+  },
 };
 
 export default ChatApi;
