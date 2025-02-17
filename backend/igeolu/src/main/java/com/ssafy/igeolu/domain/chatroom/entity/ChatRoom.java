@@ -53,6 +53,7 @@ public class ChatRoom {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
-	RoomStatus roomStatus;
+	RoomStatus roomStatus = RoomStatus.BOTH;
 }
