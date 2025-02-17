@@ -164,10 +164,57 @@ function MapPage() {
     });
   };
 
+  // const fetchSearchResults = async () => {
+  //   try {
+  //     const params = new URLSearchParams();
+
+  //     if (selectedCity) params.append('sidoName', selectedCity);
+  //     if (selectedDistrict) params.append('gugunName', selectedDistrict);
+  //     if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
+  //     if (deposit) params.append('maxDeposit', deposit);
+  //     if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
+  //     if (selectedOptions?.length > 0) {
+  //       params.append('optionIds', selectedOptions.join(','));
+  //     }
+
+  //     const response = await axios.get(
+  //       `${API_BASE_URL}/api/properties/search`,
+  //       {
+  //         params: params,
+  //         paramsSerializer: {
+  //           indexes: null,
+  //         },
+  //       }
+  //     );
+
+  //     const validResults = response.data.filter(
+  //       (item) =>
+  //         item &&
+  //         typeof item.latitude === 'number' &&
+  //         typeof item.longitude === 'number'
+  //     );
+
+  //     setSearchResults(validResults);
+  //     setPropertyMarkers([]);
+
+  //     if (validResults.length > 0) {
+  //       updateMapCenter({
+  //         lat: parseFloat(validResults[0].latitude),
+  //         lng: parseFloat(validResults[0].longitude),
+  //       });
+  //       setMapLevel(5);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching search results:', error);
+  //     setSearchResults([]);
+  //     setPropertyMarkers([]);
+  //   }
+  // };
+
   const fetchSearchResults = async () => {
     try {
       const params = new URLSearchParams();
-
+  
       if (selectedCity) params.append('sidoName', selectedCity);
       if (selectedDistrict) params.append('gugunName', selectedDistrict);
       if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
@@ -176,7 +223,7 @@ function MapPage() {
       if (selectedOptions?.length > 0) {
         params.append('optionIds', selectedOptions.join(','));
       }
-
+  
       const response = await axios.get(
         `${API_BASE_URL}/api/properties/search`,
         {
@@ -186,23 +233,37 @@ function MapPage() {
           },
         }
       );
-
+  
       const validResults = response.data.filter(
         (item) =>
           item &&
           typeof item.latitude === 'number' &&
           typeof item.longitude === 'number'
       );
-
+  
       setSearchResults(validResults);
       setPropertyMarkers([]);
-
+  
+      // 검색 결과가 있을 경우 첫 번째 결과의 위치로 이동
       if (validResults.length > 0) {
         updateMapCenter({
           lat: parseFloat(validResults[0].latitude),
           lng: parseFloat(validResults[0].longitude),
         });
         setMapLevel(5);
+      } 
+      // 검색 결과가 없지만 지역이 선택된 경우, 선택된 지역의 좌표로 이동
+      else if (selectedCity && selectedDistrict) {
+        try {
+          const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood || ''}`.trim();
+          const coordinates = await searchCoordinates(address);
+          if (coordinates) {
+            updateMapCenter(coordinates);
+            setMapLevel(5);
+          }
+        } catch (error) {
+          console.error('Error getting coordinates for selected location:', error);
+        }
       }
     } catch (error) {
       console.error('Error fetching search results:', error);
