@@ -46,11 +46,21 @@ const LocationSearch = ({ onSearch }) => {
     setIsOpen(true);
   };
 
+  // const handleSuggestionClick = (suggestion) => {
+  //   setSearchTerm('');
+  //   setIsOpen(false);
+
+  //   const [sidoName, gugunName, dongName] = suggestion.sigungu.split(' ');
+  //   onSearch({ sidoName, gugunName, dongName: dongName || '' });
+  // };
+
   const handleSuggestionClick = (suggestion) => {
+    console.log('LocationSearch - Selected suggestion:', suggestion);
     setSearchTerm('');
     setIsOpen(false);
 
     const [sidoName, gugunName, dongName] = suggestion.sigungu.split(' ');
+    console.log('LocationSearch - Parsed location:', { sidoName, gugunName, dongName });
     onSearch({ sidoName, gugunName, dongName: dongName || '' });
   };
 
