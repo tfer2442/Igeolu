@@ -58,13 +58,33 @@ const ChatApi = {
     }
   },
 
-  getChatRooms: async (userId) => {
+  getChatRooms: async (userId, userRole) => {
     try {
       const response = await instance.get('/chats', { params: { userId } });
-      return response
+      
+      // 필터링 전 전체 채팅방 데이터 확인
+      console.log('필터링 전 전체 채팅방:', response);
+      console.log('---------', userId, '-----------', userRole)
+      
+      const filteredRooms = response.filter(room => {
+        // 각 room의 roomStatus 값 확인
+        console.log(`Room ${room.roomId} status:`, room.roomStatus);
+        
+        if (userRole === 'ROLE_REALTOR') {
+          return room.roomStatus === 'BOTH' || room.roomStatus === 'REALTOR';
+        } else if (userRole === 'ROLE_MEMBER') {
+          return room.roomStatus === 'BOTH' || room.roomStatus === 'MEMBER';
+        }
+        return false;
+      });
+      
+      // 필터링 후 결과 확인
+      console.log('필터링 후 채팅방:', filteredRooms);
+      
+      return filteredRooms;
     } catch (error) {
       console.error('Error getting chat rooms:', error);
-      return []; // 에러 발생 시 빈 배열 반환
+      return [];
     }
   },
 
@@ -94,6 +114,17 @@ const ChatApi = {
       return response;
     } catch (error) {
       console.error('Error marking messages as read:', error);
+      throw error;
+    }
+  },
+
+  exitChatRoom: async (chatRoomId) => {
+    try {
+      const response = await instance.delete(`/chats/${chatRoomId}/exit`);
+      // 204 상태코드는 응답 body가 없으므로 성공 여부만 반환
+      return true;
+    } catch (error) {
+      console.error('Error exiting chat room:', error);
       throw error;
     }
   },

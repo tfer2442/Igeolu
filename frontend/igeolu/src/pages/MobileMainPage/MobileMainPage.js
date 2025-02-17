@@ -14,7 +14,7 @@ import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
 import { appointmentAPI } from '../../services/AppointmentApi';
 
 function MobileMainPage() {
-  const { user, isLoading: isUserLoading } = useUser();  // UserContext 사용
+  const { user, isLoading: isUserLoading } = useUser();
   const [realtorInfo, setRealtorInfo] = useState({
     username: '',
     profileImage: null,
@@ -101,14 +101,14 @@ function MobileMainPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // user 정보가 없거나 아직 로딩 중이면 리턴
-      if (isUserLoading) return;
-      if (!user?.userId) {
-        setError('로그인 정보를 찾을 수 없습니다');
-        return;
+      if (isUserLoading) {
+        return; // UserContext가 아직 로딩 중이면 대기
       }
 
+      // user 체크는 렌더링 부분에서 처리하므로 여기서는 제거
       try {
+        setLoading(true);
+
         // 공인중개사 정보 가져오기
         const realtorResponse = await fetch(
           `https://i12d205.p.ssafy.io/api/users/${user.userId}/realtor`,
@@ -143,6 +143,7 @@ function MobileMainPage() {
         );
 
         setTodayAppointments(todayAppointments);
+        setError(null); // 성공 시 에러 초기화
       } catch (err) {
         setError(err.message);
         console.error('데이터 조회 실패:', err);
@@ -151,53 +152,57 @@ function MobileMainPage() {
       }
     };
 
-    fetchData();
-  }, [user?.userId, isUserLoading]); // user와 isUserLoading을 의존성 배열에 추가
-
+    if (user?.userId) {
+      fetchData();
+    }
+  }, [user, isUserLoading]);
   
 
-  useEffect(() => {
-    const fetchRealtorInfo = async () => {
-      try {
-        const cachedUser = localStorage.getItem('user');
-        if (!cachedUser) {
-          setError('로그인 정보를 찾을 수 없습니다');
-          return;
-        }
+  // useEffect(() => {
+  //   const fetchRealtorInfo = async () => {
+  //     try {
+  //       const cachedUser = localStorage.getItem('user');
+  //       if (!cachedUser) {
+  //         setError('로그인 정보를 찾을 수 없습니다');
+  //         return;
+  //       }
 
-        const { userId } = JSON.parse(cachedUser);
-        const response = await fetch(
-          `https://i12d205.p.ssafy.io/api/users/${userId}/realtor`,
-          {
-            method: 'GET',
-            credentials: 'include',
-          }
-        );
+  //       const { userId } = JSON.parse(cachedUser);
+  //       const response = await fetch(
+  //         `https://i12d205.p.ssafy.io/api/users/${userId}/realtor`,
+  //         {
+  //           method: 'GET',
+  //           credentials: 'include',
+  //         }
+  //       );
 
-        if (!response.ok) {
-          throw new Error('공인중개사 정보를 가져오는데 실패했습니다');
-        }
+  //       if (!response.ok) {
+  //         throw new Error('공인중개사 정보를 가져오는데 실패했습니다');
+  //       }
 
-        const data = await response.json();
-        setRealtorInfo(data);
-      } catch (err) {
-        setError(err.message);
-        console.error('공인중개사 정보 조회 실패:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const data = await response.json();
+  //       setRealtorInfo(data);
+  //     } catch (err) {
+  //       setError(err.message);
+  //       console.error('공인중개사 정보 조회 실패:', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchRealtorInfo();
-  }, []);
+  //   fetchRealtorInfo();
+  // }, []);
 
   // 사용자 인증 상태와 데이터 로딩 상태를 모두 고려
   if (isUserLoading || loading) return <LoadingSpinner />;
-  if (error) return <div>에러: {error}</div>;
+  // 인증 체크 (여기서만 리다이렉트 처리)
   if (!user?.userId) {
     window.location.href = '/mobile-login';
     return null;
   }
+
+  // 에러 체크
+  if (error) return <div>에러: {error}</div>;
 
   const formatDate = (date) => {
     return date
