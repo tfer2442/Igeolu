@@ -71,6 +71,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/lives/{liveId}/rating/**").hasAnyRole("MEMBER")
 				.requestMatchers("/api/users/me/info", "/api/logout", "/api/login/**", "/api/test/login", "/v3/api-docs/**", "/api/swagger-ui/**", "/error").permitAll() // swagger open
 				.requestMatchers("/file/**", "/api/**").permitAll()
+				.requestMatchers(HttpMethod.GET).permitAll()
 				.anyRequest().authenticated());
 
 		//csrf disable
