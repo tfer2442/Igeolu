@@ -280,14 +280,91 @@ function MapPage() {
 
   useEffect(() => {
     if (activeMenu === 'room') {
-      fetchSearchResults();
+      const fetchAndUpdateResults = async () => {
+        try {
+          const params = new URLSearchParams();
+
+          if (selectedCity) params.append('sidoName', selectedCity);
+          if (selectedDistrict) params.append('gugunName', selectedDistrict);
+          if (selectedNeighborhood) params.append('dongName', selectedNeighborhood);
+          if (deposit) params.append('maxDeposit', deposit);
+          if (monthlyRent) params.append('maxMonthlyRent', monthlyRent);
+          if (selectedOptions?.length > 0) {
+            params.append('optionIds', selectedOptions.join(','));
+          }
+
+          const response = await axios.get(
+            `${API_BASE_URL}/api/properties/search`,
+            {
+              params: params,
+              paramsSerializer: {
+                indexes: null,
+              },
+            }
+          );
+
+          const validResults = response.data.filter(
+            (item) =>
+              item &&
+              typeof item.latitude === 'number' &&
+              typeof item.longitude === 'number'
+          );
+
+          setSearchResults(validResults);
+          
+          // 현재 선택된 매물이 검색 결과에 없는 경우에만 DetailPanel 닫기
+          if (selectedItem && selectedItem.type === 'room') {
+            const itemExists = validResults.some(
+              item => item.propertyId === selectedItem.propertyId
+            );
+            if (!itemExists) {
+              setSelectedItem(null);
+              setDetailPanelView('main');
+            }
+          }
+
+          // 검색 결과가 있는 경우
+          if (validResults.length > 0) {
+            updateMapCenter({
+              lat: parseFloat(validResults[0].latitude),
+              lng: parseFloat(validResults[0].longitude),
+            });
+            setMapLevel(5);
+          } 
+          // 검색 결과가 없지만 지역이 선택된 경우
+          else if (selectedCity && selectedDistrict) {
+            try {
+              const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood || ''}`.trim();
+              const coordinates = await searchCoordinates(address);
+              if (coordinates) {
+                updateMapCenter(coordinates);
+                setMapLevel(5);
+              }
+            } catch (error) {
+              console.error('Error getting coordinates for selected location:', error);
+            }
+          }
+          // 검색 결과도 없고 지역도 선택되지 않은 경우
+          else {
+            updateMapCenter(DEFAULT_CENTER);
+            setMapLevel(3);
+          }
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+          setSearchResults([]);
+          updateMapCenter(DEFAULT_CENTER);
+          setMapLevel(3);
+        }
+      };
+  
+      fetchAndUpdateResults();
     } else if (activeMenu === 'agent') {
-      // 공인중개사 필터링 로직
+      // 공인중개사 메뉴일 때의 로직
       const fetchFilteredRealtors = async () => {
         try {
           let response;
-          // 동까지 모두 선택된 경우
           if (selectedCity && selectedDistrict && selectedNeighborhood) {
+            // 동까지 선택된 경우의 로직
             try {
               const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood}`;
               const coordinates = await searchCoordinates(address);
@@ -310,39 +387,44 @@ function MapPage() {
             }
           }
           
-          // 동코드로 조회 실패하거나 지역이 완전히 선택되지 않은 경우 전체 목록 조회
           if (!response) {
             response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
           }
   
-          const validRealtors = response.data.filter(realtor => 
-            realtor && 
-            typeof realtor.latitude === 'number' && 
-            typeof realtor.longitude === 'number' &&
-            !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
-          );
+          const validRealtors = response.data
+            .filter(realtor => 
+              realtor && 
+              typeof realtor.latitude === 'number' && 
+              typeof realtor.longitude === 'number'
+            )
+            .map(realtor => ({
+              ...realtor,
+              type: 'agent'
+            }));
   
-          const realtorsWithType = validRealtors.map(realtor => ({
-            ...realtor,
-            type: 'agent'
-          }));
+          setSearchResults(validRealtors);
+          
+          // 현재 선택된 공인중개사가 검색 결과에 없는 경우에만 DetailPanel 닫기
+          if (selectedItem && selectedItem.type === 'agent') {
+            const itemExists = validRealtors.some(
+              realtor => realtor.userId === selectedItem.userId
+            );
+            if (!itemExists) {
+              setSelectedItem(null);
+              setDetailPanelView('main');
+            }
+          }
   
-          setSearchResults(realtorsWithType);
-          setPropertyMarkers(realtorsWithType);
-  
-          // 지도 중심 업데이트 (선택된 지역이 없는 경우에만)
           if (!selectedCity && validRealtors.length > 0) {
-            const center = {
+            updateMapCenter({
               lat: parseFloat(validRealtors[0].latitude),
               lng: parseFloat(validRealtors[0].longitude)
-            };
-            updateMapCenter(center);
+            });
             setMapLevel(7);
           }
         } catch (error) {
           console.error('Error fetching realtors:', error);
           setSearchResults([]);
-          setPropertyMarkers([]);
         }
       };
   
