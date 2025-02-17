@@ -22,26 +22,69 @@ const MobileLoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // 요청 데이터 로깅
+    console.log('로그인 요청 데이터:', {
+      url: 'https://i12d205.p.ssafy.io/api/test/login?role=realtor',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: formData
+    });
+    
     try {
       const response = await fetch('https://i12d205.p.ssafy.io/api/test/login?role=realtor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(formData)
       });
 
+      // HTTP 상태 코드 로깅
+      console.log('HTTP 상태 코드:', response.status);
+      
+      // 응답 헤더 전체 로깅
+      const headers = {};
+      response.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+      console.log('응답 헤더:', headers);
+
       if (!response.ok) {
-        throw new Error('로그인에 실패했습니다.');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('로그인 성공:', data);
-      // 로그인 성공 후 처리 추가
+      // 응답 데이터 먼저 텍스트로 받기
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+
+      let data;
+      try {
+        // 텍스트가 JSON인 경우에만 파싱
+        data = responseText ? JSON.parse(responseText) : {};
+        console.log('파싱된 응답 데이터:', data);
+      } catch (parseError) {
+        console.log('JSON 파싱 실패, 텍스트 응답:', responseText);
+        data = responseText;
+      }
+      
+      // 로그인 성공 처리 및 리다이렉트
+      console.log('로그인 성공! 최종 데이터:', data);
+      window.location.href = 'https://i12d205.p.ssafy.io/mobile-main';
       
     } catch (err) {
+      // 에러 상세 로깅
+      console.error('로그인 에러 상세:', {
+        name: err.name,
+        message: err.message,
+        stack: err.stack
+      });
+      
       setError('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
-      console.error('로그인 에러:', err);
     }
   };
 
