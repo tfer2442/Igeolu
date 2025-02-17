@@ -1,11 +1,12 @@
 // src/components/common/Chat/ChatMessage/ChatMessage.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import defaultProfile from '../../../../assets/images/testprofile.jpg';
 import LiveControllerApi from '../../../../services/LiveControllerApi';
 import './ChatMessage.css';
+import { Copy, Video } from 'lucide-react';
 
 const ChatMessage = ({
   message,
@@ -16,9 +17,27 @@ const ChatMessage = ({
   },
 }) => {
   const navigate = useNavigate(); // useNavigate 추가
+  const [copyText, setCopyText] = useState('세션 ID'); // 상위 레벨로 이동
+  const [isCopied, setIsCopied] = useState(false);
   const { content, createdAt, senderType } = message;
   const messageTime = format(new Date(message.createdAt), 'HH:mm');
   const isSystemMessage = senderType === 'SYSTEM';
+
+  const handleCopy = async (sessionId) => {
+    try {
+      await navigator.clipboard.writeText(sessionId);
+      setIsCopied(true);
+      setCopyText('복사됨!');
+
+      // 2초 후에 버튼 상태 복원
+      setTimeout(() => {
+        setIsCopied(false);
+        setCopyText('세션 ID');
+      }, 2000);
+    } catch (err) {
+      console.error('복사 실패:', err);
+    }
+  };
 
   const handleJoinLive = async (sessionId) => {
     try {
@@ -42,14 +61,24 @@ const ChatMessage = ({
       if (message.content.includes('세션 ID:')) {
         const sessionId = message.content.match(/세션 ID: (.*)/)[1];
         return (
-          <div data-type='live'>
-            <p>라이브 방송이 시작되었습니다!</p>
-            <button
-              className='live-join-button'
-              onClick={() => handleJoinLive(sessionId)}
-            >
-              방송 참여하기
-            </button>
+          <div data-type='live' className='live-message'>
+            <p>라이브 방송이 시작됐어요!</p>
+            <div className='live-buttons'>
+              <button
+                className={`copy-button ${isCopied ? 'copied' : ''}`}
+                onClick={() => handleCopy(sessionId)}
+              >
+                <Copy className='copy-icon' size={14} />
+                {copyText}
+              </button>
+              <button
+                className='live-join-button'
+                onClick={() => handleJoinLive(sessionId)}
+              >
+                <Video className='video-icon' size={14} />
+                방송 참여하기
+              </button>
+            </div>
           </div>
         );
       } else if (message.content.includes('새로운 약속')) {
@@ -73,7 +102,7 @@ const ChatMessage = ({
           <span className='message-time'>{messageTime}</span>
         </div>
       )}
-  
+
       {/* 받은 메시지 */}
       {!isCurrentUser && !isSystemMessage && (
         <div className='message-profile-container'>
@@ -105,7 +134,7 @@ const ChatMessage = ({
           </div>
         </div>
       )}
-  
+
       {/* 보낸 메시지 */}
       {isCurrentUser && !isSystemMessage && (
         <div className='message-content'>

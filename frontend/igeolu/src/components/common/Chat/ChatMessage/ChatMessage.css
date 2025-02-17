@@ -187,23 +187,47 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
+/* 버튼 컨테이너 추가 */
+.live-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 버튼 공통 스타일 */
+.copy-button, .live-join-button {
+  white-space: nowrap;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 /* 📌 라이브 방송 버튼 */
 .live-join-button {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 8px 16px;
   background-color: #FF6F61;
   color: white;
   border: none;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 18px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.live-join-button .video-icon {
+  color: white;
+  transition: all 0.2s ease;
 }
 
 .live-join-button:hover {
-  background-color: #c0392b;
+  background-color: #FF5B4B;
+  transform: translateY(-1px);
 }
 
 /* 📌 시스템 메시지 시간 */
@@ -215,12 +239,152 @@
   display: block;
 }
 
+
+
+/* 📌 라이브 메시지 컨테이너 */
+.live-message {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.live-message p {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 100%; /* 첫 줄 전체 차지 */
+}
+
+.live-message p:before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #FF4B4B;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
+/* 📌 세션 ID 컨테이너 */
+.session-id-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 8px 12px;
+  border-radius: 8px;
+  flex: 1; /* 남은 공간 채우기 */
+  max-width: fit-content; /* 내용물 만큼만 차지 */
+}
+
+.session-id-label {
+  font-weight: 500;
+  color: #666;
+  font-size: 13px;
+}
+
+.session-id {
+  font-family: monospace;
+  color: #01adff;
+  font-size: 14px;
+}
+
+/* 세션 정보 - 더 컴팩트하게 */
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+/* 📌 복사 버튼 */
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #01adff;
+  color: white;
+  border: none;
+  border-radius: 18px;
+  transition: all 0.2s ease;
+}
+
+.copy-button .copy-icon {
+  color: white;
+  transition: all 0.2s ease;
+}
+
+/* 복사 성공 상태 */
+.copy-button.copied {
+  background-color: #4CAF50;
+  color: white;
+  pointer-events: none;
+}
+
+.copy-button:hover {
+  background-color: #0095db;
+}
+
+.copy-button.copied .copy-icon {
+  color: white;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* ----------------- 모바일 -------------------- */
 .mobile .system-message-header {
   background-color: #F4D03F;
 }
 
-.mobile .sent .message-bubble .message-text {
-  background-color: #FAFAFA;
-  color: #000000;
+.mobile .message-bubble.system-bubble {
+  background-color: #34495E;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
+
+/* 모바일 스타일 */
+.mobile .session-id-container {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile .session-id-label {
+  color: #ccc;
+}
+
+.mobile .session-id {
+  color: #fff;
+}
+
+/* 모바일 스타일 유지 */
+.mobile .copy-button {
+  background-color: #01adff;
+}
+
+.mobile .copy-button.copied {
+  background-color: #4CAF50;
+}
+
+.mobile .copy-button:hover {
+  background-color: #0095db;
+}
+
