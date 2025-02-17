@@ -335,15 +335,14 @@ function DesktopLive() {
   // signal 리스너 useEffect 수정
   useEffect(() => {
     if (session) {
+      // 기존 property-completed 시그널 핸들러
       session.on('signal:property-completed', (event) => {
         try {
           const data = JSON.parse(event.data);
           const { propertyId, location } = data;
           
-          // 완료된 속성 업데이트
           setCompletedProperties(prev => new Set([...prev, propertyId]));
           
-          // 위치 정보 업데이트
           if (location) {
             setHostLocation({
               latitude: location.latitude,
@@ -352,13 +351,27 @@ function DesktopLive() {
             });
           }
 
-          // AI 체크리스트 초기화
           setDisplayedQuestions(new Set());
           setHiddenQuestions(new Set());
           setProcessedObjects(new Set());
-          
         } catch (error) {
           console.error('Error processing property-completed signal:', error);
+        }
+      });
+
+      // 새로운 location-update 시그널 핸들러 추가
+      session.on('signal:location-update', (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'host-location' && data.location) {
+            setHostLocation({
+              latitude: data.location.latitude,
+              longitude: data.location.longitude,
+              accuracy: data.location.accuracy
+            });
+          }
+        } catch (error) {
+          console.error('Error processing location-update signal:', error);
         }
       });
     }
