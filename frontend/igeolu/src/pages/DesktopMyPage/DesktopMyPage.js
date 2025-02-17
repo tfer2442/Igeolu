@@ -1,4 +1,3 @@
-// src/pages/DesktopMyPage/DesktopMyPage.js
 import React, { useState, useEffect } from 'react';
 import './DesktopMyPage.css';
 import DesktopLiveAndMyPage from '../../components/DesktopNav/DesktopLiveAndMyPage';
@@ -16,43 +15,93 @@ function DesktopMyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [liveData, setLiveData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [currentLiveIndex, setCurrentLiveIndex] = useState(0);
   const [userInfo, setUserInfo] = useState(null);
   const [realtorInfos, setRealtorInfos] = useState({});
   const [appointments, setAppointments] = useState([]);
+  
+  // 각 섹션별 로딩 상태 관리
+  const [loading, setLoading] = useState({
+    user: true,
+    appointments: true,
+    lives: true
+  });
+
+  // 전체 로딩 상태 계산
+  const isLoading = Object.values(loading).some(status => status);
 
   useEffect(() => {
     const fetchInitialData = async () => {
+      const cachedUser = localStorage.getItem('user');
+      if (!cachedUser) {
+        setLoading({
+          user: false,
+          appointments: false,
+          lives: false
+        });
+        return;
+      }
+
+      const { userId } = JSON.parse(cachedUser);
+      
       try {
-        setIsLoading(true);
+        // 병렬로 데이터 fetch
         await Promise.all([
-          fetchAppointments(),
-          fetchAllData()
+          // 유저 정보 fetch
+          (async () => {
+            try {
+              const response = await UserControllerApi.getUserInfo(userId);
+              setUserInfo(response);
+            } finally {
+              setLoading(prev => ({ ...prev, user: false }));
+            }
+          })(),
+
+          // 예약 정보 fetch
+          (async () => {
+            try {
+              const response = await appointmentAPI.getAppointments(userId);
+              const sortedAppointments = response.data.sort((a, b) => 
+                new Date(a.scheduledAt) - new Date(b.scheduledAt)
+              );
+              setAppointments(sortedAppointments);
+            } finally {
+              setLoading(prev => ({ ...prev, appointments: false }));
+            }
+          })(),
+
+          // 라이브 데이터 fetch
+          (async () => {
+            try {
+              const lives = await LiveControllerApi.getLives();
+              const livesWithProperties = await Promise.all(
+                lives.map(async (live) => ({
+                  ...live,
+                  properties: (await LiveControllerApi.getLiveProperties(live.liveId)) || [],
+                }))
+              );
+              setLiveData(livesWithProperties);
+            } finally {
+              setLoading(prev => ({ ...prev, lives: false }));
+            }
+          })()
         ]);
-        await fetchUserInfo();
+
       } catch (error) {
         console.error('Error fetching initial data:', error);
-      } finally {
-        setIsLoading(false);
+        // 에러 발생시에도 로딩 상태 해제
+        setLoading({
+          user: false,
+          appointments: false,
+          lives: false
+        });
       }
     };
-  
+
     fetchInitialData();
   }, []);
 
-  const fetchRealtorInfo = async (realtorId) => {
-    try {
-      const response = await UserControllerApi.getUserInfo(realtorId);
-      setRealtorInfos((prev) => ({
-        ...prev,
-        [realtorId]: response,
-      }));
-    } catch (error) {
-      console.error('Error fetching realtor info:', error);
-    }
-  };
-
+  // 중개사 정보 fetch
   useEffect(() => {
     const fetchRealtorsInfo = async () => {
       try {
@@ -71,52 +120,19 @@ function DesktopMyPage() {
     }
   }, [liveData, realtorInfos]);
 
-  const fetchUserInfo = async () => {
+  const fetchRealtorInfo = async (realtorId) => {
     try {
-      const cachedUser = localStorage.getItem('user');
-      if (!cachedUser) return;
-
-      const { userId } = JSON.parse(cachedUser);
-      const response = await UserControllerApi.getUserInfo(userId);
-      setUserInfo(response);
+      const response = await UserControllerApi.getUserInfo(realtorId);
+      setRealtorInfos((prev) => ({
+        ...prev,
+        [realtorId]: response,
+      }));
     } catch (error) {
-      console.error('Error fetching user info:', error);
+      console.error('Error fetching realtor info:', error);
     }
   };
 
-  const fetchAppointments = async () => {
-    try {
-      const cachedUser = localStorage.getItem('user');
-      if (!cachedUser) return;
-  
-      const { userId } = JSON.parse(cachedUser);
-      const response = await appointmentAPI.getAppointments(userId);
-      // 날짜순으로 정렬 (최신 날짜가 위로)
-      const sortedAppointments = response.data.sort((a, b) => 
-        new Date(a.scheduledAt) - new Date(b.scheduledAt)
-      );
-      setAppointments(sortedAppointments);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-    }
-  };
-  
-  const fetchAllData = async () => {
-    try {
-      const lives = await LiveControllerApi.getLives();
-      const livesWithProperties = await Promise.all(
-        lives.map(async (live) => ({
-          ...live,
-          properties:
-            (await LiveControllerApi.getLiveProperties(live.liveId)) || [],
-        }))
-      );
-      setLiveData(livesWithProperties);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
+  // 나머지 핸들러 함수들...
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ko-KR', {
@@ -147,13 +163,11 @@ function DesktopMyPage() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 파일 유효성 검사
     if (!file.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
       return;
     }
 
-    // 파일 크기 제한 (5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('파일 크기는 5MB 이하여야 합니다.');
       return;
@@ -161,29 +175,57 @@ function DesktopMyPage() {
 
     try {
       const formData = new FormData();
-      formData.append('file', file);  // 'profileImage'를 'file'로 수정
-
+      formData.append('file', file);
+      
+      setLoading(prev => ({ ...prev, user: true }));
       await UserControllerApi.updateProfileImage(formData);
-      await fetchUserInfo();
+      const cachedUser = localStorage.getItem('user');
+      if (cachedUser) {
+        const { userId } = JSON.parse(cachedUser);
+        const response = await UserControllerApi.getUserInfo(userId);
+        setUserInfo(response);
+      }
     } catch (error) {
       console.error('Error updating profile image:', error);
       alert('프로필 이미지 업데이트에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoading(prev => ({ ...prev, user: false }));
     }
   };
 
   const handleImageDelete = async () => {
     try {
+      setLoading(prev => ({ ...prev, user: true }));
       await UserControllerApi.deleteProfileImage();
-      await fetchUserInfo();
+      const cachedUser = localStorage.getItem('user');
+      if (cachedUser) {
+        const { userId } = JSON.parse(cachedUser);
+        const response = await UserControllerApi.getUserInfo(userId);
+        setUserInfo(response);
+      }
     } catch (error) {
       console.error('Error deleting profile image:', error);
       alert('프로필 이미지 삭제에 실패했습니다.');
+    } finally {
+      setLoading(prev => ({ ...prev, user: false }));
     }
   };
+
+  // 전체 페이지 로딩 중일 때
+  if (isLoading) {
+    return (
+      <div className="desktop-my-page loading">
+        <DesktopLiveAndMyPage />
+        <div className="loading-spinner">데이터를 불러오는 중입니다...</div>
+      </div>
+    );
+  }
 
   return (
     <div className='desktop-my-page'>
       <DesktopLiveAndMyPage />
+      
+      {/* 회원 정보 섹션 */}
       <div className='user-info'>
         <p>회원정보</p>
         <div className='user-info-content'>
@@ -223,6 +265,7 @@ function DesktopMyPage() {
         </div>
       </div>
 
+      {/* 일정 섹션 */}
       <div className='user-info-schedule'>
         <div className='user-info-schedule-title'>
           <p>일정</p>
@@ -248,11 +291,9 @@ function DesktopMyPage() {
         </div>
       </div>
 
+      {/* 라이브 매물 섹션 */}
       <div className='user-info-record'>
-        {/* <p>내가 본 라이브 매물</p> */}
-        {isLoading ? (
-          <p className='loading-message'>라이브 목록을 불러오는 중입니다...</p>
-        ) : liveData.length > 0 ? (
+        {liveData.length > 0 ? (
           <>
             <LiveCarousel
               liveData={liveData}
