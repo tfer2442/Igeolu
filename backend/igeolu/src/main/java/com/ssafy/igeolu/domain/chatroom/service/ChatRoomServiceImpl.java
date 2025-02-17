@@ -25,6 +25,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	@Override
 	public ChatRoom createChatRoom(User member, User realtor) {
 
+		if (chatRoomRepository.existsByMemberAndRealtor(member, realtor)) {
+			throw new RuntimeException("이미 채팅방이 존재합니다.");
+		}
+
 		ChatRoom chatRoom = ChatRoom.builder()
 			.member(member)
 			.realtor(realtor)
