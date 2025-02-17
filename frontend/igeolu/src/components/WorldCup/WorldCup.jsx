@@ -182,21 +182,6 @@ function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
                                             <p style={{fontSize: '14px'}}>{winner.address || '주소 정보 없음'}</p>
                                             <p style={{fontSize: '14px'}}>{winner.description || '소개 정보 없음'}</p>
                                         </div>
-                                        {/* <button 
-                                            className="world-cup-modal__restart-button" 
-                                            onClick={resetWorldCup}
-                                        >
-                                            다시하기
-                                        </button>
-                                        <button
-                                            className="world-cup-modal__property-button"
-                                            onClick={() => {
-                                                onSelectWinner(winner);
-                                                handleCloseModal();
-                                            }}
-                                        >
-                                            매물보기
-                                        </button> */}
 
                                         <div className="winner-buttons-container">
                                             <button 
