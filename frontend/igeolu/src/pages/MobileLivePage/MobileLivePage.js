@@ -520,6 +520,7 @@ function MobileLivePage() {
                                                 <button 
                                                     className="property-nav-button completed"
                                                     onClick={() => handleNextProperty(live.liveId)}
+                                                    disabled={isRecording}
                                                 >
                                                     완료
                                                 </button>
@@ -527,6 +528,7 @@ function MobileLivePage() {
                                                 <button 
                                                     className="property-nav-button"
                                                     onClick={() => handleNextProperty(live.liveId)}
+                                                    disabled={isRecording}
                                                 >
                                                     <MdNavigateNext size={20} />
                                                 </button>
