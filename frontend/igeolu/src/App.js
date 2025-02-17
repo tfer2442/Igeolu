@@ -349,7 +349,6 @@ function App() {
               path='/mobile-additional-info'
               element={<MobileAdditionalInfoPage />}
             />
-            <Route path='/make' element={<Make />} />
             <Route path='/mobile-main' element={<MobileMainPage />} />
             <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
             <Route path='/mobile-my-page' element={<MobileMyPage />} />

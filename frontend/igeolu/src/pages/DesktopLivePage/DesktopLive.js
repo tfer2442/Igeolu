@@ -16,9 +16,9 @@ import labels from '../../utils/labels.json';
 import { renderBoxes } from '../../utils/renderBox';
 import { objectQuestions } from '../../utils/questions.js';
 
-// axios 기본 설정 추가
-axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+// // axios 기본 설정 추가
+// axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM1LCJyb2xlIjoiUk9MRV9NRU1CRVIiLCJpYXQiOjE3Mzg5MDQyMjAsImV4cCI6MTc0MDExMzgyMH0.rvdPE4gWoUx9zHUoAWjPe_rmyNH4h2ssNqiTcIRqIpE';
+// axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 function DesktopLive() {
   const location = useLocation();
@@ -316,11 +316,8 @@ function DesktopLive() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get(`/api/lives/${sessionId}/properties`, {
-          headers: {
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg'
-          }
-        });
+        const response = await axios.get(`/api/lives/${sessionId}/properties`);
+        
         // livePropertyId 기준으로 정렬
         const properties = response.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
         console.log('Sorted properties:', properties);
