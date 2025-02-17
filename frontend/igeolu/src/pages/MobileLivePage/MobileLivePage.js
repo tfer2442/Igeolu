@@ -131,51 +131,44 @@ function MobileLivePage() {
                 const clientData = JSON.stringify({ role: role });
                 console.log('Connecting with clientData:', clientData);
 
-                try {
-                    // clientData를 포함하여 연결
-                    await newSession.connect(token, clientData);
-                    console.log('Session connected successfully');
-                    console.log('My Connection Data:', newSession.connection.data);
-                    setSession(newSession);
+                // clientData를 포함하여 연결
+                await newSession.connect(token, clientData);
+                console.log('Session connected successfully');
+                console.log('My Connection Data:', newSession.connection.data);
+                setSession(newSession);
 
-                    const publisher = await OV.current.initPublisherAsync(undefined, {
-                        audioSource: undefined,
-                        videoSource: undefined,
-                        publishAudio: true,
-                        publishVideo: true,
-                        resolution: '640x480',
-                        frameRate: 30,
-                        insertMode: 'APPEND',
-                        mirror: true,
-                    });
+                const publisher = await OV.current.initPublisherAsync(undefined, {
+                    audioSource: undefined,
+                    videoSource: undefined,
+                    publishAudio: true,
+                    publishVideo: true,
+                    resolution: '640x480',
+                    frameRate: 30,
+                    insertMode: 'APPEND',
+                    mirror: true,
+                });
 
-                    await newSession.publish(publisher);
-                    console.log('Publisher created with connection data:', publisher.stream.connection.data);
-                    setPublisher(publisher);
-
-                } catch (connectionError) {
-                    console.error('Connection error:', connectionError);
-                    // 연결 실패 시 세션 정리
-                    if (newSession) {
-                        try {
-                            await newSession.disconnect();
-                        } catch (e) {
-                            console.error('Error disconnecting session:', e);
-                        }
-                    }
-                    throw connectionError;
-                }
+                await newSession.publish(publisher);
+                console.log('Publisher created with connection data:', publisher.stream.connection.data);
+                setPublisher(publisher);
 
             } catch (error) {
                 console.error('Error initializing session:', error.message);
                 console.error('Full error:', error);
-               
+                
+                // 세션이 존재하면 정리
+                if (session) {
+                    try {
+                        await session.disconnect();
+                    } catch (e) {
+                        console.error('Error disconnecting session:', e);
+                    }
+                }
             }
         };
 
         const fetchLiveList = async () => {
             try {
-<<<<<<< HEAD
                 // const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
                 //     headers: {
                 //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
@@ -186,15 +179,6 @@ function MobileLivePage() {
                 const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`);
                 
                 
-=======
-                const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`, {
-                    headers: {
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMyLCJyb2xlIjoiUk9MRV9SRUFMVE9SIiwiaWF0IjoxNzM4OTAyOTM4LCJleHAiOjE3NDAxMTI1Mzh9.nE5i5y2LWQR8Cws172k0Ti15LumNkDd0uihFYHQdnUg',
-                        'userId': '32'
-                    }
-                });
-                // const propertyResponse = await axios.get(`/api/lives/${sessionId}/properties`);
->>>>>>> reborn
                 setLiveList([{ liveId: sessionId }]);
                 
                 const properties = propertyResponse.data.sort((a, b) => a.livePropertyId - b.livePropertyId);
@@ -263,7 +247,7 @@ function MobileLivePage() {
                 {
                     enableHighAccuracy: true,
                     timeout: 5000,
-                    maximumAge: 4000 // 3초 이전의 캐시된 위치까지만 사용
+                    maximumAge: 4000 // 4초 이전의 캐시된 위치까지만 사용
                 }
             );
 
