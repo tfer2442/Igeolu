@@ -141,7 +141,7 @@
 }
 
 .system-message-header {
-  background-color: #FFFB05;
+  background-color: #FFF9c4;
   color: #000000;
   padding: 6px 12px;
   font-size: 13px;
@@ -192,7 +192,7 @@
   display: inline-block;
   margin-top: 8px;
   padding: 8px 16px;
-  background-color: #e74c3c;
+  background-color: #FF6F61;
   color: white;
   border: none;
   border-radius: 20px;
@@ -213,4 +213,14 @@
   margin-top: 4px;
   text-align: center;
   display: block;
+}
+
+/* ----------------- 모바일 -------------------- */
+.mobile .system-message-header {
+  background-color: #F4D03F;
+}
+
+.mobile .sent .message-bubble .message-text {
+  background-color: #FAFAFA;
+  color: #000000;
 }
