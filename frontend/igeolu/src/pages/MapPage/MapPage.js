@@ -278,15 +278,95 @@ function MapPage() {
     }
   };
 
+  // useEffect(() => {
+  //   if (activeMenu === 'room') {
+  //     fetchSearchResults();
+  //   } else if (activeMenu === 'agent') {
+  //     fetchRealtors();
+  //   }
+  //   setSelectedItem(null);
+  //   setPropertyMarkers([]);
+  //   setInitialProperties([]);
+  // }, [
+  //   selectedCity,
+  //   selectedDistrict,
+  //   selectedNeighborhood,
+  //   activeMenu,
+  //   deposit,
+  //   monthlyRent,
+  //   selectedOptions,
+  // ]);
+
   useEffect(() => {
     if (activeMenu === 'room') {
       fetchSearchResults();
     } else if (activeMenu === 'agent') {
-      fetchRealtors();
+      // 공인중개사 필터링 로직
+      const fetchFilteredRealtors = async () => {
+        try {
+          let response;
+          // 동까지 모두 선택된 경우
+          if (selectedCity && selectedDistrict && selectedNeighborhood) {
+            try {
+              const address = `${selectedCity} ${selectedDistrict} ${selectedNeighborhood}`;
+              const coordinates = await searchCoordinates(address);
+              
+              if (coordinates) {
+                updateMapCenter(coordinates);
+                setMapLevel(3);
+              }
+  
+              const selectedDong = neighborhoods.find(n => 
+                n.dongName === selectedNeighborhood || n.name === selectedNeighborhood
+              );
+              const dongCode = selectedDong?.dongCode || selectedDong?.dongcode || selectedDong?.code || selectedDong?.id;
+              
+              if (dongCode) {
+                response = await axios.get(`${API_BASE_URL}/api/users/${dongCode}/realtors`);
+              }
+            } catch (error) {
+              console.error('Error fetching dong realtors:', error);
+            }
+          }
+          
+          // 동코드로 조회 실패하거나 지역이 완전히 선택되지 않은 경우 전체 목록 조회
+          if (!response) {
+            response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+          }
+  
+          const validRealtors = response.data.filter(realtor => 
+            realtor && 
+            typeof realtor.latitude === 'number' && 
+            typeof realtor.longitude === 'number' &&
+            !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
+          );
+  
+          const realtorsWithType = validRealtors.map(realtor => ({
+            ...realtor,
+            type: 'agent'
+          }));
+  
+          setSearchResults(realtorsWithType);
+          setPropertyMarkers(realtorsWithType);
+  
+          // 지도 중심 업데이트 (선택된 지역이 없는 경우에만)
+          if (!selectedCity && validRealtors.length > 0) {
+            const center = {
+              lat: parseFloat(validRealtors[0].latitude),
+              lng: parseFloat(validRealtors[0].longitude)
+            };
+            updateMapCenter(center);
+            setMapLevel(7);
+          }
+        } catch (error) {
+          console.error('Error fetching realtors:', error);
+          setSearchResults([]);
+          setPropertyMarkers([]);
+        }
+      };
+  
+      fetchFilteredRealtors();
     }
-    setSelectedItem(null);
-    setPropertyMarkers([]);
-    setInitialProperties([]);
   }, [
     selectedCity,
     selectedDistrict,
@@ -489,9 +569,55 @@ function MapPage() {
     }
   };
 
-  const handleDetailClose = () => {
+  const handleDetailClose = async (type) => {
     setSelectedItem(null);
-    setPropertyMarkers([]);
+    
+    if (type === 'agent') {
+        try {
+            // 전체 공인중개사 목록 가져오기
+            const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
+            const validRealtors = response.data.filter(realtor => 
+                realtor && 
+                typeof realtor.latitude === 'number' && 
+                typeof realtor.longitude === 'number' &&
+                !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
+            );
+            
+            const realtorsWithType = validRealtors.map(realtor => ({
+                ...realtor,
+                type: 'agent'
+            }));
+
+            setPropertyMarkers(realtorsWithType);
+
+            // 전체 공인중개사가 잘 보이도록 지도 중심과 레벨 조정
+            if (validRealtors.length > 0) {
+                updateMapCenter({
+                    lat: parseFloat(validRealtors[0].latitude),
+                    lng: parseFloat(validRealtors[0].longitude)
+                });
+                setMapLevel(7); // 더 넓은 시야를 위해 레벨 조정
+            }
+        } catch (error) {
+            console.error('Error fetching realtors:', error);
+            setPropertyMarkers([]);
+        }
+    } else {
+        // 원룸 메뉴인 경우 전체 검색 결과 마커 표시
+        if (searchResults.length > 0) {
+            setPropertyMarkers(searchResults);
+            updateMapCenter({
+                lat: parseFloat(searchResults[0].latitude),
+                lng: parseFloat(searchResults[0].longitude)
+            });
+            setMapLevel(5);
+        } else {
+            setPropertyMarkers([]);
+            updateMapCenter(DEFAULT_CENTER);
+            setMapLevel(3);
+        }
+    }
+    
     setInitialProperties([]);
   };
 

@@ -246,8 +246,8 @@ const DetailPanel = ({
                             setSelectedProperty(null);
                             setProperties([]);
                         } else if (type === 'agent') {
-                            // 공인중개사 메뉴는 기존대로 처리
-                            onClose();
+                            // 공인중개사 메뉴는 전체 공인중개사 마커 표시를 위해 type을 전달
+                            onClose('agent');
                             setView('main');
                             setSelectedProperty(null);
                             setProperties([]);
