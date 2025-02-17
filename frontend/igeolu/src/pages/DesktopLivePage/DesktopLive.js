@@ -42,12 +42,14 @@ function DesktopLive() {
   const detectionCanvasRef = useRef(null);
   const [model, setModel] = useState(null);
   const [displayedQuestions, setDisplayedQuestions] = useState(new Set());
+  const [hiddenQuestions, setHiddenQuestions] = useState(new Set());
   const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
   const [selectedMemoText, setSelectedMemoText] = useState('');
   const [hostLocation, setHostLocation] = useState(null);
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
   const [hostAddress, setHostAddress] = useState('');
+  const [processedObjects, setProcessedObjects] = useState(new Set());
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -336,7 +338,6 @@ function DesktopLive() {
   // signal 리스너 useEffect 수정
   useEffect(() => {
     if (session) {
-      // 기존 property-completed 시그널 핸들러
       session.on('signal:property-completed', (event) => {
         try {
           const data = JSON.parse(event.data);
@@ -353,6 +354,12 @@ function DesktopLive() {
               accuracy: location.accuracy
             });
           }
+
+          // AI 체크리스트 초기화
+          setDisplayedQuestions(new Set());
+          setHiddenQuestions(new Set());
+          setProcessedObjects(new Set());
+          
         } catch (error) {
           console.error('Error processing property-completed signal:', error);
         }
@@ -397,16 +404,26 @@ function DesktopLive() {
                 );
               }
 
-              predictions.forEach(pred => {
-                const detectedClass = pred.class;
-                const questions = objectQuestions[detectedClass];
-                
-                if (questions) {
-                  questions.forEach(question => {
-                    setDisplayedQuestions(prev => new Set([...prev, question]));
-                  });
-                }
-              });
+              // 아직 처리되지 않은 객체들만 필터링
+              const newObjects = predictions.filter(pred => !processedObjects.has(pred.class));
+              
+              if (newObjects.length > 0) {
+                // 새로운 객체들에 대한 모든 질문을 수집
+                const allNewQuestions = newObjects.flatMap(pred => {
+                  const questions = objectQuestions[pred.class] || [];
+                  // 해당 객체를 처리된 것으로 표시
+                  setProcessedObjects(prev => new Set([...prev, pred.class]));
+                  return questions;
+                });
+
+                // 수집된 질문들 중 랜덤하게 3개 선택
+                const selectedQuestions = allNewQuestions
+                  .sort(() => 0.5 - Math.random()) // 질문들을 랜덤하게 섞기
+                  .slice(0, 3); // 앞에서 3개만 선택
+
+                // 선택된 질문들을 displayedQuestions에 추가
+                setDisplayedQuestions(prev => new Set([...prev, ...selectedQuestions]));
+              }
             }
           } catch (error) {
             console.error('Detection error:', error);
@@ -427,7 +444,7 @@ function DesktopLive() {
         });
       }
     }
-  }, [model, subscriberVideoRef.current, detectionCanvasRef.current, showDetectionOverlay]);
+  }, [model, subscriberVideoRef.current, detectionCanvasRef.current, showDetectionOverlay, processedObjects]);
 
   // 질문 클릭 핸들러 추가
   const handleQuestionClick = (question) => {
@@ -491,6 +508,12 @@ function DesktopLive() {
       }
     }
   }, [map, hostLocation]);
+
+  // 질문 숨기기 핸들러 추가
+  const handleHideQuestion = (question, event) => {
+    event.stopPropagation(); // 상위 요소의 클릭 이벤트 전파 방지
+    setHiddenQuestions(prev => new Set([...prev, question]));
+  };
 
   return (
     <div className="desktop-live-page">
@@ -582,15 +605,22 @@ function DesktopLive() {
         <div className='desktop-live-page__left-content__bottom-content__ai-checklist'>
               <p>AI 체크리스트</p>
               <div className="ai-questions-list">
-                {Array.from(displayedQuestions).map((question, index) => (
-                  <div 
-                    key={index} 
-                    className="ai-question-item"
-                    onClick={() => handleQuestionClick(question)}
-                    style={{ cursor: 'pointer' }}  // 클릭 가능함을 표시
-                  >
-                    {question}
-                  </div>
+                {Array.from(displayedQuestions)
+                  .filter(question => !hiddenQuestions.has(question))
+                  .map((question, index) => (
+                    <div 
+                      key={index} 
+                      className="ai-question-item"
+                      onClick={() => handleQuestionClick(question)}
+                    >
+                      <span>{question}</span>
+                      <button 
+                        className="question-hide-button"
+                        onClick={(e) => handleHideQuestion(question, e)}
+                      >
+                        ✕
+                      </button>
+                    </div>
                 ))}
               </div>
             </div>
