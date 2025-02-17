@@ -1,9 +1,9 @@
 // src/pages/MobileMainPage/MobileMainPage/js
 import './MobileMainPage.css';
 import { useState, useEffect, useRef } from 'react';
+import { useUser } from '../../contexts/UserContext';  // UserContext import 추가
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
 import MobileLogo from '../../assets/images/모바일로고.png';
-import MobileAlarm from '../../assets/images/알림아이콘.png';
 import RealEstateRegistration from '../../components/RealEstateRegistration/RealEstateRegistration';
 import RealEstateEdit from '../../components/RealEstateEdit/RealEstateEdit';
 import poster1 from '../../assets/images/포스터1.jpg';
@@ -14,6 +14,7 @@ import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
 import { appointmentAPI } from '../../services/AppointmentApi';
 
 function MobileMainPage() {
+  const { user, isLoading: isUserLoading } = useUser();  // UserContext 사용
   const [realtorInfo, setRealtorInfo] = useState({
     username: '',
     profileImage: null,
@@ -100,18 +101,17 @@ function MobileMainPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // user 정보가 없거나 아직 로딩 중이면 리턴
+      if (isUserLoading) return;
+      if (!user?.userId) {
+        setError('로그인 정보를 찾을 수 없습니다');
+        return;
+      }
+
       try {
-        const cachedUser = localStorage.getItem('user');
-        if (!cachedUser) {
-          setError('로그인 정보를 찾을 수 없습니다');
-          return;
-        }
-
-        const { userId } = JSON.parse(cachedUser);
-
         // 공인중개사 정보 가져오기
         const realtorResponse = await fetch(
-          `https://i12d205.p.ssafy.io/api/users/${userId}/realtor`,
+          `https://i12d205.p.ssafy.io/api/users/${user.userId}/realtor`,
           {
             method: 'GET',
             credentials: 'include',
@@ -130,7 +130,6 @@ function MobileMainPage() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // 오늘 날짜의 예약만 필터링
         const todayAppointments = appointmentsResponse.data.filter(
           (appointment) => {
             const appointmentDate = new Date(appointment.scheduledAt);
@@ -139,7 +138,6 @@ function MobileMainPage() {
           }
         );
 
-        // 시간순으로 정렬
         todayAppointments.sort(
           (a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt)
         );
@@ -154,7 +152,9 @@ function MobileMainPage() {
     };
 
     fetchData();
-  }, []);
+  }, [user?.userId, isUserLoading]); // user와 isUserLoading을 의존성 배열에 추가
+
+  
 
   useEffect(() => {
     const fetchRealtorInfo = async () => {
@@ -191,8 +191,13 @@ function MobileMainPage() {
     fetchRealtorInfo();
   }, []);
 
-  if (loading) return <LoadingSpinner />;
+  // 사용자 인증 상태와 데이터 로딩 상태를 모두 고려
+  if (isUserLoading || loading) return <LoadingSpinner />;
   if (error) return <div>에러: {error}</div>;
+  if (!user?.userId) {
+    window.location.href = '/mobile-login';
+    return null;
+  }
 
   const formatDate = (date) => {
     return date
