@@ -18,7 +18,7 @@ const MenuButtons = ({ onMenuClick, activeMenu }) => {
         onClick={() => onMenuClick('agent')}
       >
         <User size={24} />
-        <span className="menu-button-text">공인중개사</span>
+        <span className="menu-button-text">중개인</span>
       </button>
     </div>
   );
