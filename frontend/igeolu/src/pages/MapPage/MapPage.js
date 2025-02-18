@@ -203,7 +203,7 @@ function MapPage() {
           lat: parseFloat(validResults[0].latitude),
           lng: parseFloat(validResults[0].longitude),
         });
-        setMapLevel(5);
+        setMapLevel(3);
       } 
       // 검색 결과가 없지만 지역이 선택된 경우, 선택된 지역의 좌표로 이동
       else if (selectedCity && selectedDistrict) {
@@ -329,7 +329,7 @@ function MapPage() {
               lat: parseFloat(validResults[0].latitude),
               lng: parseFloat(validResults[0].longitude),
             });
-            setMapLevel(5);
+            setMapLevel(3);
           } 
           // 검색 결과가 없지만 지역이 선택된 경우
           else if (selectedCity && selectedDistrict) {
@@ -403,6 +403,19 @@ function MapPage() {
             }));
   
           setSearchResults(validRealtors);
+          setPropertyMarkers(validRealtors); // 여기를 추가
+
+          if (validRealtors.length > 0) {
+            const firstRealtor = validRealtors[0];
+            updateMapCenter({
+              lat: parseFloat(firstRealtor.latitude),
+              lng: parseFloat(firstRealtor.longitude)
+            });
+
+            // 지역 필터가 적용된 경우는 더 자세히 보여주기 위해 레벨 3으로,
+            // 그렇지 않은 경우는 전체를 보여주기 위해 레벨 7로 설정
+            setMapLevel(selectedCity ? 3 : 7);
+          }
           
           // 현재 선택된 공인중개사가 검색 결과에 없는 경우에만 DetailPanel 닫기
           if (selectedItem && selectedItem.type === 'agent') {
@@ -420,11 +433,12 @@ function MapPage() {
               lat: parseFloat(validRealtors[0].latitude),
               lng: parseFloat(validRealtors[0].longitude)
             });
-            setMapLevel(7);
+            setMapLevel(3);
           }
         } catch (error) {
           console.error('Error fetching realtors:', error);
           setSearchResults([]);
+          setPropertyMarkers([]); // 에러 시 마커도 초기화
         }
       };
   
@@ -469,7 +483,7 @@ function MapPage() {
             lat: parseFloat(validRealtors[0].latitude),
             lng: parseFloat(validRealtors[0].longitude)
           });
-          setMapLevel(7);
+          setMapLevel(3);
         }
       } catch (error) {
         console.error('Error fetching realtors:', error);
@@ -512,7 +526,7 @@ function MapPage() {
             lat: parseFloat(validRealtors[0].latitude),
             lng: parseFloat(validRealtors[0].longitude)
           });
-          setMapLevel(7);
+          setMapLevel(3);
         }
       } catch (error) {
         console.error('Error fetching realtors:', error);
@@ -679,33 +693,26 @@ function MapPage() {
     setSelectedItem(null);
     
     if (type === 'agent') {
+        // 공인중개사 메뉴인 경우
         try {
-            // 전체 공인중개사 목록 가져오기
-            const response = await axios.get(`${API_BASE_URL}/api/users/realtors`);
-            const validRealtors = response.data.filter(realtor => 
-                realtor && 
-                typeof realtor.latitude === 'number' && 
-                typeof realtor.longitude === 'number' &&
-                !isNaN(realtor.latitude) && !isNaN(realtor.longitude)
-            );
-            
-            const realtorsWithType = validRealtors.map(realtor => ({
+            // ListPanel에 표시된 공인중개사들을 마커로 표시
+            const realtorsToShow = searchResults.map(realtor => ({
                 ...realtor,
                 type: 'agent'
             }));
+            
+            setPropertyMarkers(realtorsToShow);
 
-            setPropertyMarkers(realtorsWithType);
-
-            // 전체 공인중개사가 잘 보이도록 지도 중심과 레벨 조정
-            if (validRealtors.length > 0) {
+            // 모든 마커가 잘 보이도록 지도 중심과 레벨 조정
+            if (realtorsToShow.length > 0) {
                 updateMapCenter({
-                    lat: parseFloat(validRealtors[0].latitude),
-                    lng: parseFloat(validRealtors[0].longitude)
+                    lat: parseFloat(realtorsToShow[0].latitude),
+                    lng: parseFloat(realtorsToShow[0].longitude)
                 });
-                setMapLevel(7); // 더 넓은 시야를 위해 레벨 조정
+                setMapLevel(3);
             }
         } catch (error) {
-            console.error('Error fetching realtors:', error);
+            console.error('Error showing realtor markers:', error);
             setPropertyMarkers([]);
         }
     } else {
@@ -716,7 +723,7 @@ function MapPage() {
                 lat: parseFloat(searchResults[0].latitude),
                 lng: parseFloat(searchResults[0].longitude)
             });
-            setMapLevel(5);
+            setMapLevel(3);
         } else {
             setPropertyMarkers([]);
             updateMapCenter(DEFAULT_CENTER);
@@ -769,7 +776,7 @@ function MapPage() {
             };
             updateMapCenter(center);
             setMapCenter(center);
-            setMapLevel(5); // 더 넓은 시야를 위해 레벨 조정
+            setMapLevel(3);
           } else {
             const center = {
               lat: parseFloat(validResults[0].latitude),
@@ -777,7 +784,7 @@ function MapPage() {
             };
             updateMapCenter(center);
             setMapCenter(center);
-            setMapLevel(5);
+            setMapLevel(3);
           }
         }
       }

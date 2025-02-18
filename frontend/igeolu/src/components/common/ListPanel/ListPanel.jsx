@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Building2, MapPin, Home } from 'lucide-react';
 import './ListPanel.css';
@@ -33,7 +34,7 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                 className='list-item'
                 onClick={() => onItemClick(item)}
               >
-                <div className="item-image-container">
+                <div className={`item-image-container ${type === 'agent' ? 'agent' : ''}`}>
                   <img 
                     src={type === 'room' ? 
                       (item.images?.[0] || '/room-placeholder.jpg') : 
@@ -73,11 +74,9 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                     <>
                       <div className='item-title'>{item.username}</div>
                       <div className='item-subtitle'>{item.title}</div>
-                      <div className='item-details'>
-                        <div className='item-address'>
-                          <MapPin size={16} />
-                          <span>{item.address}</span>
-                        </div>
+                      <div className='item-address'>
+                        <MapPin size={16} />
+                        <span>{item.address}</span>
                       </div>
                     </>
                   )}
