@@ -1,4 +1,3 @@
-
 import "./MobileMyPage.css";
 import { useState, useEffect } from "react";
 import MobileBottomTab from "../../components/MobileBottomTab/MobileBottomTab";
@@ -6,12 +5,14 @@ import { FiEdit } from "react-icons/fi";
 import RealEstateRegistration from "../../components/RealEstateRegistration/RealEstateRegistration";
 import RealEstateEdit from "../../components/RealEstateEdit/RealEstateEdit";
 import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
+import { useNavigate } from 'react-router-dom';
 
 function MobileMyPage() {
   const [realtorInfo, setRealtorInfo] = useState(null);
   const [myProperties, setMyProperties] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +73,10 @@ function MobileMyPage() {
               alt="profile" 
             />
             <div className="mobile-my-page__my-info__profile__name">
-              <div className="mobile-my-page__my-info__profile__edit-icon">
+              <div className="mobile-my-page__my-info__profile__edit-icon"
+                onClick={() => navigate('/mobile-my-page-edit')}
+                style={{ cursor: 'pointer' }}
+              >
                 <FiEdit size={24} color="white" />
               </div>
               <div className="mobile-my-page__my-info__profile__name-text">

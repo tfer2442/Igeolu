@@ -167,6 +167,49 @@ const AdditionalInfoAPI = {
 
       document.head.appendChild(script);
     });
+  },
+
+  // GET: 공인중개사 정보 조회
+  getAgentInfo: async (userId) => {
+    try {
+      console.log('Requesting info for userId:', userId);
+      
+      const response = await submitInstance.get(`/users/${userId}/realtor`);
+      console.log('GET Response:', response);
+      return response;
+    } catch (error) {
+      console.error('GET Error:', error.response?.data);
+      throw error;
+    }
+  },
+
+  // PUT: 공인중개사 정보 업데이트
+  updateAgentInfo: async (userId, data) => {
+    try {
+      const requestData = {
+        title: data.title || "",
+        content: data.content || "",
+        registrationNumber: data.registrationNumber || "",
+        tel: data.tel || "",
+        address: data.address || "",
+        y: String(data.y || ""),
+        x: String(data.x || ""),
+        dongcode: data.dongcode || ""
+      };
+
+      console.log('PUT Request data:', requestData);
+      
+      const response = await submitInstance.put(
+        `/users/${userId}/realtor`,
+        requestData
+      );
+      
+      console.log('PUT Response:', response);
+      return response;
+    } catch (error) {
+      console.error('PUT Error:', error.response?.data);
+      throw error;
+    }
   }
 };
 
