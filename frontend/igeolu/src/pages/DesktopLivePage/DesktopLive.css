@@ -516,12 +516,3 @@
 .question-hide-button:hover {
     color: #ff4444;
 }
-
-.desktop-live-container {
-    height: 100vh;
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-}
