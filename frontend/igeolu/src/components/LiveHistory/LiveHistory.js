@@ -1,5 +1,6 @@
+// src/components/LiveHistory/LiveHistory.js
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Home, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronUp, Home } from 'lucide-react';
 import MyPageModal from '../MyPageModal/MyPageModal';
 import './LiveHistory.css';
 
@@ -54,7 +55,7 @@ const LiveHistory = ({ liveData, onSelectLive, selectedLiveId }) => {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    setExpandedLive(null); // 페이지 변경 시 확장된 항목 초기화
+    setExpandedLive(null);
   };
 
   return (
@@ -82,19 +83,23 @@ const LiveHistory = ({ liveData, onSelectLive, selectedLiveId }) => {
                 }}
               >
                 <div className="live-history-item-content">
-                  <div className="live-history-item-title">
-                    <div className="badge-container">
-                      <span className="live-badge">LIVE</span>
+                  <div className="live-history-item-header-row">
+                    <div className="live-history-main-info">
+                      <span className="live-date">{formatDate(live.createdAt)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <span className="live-time">{formatTime(live.createdAt)}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
                       {isNew(live.createdAt) && <span className="new-badge">NEW</span>}
                     </div>
-                    <span className="live-date">{formatDate(live.createdAt)}</span>
-                    <span className="live-time">{formatTime(live.createdAt)}</span>
                   </div>
                   
                   <div className="live-history-item-info">
-                    <div className="info-item">
+                    <div className="info-item property-count">
                       <Home size={16} />
                       <span>매물 {live.properties?.length || 0}개</span>
+                    </div>
+                    <div className="info-item realtor-info">
+                      <span className="realtor-label">담당 중개인</span>
+                      <span className="realtor-name">{live.realtorName || '미배정'}</span>
                     </div>
                   </div>
                 </div>
@@ -110,6 +115,10 @@ const LiveHistory = ({ liveData, onSelectLive, selectedLiveId }) => {
                     <div 
                       key={property.propertyId}
                       className="property-card"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePropertyDetail(property);
+                      }}
                     >
                       <div className="property-image-container">
                         <img
@@ -119,23 +128,16 @@ const LiveHistory = ({ liveData, onSelectLive, selectedLiveId }) => {
                         />
                       </div>
                       <div className="property-details">
-                        <p className="property-description">{property.description}</p>
-                        <div className="property-footer">
-                          <div className="property-price">
-                            <p className="price-label">보증금/월세</p>
-                            <p className="price-value">
-                              {formatPrice(property.deposit)}/{formatPrice(property.monthlyRent)}만원
-                            </p>
+                        <h4 className="property-description">{property.description}</h4>
+                        <div className="property-price">
+                          <div className="price-item">
+                            <span className="price-label">보증금</span>
+                            <span className="price-value">{formatPrice(property.deposit)}만원</span>
                           </div>
-                          <button 
-                            className="detail-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePropertyDetail(property);
-                            }}
-                          >
-                            상세보기
-                          </button>
+                          <div className="price-item">
+                            <span className="price-label">월세</span>
+                            <span className="price-value">{formatPrice(property.monthlyRent)}만원</span>
+                          </div>
                         </div>
                       </div>
                     </div>
