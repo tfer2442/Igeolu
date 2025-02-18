@@ -203,7 +203,7 @@ function MapPage() {
           lat: parseFloat(validResults[0].latitude),
           lng: parseFloat(validResults[0].longitude),
         });
-        setMapLevel(5);
+        setMapLevel(3);
       } 
       // 검색 결과가 없지만 지역이 선택된 경우, 선택된 지역의 좌표로 이동
       else if (selectedCity && selectedDistrict) {
@@ -433,7 +433,7 @@ function MapPage() {
               lat: parseFloat(validRealtors[0].latitude),
               lng: parseFloat(validRealtors[0].longitude)
             });
-            setMapLevel(5);
+            setMapLevel(3);
           }
         } catch (error) {
           console.error('Error fetching realtors:', error);
