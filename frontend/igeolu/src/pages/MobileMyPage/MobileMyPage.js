@@ -70,14 +70,14 @@ function MobileMyPage() {
           <div className="mobile-my-page__my-info__profile">
             <img 
               src={realtorInfo?.profileImage || "https://via.placeholder.com/120"} 
-              alt="profile" 
+              alt="profile"  
             />
             <div className="mobile-my-page__my-info__profile__name">
               <div className="mobile-my-page__my-info__profile__edit-icon"
                 onClick={() => navigate('/mobile-my-page-edit')}
                 style={{ cursor: 'pointer' }}
               >
-                <FiEdit size={24} color="white" />
+                <FiEdit size={20} color="#01ADFF" />
               </div>
               <div className="mobile-my-page__my-info__profile__name-text">
                 <p id="name">{realtorInfo?.username}</p>
@@ -89,14 +89,20 @@ function MobileMyPage() {
             </div>
           </div>
           <div className="mobile-my-page__my-live-count">
-            <p id="live-count">부동산 라이브 횟수</p>
-            <p id="live-count-number">{realtorInfo?.liveCount}회</p>
+            <div className="live-info">
+              <p id="live-count">부동산 라이브 횟수</p>
+              <p id="live-count-number">{realtorInfo?.liveCount}회</p>
+            </div>
+            <div className="rating-info">
+              <p id="rating">나의 평점</p>
+              <p id="rating-number">{realtorInfo?.ratingAvg?.toFixed(1) || '0.0'}</p>
+            </div>
           </div>
           <div className="mobile-my-page__my-real-estate">
             <p>나의 부동산</p>
             <div className="mobile-my-page__my-real-estate-content">
               <p>등록된 매물</p>
-              <p id="real-estate-count">{myProperties.length}</p>
+              <p id="real-estate-count" style={{ color: '#01ADFF' }}>{myProperties.length}</p>
             </div>
           </div>
         </div>
