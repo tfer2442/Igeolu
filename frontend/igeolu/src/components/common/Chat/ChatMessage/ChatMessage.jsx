@@ -7,6 +7,7 @@ import defaultProfile from '../../../../assets/images/testprofile.jpg';
 import LiveControllerApi from '../../../../services/LiveControllerApi';
 import './ChatMessage.css';
 import { Copy, Video } from 'lucide-react';
+import { useUser } from '../../../../contexts/UserContext';
 
 const ChatMessage = ({
   message,
@@ -22,6 +23,7 @@ const ChatMessage = ({
   const { content, createdAt, senderType } = message;
   const messageTime = format(new Date(message.createdAt), 'HH:mm');
   const isSystemMessage = senderType === 'SYSTEM';
+  const { user } = useUser();
 
   const handleCopy = async (sessionId) => {
     try {
@@ -60,25 +62,29 @@ const ChatMessage = ({
     if (message.senderType === 'SYSTEM') {
       if (message.content.includes('세션 ID:')) {
         const sessionId = message.content.match(/세션 ID: (.*)/)[1];
+        const isRealtor = user?.role === 'ROLE_REALTOR';
+
         return (
           <div data-type='live' className='live-message'>
             <p>라이브 방송이 시작됐어요!</p>
-            <div className='live-buttons'>
-              <button
-                className={`copy-button ${isCopied ? 'copied' : ''}`}
-                onClick={() => handleCopy(sessionId)}
-              >
-                <Copy className='copy-icon' size={14} />
-                {copyText}
-              </button>
-              <button
-                className='live-join-button'
-                onClick={() => handleJoinLive(sessionId)}
-              >
-                <Video className='video-icon' size={14} />
-                방송 참여하기
-              </button>
-            </div>
+            {!isRealtor && (
+              <div className='live-buttons'>
+                <button
+                  className={`copy-button ${isCopied ? 'copied' : ''}`}
+                  onClick={() => handleCopy(sessionId)}
+                >
+                  <Copy className='copy-icon' size={14} />
+                  {copyText}
+                </button>
+                <button
+                  className='live-join-button'
+                  onClick={() => handleJoinLive(sessionId)}
+                >
+                  <Video className='video-icon' size={14} />
+                  방송 참여하기
+                </button>
+              </div>
+            )}
           </div>
         );
       } else if (message.content.includes('새로운 약속')) {

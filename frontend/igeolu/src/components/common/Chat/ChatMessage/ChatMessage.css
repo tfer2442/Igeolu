@@ -394,3 +394,8 @@
   background-color: #0095db;
 }
 
+/* 모바일용 시스템 메시지 스타일 추가 */
+.mobile.sent .message-bubble .message-text {
+  background-color: rgb(240, 240, 240);
+  color: #000000;
+}
