@@ -541,7 +541,7 @@ function DesktopLive() {
   };
 
   return (
-    <div className="desktop-live-container">
+    <div className="desktop-live-page">
       <DesktopLiveAndMyPage />
       <div className='desktop-live-page__content'>
         <div className='desktop-live-page__left-content'>
