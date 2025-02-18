@@ -115,7 +115,7 @@ function DesktopMapPageNav({ onLoginSigninClick, children }) {
   return (
     <nav className='desktop-map-nav'>
       <div className='desktop-map-nav__left'>
-        <Link to='/'>
+        <Link to='/desktop-main'>
           <img src={logo} alt='logo' />
         </Link>
         {children}
