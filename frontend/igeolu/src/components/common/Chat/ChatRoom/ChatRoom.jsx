@@ -126,125 +126,137 @@ const ChatRoom = ({
   ]);
 
   /* 📌 채팅방 초기화 및 WebSocket 연결 */
-useEffect(() => {
-  console.log('[시작] ChatRoom 컴포넌트 마운트/업데이트', {
-    time: new Date().toISOString(),
-    roomId: room.roomId,
-    isActive: isRoomActive,
-  });
-
-  const initializeChat = async () => {
-    const startTime = performance.now();
-    try {
-      // 이미 존재하는 WebSocket 인스턴스 확인
-      if (chatSocketRef.current) {
-        console.log('[WebSocket] 기존 WebSocket 인스턴스 확인', {
-          time: new Date().toISOString(),
-          elapsed: performance.now() - startTime
-        });
-
-        // 기존 인스턴스의 구독이 활성화되어 있는지 확인
-        if (!chatSocketRef.current.subscription || !chatSocketRef.current.stompClient?.connected) {
-          console.log('[WebSocket] 재연결 시작', {
-            time: new Date().toISOString(),
-            elapsed: performance.now() - startTime
-          });
-          
-          await chatSocketRef.current.connect();
-          console.log('[WebSocket] 재연결 완료', {
-            time: new Date().toISOString(),
-            elapsed: performance.now() - startTime
-          });
-          
-          chatSocketRef.current.subscribeToMessages();
-          console.log('[WebSocket] 메시지 구독 완료', {
-            time: new Date().toISOString(),
-            elapsed: performance.now() - startTime
-          });
-        }
-      } else {
-        console.log('[WebSocket] 새 WebSocket 인스턴스 생성 시작', {
-          time: new Date().toISOString(),
-          elapsed: performance.now() - startTime
-        });
-        
-        chatSocketRef.current = new ChatWebSocket(room.roomId, handleNewMessage);
-        await chatSocketRef.current.connect();
-        console.log('[WebSocket] 새 연결 완료', {
-          time: new Date().toISOString(),
-          elapsed: performance.now() - startTime
-        });
-        
-        chatSocketRef.current.subscribeToMessages();
-        console.log('[WebSocket] 새 메시지 구독 완료', {
-          time: new Date().toISOString(),
-          elapsed: performance.now() - startTime
-        });
-      }
-
-      chatSocketRef.current.setActive(isRoomActive);
-      
-      console.log('[API] 메시지 로드 시작', {
-        time: new Date().toISOString(),
-        elapsed: performance.now() - startTime
-      });
-
-      // 메시지 로드
-      const response = await chatApi.getChatMessages(room.roomId);
-      console.log('[API] 메시지 로드 완료', {
-        time: new Date().toISOString(),
-        elapsed: performance.now() - startTime,
-        messageCount: response?.length
-      });
-
-      setMessages(response || []);
-
-      if (isRoomActive) {
-        console.log('[API] 읽음 처리 시작', {
-          time: new Date().toISOString(),
-          elapsed: performance.now() - startTime
-        });
-        
-        await handleMarkAsRead();
-        console.log('[API] 읽음 처리 완료', {
-          time: new Date().toISOString(),
-          elapsed: performance.now() - startTime
-        });
-      }
-
-      scrollToBottom();
-      setIsLoading(false);
-
-      console.log('[완료] 채팅방 초기화 완료', {
-        time: new Date().toISOString(),
-        totalElapsed: performance.now() - startTime
-      });
-    } catch (error) {
-      console.error('[에러] 채팅방 초기화 실패:', {
-        error,
-        time: new Date().toISOString(),
-        elapsed: performance.now() - startTime
-      });
-      setError('채팅 초기화에 실패했습니다.');
-      setIsLoading(false);
-    }
-  };
-
-  initializeChat();
-
-  // Cleanup
-  return () => {
-    console.log('[정리] ChatRoom 컴포넌트 언마운트', {
+  useEffect(() => {
+    console.log('[시작] ChatRoom 컴포넌트 마운트/업데이트', {
       time: new Date().toISOString(),
       roomId: room.roomId,
-      isActive: false,
+      isActive: isRoomActive,
     });
 
-    if (chatSocketRef.current) {
-      chatSocketRef.current.setActive(false);
-    }
-  };
-}, [room.roomId, isRoomActive, handleNewMessage, handleMarkAsRead, scrollToBottom]);
+    const initializeChat = async () => {
+      const startTime = performance.now();
+      try {
+        // 이미 존재하는 WebSocket 인스턴스 확인
+        if (chatSocketRef.current) {
+          console.log('[WebSocket] 기존 WebSocket 인스턴스 확인', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime,
+          });
+
+          // 기존 인스턴스의 구독이 활성화되어 있는지 확인
+          if (
+            !chatSocketRef.current.subscription ||
+            !chatSocketRef.current.stompClient?.connected
+          ) {
+            console.log('[WebSocket] 재연결 시작', {
+              time: new Date().toISOString(),
+              elapsed: performance.now() - startTime,
+            });
+
+            await chatSocketRef.current.connect();
+            console.log('[WebSocket] 재연결 완료', {
+              time: new Date().toISOString(),
+              elapsed: performance.now() - startTime,
+            });
+
+            chatSocketRef.current.subscribeToMessages();
+            console.log('[WebSocket] 메시지 구독 완료', {
+              time: new Date().toISOString(),
+              elapsed: performance.now() - startTime,
+            });
+          }
+        } else {
+          console.log('[WebSocket] 새 WebSocket 인스턴스 생성 시작', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime,
+          });
+
+          chatSocketRef.current = new ChatWebSocket(
+            room.roomId,
+            handleNewMessage
+          );
+          await chatSocketRef.current.connect();
+          console.log('[WebSocket] 새 연결 완료', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime,
+          });
+
+          chatSocketRef.current.subscribeToMessages();
+          console.log('[WebSocket] 새 메시지 구독 완료', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime,
+          });
+        }
+
+        chatSocketRef.current.setActive(isRoomActive);
+
+        console.log('[API] 메시지 로드 시작', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime,
+        });
+
+        // 메시지 로드
+        const response = await chatApi.getChatMessages(room.roomId);
+        console.log('[API] 메시지 로드 완료', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime,
+          messageCount: response?.length,
+        });
+
+        setMessages(response || []);
+
+        if (isRoomActive) {
+          console.log('[API] 읽음 처리 시작', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime,
+          });
+
+          await handleMarkAsRead();
+          console.log('[API] 읽음 처리 완료', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime,
+          });
+        }
+
+        scrollToBottom();
+        setIsLoading(false);
+
+        console.log('[완료] 채팅방 초기화 완료', {
+          time: new Date().toISOString(),
+          totalElapsed: performance.now() - startTime,
+        });
+      } catch (error) {
+        console.error('[에러] 채팅방 초기화 실패:', {
+          error,
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime,
+        });
+        setError('채팅 초기화에 실패했습니다.');
+        setIsLoading(false);
+      }
+    };
+
+    initializeChat();
+
+    // Cleanup
+    return () => {
+      console.log('[정리] ChatRoom 컴포넌트 언마운트', {
+        time: new Date().toISOString(),
+        roomId: room.roomId,
+        isActive: false,
+      });
+
+      if (chatSocketRef.current) {
+        chatSocketRef.current.setActive(false);
+      }
+    };
+  }, [
+    room.roomId,
+    isRoomActive,
+    handleNewMessage,
+    handleMarkAsRead,
+    scrollToBottom,
+  ]);
 
   const handleExitRoom = () => {
     setShowExitModal(true);
@@ -406,6 +418,21 @@ useEffect(() => {
             </div>
           ) : (
             <>
+              {/* 환영 메시지 */}
+              <div className='welcome-message'>
+                <ChatMessage
+                  message={{
+                    userId: 0,
+                    content: `✨ 환영합니다 ${room.userName}님! ✨`, // 별 이모티콘 추가
+                    createdAt: new Date().toISOString(),
+                    senderType: 'SYSTEM',
+                  }}
+                  isCurrentUser={false}
+                  userProfile={null}
+                />
+              </div>
+
+              {/* 실제 메시지 목록 */}
               {messages.map((message, index) => (
                 <ChatMessage
                   key={`${message.roomId}-${message.writerId}-${index}`}
@@ -413,7 +440,7 @@ useEffect(() => {
                     userId: message.writerId,
                     content: message.content,
                     createdAt: message.createdAt,
-                    senderType: message.senderType, // 이 부분 추가
+                    senderType: message.senderType,
                   }}
                   isCurrentUser={message.writerId === currentUserId}
                   userProfile={

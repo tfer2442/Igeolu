@@ -354,7 +354,7 @@ function App() {
               }
             />
             <Route
-              path='/mypage'
+              path='/desktop-my-page'
               element={
                 <PrivateRoute user={user}>
                   <DesktopMyPage onLoginSigninClick={handleLoginClick} />
