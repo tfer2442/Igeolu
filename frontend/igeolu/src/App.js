@@ -29,6 +29,7 @@ import MobileEditPage from './pages/MobileEditPage/MobileEditPage';
 import MobileEstateList from './pages/MobileEstateList/MobileEstateList';
 import MobileLiveSettingPage from './pages/MobileLiveSettingPage/MobileLiveSettingPage';
 import MobileAdditionalInfoPage from './pages/MobileAdditionalInfoPage/MobileAdditionalInfo';
+import MobileMyPageEdit from './pages/MobileMyPageEdit/MobileMyPageEdit';
 
 // Common Components
 import ChatButton from './components/common/Button/ChatButton/ChatButton';
@@ -358,6 +359,7 @@ function App() {
             <Route path='/mobile-main' element={<MobileMainPage />} />
             <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
             <Route path='/mobile-my-page' element={<MobileMyPage />} />
+            <Route path='/mobile-my-page-edit' element={<MobileMyPageEdit />} />
             <Route path='/mobile-live' element={<MobileLivePage />} />
             <Route path='/mobile-register' element={<MobileRegisterPage />} />
             <Route path='/mobile-edit' element={<MobileEditPage />} />
