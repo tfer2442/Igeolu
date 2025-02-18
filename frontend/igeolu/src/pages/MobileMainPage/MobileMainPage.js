@@ -156,7 +156,6 @@ function MobileMainPage() {
       fetchData();
     }
   }, [user, isUserLoading]);
-  
 
   // useEffect(() => {
   //   const fetchRealtorInfo = async () => {
@@ -223,26 +222,35 @@ function MobileMainPage() {
     });
   };
 
-  return (
-    <div className='mobile-main-page-container'>
-      <div className='mobile-main-page'>
-        <MobileTopBar logoSrc={MobileLogo} />
+return (
+  <div className='mobile-main-page-container'>
+    <div className='mobile-main-page'>
+      <MobileTopBar logoSrc={MobileLogo} />
+
+      {/* 컨텐츠를 감싸는 wrapper 추가 */}
+      <div className='mobile-main-page__content-wrapper'>
         <div className='mobile-main-page__top-name'>
           <div className='mobile-main-page__top-name-left'>
             <p id='Name'>{realtorInfo.username}</p>
             <p>공인중개사님</p>
           </div>
         </div>
-        <div className='mobile-main-page__today-live-schedule'>
-        <p>오늘의 일정</p>
+
+        {/* 스케줄 섹션 */}
+        <section className='mobile-main-page__today-live-schedule'>
+          <p>오늘의 일정</p>
           <div className='mobile-main-page__today-live-schedule-content'>
             <p id='Date'>{formatDate(new Date())}</p>
             {todayAppointments.length > 0 ? (
               todayAppointments.map((appointment, index) => (
                 <div key={index}>
                   <p id='reserve-time'>
-                    {formatTime(appointment.scheduledAt)}분 {appointment.memberName}님과의 
-                    {appointment.appointmentType === 'LIVE' ? ' 라이브' : ' 일반'} 예약
+                    {formatTime(appointment.scheduledAt)}{' '}
+                    {appointment.memberName}님과의
+                    {appointment.appointmentType === 'LIVE'
+                      ? ' 라이브'
+                      : ' 일반'}{' '}
+                    일정
                   </p>
                   <p id='appointment-title'>{appointment.title}</p>
                 </div>
@@ -251,15 +259,21 @@ function MobileMainPage() {
               <p id='reserve-time'>오늘은 일정이 없네요!</p>
             )}
           </div>
-        </div>
-        <div className='mobile-main-page__real-estate'>
+        </section>
+
+        {/* 부동산 섹션 */}
+          <section className='mobile-main-page__real-estate'>
           <div className='mobile-main-page__real-estate-title'>
             <p>나의 부동산</p>
           </div>
-          <RealEstateRegistration />
-          <RealEstateEdit />
-        </div>
-        <div className='mobile-main-page__notice'>
+          <div className='mobile-main-page__real-estate-buttons'>
+            <RealEstateRegistration />
+            <RealEstateEdit />
+          </div>
+        </section>
+
+        {/* 공지 섹션 */}
+        <section className='mobile-main-page__notice'>
           <p>공지</p>
           <div
             className='mobile-main-page__notice-slider'
@@ -281,11 +295,12 @@ function MobileMainPage() {
               ))}
             </div>
           </div>
-        </div>
-        <MobileBottomTab />
+        </section>
       </div>
+      <MobileBottomTab />
     </div>
-  );
+  </div>
+);
 }
 
 export default MobileMainPage;
