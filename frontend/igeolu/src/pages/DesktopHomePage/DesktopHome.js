@@ -1,5 +1,6 @@
 import DesktopMainPageNav from '../../components/DesktopNav/DesktopMainPageNav'
 import guideVideo from '../../assets/videos/가이드영상.mp4'
+import sampleVideo from '../../assets/videos/메인영상샘플.mp4'
 import './DesktopHome.css'
 import rightTopBlock from '../../assets/images/우측상단.png'
 import leftBottomBlock from '../../assets/images/좌측하단.png'
@@ -18,7 +19,7 @@ function DesktopHome() {
             loop 
             className="background-video"
           >
-            <source src={guideVideo} type="video/mp4" />
+            <source src={sampleVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           <img src={rightTopBlock} alt="rightTopBlock" className="right-top-block" />

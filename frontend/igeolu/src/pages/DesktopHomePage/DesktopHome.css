@@ -30,6 +30,6 @@
 .left-bottom-block {
     position: absolute;
     bottom: 0;
-    left: 8.35%;  /* 100% - 83% = 17%, 17% ÷ 2 = 8.5% */
+    left: 8.199%;  /* 100% - 83% = 17%, 17% ÷ 2 = 8.5% */
     z-index: 1;
 }
