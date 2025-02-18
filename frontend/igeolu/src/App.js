@@ -67,7 +67,8 @@ function App() {
 
   // === 3. Route Management ===
   const location = useLocation();
-  const isDesktopHomePage = location.pathname === '/';
+  const isDesktopHomePage = location.pathname === '/desktop-main';
+  const isDesktopMapPage = location.pathname === '/map';
   const isDesktopMyPage = location.pathname === '/my-page';
 
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
@@ -214,7 +215,7 @@ function App() {
   // 채팅방 목록 초기 로드
   const fetchChatRooms = useCallback(async () => {
     if (!user?.userId || !user?.role) return;
-  
+
     try {
       setIsLoading(true);
       setError(null);
@@ -285,7 +286,7 @@ function App() {
 
   // === 7. UI Rendering Methods ===
   const renderChatInterface = () => {
-    if (isDesktopHomePage || isDesktopMyPage)
+    if (isDesktopHomePage || isDesktopMyPage || isDesktopMapPage)
       return (
         <>
           <ChatButton onClick={handleToggleChat} />
@@ -342,7 +343,16 @@ function App() {
             />
             <Route
               path='/map'
-              element={<Map onLoginSigninClick={handleLoginClick} />}
+              element={
+                <Map
+                  onLoginSigninClick={handleLoginClick}
+                  setIsOpen={setIsOpen}
+                  setSelectedRoom={setSelectedRoom}
+                  setChatRooms={setChatRooms} // 추가
+                  currentUserId={currentUserId} // 현재 사용자 ID도 필요
+                  userRole={user?.role} // 사용자 역할도 전달
+                />
+              }
             />
             <Route
               path='/mypage'
