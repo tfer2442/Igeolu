@@ -297,8 +297,8 @@ const DetailPanel = ({
                                             </div>
                                             <div className='property-list-item-content'>
                                                 <div className='property-list-price'>
-                                                    <span className='deposit'>{property.deposit?.toLocaleString()}만원</span>
-                                                    <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}만원</span>
+                                                    <span className='deposit'>{property.deposit?.toLocaleString()} / </span>
+                                                    <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}</span>
                                                 </div>
                                                 <div className='property-list-info'>
                                                     <span className='address'>{property.address}</span>
