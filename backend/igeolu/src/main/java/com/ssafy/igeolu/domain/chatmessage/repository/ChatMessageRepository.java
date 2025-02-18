@@ -12,6 +12,9 @@ public interface ChatMessageRepository extends ReactiveMongoRepository<ChatMessa
 	// 특정 채팅방의 모든 메시지 조회
 	Flux<ChatMessage> findAllByRoomId(Integer roomId);
 
+	// 특정 id 이후 모든 메시지 조회
+	Flux<ChatMessage> findAllByRoomIdAndIdGreaterThan(Integer roomId, ObjectId lastExitRoomMessageId);
+
 	// 특정 채팅방에서 가장 최근 메시지 조회
 	Mono<ChatMessage> findFirstByRoomIdOrderByIdDesc(Integer roomId);
 
