@@ -363,8 +363,20 @@
 
 .agent-stat-row {
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rating-header {
+    display: flex;
     align-items: center;
-    gap: 0.1rem;
+    gap: 0.5rem;
+}
+
+.rating-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .stat-label {
@@ -376,14 +388,14 @@
 .rating-value {
     display: flex;
     align-items: center;
-    transform: scale(0.8);
+    transform: scale(1.1);
     transform-origin: left center;
 }
 
 .live-count {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.5rem;
 }
 
 .live-count-value {
