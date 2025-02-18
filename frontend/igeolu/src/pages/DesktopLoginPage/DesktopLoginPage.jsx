@@ -74,7 +74,7 @@ const LoginPage = () => {
       
       // 로그인 성공 처리 및 리다이렉트
       console.log('로그인 성공! 최종 데이터:', data);
-      window.location.href = 'https://i12d205.p.ssafy.io/';
+      window.location.href = 'https://i12d205.p.ssafy.io/desktop-main';
       
     } catch (err) {
       // 에러 상세 로깅

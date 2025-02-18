@@ -244,7 +244,6 @@ function App() {
     setIsChatRoomOpen(true); // 채팅방 열기
   };
   const handleBack = () => {
-    console.log('----------너 동작하니?');
     setSelectedRoom(null);
     setActiveRoomId(null);
     setIsChatRoomOpen(false); // 채팅방 닫기
