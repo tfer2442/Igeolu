@@ -126,76 +126,125 @@ const ChatRoom = ({
   ]);
 
   /* 📌 채팅방 초기화 및 WebSocket 연결 */
-  useEffect(() => {
-    console.log('ChatRoom: Component mounted/updated', {
-      roomId: room.roomId,
-      isActive: isRoomActive,
-    });
+useEffect(() => {
+  console.log('[시작] ChatRoom 컴포넌트 마운트/업데이트', {
+    time: new Date().toISOString(),
+    roomId: room.roomId,
+    isActive: isRoomActive,
+  });
 
-    const initializeChat = async () => {
-      try {
-        // 이미 존재하는 WebSocket 인스턴스 확인
-        if (chatSocketRef.current) {
-          // 기존 인스턴스의 구독이 활성화되어 있는지 확인
-          if (
-            !chatSocketRef.current.subscription ||
-            !chatSocketRef.current.stompClient?.connected
-          ) {
-            console.log('ChatRoom: Reestablishing WebSocket connection');
-            await chatSocketRef.current.connect();
-            chatSocketRef.current.subscribeToMessages();
-          }
-        } else {
-          // 새로운 WebSocket 인스턴스 생성 및 연결
-          console.log('ChatRoom: Creating new WebSocket instance');
-          chatSocketRef.current = new ChatWebSocket(
-            room.roomId,
-            handleNewMessage
-          );
+  const initializeChat = async () => {
+    const startTime = performance.now();
+    try {
+      // 이미 존재하는 WebSocket 인스턴스 확인
+      if (chatSocketRef.current) {
+        console.log('[WebSocket] 기존 WebSocket 인스턴스 확인', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime
+        });
+
+        // 기존 인스턴스의 구독이 활성화되어 있는지 확인
+        if (!chatSocketRef.current.subscription || !chatSocketRef.current.stompClient?.connected) {
+          console.log('[WebSocket] 재연결 시작', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime
+          });
+          
           await chatSocketRef.current.connect();
+          console.log('[WebSocket] 재연결 완료', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime
+          });
+          
           chatSocketRef.current.subscribeToMessages();
+          console.log('[WebSocket] 메시지 구독 완료', {
+            time: new Date().toISOString(),
+            elapsed: performance.now() - startTime
+          });
         }
-
-        // 활성화 상태 업데이트
-        chatSocketRef.current.setActive(isRoomActive);
-
-        // 메시지 로드
-        const response = await chatApi.getChatMessages(room.roomId);
-        setMessages(response || []);
-
-        if (isRoomActive) {
-          await handleMarkAsRead();
-        }
-
-        scrollToBottom();
-        setIsLoading(false);
-      } catch (error) {
-        console.error('ChatRoom: Initialization failed:', error);
-        setError('채팅 초기화에 실패했습니다.');
-        setIsLoading(false);
+      } else {
+        console.log('[WebSocket] 새 WebSocket 인스턴스 생성 시작', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime
+        });
+        
+        chatSocketRef.current = new ChatWebSocket(room.roomId, handleNewMessage);
+        await chatSocketRef.current.connect();
+        console.log('[WebSocket] 새 연결 완료', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime
+        });
+        
+        chatSocketRef.current.subscribeToMessages();
+        console.log('[WebSocket] 새 메시지 구독 완료', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime
+        });
       }
-    };
 
-    initializeChat();
-
-    // Cleanup
-    return () => {
-      console.log('ChatRoom: Component unmounting', {
-        roomId: room.roomId,
-        isActive: false,
+      chatSocketRef.current.setActive(isRoomActive);
+      
+      console.log('[API] 메시지 로드 시작', {
+        time: new Date().toISOString(),
+        elapsed: performance.now() - startTime
       });
 
-      if (chatSocketRef.current) {
-        chatSocketRef.current.setActive(false);
+      // 메시지 로드
+      const response = await chatApi.getChatMessages(room.roomId);
+      console.log('[API] 메시지 로드 완료', {
+        time: new Date().toISOString(),
+        elapsed: performance.now() - startTime,
+        messageCount: response?.length
+      });
+
+      setMessages(response || []);
+
+      if (isRoomActive) {
+        console.log('[API] 읽음 처리 시작', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime
+        });
+        
+        await handleMarkAsRead();
+        console.log('[API] 읽음 처리 완료', {
+          time: new Date().toISOString(),
+          elapsed: performance.now() - startTime
+        });
       }
-    };
-  }, [
-    room.roomId,
-    isRoomActive,
-    handleNewMessage,
-    handleMarkAsRead,
-    scrollToBottom,
-  ]);
+
+      scrollToBottom();
+      setIsLoading(false);
+
+      console.log('[완료] 채팅방 초기화 완료', {
+        time: new Date().toISOString(),
+        totalElapsed: performance.now() - startTime
+      });
+    } catch (error) {
+      console.error('[에러] 채팅방 초기화 실패:', {
+        error,
+        time: new Date().toISOString(),
+        elapsed: performance.now() - startTime
+      });
+      setError('채팅 초기화에 실패했습니다.');
+      setIsLoading(false);
+    }
+  };
+
+  initializeChat();
+
+  // Cleanup
+  return () => {
+    console.log('[정리] ChatRoom 컴포넌트 언마운트', {
+      time: new Date().toISOString(),
+      roomId: room.roomId,
+      isActive: false,
+    });
+
+    if (chatSocketRef.current) {
+      chatSocketRef.current.setActive(false);
+    }
+  };
+}, [room.roomId, isRoomActive, handleNewMessage, handleMarkAsRead, scrollToBottom]);
 
   const handleExitRoom = () => {
     setShowExitModal(true);
