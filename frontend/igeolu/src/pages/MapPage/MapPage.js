@@ -403,6 +403,19 @@ function MapPage() {
             }));
   
           setSearchResults(validRealtors);
+          setPropertyMarkers(validRealtors); // 여기를 추가
+
+          if (validRealtors.length > 0) {
+            const firstRealtor = validRealtors[0];
+            updateMapCenter({
+              lat: parseFloat(firstRealtor.latitude),
+              lng: parseFloat(firstRealtor.longitude)
+            });
+
+            // 지역 필터가 적용된 경우는 더 자세히 보여주기 위해 레벨 3으로,
+            // 그렇지 않은 경우는 전체를 보여주기 위해 레벨 7로 설정
+            setMapLevel(selectedCity ? 3 : 7);
+          }
           
           // 현재 선택된 공인중개사가 검색 결과에 없는 경우에만 DetailPanel 닫기
           if (selectedItem && selectedItem.type === 'agent') {
@@ -425,6 +438,7 @@ function MapPage() {
         } catch (error) {
           console.error('Error fetching realtors:', error);
           setSearchResults([]);
+          setPropertyMarkers([]); // 에러 시 마커도 초기화
         }
       };
   
