@@ -263,8 +263,7 @@ function MobileMyPageEdit() {
                 const response = await AdditionalInfoAPI.updateAgentInfo(user.userId, apiRequestData);
                 
                 if (response) {
-                    alert('정보가 성공적으로 수정되었습니다.');
-                    navigate('/mobile-mypage');
+                    navigate('/mobile-my-page');
                 }
             } catch (error) {
                 console.error('정보 수정 실패:', error);
