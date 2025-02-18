@@ -50,12 +50,13 @@
     border: 1px solid #403F3F;
     border-radius: 15px;
     padding: 10px;
+    margin-top: 20px;
 }
 .mobile-my-page__my-info__profile img {
     width: 120px;
     height: 120px;
     border-radius: 10px;
-    border: 1px solid #403F3F;
+    object-fit: cover;
 }
 .mobile-my-page__my-info__profile__name {
     display: flex;
@@ -73,6 +74,7 @@
     flex-direction: column;
     gap: 5px;
     width: 100%;
+    margin-left: 5px;
 }
 .mobile-my-page__my-info__profile__name-text p {
     font-size: 13px;
@@ -87,21 +89,30 @@
 .mobile-my-page__my-live-count {
     display: flex;
     justify-content: space-between;
-    align-items: center;  
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
     margin-top: 30px;
-    border-bottom: 1px solid #403F3F;
-    padding-bottom: 10px;
 }
-#live-count {
-    font-size: 24px;
-    color: white;
-    font-weight: bold;
+
+.live-info, .rating-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
-#live-count-number {
+
+#live-count, #rating {
     font-size: 16px;
+    color: white;
+}
+
+#live-count-number, #rating-number {
+    font-size: 24px;
     color: #01ADFF;
     font-weight: normal;
 }
+
 .mobile-my-page__my-real-estate {
     display: flex;
     flex-direction: column;
@@ -109,9 +120,9 @@
     gap: 10px;
 }
 .mobile-my-page__my-real-estate p {
-    font-size: 20px;
+    font-size: 24px;
     color: white;
-    font-weight: normal;
+    font-weight: bold;
     margin: 0;
 }
 .mobile-my-page__my-real-estate-content {
@@ -119,17 +130,35 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-top: 10px;
 }
-#real-estate-count {
+.mobile-my-page__my-real-estate-content p {
     font-size: 16px;
-    color: #01ADFF;
     font-weight: normal;
 }
 .mobile-my-page__component-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 30px;
+    margin-top: 20px;
     width:100%;
     align-items: center;
+}
+.mobile-my-page__my-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.mobile-my-page__my-rating #rating {
+    font-size: 16px;
+    color: white;
+}
+
+.mobile-my-page__my-rating #rating-number {
+    font-size: 24px;
+    color: #01ADFF;
+    font-weight: normal;
 }

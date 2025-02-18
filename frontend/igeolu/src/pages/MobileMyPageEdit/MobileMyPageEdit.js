@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import PropTypes from 'prop-types';
 import './MobileMyPageEdit.css';
+import MobileBottomTab from "../../components/MobileBottomTab/MobileBottomTab";
+
 import AdditionalInfoAPI from '../../services/AdditionalInfoApi';
 import { 
     Dialog, 
@@ -254,26 +256,23 @@ function MobileMyPageEdit() {
                     registrationNumber: formData.registrationNumber,
                     tel: formData.tel,
                     address: formData.address,
-                    y: String(formData.latitude),
                     x: String(formData.longitude),
+                    y: String(formData.latitude),
                     dongcode: formData.dongcode
                 };
 
                 console.log('Submitting data:', apiRequestData);
-                const response = await AdditionalInfoAPI.updateAgentInfo(user.userId, apiRequestData);
-                
-                if (response) {
-                    alert('정보가 성공적으로 수정되었습니다.');
-                    navigate('/mobile-mypage');
-                }
+                await AdditionalInfoAPI.updateAgentInfo(user.userId, apiRequestData);
             } catch (error) {
                 console.error('정보 수정 실패:', error);
-                alert('정보 수정에 실패했습니다. 다시 시도해주세요.');
+            } finally {
+                navigate('/mobile-my-page');
             }
         }
     };
     return (
         <div className="additional-info-container">
+            
             <div className="additional-info-wrapper">
                 <form onSubmit={handleSubmit} className="info-form">
                     <div className="form-group">
@@ -366,6 +365,7 @@ function MobileMyPageEdit() {
                 results={addressResults}
                 onSelect={handleAddressSelect}
             />
+            <MobileBottomTab />
         </div>
     );
 }
