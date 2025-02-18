@@ -56,10 +56,6 @@
     width: 120px;
     height: 120px;
     border-radius: 10px;
-<<<<<<< HEAD
-    border: 1px solid #403F3F;
-=======
->>>>>>> reborn
     object-fit: cover;
 }
 .mobile-my-page__my-info__profile__name {
