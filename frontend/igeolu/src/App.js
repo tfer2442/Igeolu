@@ -333,7 +333,7 @@ function App() {
             <Route
               path='/desktop-main'
               element={
-                <PrivateRoute user={user}>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
                   <DesktopHome />
                 </PrivateRoute>
               }
@@ -341,7 +341,7 @@ function App() {
             <Route
               path='/map'
               element={
-                <PrivateRoute user={user}>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
                   <Map
                     onLoginSigninClick={handleLoginClick}
                     setIsOpen={setIsOpen}
@@ -356,7 +356,7 @@ function App() {
             <Route
               path='/desktop-my-page'
               element={
-                <PrivateRoute user={user}>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
                   <DesktopMyPage onLoginSigninClick={handleLoginClick} />
                 </PrivateRoute>
               }
@@ -364,7 +364,7 @@ function App() {
             <Route
               path='/live'
               element={
-                <PrivateRoute user={user}>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
                   <DesktopLive onLoginSigninClick={handleLoginClick} />
                 </PrivateRoute>
               }
@@ -372,7 +372,7 @@ function App() {
             <Route
               path='/live-join'
               element={
-                <PrivateRoute user={user}>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
                   <DesktopLiveJoinPage onLoginSigninClick={handleLoginClick} />
                 </PrivateRoute>
               }
@@ -382,7 +382,7 @@ function App() {
             <Route
               path='/mobile-main'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileMainPage />
                 </PrivateRoute>
               }
@@ -390,7 +390,7 @@ function App() {
             <Route
               path='/mobile-calendar'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileCalendarPage />
                 </PrivateRoute>
               }
@@ -398,7 +398,7 @@ function App() {
             <Route
               path='/mobile-my-page'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileMyPage />
                 </PrivateRoute>
               }
@@ -406,7 +406,7 @@ function App() {
             <Route
               path='/mobile-my-page-edit'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileMyPageEdit />
                 </PrivateRoute>
               }
@@ -414,7 +414,7 @@ function App() {
             <Route
               path='/mobile-live'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileLivePage />
                 </PrivateRoute>
               }
@@ -422,7 +422,7 @@ function App() {
             <Route
               path='/mobile-edit'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileEditPage />
                 </PrivateRoute>
               }
@@ -430,7 +430,7 @@ function App() {
             <Route
               path='/mobile-estate-list'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileEstateList />
                 </PrivateRoute>
               }
@@ -438,7 +438,7 @@ function App() {
             <Route
               path='/mobile-live-setting'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileLiveSettingPage />
                 </PrivateRoute>
               }
@@ -446,7 +446,7 @@ function App() {
             <Route
               path='/mobile-chat'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileChatList
                     chatRooms={chatRooms}
                     isLoading={isLoading}
@@ -460,8 +460,17 @@ function App() {
             <Route
               path='/mobile-chat/:roomId'
               element={
-                <PrivateRoute user={user} isMobile>
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileChatRoom currentUserId={currentUserId} />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path='/mobile-register'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileRegisterPage />
                 </PrivateRoute>
               }
             />
@@ -470,7 +479,7 @@ function App() {
             <Route
               path='/login'
               element={
-                <AuthRoute user={user}>
+                <AuthRoute user={user} isUserInitialized={isUserInitialized}>
                   <DesktopLogin />
                 </AuthRoute>
               }
@@ -478,16 +487,8 @@ function App() {
             <Route
               path='/mobile-login'
               element={
-                <AuthRoute user={user} isMobile>
+                <AuthRoute user={user} isUserInitialized={isUserInitialized} isMobile>
                   <MobileLoginPage />
-                </AuthRoute>
-              }
-            />
-            <Route
-              path='/mobile-register'
-              element={
-                <AuthRoute user={user} isMobile>
-                  <MobileRegisterPage />
                 </AuthRoute>
               }
             />

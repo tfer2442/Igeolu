@@ -8,6 +8,7 @@ import LiveControllerApi from '../../services/LiveControllerApi';
 import UserControllerApi from '../../services/UserControllerApi';
 import MyPageModal from '../../components/MyPageModal/MyPageModal';
 import PropertySlider from '../../components/PropertySlider/PropertySlider';
+import LiveHistory from '../../components/LiveHistory/LiveHistory';
 import { appointmentAPI } from '../../services/AppointmentApi';
 import { FaCamera, FaTimes } from 'react-icons/fa';
 
@@ -19,16 +20,16 @@ function DesktopMyPage() {
   const [userInfo, setUserInfo] = useState(null);
   const [realtorInfos, setRealtorInfos] = useState({});
   const [appointments, setAppointments] = useState([]);
-  
+
   // 각 섹션별 로딩 상태 관리
   const [loading, setLoading] = useState({
     user: true,
     appointments: true,
-    lives: true
+    lives: true,
   });
 
   // 전체 로딩 상태 계산
-  const isLoading = Object.values(loading).some(status => status);
+  const isLoading = Object.values(loading).some((status) => status);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -37,13 +38,13 @@ function DesktopMyPage() {
         setLoading({
           user: false,
           appointments: false,
-          lives: false
+          lives: false,
         });
         return;
       }
 
       const { userId } = JSON.parse(cachedUser);
-      
+
       try {
         // 병렬로 데이터 fetch
         await Promise.all([
@@ -53,7 +54,7 @@ function DesktopMyPage() {
               const response = await UserControllerApi.getUserInfo(userId);
               setUserInfo(response);
             } finally {
-              setLoading(prev => ({ ...prev, user: false }));
+              setLoading((prev) => ({ ...prev, user: false }));
             }
           })(),
 
@@ -61,12 +62,12 @@ function DesktopMyPage() {
           (async () => {
             try {
               const response = await appointmentAPI.getAppointments(userId);
-              const sortedAppointments = response.data.sort((a, b) => 
-                new Date(a.scheduledAt) - new Date(b.scheduledAt)
+              const sortedAppointments = response.data.sort(
+                (a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt)
               );
               setAppointments(sortedAppointments);
             } finally {
-              setLoading(prev => ({ ...prev, appointments: false }));
+              setLoading((prev) => ({ ...prev, appointments: false }));
             }
           })(),
 
@@ -77,23 +78,24 @@ function DesktopMyPage() {
               const livesWithProperties = await Promise.all(
                 lives.map(async (live) => ({
                   ...live,
-                  properties: (await LiveControllerApi.getLiveProperties(live.liveId)) || [],
+                  properties:
+                    (await LiveControllerApi.getLiveProperties(live.liveId)) ||
+                    [],
                 }))
               );
               setLiveData(livesWithProperties);
             } finally {
-              setLoading(prev => ({ ...prev, lives: false }));
+              setLoading((prev) => ({ ...prev, lives: false }));
             }
-          })()
+          })(),
         ]);
-
       } catch (error) {
         console.error('Error fetching initial data:', error);
         // 에러 발생시에도 로딩 상태 해제
         setLoading({
           user: false,
           appointments: false,
-          lives: false
+          lives: false,
         });
       }
     };
@@ -176,8 +178,8 @@ function DesktopMyPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
-      setLoading(prev => ({ ...prev, user: true }));
+
+      setLoading((prev) => ({ ...prev, user: true }));
       await UserControllerApi.updateProfileImage(formData);
       const cachedUser = localStorage.getItem('user');
       if (cachedUser) {
@@ -189,13 +191,13 @@ function DesktopMyPage() {
       console.error('Error updating profile image:', error);
       alert('프로필 이미지 업데이트에 실패했습니다. 다시 시도해주세요.');
     } finally {
-      setLoading(prev => ({ ...prev, user: false }));
+      setLoading((prev) => ({ ...prev, user: false }));
     }
   };
 
   const handleImageDelete = async () => {
     try {
-      setLoading(prev => ({ ...prev, user: true }));
+      setLoading((prev) => ({ ...prev, user: true }));
       await UserControllerApi.deleteProfileImage();
       const cachedUser = localStorage.getItem('user');
       if (cachedUser) {
@@ -207,16 +209,16 @@ function DesktopMyPage() {
       console.error('Error deleting profile image:', error);
       alert('프로필 이미지 삭제에 실패했습니다.');
     } finally {
-      setLoading(prev => ({ ...prev, user: false }));
+      setLoading((prev) => ({ ...prev, user: false }));
     }
   };
 
   // 전체 페이지 로딩 중일 때
   if (isLoading) {
     return (
-      <div className="desktop-my-page loading">
+      <div className='desktop-my-page loading'>
         <DesktopLiveAndMyPage />
-        <div className="loading-spinner">데이터를 불러오는 중입니다...</div>
+        <div className='loading-spinner'>데이터를 불러오는 중입니다...</div>
       </div>
     );
   }
@@ -224,29 +226,32 @@ function DesktopMyPage() {
   return (
     <div className='desktop-my-page'>
       <DesktopLiveAndMyPage />
-      
+
       {/* 회원 정보 섹션 */}
       <div className='user-info'>
         <p>회원정보</p>
         <div className='user-info-content'>
           <div className='user-info-content-img'>
-            <div className="profile-image-container">
+            <div className='profile-image-container'>
               <img
                 src={userInfo?.imageUrl || defaultProfile}
                 alt='프로필 이미지'
               />
               {userInfo?.imageUrl && (
-                <div className="delete-overlay">
-                  <FaTimes className="delete-icon" onClick={handleImageDelete} />
+                <div className='delete-overlay'>
+                  <FaTimes
+                    className='delete-icon'
+                    onClick={handleImageDelete}
+                  />
                 </div>
               )}
             </div>
-            <label htmlFor="profile-image-input" className="image-edit-button">
+            <label htmlFor='profile-image-input' className='image-edit-button'>
               <FaCamera />
               <input
-                type="file"
-                id="profile-image-input"
-                accept="image/*"
+                type='file'
+                id='profile-image-input'
+                accept='image/*'
                 onChange={handleImageUpdate}
                 style={{ display: 'none' }}
               />
@@ -278,10 +283,10 @@ function DesktopMyPage() {
               key={appointment.appointmentId}
               className='user-info-schedule-content'
             >
-              <div className="date-container">
+              <div className='date-container'>
                 <p>{formatDate(appointment.scheduledAt)}</p>
-                {appointment.appointmentType === "LIVE" && (
-                  <span className="live-badge">LIVE</span>
+                {appointment.appointmentType === 'LIVE' && (
+                  <span className='live-badge'>LIVE</span>
                 )}
               </div>
               <p>{appointment.title || '일정 내용 없음'}</p>
@@ -293,6 +298,22 @@ function DesktopMyPage() {
 
       {/* 라이브 매물 섹션 */}
       <div className='user-info-record'>
+        {liveData.length > 0 ? (
+          <LiveHistory
+            liveData={liveData}
+            onSelectLive={(live) => {
+              const index = liveData.findIndex((l) => l.liveId === live.liveId);
+              setCurrentLiveIndex(index);
+            }}
+            selectedLiveId={liveData[currentLiveIndex]?.liveId}
+          />
+        ) : (
+          <p>라이브 기록이 없습니다.</p>
+        )}
+      </div>
+
+        {/* -------------------- 기존 스타일 -----------------------------*/}
+      {/* <div className='user-info-record'>
         {liveData.length > 0 ? (
           <>
             <LiveCarousel
@@ -311,7 +332,7 @@ function DesktopMyPage() {
         ) : (
           <p>라이브 기록이 없습니다.</p>
         )}
-      </div>
+      </div> */}
 
       {isModalOpen && (
         <MyPageModal
