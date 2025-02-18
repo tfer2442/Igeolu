@@ -65,9 +65,10 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     }
 
     try {
-      // 로컬 시간을 그대로 ISO 문자열로 변환
+      // 수정된 부분: 타임존 오프셋을 고려한 ISO 문자열 변환
       const localDate = new Date(formData.scheduledAt);
-      const isoDate = localDate.toISOString();
+      const offset = localDate.getTimezoneOffset() * 60000;
+      const isoDate = new Date(localDate.getTime() - offset).toISOString();
   
       const response = await appointmentAPI.createAppointment({
         ...formData,
@@ -104,7 +105,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
       console.error('Failed to create appointment:', error);
       setError('약속 생성에 실패했습니다. 다시 시도해주세요.');
     }
-  };
+};
 
   useEffect(() => {
     const handleEscapeKey = (e) => {
