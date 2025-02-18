@@ -1,13 +1,12 @@
-// src/components/common/Chat/ChatMessage/ChatMessage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import { Copy, Video } from 'lucide-react';
 import defaultProfile from '../../../../assets/images/testprofile.jpg';
 import LiveControllerApi from '../../../../services/LiveControllerApi';
-import './ChatMessage.css';
-import { Copy, Video } from 'lucide-react';
 import { useUser } from '../../../../contexts/UserContext';
+import './ChatMessage.css';
 
 const ChatMessage = ({
   message,
@@ -17,9 +16,10 @@ const ChatMessage = ({
     profileUrl: '',
   },
 }) => {
-  const navigate = useNavigate(); // useNavigate 추가
-  const [copyText, setCopyText] = useState('세션 ID'); // 상위 레벨로 이동
+  const navigate = useNavigate();
+  const [copyText, setCopyText] = useState('세션 ID');
   const [isCopied, setIsCopied] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
   const { content, createdAt, senderType } = message;
   const messageTime = format(new Date(message.createdAt), 'HH:mm');
   const isSystemMessage = senderType === 'SYSTEM';
@@ -31,7 +31,6 @@ const ChatMessage = ({
       setIsCopied(true);
       setCopyText('복사됨!');
 
-      // 2초 후에 버튼 상태 복원
       setTimeout(() => {
         setIsCopied(false);
         setCopyText('세션 ID');
@@ -54,7 +53,12 @@ const ChatMessage = ({
       });
     } catch (error) {
       console.error('라이브 참여 실패:', error);
-      // 에러 처리 (필요한 경우 사용자에게 알림)
+      setShowErrorAlert(true);
+      
+      // 3초 후 에러 알림 자동 닫기
+      setTimeout(() => {
+        setShowErrorAlert(false);
+      }, 3000);
     }
   };
 
@@ -67,6 +71,12 @@ const ChatMessage = ({
         return (
           <div data-type='live' className='live-message'>
             <p>라이브 방송이 시작됐어요!</p>
+            {showErrorAlert && (
+              <div className="error-alert">
+                <span className="error-icon">⚠️</span>
+                이미 종료된 라이브 방송입니다.
+              </div>
+            )}
             {!isRealtor && (
               <div className='live-buttons'>
                 <button
@@ -98,7 +108,6 @@ const ChatMessage = ({
     <div
       className={`message-wrapper ${isCurrentUser ? 'sent' : 'received'} ${isSystemMessage ? 'system' : ''}`}
     >
-      {/* 시스템 메시지 */}
       {isSystemMessage && (
         <div className='message-content system-content'>
           <div className='message-bubble system-bubble'>
@@ -109,7 +118,6 @@ const ChatMessage = ({
         </div>
       )}
 
-      {/* 받은 메시지 */}
       {!isCurrentUser && !isSystemMessage && (
         <div className='message-profile-container'>
           <div className='message-profile'>
@@ -141,7 +149,6 @@ const ChatMessage = ({
         </div>
       )}
 
-      {/* 보낸 메시지 */}
       {isCurrentUser && !isSystemMessage && (
         <div className='message-content'>
           <div className='message-bubble'>
@@ -154,7 +161,6 @@ const ChatMessage = ({
   );
 };
 
-// PropTypes는 그대로 유지
 ChatMessage.propTypes = {
   message: PropTypes.shape({
     userId: PropTypes.number.isRequired,

@@ -399,3 +399,60 @@
   background-color: rgb(240, 240, 240);
   color: #000000;
 }
+
+/* 📌 에러 알림 스타일 */
+.error-alert {
+  background-color: #FFF1F0;
+  border: 1px solid #FFB4B0;
+  color: #FF4D4F;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  width: 100%;
+  animation: fadeInOut 3s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.error-icon {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+/* 에러 알림 애니메이션 */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* 모바일 환경에서의 에러 알림 스타일 */
+.mobile .error-alert {
+  background-color: #4A1414;
+  border-color: #842626;
+  color: #FFCCC7;
+}
+
+/* live-message 내부의 error-alert 특별 스타일 */
+.live-message .error-alert {
+  max-width: 300px;
+  margin: 4px auto;
+  justify-content: center;
+  font-weight: 500;
+}

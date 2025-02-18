@@ -1,3 +1,4 @@
+/* MobileMyPage.css */
 .mobile-my-page-container {
     display: flex;
     justify-content: center;
@@ -91,7 +92,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 0 20px;
+    padding: 0 50px 0 30px;
     margin-top: 30px;
 }
 
