@@ -20,6 +20,9 @@ public class LiveGetResponseDto {
 	@Schema(description = "라이브 생성한 공인중개사 id")
 	private Integer realtorId;
 
+	@Schema(description = "라이브 생성한 공인중개사 이름")
+	private String realtorName;
+
 	@Schema(description = "생성일")
 	private LocalDateTime createdAt;
 }

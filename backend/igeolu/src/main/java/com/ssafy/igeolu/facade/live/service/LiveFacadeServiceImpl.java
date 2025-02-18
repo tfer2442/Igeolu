@@ -134,6 +134,9 @@ public class LiveFacadeServiceImpl implements LiveFacadeService {
 				.realtorId(
 					liveSession.getRealtor().getId()
 				)
+				.realtorName(
+					liveSession.getRealtor().getUsername()
+				)
 				.createdAt(liveSession.getCreatedAt())
 				.build()
 			)
