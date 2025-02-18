@@ -413,52 +413,48 @@ function MobileRegisterPage() {
             </div>
           )}
 
-          {!isSearching &&
-            !searchError &&
-            addressResults.length === 0 &&
-            addressKeyword && (
-              <div className='no-results' style={{ color: 'white' }}>
-                검색 결과가 없습니다.
-              </div>
-            )}
+{!isSearching && !searchError && addressResults.length === 0 && addressKeyword && (
+                        <div className="no-results" style={{ color: 'white', backgroundColor: '#2F2E2E',margin:0 }}>
+                            검색 결과가 없습니다.
+                        </div>
+                    )}
 
-          {address && (
-            <div className='selected-address'>선택된 주소: {address}</div>
-          )}
-        </div>
-        <div className='mobile-register-page__option'>
-          <div className='option-label' onClick={toggleOptions}>
-            <span>옵션</span>
-            <span>{optionsVisible ? '▲' : '▼'}</span>
-          </div>
-          {optionsVisible && (
-            <div className='options-container'>
-              {optionsList.map((option) => (
-                <span
-                  key={option.optionId}
-                  className={`option-item ${selectedOptions.includes(option.optionId) ? 'selected' : ''}`}
-                  onClick={() => toggleOption(option.optionId)}
-                >
-                  {option.optionName}
-                </span>
-              ))}
+                    {address && (
+                        <div className="selected-address">
+                            선택된 주소: {address}
+                        </div>
+                    )}
+                </div>
+                <div className="mobile-register-page__option">
+                    <div className="mobile-register-page__option-label">
+                        <span>옵션</span>
+                    </div>
+                    <div className="mobile-register-page__options-container">
+                        {optionsList.map((option) => (
+                            <span
+                                key={option.optionId}
+                                className={`mobile-register-page__option-item ${
+                                    selectedOptions.includes(option.optionId) 
+                                    ? 'mobile-register-page__option-item--selected' 
+                                    : ''
+                                }`}
+                                onClick={() => toggleOption(option.optionId)}
+                            >
+                                {option.optionName}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+                <div className="mobile-register-page__submit-button">
+                    <input 
+                        type="submit" 
+                        value="등록하기" 
+                        onClick={handleSubmit}
+                        className="mobile-register-page__submit-input"
+                    />
+                </div>
+                <MobileBottomTab />
             </div>
-          )}
-          <div className='selected-options'>
-            {selectedOptions
-              .map(
-                (id) =>
-                  optionsList.find((opt) => opt.optionId === id)?.optionName
-              )
-              .filter(Boolean)
-              .join(', ')}
-          </div>
-        </div>
-        <div className='submit-button'>
-          <input type='submit' value='등록하기' onClick={handleSubmit} />
-        </div>
-        <MobileBottomTab />
-      </div>
     </div>
   );
 }

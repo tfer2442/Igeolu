@@ -333,13 +333,17 @@
     margin-bottom: 10px;
 }
 
-.mobile-register-page__option label {
-    display: block;
+.mobile-register-page__option-label {
     margin-bottom: 10px;
-    cursor: pointer;
 }
 
-.options-container {
+.mobile-register-page__option-label span {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.mobile-register-page__options-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -349,7 +353,7 @@
     padding: 15px;
 }
 
-.option-item {
+.mobile-register-page__option-item {
     padding: 8px 15px;
     background-color: #535252;
     border: 1px solid #403F3F;
@@ -360,7 +364,7 @@
     color: #E2E1E1;
 }
 
-.option-item.selected {
+.mobile-register-page__option-item--selected {
     background-color: #FFFFFF;
     color: #272626 !important;
     border-color: #272626 !important;
@@ -383,11 +387,6 @@
     margin-bottom: 10px;
 
 }
-.option-label span {
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-}
 .selected-options {
     margin-top: 10px;
     min-height: 20px;
@@ -397,7 +396,7 @@
     border-radius: 5px;
     padding: 10px;
 }
-.submit-button input{
+.mobile-register-page__submit-button input{
     width: 100%;
     height: 40px;
     background-color: #01ADFF;
@@ -427,8 +426,7 @@
 
 .address-search-container button {
     width: 30%; /* 7:3 비율의 button */
-    height: 43.33px;
-    background-color: #1E1D1D;
+    background-color: #272626;
     border: 1px solid #403F3F;
     border-radius: 5px;
     color: #E2E1E1;
@@ -504,4 +502,10 @@
 .error-message {
     color: red;
     margin-top: 4px;
+}
+
+
+/* 모든 input에 패딩 추가 */
+.mobile-register-page input {
+    padding-left: 10px;
 }

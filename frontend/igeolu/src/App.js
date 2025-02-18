@@ -4,6 +4,10 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 // === 1. Component Imports ===
+
+// Default Page
+import DefaultPage from './pages/DefaultPage/DefaultPage';
+
 // Desktop Pages
 import DesktopLive from './pages/DesktopLivePage/DesktopLive';
 import DesktopLiveJoinPage from './pages/DesktopLiveJoinPage/DesktopLiveJoinPage';
@@ -322,7 +326,8 @@ function App() {
           {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
           {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
           <Routes>
-            <Route path='/' element={<DesktopHome />} />
+            <Route path='/' element={<DefaultPage />} />
+            <Route path='/desktop-main' element={<DesktopHome />} />
             <Route path='/login' element={<DesktopLogin />} />
             <Route
               path='/live'
