@@ -66,7 +66,8 @@ function App() {
 
   // === 3. Route Management ===
   const location = useLocation();
-  const isDesktopHomePage = location.pathname === '/';
+  const isDesktopHomePage = location.pathname === '/desktop-main';
+  const isDesktopMapPage = location.pathname === '/map'
   const isDesktopMyPage = location.pathname === '/my-page';
 
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
@@ -284,7 +285,7 @@ function App() {
 
   // === 7. UI Rendering Methods ===
   const renderChatInterface = () => {
-    if (isDesktopHomePage || isDesktopMyPage)
+    if (isDesktopHomePage || isDesktopMyPage || isDesktopMapPage)
       return (
         <>
           <ChatButton onClick={handleToggleChat} />
