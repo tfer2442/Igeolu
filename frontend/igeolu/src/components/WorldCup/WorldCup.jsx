@@ -51,9 +51,9 @@ function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
         // 매물 수에 따라 토너먼트 라운드 결정
         if (propertyCount >= 16) {
             initialRound = 16;
-        } else if (propertyCount >= 8) {
+        } else if (propertyCount >= 8 && propertyCount <= 15) {
             initialRound = 8;
-        } else if (propertyCount >= 4) {
+        } else if (propertyCount >= 4 && propertyCount <= 7) {
             initialRound = 4;
         } else {
             initialRound = 2;
