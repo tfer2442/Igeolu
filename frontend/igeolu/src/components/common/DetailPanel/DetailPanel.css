@@ -193,7 +193,7 @@
 }
 
 .thumbnail-wrapper.active {
-    border-color: #0066ff;
+    border-color: #01ADFF;
 }
 
 .thumbnail-wrapper:hover {
@@ -244,7 +244,7 @@
 
 .price-value {
     font-weight: 600;
-    color: #0066ff;
+    color: #01ADFF;
 }
 
 .property-basic-info {
@@ -293,7 +293,7 @@
 .option-tag {
     padding: 0.35rem 0.75rem;
     background-color: #f0f7ff;
-    color: #0066ff;
+    color: #01ADFF;
     border-radius: 15px;
     font-size: 0.8rem;
     font-weight: 500;
@@ -459,7 +459,7 @@
 .view-properties-button {
     width: 100%;
     padding: 1rem;
-    background-color: #0066ff;
+    background-color: #01ADFF;
     color: white;
     border: none;
     border-radius: 8px;
@@ -474,7 +474,7 @@
 }
 
 .view-properties-button:hover {
-    background-color: #0052cc;
+    background-color: #009CE6;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
 }
@@ -483,8 +483,8 @@
     width: 100%;
     padding: 1rem;
     background-color: white;
-    color: #0066ff;
-    border: 2px solid #0066ff;
+    color: #01ADFF;
+    border: 2px solid #01ADFF;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
@@ -532,7 +532,7 @@
 }
 
 .property-list-item:hover {
-    border-color: #0066ff;
+    border-color: #01ADFF;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
 }
@@ -573,7 +573,7 @@
 
 .deposit {
     font-weight: 600;
-    color: #0066ff;
+    color: #01ADFF;
     font-size: 1.1rem;
 }
 

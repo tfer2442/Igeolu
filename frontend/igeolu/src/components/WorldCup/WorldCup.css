@@ -535,7 +535,7 @@
 .world-cup-modal__winner .property-price {
     font-size: 24px;
     font-weight: 600;
-    color: #0066ff;
+    color: #01ADFF;
     margin: 16px 0;
 }
 
@@ -571,12 +571,12 @@
 
 .world-cup-modal__restart-button {
     background-color: #f0f7ff;
-    color: #0066ff;
-    border: 1px solid #0066ff;
+    color: #01ADFF;
+    border: 1px solid #01ADFF;
 }
 
 .world-cup-modal__property-button {
-    background-color: #0066ff;
+    background-color: #01ADFF;
     color: white;
 }
 

@@ -27,7 +27,7 @@
 }
 
 .location-filter-button.active {
-  border-color: #0066ff;
+  border-color: #01ADFF;
 }
 
 .location-text {
@@ -51,7 +51,7 @@
 }
 
 .price-filter-button.active {
-  border-color: #0066ff;
+  border-color: #01ADFF;
 }
 
 .price-text {
@@ -75,7 +75,7 @@
 }
 
 .option-filter-button.active {
-  border-color: #0066ff;
+  border-color: #01ADFF;
 }
 
 .option-text {

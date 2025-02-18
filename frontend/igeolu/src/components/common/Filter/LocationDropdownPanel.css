@@ -80,14 +80,14 @@
 }
   
 .location-options::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #f0f7ff;
 }
   
 .location-options::-webkit-scrollbar-thumb {
-    background: #ddd;
+    background: #01ADFF;
     border-radius: 3px;
 }
   
 .location-options::-webkit-scrollbar-thumb:hover {
-    background: #ccc;
+    background: #01ADFF;
 }
