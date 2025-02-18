@@ -1,4 +1,4 @@
-
+// src/components/common/DetailPanel/DetailPane.jsx
 import ChatApi from '../../../services/ChatApi';
 import React, { useState, useEffect } from 'react';
 import { X, ArrowLeft, ChevronLeft, ChevronRight, Building2, MessageCircle } from 'lucide-react';
@@ -14,7 +14,8 @@ const DetailPanel = ({
     onViewProperties,
     view,
     setView,
-    onSwitchToAgent
+    onSwitchToAgent,
+    onChatRoomCreated  // 새로 추가된 prop
 }) => {
     const [selectedProperty, setSelectedProperty] = useState(null);
     const [properties, setProperties] = useState([]);
@@ -81,9 +82,22 @@ const DetailPanel = ({
                 alert('로그인이 필요합니다.');
                 return;
             }
+            
             const response = await ChatApi.createChatRoom(currentUser.userId, data?.userId);
+            
             if (response?.id) {
-                alert('채팅방이 생성되었습니다.');
+                const chatRoomsResponse = await ChatApi.getChatRooms(currentUser.userId, currentUser.role);
+                const newChatRoom = chatRoomsResponse.find(room => room.roomId === response.id);
+                
+                if (newChatRoom) {
+                    const roomData = {
+                        ...newChatRoom,  // 서버에서 받은 전체 데이터 사용
+                        userName: data.name || data.username || data.userName,
+                        userProfileUrl: data.profileImageUrl || data.userProfileUrl || ''
+                    };
+                    
+                    onChatRoomCreated(roomData);
+                }
             }
         } catch (error) {
             console.error('채팅방 생성 실패:', error);

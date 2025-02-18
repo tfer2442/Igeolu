@@ -111,7 +111,7 @@ function DesktopMainPageNav() {
   if (isLoading) {
     return <nav className="desktop-main-nav">
       <div className='desktop-main-nav__left-logo'>
-        <Link to='/'>
+        <Link to='/desktop-main'>
           <img src={logo} alt='logo' />
         </Link>
       </div>
@@ -129,7 +129,7 @@ function DesktopMainPageNav() {
   return (
     <nav className='desktop-main-nav'>
       <div className='desktop-main-nav__left-logo'>
-        <Link to='/'>
+        <Link to='/desktop-main'>
           <img src={logo} alt='logo' />
         </Link>
       </div>

@@ -112,7 +112,7 @@ function DesktopLiveAndMyPage({ onLoginSigninClick }) {
   return (
     <nav className='desktop-live-and-my-nav'>
       <div className='desktop-live-and-my-nav__left-logo'>
-        <Link to='/'>
+        <Link to='/desktop-main'>
           <img src={logo} alt='logo' />
         </Link>
       </div>

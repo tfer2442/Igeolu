@@ -192,6 +192,9 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
 }
 
 /* 버튼 공통 스타일 */
@@ -244,10 +247,11 @@
 /* 📌 라이브 메시지 컨테이너 */
 .live-message {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
   gap: 12px;
   padding: 12px;
+  width: 100%;
 }
 
 .live-message p {
@@ -257,7 +261,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1 1 100%; /* 첫 줄 전체 차지 */
+  justify-content: center;
+  width: 100%;
 }
 
 .live-message p:before {
@@ -267,7 +272,7 @@
   background-color: #FF4B4B;
   border-radius: 50%;
   display: inline-block;
-  animation: pulse 1.5s infinite;
+  animation: liveDotPulse 1.5s infinite;
 }
 
 /* 📌 세션 ID 컨테이너 */
@@ -337,7 +342,8 @@
   color: white;
 }
 
-@keyframes pulse {
+/* 변경 후 */
+@keyframes liveDotPulse {
   0% {
     transform: scale(1);
     opacity: 1;

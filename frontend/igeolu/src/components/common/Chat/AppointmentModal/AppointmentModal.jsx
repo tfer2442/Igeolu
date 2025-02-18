@@ -47,7 +47,12 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     // datetime-local의 값은 이미 사용자의 로컬 시간대로 들어옴
     const selectedDate = new Date(dateTimeStr);
     const now = new Date();
-    return selectedDate > now;
+    
+    // 현재 시간과의 차이를 분 단위로 계산
+    const diffInMinutes = (selectedDate - now) / (1000 * 60);
+    
+    // 현재 시간보다 미래이면서 1분 이상 차이나는지 확인
+    return diffInMinutes > 1;
   };
 
   const handleSubmit = async (e) => {
@@ -55,16 +60,7 @@ const AppointmentModal = ({ onClose, roomInfo, currentUserId, sendSystemMessage 
     
     // 선택된 시각이 현재보다 과거인지 확인
     if (!validateDateTime(formData.scheduledAt)) {
-      const now = new Date();
-      const formatter = new Intl.DateTimeFormat('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      });
-      setError(`${formatter.format(now)} 이후의 시간을 선택해주세요.`);
+      setError('현재 시간보다 1분 이상 이후의 시간을 선택해주세요.');
       return;
     }
 

@@ -2,6 +2,7 @@
 import './styles/global.css';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { PrivateRoute, AuthRoute } from './components/auth/AuthRoutes';
 
 // === 1. Component Imports ===
 
@@ -67,7 +68,8 @@ function App() {
 
   // === 3. Route Management ===
   const location = useLocation();
-  const isDesktopHomePage = location.pathname === '/';
+  const isDesktopHomePage = location.pathname === '/desktop-main';
+  const isDesktopMapPage = location.pathname === '/map';
   const isDesktopMyPage = location.pathname === '/my-page';
 
   const isMobileChatRoute = location.pathname.startsWith('/mobile-chat');
@@ -214,7 +216,7 @@ function App() {
   // 채팅방 목록 초기 로드
   const fetchChatRooms = useCallback(async () => {
     if (!user?.userId || !user?.role) return;
-  
+
     try {
       setIsLoading(true);
       setError(null);
@@ -285,7 +287,7 @@ function App() {
 
   // === 7. UI Rendering Methods ===
   const renderChatInterface = () => {
-    if (isDesktopHomePage || isDesktopMyPage)
+    if (isDesktopHomePage || isDesktopMyPage || isDesktopMapPage)
       return (
         <>
           <ChatButton onClick={handleToggleChat} />
@@ -314,10 +316,7 @@ function App() {
       <UserProvider>
         <NotificationProvider
           user={user}
-          onInitialized={() => {
-            // console.log('🔄 App.js: 알림 초기화 완료, 채팅 WebSocket 연결 시작');
-            setIsNotificationInitialized(true);
-          }}
+          onInitialized={() => setIsNotificationInitialized(true)}
         >
           {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
           {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
@@ -327,62 +326,179 @@ function App() {
           {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
           {/* ------------------------------ 개발용 유저 변경(이진형/오승우) --------------------------- */}
           <Routes>
+            {/* 공용 라우트 */}
             <Route path='/' element={<DefaultPage />} />
-            <Route path='/desktop-main' element={<DesktopHome />} />
-            <Route path='/login' element={<DesktopLogin />} />
+
+            {/* 인증이 필요한 데스크톱 라우트 */}
             <Route
-              path='/live'
-              element={<DesktopLive onLoginSigninClick={handleLoginClick} />}
-            />
-            <Route
-              path='/live-join'
+              path='/desktop-main'
               element={
-                <DesktopLiveJoinPage onLoginSigninClick={handleLoginClick} />
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
+                  <DesktopHome />
+                </PrivateRoute>
               }
             />
             <Route
               path='/map'
-              element={<Map onLoginSigninClick={handleLoginClick} />}
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
+                  <Map
+                    onLoginSigninClick={handleLoginClick}
+                    setIsOpen={setIsOpen}
+                    setSelectedRoom={setSelectedRoom}
+                    setChatRooms={setChatRooms}
+                    currentUserId={currentUserId}
+                    userRole={user?.role}
+                  />
+                </PrivateRoute>
+              }
             />
             <Route
-              path='/mypage'
-              element={<DesktopMyPage onLoginSigninClick={handleLoginClick} />}
+              path='/desktop-my-page'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
+                  <DesktopMyPage onLoginSigninClick={handleLoginClick} />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/live'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
+                  <DesktopLive onLoginSigninClick={handleLoginClick} />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/live-join'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized}>
+                  <DesktopLiveJoinPage onLoginSigninClick={handleLoginClick} />
+                </PrivateRoute>
+              }
             />
 
-            <Route path='/desktop-my-page' element={<DesktopMyPage />} />
-            {/* Mobile Routes */}
-            <Route path='/mobile-login' element={<MobileLoginPage />} />
+            {/* 인증이 필요한 모바일 라우트 */}
             <Route
-              path='/mobile-additional-info'
-              element={<MobileAdditionalInfoPage />}
+              path='/mobile-main'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileMainPage />
+                </PrivateRoute>
+              }
             />
-            <Route path='/mobile-main' element={<MobileMainPage />} />
-            <Route path='/mobile-calendar' element={<MobileCalendarPage />} />
-            <Route path='/mobile-my-page' element={<MobileMyPage />} />
-            <Route path='/mobile-my-page-edit' element={<MobileMyPageEdit />} />
-            <Route path='/mobile-live' element={<MobileLivePage />} />
-            <Route path='/mobile-register' element={<MobileRegisterPage />} />
-            <Route path='/mobile-edit' element={<MobileEditPage />} />
-            <Route path='/mobile-estate-list' element={<MobileEstateList />} />
+            <Route
+              path='/mobile-calendar'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileCalendarPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/mobile-my-page'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileMyPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/mobile-my-page-edit'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileMyPageEdit />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/mobile-live'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileLivePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/mobile-edit'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileEditPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/mobile-estate-list'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileEstateList />
+                </PrivateRoute>
+              }
+            />
             <Route
               path='/mobile-live-setting'
-              element={<MobileLiveSettingPage />}
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileLiveSettingPage />
+                </PrivateRoute>
+              }
             />
             <Route
               path='/mobile-chat'
               element={
-                <MobileChatList
-                  chatRooms={chatRooms}
-                  isLoading={isLoading}
-                  error={error}
-                  onRetry={fetchChatRooms}
-                  currentUserId={currentUserId}
-                />
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileChatList
+                    chatRooms={chatRooms}
+                    isLoading={isLoading}
+                    error={error}
+                    onRetry={fetchChatRooms}
+                    currentUserId={currentUserId}
+                  />
+                </PrivateRoute>
               }
             />
             <Route
               path='/mobile-chat/:roomId'
-              element={<MobileChatRoom currentUserId={currentUserId} />}
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileChatRoom currentUserId={currentUserId} />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path='/mobile-register'
+              element={
+                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileRegisterPage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* 로그인 라우트 */}
+            <Route
+              path='/login'
+              element={
+                <AuthRoute user={user} isUserInitialized={isUserInitialized}>
+                  <DesktopLogin />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path='/mobile-login'
+              element={
+                <AuthRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+                  <MobileLoginPage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path='/mobile-additional-info'
+              element={
+                <AuthRoute user={user} isMobile>
+                  <MobileAdditionalInfoPage />
+                </AuthRoute>
+              }
             />
           </Routes>
           {!isMobileChatRoute && renderChatInterface()}
