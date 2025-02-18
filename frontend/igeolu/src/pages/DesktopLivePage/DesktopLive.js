@@ -50,6 +50,8 @@ function DesktopLive() {
   const mapContainer = useRef(null);
   const [hostAddress, setHostAddress] = useState('');
   const [processedObjects, setProcessedObjects] = useState(new Set());
+  const currentMarker = useRef(null);
+  const currentCircle = useRef(null);
 
   // 마이크 토글
   const toggleMicrophone = () => {
@@ -488,10 +490,17 @@ function DesktopLive() {
       map.setCenter(hostPosition);
       map.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.TRAFFIC);
       
+      // 이전 마커가 있다면 제거
+      if (currentMarker.current) {
+        currentMarker.current.setMap(null);
+      }
+      
+      // 새로운 마커 생성 및 저장
       const marker = new window.kakao.maps.Marker({
         position: hostPosition,
         map: map
       });
+      currentMarker.current = marker;
 
       // 좌표를 주소로 변환
       const geocoder = new window.kakao.maps.services.Geocoder();
@@ -501,6 +510,11 @@ function DesktopLive() {
           setHostAddress(address);
         }
       });
+
+      // 이전 원이 있다면 제거
+      if (currentCircle.current) {
+        currentCircle.current.setMap(null);
+      }
 
       // 정확도 원 그리기
       if (hostLocation.accuracy) {
@@ -515,6 +529,7 @@ function DesktopLive() {
           fillOpacity: 0.2,
           map: map
         });
+        currentCircle.current = circle;
       }
     }
   }, [map, hostLocation]);
