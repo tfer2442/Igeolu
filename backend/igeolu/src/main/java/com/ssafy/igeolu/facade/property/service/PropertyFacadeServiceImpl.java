@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ssafy.igeolu.facade.property.dto.response.*;
+import com.ssafy.igeolu.facade.property.mapper.PropertyDetailMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +30,6 @@ import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.SigunguSearchGetRequestDto;
-import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
 import com.ssafy.igeolu.facade.property.mapper.PropertyMapper;
 import com.ssafy.igeolu.global.exception.CustomException;
 import com.ssafy.igeolu.global.exception.ErrorCode;
@@ -121,10 +118,10 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 	}
 
 	@Override
-	public PropertyGetResponseDto getProperty(Integer propertyId) {
+	public PropertyDetailGetResponseDto getProperty(Integer propertyId) {
 
 		Property property = propertyService.getProperty(propertyId);
-		return PropertyMapper.toDto(property);
+		return PropertyDetailMapper.toDto(property);
 	}
 
 	@Override

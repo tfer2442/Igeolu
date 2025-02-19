@@ -2,17 +2,13 @@ package com.ssafy.igeolu.facade.property.service;
 
 import java.util.List;
 
+import com.ssafy.igeolu.facade.property.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.igeolu.facade.property.dto.request.PropertyPostRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertySearchGetRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.PropertyUpdateRequestDto;
 import com.ssafy.igeolu.facade.property.dto.request.SigunguSearchGetRequestDto;
-import com.ssafy.igeolu.facade.property.dto.response.DongResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.OptionListGetResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.PropertyGetResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.PropertySearchGetResponseDto;
-import com.ssafy.igeolu.facade.property.dto.response.SigunguSearchGetResponseDto;
 
 public interface PropertyFacadeService {
 
@@ -20,7 +16,7 @@ public interface PropertyFacadeService {
 
 	List<PropertyGetResponseDto> getProperties(Integer userId);
 
-	PropertyGetResponseDto getProperty(Integer propertyId);
+	PropertyDetailGetResponseDto getProperty(Integer propertyId);
 
 	List<OptionListGetResponseDto> getOptionList();
 

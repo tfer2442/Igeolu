@@ -2,6 +2,7 @@ package com.ssafy.igeolu.presentation.property.controller;
 
 import java.util.List;
 
+import com.ssafy.igeolu.facade.property.dto.response.PropertyDetailGetResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -80,8 +81,8 @@ public class PropertyController {
 		@ApiResponse(responseCode = "404", description = "매물을 찾을 수 없습니다.")
 	})
 	@GetMapping("/{propertyId}")
-	public ResponseEntity<PropertyGetResponseDto> getPropertyDetail(@PathVariable Integer propertyId) {
-		PropertyGetResponseDto property = propertyFacadeService.getProperty(propertyId);
+	public ResponseEntity<PropertyDetailGetResponseDto> getPropertyDetail(@PathVariable Integer propertyId) {
+		PropertyDetailGetResponseDto property = propertyFacadeService.getProperty(propertyId);
 		return ResponseEntity.ok(property);
 	}
 
