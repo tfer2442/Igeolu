@@ -9,6 +9,7 @@ import './ChatRoom.css';
 import DesktopLoadingSpinner from '../../../LoadingSpinner/DesktopLoadingSpinner';
 import MobileLoadingSpinner from '../../../LoadingSpinner/MobileLoadingSpinner';
 import { LogOut } from 'lucide-react'; // lucide-react 아이콘 import
+import { useUser } from '../../../../contexts/UserContext';
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -26,6 +27,8 @@ const ChatRoom = ({
   isChatRoomOpen,
   onRoomExit,
 }) => {
+  const { user } = useUser();  // UserContext 사용
+
   // currentUserId props
   /* 📌 상태 관리 */
   const [messages, setMessages] = useState([]); // 채팅 메시지 목록
@@ -36,6 +39,7 @@ const ChatRoom = ({
   const chatSocketRef = useRef(null); // WebSocket 참조
   const messagesEndRef = useRef(null); // 메시지 목록 끝 위치 참조
   const [showExitModal, setShowExitModal] = useState(false);
+  const [myName, setMyName] = useState('');
 
   const isRoomActive = activeRoomId === room.roomId && isChatRoomOpen;
 
@@ -263,6 +267,13 @@ const ChatRoom = ({
     setShowExitModal(true);
   };
 
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    if (currentUser?.name) {
+      setMyName(currentUser.name);
+    }
+  }, []);
+
   const handleConfirmExit = async () => {
     try {
       await chatApi.exitChatRoom(room.roomId);
@@ -421,17 +432,17 @@ const ChatRoom = ({
             <>
               {/* 환영 메시지 */}
               <div className='welcome-message'>
-                <ChatMessage
-                  message={{
-                    userId: 0,
-                    content: `✨ 환영합니다 ${room.userName}님! ✨`, // 별 이모티콘 추가
-                    createdAt: new Date().toISOString(),
-                    senderType: 'SYSTEM',
-                  }}
-                  isCurrentUser={false}
-                  userProfile={null}
-                />
-              </div>
+        <ChatMessage
+          message={{
+            userId: 0,
+            content: `✨ 환영합니다 ${user.role === 'ROLE_REALTOR' ? '중개인' : '세입자'}님! ✨`,
+            createdAt: new Date().toISOString(),
+            senderType: 'SYSTEM',
+          }}
+          isCurrentUser={false}
+          userProfile={null}
+        />
+      </div>
 
               {/* 실제 메시지 목록 */}
               {messages.map((message, index) => (
