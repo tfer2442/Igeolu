@@ -337,22 +337,14 @@ function DesktopLive() {
   // signal 리스너 useEffect 수정
   useEffect(() => {
     if (session) {
-      // 기존 property-completed 시그널 핸들러
+      // property-completed 시그널 핸들러
       session.on('signal:property-completed', (event) => {
         try {
           const data = JSON.parse(event.data);
-          const { propertyId, location } = data;
+          const { propertyId } = data;
           
           setCompletedProperties(prev => new Set([...prev, propertyId]));
           
-          if (location) {
-            setHostLocation({
-              latitude: location.latitude,
-              longitude: location.longitude,
-              accuracy: location.accuracy
-            });
-          }
-
           setDisplayedQuestions(new Set());
           setHiddenQuestions(new Set());
           setProcessedObjects(new Set());
@@ -361,7 +353,7 @@ function DesktopLive() {
         }
       });
 
-      // 새로운 location-update 시그널 핸들러 추가
+      // location-update 시그널 핸들러
       session.on('signal:location-update', (event) => {
         try {
           const data = JSON.parse(event.data);
