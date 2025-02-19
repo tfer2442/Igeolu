@@ -509,3 +509,15 @@
 .mobile-register-page input {
     padding-left: 10px;
 }
+
+/* Chrome, Safari, Edge, Opera에서 스피너 제거 */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox에서 스피너 제거 */
+input[type=number] {
+  -moz-appearance: textfield;
+}

@@ -266,6 +266,25 @@ function MobileRegisterPage() {
     }
   }, [isLoading, user]);
 
+  // 해당층 입력 처리
+  const handleCurrentFloorChange = (e) => {
+    const value = parseInt(e.target.value);
+    if (totalFloors && value > parseInt(totalFloors)) {
+      alert('해당층은 총층수를 초과할 수 없습니다.');
+      return;
+    }
+    setCurrentFloor(e.target.value);
+  };
+
+  // 총층 입력 처리
+  const handleTotalFloorsChange = (e) => {
+    const value = parseInt(e.target.value);
+    if (currentFloor && value < parseInt(currentFloor)) {
+      setCurrentFloor(e.target.value); // 총층이 해당층보다 작아지면 해당층도 같이 수정
+    }
+    setTotalFloors(e.target.value);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -371,14 +390,15 @@ function MobileRegisterPage() {
             <input
               placeholder='해당층'
               value={currentFloor}
-              onChange={(e) => setCurrentFloor(e.target.value)}
+              onChange={handleCurrentFloorChange}
               type='number'
             />
             <input
               placeholder='총층'
               value={totalFloors}
-              onChange={(e) => setTotalFloors(e.target.value)}
+              onChange={handleTotalFloorsChange}
               type='number'
+              min="1"
             />
           </div>
         </div>
