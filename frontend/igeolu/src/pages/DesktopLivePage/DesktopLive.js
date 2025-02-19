@@ -379,7 +379,7 @@ function DesktopLive() {
     }
   }, [session]);
 
-  // detectVideo 관련 useEffect 제거하고 새로운 useEffect 추가
+  // detectVideo 관련 useEffect 수정
   useEffect(() => {
     if (subscriberVideoRef.current && model && detectionCanvasRef.current) {
       const videoElement = subscriberVideoRef.current;
@@ -390,10 +390,16 @@ function DesktopLive() {
       if (detectionCanvasRef.current) {
         detectionCanvasRef.current.width = videoElement.videoWidth;
         detectionCanvasRef.current.height = videoElement.videoHeight;
+        const ctx = detectionCanvasRef.current.getContext('2d');
+        
+        // 객체 인식이 꺼져있을 때는 캔버스를 클리어
+        if (!showDetectionOverlay) {
+          ctx.clearRect(0, 0, detectionCanvasRef.current.width, detectionCanvasRef.current.height);
+        }
       }
 
       const detectFrame = async () => {
-        if (!videoElement.paused && !videoElement.ended) {
+        if (!videoElement.paused && !videoElement.ended && showDetectionOverlay) {
           frameCount++;
           
           // 5프레임마다 객체 인식 실행
@@ -405,7 +411,7 @@ function DesktopLive() {
                 detectionCanvasRef.current
               );
               
-              if (predictions && predictions.length > 0 && showDetectionOverlay) {
+              if (predictions && predictions.length > 0) {
                 // 새로운 객체 처리
                 const newObjects = predictions.filter(pred => !processedObjects.has(pred.class));
                 
@@ -529,6 +535,19 @@ function DesktopLive() {
     setHiddenQuestions(prev => new Set([...prev, question]));
   };
 
+  // 토글 버튼 클릭 핸들러 수정
+  const handleToggleDetection = () => {
+    setShowDetectionOverlay(prev => {
+      const newState = !prev;
+      if (!newState && detectionCanvasRef.current) {
+        // 객체 인식을 끌 때 캔버스 클리어
+        const ctx = detectionCanvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, detectionCanvasRef.current.width, detectionCanvasRef.current.height);
+      }
+      return newState;
+    });
+  };
+
   return (
     <div className="desktop-live-page">
       <DesktopLiveAndMyPage />
@@ -553,11 +572,7 @@ function DesktopLive() {
                   />
                   <button 
                     className="overlay-toggle-button"
-                    onClick={() => {
-                      console.log('Toggle button clicked. Current state:', showDetectionOverlay);
-                      setShowDetectionOverlay(!showDetectionOverlay);
-                      console.log('New state will be:', !showDetectionOverlay);
-                    }}
+                    onClick={handleToggleDetection}
                   >
                     {showDetectionOverlay ? '객체 인식 끄기' : '객체 인식 켜기'}
                   </button>
