@@ -14,8 +14,7 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
 	@NonNull
 	public ClientConfiguration clientConfiguration() {
 		return ClientConfiguration.builder()
-//			.connectedTo("elasticsearch1:9200")
-			.connectedTo("igeolu.com:9200")
+			.connectedTo("elasticsearch1:9200")
 			.build();
 	}
 }
