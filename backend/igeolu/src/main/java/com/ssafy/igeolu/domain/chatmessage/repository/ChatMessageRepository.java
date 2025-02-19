@@ -26,4 +26,7 @@ public interface ChatMessageRepository extends ReactiveMongoRepository<ChatMessa
 
 	// 채팅방 메세지 삭제
 	Mono<Void> deleteByRoomId(Integer roomId);
+
+	Mono<ChatMessage> findTopByRoomIdAndIdGreaterThanOrderByIdDesc(Integer roomId, ObjectId lastExitMessageId);
+
 }

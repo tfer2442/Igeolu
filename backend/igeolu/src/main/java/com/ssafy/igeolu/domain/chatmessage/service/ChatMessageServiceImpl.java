@@ -1,14 +1,16 @@
 package com.ssafy.igeolu.domain.chatmessage.service;
 
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Service;
+
 import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessage;
 import com.ssafy.igeolu.domain.chatmessage.entity.ChatMessageWithMVC;
 import com.ssafy.igeolu.domain.chatmessage.entity.UserRoomStatus;
 import com.ssafy.igeolu.domain.chatmessage.repository.ChatMessageRepository;
 import com.ssafy.igeolu.domain.chatmessage.repository.ChatMessageWithMVCRepository;
 import com.ssafy.igeolu.domain.chatmessage.repository.UserRoomStatusRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -95,7 +97,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public Mono<Long> countUnreadMessages(Integer userId, Integer roomId) {
         return userRoomStatusRepository.findByUserIdAndRoomId(userId, roomId)
                 .flatMap(userRoomStatus ->
-                        chatMessageRepository.countByRoomIdAndIdGreaterThan(roomId, userRoomStatus.getLastReadMessageId())
+                    chatMessageRepository.countByRoomIdAndIdGreaterThan(roomId, userRoomStatus.getLastReadMessageId())
                 )
                 .defaultIfEmpty(0L); // 읽은 기록이 없으면 0 반환
     }
@@ -104,8 +106,16 @@ public class ChatMessageServiceImpl implements ChatMessageService {
      * 채팅방 ID에 대한 마지막 메시지 가져오기
      */
     @Override
-    public Mono<ChatMessage> getLastMessage(Integer roomId) {
-        return chatMessageRepository.findTopByRoomIdOrderByIdDesc(roomId);
+    public Mono<ChatMessage> getLastMessage(Integer userId, Integer roomId) {
+		return userRoomStatusRepository.findByUserIdAndRoomId(userId, roomId)
+			.flatMap(userRoomStatus -> {
+				ObjectId lastExitMessageId = userRoomStatus.getLastExitRoomMessageId();
+				if (lastExitMessageId == null) {
+					return chatMessageRepository.findTopByRoomIdOrderByIdDesc(roomId);
+				}
+				return chatMessageRepository.findTopByRoomIdAndIdGreaterThanOrderByIdDesc(roomId, lastExitMessageId)
+					.switchIfEmpty(Mono.empty()); // 메시지가 없으면 null 반환
+			});
     }
 
     @Override
