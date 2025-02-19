@@ -105,5 +105,10 @@ public class Property {
 		propertyImages.add(propertyImage);
 		propertyImage.setProperty(this);
 	}
+
+	public void removePropertyImage(PropertyImage propertyImage) {
+		propertyImages.remove(propertyImage);
+		propertyImage.setProperty(null);
+	}
 }
 

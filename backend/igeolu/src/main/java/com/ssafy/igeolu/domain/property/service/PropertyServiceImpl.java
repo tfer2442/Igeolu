@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.igeolu.domain.property.entity.EsProperty;
 import com.ssafy.igeolu.domain.property.entity.Property;
 import com.ssafy.igeolu.domain.property.repository.EsPropertyRepository;
+import com.ssafy.igeolu.domain.property.repository.PropertyImageRepository;
 import com.ssafy.igeolu.domain.property.repository.PropertyRepository;
 import com.ssafy.igeolu.domain.user.entity.User;
 import com.ssafy.igeolu.global.exception.CustomException;
@@ -17,12 +18,15 @@ import com.ssafy.igeolu.global.exception.ErrorCode;
 @Service
 public class PropertyServiceImpl implements PropertyService {
 	private final PropertyRepository propertyRepository;
+	private final PropertyImageRepository propertyImageRepository;
 	private final EsPropertyRepository esPropertyRepository;
 
 	@Autowired
 	public PropertyServiceImpl(PropertyRepository propertyRepository,
+		PropertyImageRepository propertyImageRepository,
 		@Autowired(required = false) EsPropertyRepository esPropertyRepository) {
 		this.propertyRepository = propertyRepository;
+		this.propertyImageRepository = propertyImageRepository;
 		this.esPropertyRepository = esPropertyRepository;
 	}
 
@@ -84,4 +88,7 @@ public class PropertyServiceImpl implements PropertyService {
 			pageable);
 	}
 
+	public List<String> getImagesByPropertyId(Integer propertyId) {
+		return propertyImageRepository.findImagesByPropertyId(propertyId);
+	}
 }

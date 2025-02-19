@@ -1,7 +1,6 @@
 package com.ssafy.igeolu.facade.property.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -184,10 +183,22 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		property.setLatitude(latitude);
 		property.setLongitude(longitude);
 
-		// 기존 파일 삭제하고
-		property.getPropertyImages().forEach(i -> fileService.deleteFile(i.getFilePath()));
-		property.setPropertyImages(new ArrayList<>());
-		// 이미지 저장
+		// 이미지 수정 로직
+		// 기존 이미지 목록 조회
+		List<String> existingImageUrls = propertyService.getImagesByPropertyId(propertyId);
+
+		// 기존에 없는 이미지를 삭제
+		existingImageUrls.stream()
+			.filter(imageUrl -> !requestDto.getImageUrls().contains(imageUrl))
+			.forEach(fileService::deleteFile);
+
+		// 매물리스트에서 없는 이미지 삭제
+		List<PropertyImage> propertyImagesToDelete = property.getPropertyImages().stream()
+			.filter(pi -> !existingImageUrls.contains(pi.getFilePath()))
+			.toList();
+		propertyImagesToDelete.forEach(property::removePropertyImage);
+
+		// 새로게 추가된 이미지 저장 및 추가
 		if (images != null && !images.isEmpty()) {
 			images.forEach(i -> {
 				String filePath = fileService.saveFile(i);

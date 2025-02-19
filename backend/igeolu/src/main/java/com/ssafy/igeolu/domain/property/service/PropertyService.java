@@ -35,4 +35,5 @@ public interface PropertyService {
 		List<Integer> optionIds,
 		Pageable pageable);
 
+	List<String> getImagesByPropertyId(Integer propertyId);
 }

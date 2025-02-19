@@ -36,5 +36,7 @@ public class PropertyUpdateRequestDto {
 
 	private String dongcode;
 
+	private List<String> imageUrls;
+
 	private List<Integer> options;
 }
