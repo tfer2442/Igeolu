@@ -70,27 +70,35 @@ function MobileMyPage() {
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file);  // Swagger 문서에 따라 'file'로 지정
 
     try {
-      const response = await axios.put('https://i12d205.p.ssafy.io/api/users/me/profile', formData, {
+      setIsLoading(true); // 로딩 상태 시작
+
+      const response = await axios.put('/api/users/me/profile', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'multipart/form-data'
         }
       });
 
-      if (response.data.imageUrl) {
+      // Swagger 응답 형식에 맞춰 처리
+      if (response.data && response.data.imageUrl) {
         setRealtorInfo(prev => ({
           ...prev,
           profileImage: response.data.imageUrl
         }));
-        // 성공 시 페이지 새로고침하여 최신 데이터 반영
+        
+        alert('프로필 이미지가 성공적으로 업데이트되었습니다.');
         window.location.reload();
       }
     } catch (error) {
       console.error('프로필 이미지 업데이트 실패:', error.response?.data || error);
-      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+      
+      // 서버 응답의 구체적인 에러 메시지가 있다면 그것을 표시
+      const errorMessage = error.response?.data?.error || '이미지 업로드에 실패했습니다. 다시 시도해주세요.';
+      alert(errorMessage);
+    } finally {
+      setIsLoading(false); // 로딩 상태 종료
     }
   };
 
