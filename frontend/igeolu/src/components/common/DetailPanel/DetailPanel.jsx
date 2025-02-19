@@ -297,8 +297,8 @@ const DetailPanel = ({
                                             </div>
                                             <div className='property-list-item-content'>
                                                 <div className='property-list-price'>
-                                                    <span className='deposit'>{property.deposit?.toLocaleString()}만원</span>
-                                                    <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}만원</span>
+                                                    <span className='deposit'>{property.deposit?.toLocaleString()} / </span>
+                                                    <span className='monthly-rent'>{property.monthlyRent?.toLocaleString()}</span>
                                                 </div>
                                                 <div className='property-list-info'>
                                                     <span className='address'>{property.address}</span>
@@ -429,14 +429,18 @@ const DetailPanel = ({
                                     <p className='agent-title'>{data?.title}</p>
                                     <div className='agent-stats'>
                                         <div className='agent-stat-row'>
-                                            <span className='stat-label'>평점</span>
+                                            <div className='rating-header'>
+                                                <span className='stat-label'>평점</span>
+                                                <span className='rating-text'>{data?.ratingAvg?.toFixed(1) || '-'}</span>
+                                            </div>
                                             <div className='rating-value'>
-                                                <RatingStars rating={data?.ratingAvg || 0} />
+                                                <RatingStars rating={data?.ratingAvg || 0} showScore={false} />
                                             </div>
                                         </div>
+
                                         <div className='agent-stat-row'>
-                                            <span className='stat-label'>방송</span>
                                             <div className='live-count'>
+                                                <span className='stat-label'>방송</span>
                                                 <span className="live-count-value">{data?.liveCount || 0}</span>
                                                 <span className="live-count-text">회</span>
                                             </div>

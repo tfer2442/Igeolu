@@ -70,9 +70,13 @@
 }
 
 .filter-worldcup-container {
-    margin-right: auto; /* 왼쪽 정렬 */
+    margin-right: auto;
 }
 
-
-
-
+/* .filter-worldcup-container {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    padding-left: 8px;
+    border-left: 1px solid #e5e7eb;
+} */

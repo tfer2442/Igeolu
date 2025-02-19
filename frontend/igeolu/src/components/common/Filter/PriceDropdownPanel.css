@@ -31,7 +31,7 @@
   
 .price-value {
     font-weight: 600;
-    color: #0066ff;
+    color: #01ADFF;
 }
   
 .price-range-slider {
@@ -49,7 +49,7 @@
     appearance: none;
     width: 20px;
     height: 20px;
-    background: #0066ff;
+    background: #01ADFF;
     border-radius: 50%;
     cursor: pointer;
     border: 2px solid white;
@@ -59,7 +59,7 @@
 .price-range-slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: #0066ff;
+    background: #01ADFF;
     border-radius: 50%;
     cursor: pointer;
     border: 2px solid white;
@@ -101,11 +101,11 @@
 }
   
 .price-action-button.apply {
-    background-color: #0066ff;
-    border: 1px solid #0066ff;
+    background-color: #01ADFF;
+    border: 1px solid #01ADFF;
     color: white;
 }
   
 .price-action-button.apply:hover {
-    background-color: #0052cc;
+    background-color: #009CE6;
 }

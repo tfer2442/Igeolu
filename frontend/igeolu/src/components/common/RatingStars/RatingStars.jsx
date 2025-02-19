@@ -19,9 +19,9 @@ const RatingStars = ({ rating }) => {
           />
         ))}
       </div>
-      <span className="ml-2 text-xl font-bold text-gray-800">
+      {/* <span className="ml-2 text-xl font-bold text-gray-800">
         {rating ? rating.toFixed(1) : '-'}
-      </span>
+      </span> */}
     </div>
   );
 };

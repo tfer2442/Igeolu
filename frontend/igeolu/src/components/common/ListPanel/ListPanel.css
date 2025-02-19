@@ -57,7 +57,7 @@
 }
 
 .list-item:hover {
-  border-color: #0066ff;
+  border-color: #01ADFF;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -126,7 +126,7 @@
 
 .price-value {
   font-weight: 600;
-  color: #0066ff;
+  color: #01ADFF;
   font-size: 1.1rem;
 }
 

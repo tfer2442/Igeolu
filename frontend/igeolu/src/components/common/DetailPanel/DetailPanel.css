@@ -60,32 +60,12 @@
     background-color: #f5f5f5;
 }
 
-/* 스크롤바 스타일 통일 */
 .detail-panel-content {
     flex: 1;
     overflow-y: auto;
     padding: 0.75rem 1.25rem;
 }
 
-.detail-panel-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.detail-panel-content::-webkit-scrollbar-track {
-    background: #f0f7ff;
-    border-radius: 3px;
-}
-
-.detail-panel-content::-webkit-scrollbar-thumb {
-    background: #01ADFF;
-    border-radius: 3px;
-}
-
-.detail-panel-content::-webkit-scrollbar-thumb:hover {
-    background: #01ADFF;
-}
-
-/* 나머지 스타일은 유지 */
 .detail-panel-section {
     display: flex;
     flex-direction: column;
@@ -193,7 +173,7 @@
 }
 
 .thumbnail-wrapper.active {
-    border-color: #0066ff;
+    border-color: #01ADFF;
 }
 
 .thumbnail-wrapper:hover {
@@ -244,7 +224,7 @@
 
 .price-value {
     font-weight: 600;
-    color: #0066ff;
+    color: #01ADFF;
 }
 
 .property-basic-info {
@@ -293,7 +273,7 @@
 .option-tag {
     padding: 0.35rem 0.75rem;
     background-color: #f0f7ff;
-    color: #0066ff;
+    color: #01ADFF;
     border-radius: 15px;
     font-size: 0.8rem;
     font-weight: 500;
@@ -363,8 +343,20 @@
 
 .agent-stat-row {
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rating-header {
+    display: flex;
     align-items: center;
-    gap: 0.1rem;
+    gap: 0.5rem;
+}
+
+.rating-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .stat-label {
@@ -376,14 +368,14 @@
 .rating-value {
     display: flex;
     align-items: center;
-    transform: scale(0.8);
+    transform: scale(1.1);
     transform-origin: left center;
 }
 
 .live-count {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.5rem;
 }
 
 .live-count-value {
@@ -447,7 +439,7 @@
 .view-properties-button {
     width: 100%;
     padding: 1rem;
-    background-color: #0066ff;
+    background-color: #01ADFF;
     color: white;
     border: none;
     border-radius: 8px;
@@ -462,7 +454,7 @@
 }
 
 .view-properties-button:hover {
-    background-color: #0052cc;
+    background-color: #009CE6;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
 }
@@ -471,8 +463,8 @@
     width: 100%;
     padding: 1rem;
     background-color: white;
-    color: #0066ff;
-    border: 2px solid #0066ff;
+    color: #01ADFF;
+    border: 2px solid #01ADFF;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
@@ -520,7 +512,7 @@
 }
 
 .property-list-item:hover {
-    border-color: #0066ff;
+    border-color: #01ADFF;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
 }
@@ -557,18 +549,9 @@
 
 .property-list-price {
     margin-bottom: 0.5rem;
-}
-
-.deposit {
     font-weight: 600;
-    color: #0066ff;
-    font-size: 1.1rem;
-}
-
-.monthly-rent {
-    color: #333;
-    font-weight: 500;
-    margin-left: 0.5rem;
+    color: #01ADFF;
+    font-size: 1.4rem;
 }
 
 .property-list-info {
@@ -597,4 +580,34 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+}
+
+
+
+
+/* 모든 스크롤바 스타일 통일 */
+.detail-panel-content::-webkit-scrollbar,
+.property-list-content::-webkit-scrollbar,
+.image-thumbnails::-webkit-scrollbar {
+    width: 6px;
+}
+
+.detail-panel-content::-webkit-scrollbar-track,
+.property-list-content::-webkit-scrollbar-track,
+.image-thumbnails::-webkit-scrollbar-track {
+    background: #f0f7ff;  /* 연한 파란색 배경 */
+    border-radius: 3px;
+}
+
+.detail-panel-content::-webkit-scrollbar-thumb,
+.property-list-content::-webkit-scrollbar-thumb,
+.image-thumbnails::-webkit-scrollbar-thumb {
+    background: #01ADFF;  /* 이글루컬러 */
+    border-radius: 3px;
+}
+
+.detail-panel-content::-webkit-scrollbar-thumb:hover,
+.property-list-content::-webkit-scrollbar-thumb:hover,
+.image-thumbnails::-webkit-scrollbar-thumb:hover {
+    background: #01ADFF;  /* 이글루컬러 */
 }

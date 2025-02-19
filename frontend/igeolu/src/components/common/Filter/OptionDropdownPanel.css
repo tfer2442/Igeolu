@@ -37,14 +37,14 @@
 }
   
 .map-option-item:hover {
-    border-color: #0066ff;
+    border-color: #01ADFF;
     background-color: #f0f7ff;
 }
   
 .map-option-item.selected {
     background-color: #f0f7ff;
-    border-color: #0066ff;
-    color: #0066ff;
+    border-color: #01ADFF;
+    color: #01ADFF;
 }
   
 .map-option-actions {
@@ -75,11 +75,11 @@
 }
   
 .map-option-action-button.apply {
-    background-color: #0066ff;
-    border: 1px solid #0066ff;
+    background-color: #01ADFF;
+    border: 1px solid #01ADFF;
     color: white;
 }
   
 .map-option-action-button.apply:hover {
-    background-color: #0052cc;
+    background-color: #009CE6;
 }

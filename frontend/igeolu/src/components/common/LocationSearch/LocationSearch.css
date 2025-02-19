@@ -59,3 +59,22 @@
 .location-search__suggestion-item:hover {
     background-color: #f3f4f6;
 }
+
+/* ListPanel과 동일한 스크롤바 스타일 */
+.location-search__suggestions::-webkit-scrollbar {
+    width: 6px;
+}
+
+.location-search__suggestions::-webkit-scrollbar-track {
+    background: #f0f7ff;
+    border-radius: 3px;
+}
+
+.location-search__suggestions::-webkit-scrollbar-thumb {
+    background: #01ADFF;
+    border-radius: 3px;
+}
+
+.location-search__suggestions::-webkit-scrollbar-thumb:hover {
+    background: #01ADFF;
+}
