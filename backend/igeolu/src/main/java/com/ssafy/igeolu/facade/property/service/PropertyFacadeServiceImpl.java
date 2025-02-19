@@ -279,9 +279,11 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 			.stream().map(p -> {
 
                     List<String> imageUrls = new ArrayList<>();
-                    if (p.getImageUrls() == null || p.getImageUrls().isEmpty()) {
-                        imageUrls.add(defaultPropertyImageUrl);
-                    }
+					if (p.getImageUrls() == null || p.getImageUrls().isEmpty()) {
+						imageUrls.add(defaultPropertyImageUrl);
+					} else {
+						imageUrls = p.getImageUrls();
+					}
 
                     return PropertySearchGetResponseDto.builder()
                             .area(p.getArea())
