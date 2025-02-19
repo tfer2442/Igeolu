@@ -155,7 +155,19 @@ function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
                                             </div>
                                             <p style={{fontSize: '20px', marginTop: '10px',fontWeight: 'bold'}}>{(winner.deposit ?? 0).toLocaleString()} / {(winner.monthlyRent ?? 0).toLocaleString()}</p>
                                             <p style={{fontSize: '14px'}}>{winner.address || '주소 정보 없음'}</p>
-                                            <p style={{fontSize: '14px'}}>{winner.description || '소개 정보 없음'}</p>
+                                            <p style={{fontSize: '14px'}}>{winner.area}㎡ ({Math.floor(winner.area * 0.3025)}평) | {winner.currentFloor}층/{winner.totalFloors}층</p>
+                                            <div style={{fontSize: '13px', color: '#666', marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center'}}>
+                                                {winner.options && winner.options.map((option) => (
+                                                    <span key={option.optionId} style={{
+                                                        backgroundColor: '#f0f7ff',
+                                                        color: '#01ADFF',
+                                                        padding: '2px 8px',
+                                                        borderRadius: '12px'
+                                                    }}>
+                                                        {option.optionName}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
 
                                         <div className="winner-buttons-container">
@@ -224,7 +236,19 @@ function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
                                                 </div>
                                                 <p style={{fontSize: '20px', marginTop: '30px',fontWeight: 'bold'}}>{(property.deposit ?? 0).toLocaleString()} / {(property.monthlyRent ?? 0).toLocaleString()}</p>
                                                 <p style={{fontSize: '14px'}}>{property.address || '주소 정보 없음'}</p>
-                                                <p style={{fontSize: '14px'}}>{property.description || '소개 정보 없음'}</p>
+                                                <p style={{fontSize: '14px'}}>{property.area}㎡ ({Math.floor(property.area * 0.3025)}평) | {property.currentFloor}층/{property.totalFloors}층</p>
+                                                <div style={{fontSize: '13px', color: '#666', marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '4px'}}>
+                                                    {property.options && property.options.map((option) => (
+                                                        <span key={option.optionId} style={{
+                                                            backgroundColor: '#f0f7ff',
+                                                            color: '#01ADFF',
+                                                            padding: '2px 8px',
+                                                            borderRadius: '12px'
+                                                        }}>
+                                                            {option.optionName}
+                                                        </span>
+                                                    ))}
+                                                </div>
                                             </div>
                                         ))}
                                         <div className="vs-text">VS</div>
