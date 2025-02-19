@@ -97,6 +97,9 @@ public class ChatRoomFacadeServiceImpl implements ChatRoomFacadeService {
         // 채팅방 상태 변경
         chatRoomService.updateChatRoomStatus(chatRoom, user);
 
+        // 나간 사람에 대해 메세지 마킹
+        chatMessageService.markLastExitRoomMessage(user.getId(), chatRoomId).subscribe();
+
         if (chatRoom.getRoomStatus() == RoomStatus.NONE) {
             chatMessageService.deleteAllMessagesByRoomId(chatRoomId).subscribe();
             chatRoomService.leaveChatRoom(chatRoom);
