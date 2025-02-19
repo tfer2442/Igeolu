@@ -402,6 +402,50 @@ function MobileLivePage() {
         }
     };
 
+    const switchCamera = async () => {
+        try {
+            if (devices.length < 2) return;
+
+            const currentDevice = currentVideoDevice;
+            let nextDevice;
+
+            const isCurrentFront = currentDevice.label.toLowerCase().includes('front') ||
+                                 currentDevice.label.toLowerCase().includes('전면') ||
+                                 currentDevice.label.toLowerCase().includes('user');
+
+            if (isCurrentFront) {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('후면') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+            } else {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('front') ||
+                    device.label.toLowerCase().includes('전면') ||
+                    device.label.toLowerCase().includes('user')
+                );
+            }
+
+            if (!nextDevice) {
+                const currentIndex = devices.findIndex(device => device.deviceId === currentDevice.deviceId);
+                nextDevice = devices[(currentIndex + 1) % devices.length];
+            }
+
+            if (publisher) {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: nextDevice.deviceId } }
+                });
+                const videoTrack = stream.getVideoTracks()[0];
+                
+                await publisher.replaceTrack(videoTrack);
+                setCurrentVideoDevice(nextDevice);
+            }
+        } catch (error) {
+            console.error('Error switching camera:', error);
+        }
+    };
+
     return (
         <div className="mobile-live-page-container">
             <div className="mobile-live-page">
