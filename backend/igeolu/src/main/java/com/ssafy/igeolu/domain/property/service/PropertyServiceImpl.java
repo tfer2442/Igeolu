@@ -69,7 +69,7 @@ public class PropertyServiceImpl implements PropertyService {
 		propertyRepository.delete(property);
 
 		// es 에서도 삭제
-		esPropertyRepository.deleteById(String.valueOf(propertyId));
+		esPropertyRepository.deletePropertyById(String.valueOf(propertyId));
 	}
 
 	@Override

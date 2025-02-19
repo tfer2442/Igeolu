@@ -16,4 +16,6 @@ public interface CustomPropertyRepository {
 		Integer maxMonthlyRent,
 		List<Integer> optionIds,
 		Pageable pageable);
+
+	void deletePropertyById(String propertyId);
 }
