@@ -17,9 +17,6 @@ import lombok.Data;
 public class EsProperty {
 
 	@Id
-	private String id; // Elasticsearch의 _id 필드와 매핑
-
-	@Field(type = FieldType.Integer, name = "id")
 	private Integer propertyId; // property_id
 
 	@Field(type = FieldType.Text)

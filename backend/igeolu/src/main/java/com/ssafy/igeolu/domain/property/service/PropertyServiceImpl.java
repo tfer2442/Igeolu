@@ -55,9 +55,6 @@ public class PropertyServiceImpl implements PropertyService {
 	@Override
 	public void updateProperty(Property property) {
 		propertyRepository.save(property);
-
-		// es 에서 삭제(나중에 업데이트됨)
-		esPropertyRepository.deleteByPropertyId(property.getId());
 	}
 
 	@Override
