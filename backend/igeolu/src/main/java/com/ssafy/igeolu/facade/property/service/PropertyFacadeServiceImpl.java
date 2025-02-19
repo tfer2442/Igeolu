@@ -1,9 +1,11 @@
 package com.ssafy.igeolu.facade.property.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -261,8 +263,14 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		filePaths.forEach(fileService::deleteFile);
 	}
 
+	@Value("${file.base-url}")
+	private String baseUrl;
+
 	@Override
 	public List<PropertySearchGetResponseDto> searchBy(PropertySearchGetRequestDto request) {
+		// 기본이미지 url
+		String defaultPropertyImageUrl = baseUrl + "/property.png";
+
 		return propertyService.searchBy(request.getKeyword(),
 				request.getSidoName(),
 				request.getGugunName(),
@@ -271,27 +279,34 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 				request.getMaxMonthlyRent(),
 				request.getOptionIds(),
 				request.toPageableWithCriteria("created_at")) // elasticsearch 컬럼명으로 넣어줘야함
-			.stream().map(p -> PropertySearchGetResponseDto.builder()
-				.area(p.getArea())
-				.propertyId(p.getPropertyId())
-				.approvalDate(p.getApprovalDate()) // LocalDate 변환
-				.monthlyRent(p.getMonthlyRent())
-				.deposit(p.getDeposit())
-				.userId(p.getUserId())
-				.currentFloor(p.getCurrentFloor())
-				.totalFloors(p.getTotalFloors())
-				.address(p.getAddress())
-				.dongCode(p.getDongCode())
-				.sidoName(p.getSidoName())
-				.gugunName(p.getGugunName())
-				.dongName(p.getDongName())
-				.latitude(p.getLatitude())
-				.longitude(p.getLongitude())
-				.images(p.getImageUrls())
-				.createdAt(p.getCreatedAt())
-				.updatedAt(p.getUpdatedAt())
-				.options(p.getOptionIds())
-				.build()
+			.stream().map(p -> {
+
+                    List<String> imageUrls = new ArrayList<>();
+                    if (p.getImageUrls() == null || p.getImageUrls().isEmpty()) {
+                        imageUrls.add(defaultPropertyImageUrl);
+                    }
+
+                    return PropertySearchGetResponseDto.builder()
+                            .area(p.getArea())
+                            .propertyId(p.getPropertyId())
+                            .approvalDate(p.getApprovalDate()) // LocalDate 변환
+                            .monthlyRent(p.getMonthlyRent())
+                            .deposit(p.getDeposit())
+                            .userId(p.getUserId())
+                            .currentFloor(p.getCurrentFloor())
+                            .totalFloors(p.getTotalFloors())
+                            .address(p.getAddress())
+                            .dongCode(p.getDongCode())
+                            .sidoName(p.getSidoName())
+                            .gugunName(p.getGugunName())
+                            .dongName(p.getDongName())
+                            .latitude(p.getLatitude())
+                            .longitude(p.getLongitude())
+                            .images(imageUrls)
+                            .createdAt(p.getCreatedAt())
+                            .updatedAt(p.getUpdatedAt())
+                            .options(p.getOptionIds())
+                            .build();}
 			)
 			.toList();
 	}

@@ -3,7 +3,6 @@ package com.ssafy.igeolu.domain.property.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -76,16 +75,6 @@ public class EsProperty {
 
 	@Field(type = FieldType.Integer, name = "option_ids")
 	private List<Integer> optionIds;
-
-	public List<String> getImageUrls() {
-		final String defaultPropertyImageUrl = "https://i12d205.p.ssafy.io/file/property.png";
-
-		if (imageUrls == null || imageUrls.isEmpty()) {
-			return new ArrayList<>(List.of(defaultPropertyImageUrl));
-		}
-
-		return imageUrls;
-	}
 
 	public LocalDate getApprovalDate() {
 		return approvalDate != null ?
