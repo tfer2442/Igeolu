@@ -9,6 +9,7 @@ import './ChatRoom.css';
 import DesktopLoadingSpinner from '../../../LoadingSpinner/DesktopLoadingSpinner';
 import MobileLoadingSpinner from '../../../LoadingSpinner/MobileLoadingSpinner';
 import { LogOut } from 'lucide-react'; // lucide-react 아이콘 import
+import { useUser } from '../../../../contexts/UserContext';
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -26,6 +27,8 @@ const ChatRoom = ({
   isChatRoomOpen,
   onRoomExit,
 }) => {
+  const { user } = useUser();  // UserContext 사용
+
   // currentUserId props
   /* 📌 상태 관리 */
   const [messages, setMessages] = useState([]); // 채팅 메시지 목록
@@ -36,6 +39,9 @@ const ChatRoom = ({
   const chatSocketRef = useRef(null); // WebSocket 참조
   const messagesEndRef = useRef(null); // 메시지 목록 끝 위치 참조
   const [showExitModal, setShowExitModal] = useState(false);
+  const [myName, setMyName] = useState('');
+  const [messageLength, setMessageLength] = useState(0);
+  const [showLengthWarning, setShowLengthWarning] = useState(false);
 
   const isRoomActive = activeRoomId === room.roomId && isChatRoomOpen;
 
@@ -57,6 +63,16 @@ const ChatRoom = ({
       });
     }, 50);
   }, []);
+
+  // handleChange 함수 수정
+const handleMessageChange = (e) => {
+  const text = e.target.value;
+  setNewMessage(text);
+  setMessageLength(text.length);
+  
+  // 900자 이상일 때 경고 표시
+  setShowLengthWarning(text.length >= 900);
+};
 
   /* 📌 메시지 읽음 처리 핸들러 */
   const handleMarkAsRead = useCallback(async () => {
@@ -263,6 +279,13 @@ const ChatRoom = ({
     setShowExitModal(true);
   };
 
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    if (currentUser?.name) {
+      setMyName(currentUser.name);
+    }
+  }, []);
+
   const handleConfirmExit = async () => {
     try {
       await chatApi.exitChatRoom(room.roomId);
@@ -421,17 +444,17 @@ const ChatRoom = ({
             <>
               {/* 환영 메시지 */}
               <div className='welcome-message'>
-                <ChatMessage
-                  message={{
-                    userId: 0,
-                    content: `✨ 환영합니다 ${room.userName}님! ✨`, // 별 이모티콘 추가
-                    createdAt: new Date().toISOString(),
-                    senderType: 'SYSTEM',
-                  }}
-                  isCurrentUser={false}
-                  userProfile={null}
-                />
-              </div>
+        <ChatMessage
+          message={{
+            userId: 0,
+            content: `✨ 환영합니다 ${user.role === 'ROLE_REALTOR' ? '중개인' : '세입자'}님! ✨`,
+            createdAt: new Date().toISOString(),
+            senderType: 'SYSTEM',
+          }}
+          isCurrentUser={false}
+          userProfile={null}
+        />
+      </div>
 
               {/* 실제 메시지 목록 */}
               {messages.map((message, index) => (
@@ -462,29 +485,36 @@ const ChatRoom = ({
         {/* 📌 메시지 입력창 및 추가 기능 */}
 
         <div className='message-input-container'>
-          <button
-            className='extras-toggle-button'
-            onClick={toggleExtras}
-            aria-label={isExtrasOpen ? '추가 기능 닫기' : '추가 기능 열기'}
-          >
-            {isExtrasOpen ? '✕' : '+'}
-          </button>
-          <textarea
-            className='message-input'
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            rows={1}
-            maxLength={1000}
-          />
-          <button
-            onClick={handleSendMessage}
-            className='send-button'
-            disabled={!newMessage.trim()}
-            aria-label='메시지 전송'
-          />
-        </div>
-
+  <button
+    className='extras-toggle-button'
+    onClick={toggleExtras}
+    aria-label={isExtrasOpen ? '추가 기능 닫기' : '추가 기능 열기'}
+  >
+    {isExtrasOpen ? '✕' : '+'}
+  </button>
+  {messageLength > 1000 && (
+    <div className="character-limit-warning">
+      문자수가 너무 깁니다 (최대 1000자)
+    </div>
+  )}
+  <textarea
+    className='message-input'
+    value={newMessage}
+    onChange={(e) => {
+      setNewMessage(e.target.value);
+      setMessageLength(e.target.value.length);
+    }}
+    onKeyPress={handleKeyPress}
+    rows={1}
+    maxLength={1000}
+  />
+  <button
+    onClick={handleSendMessage}
+    className='send-button'
+    disabled={!newMessage.trim()}
+    aria-label='메시지 전송'
+  />
+</div>
         {/* 📌 추가 기능 패널 */}
         <ChatExtras
           isOpen={isExtrasOpen}

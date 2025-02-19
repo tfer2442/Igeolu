@@ -76,9 +76,23 @@ function DesktopLiveAndMyPage({ onLoginSigninClick }) {
     }
   }, [user]);
 
-  const handleProfileClick = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  // 알림 드롭다운 토글 핸들러 (새로운 기능)
+const toggleNotification = () => {
+  setIsNotificationOpen(!isNotificationOpen);
+  // 프로필 메뉴가 열려있다면 닫기
+  if (isDropdownOpen) {
+    setIsDropdownOpen(false);
+  }
+};
+
+// 프로필 메뉴 클릭 핸들러 수정
+const handleProfileClick = () => {
+  setIsDropdownOpen(!isDropdownOpen);
+  // 알림 드롭다운이 열려있다면 닫기
+  if (isNotificationOpen) {
+    setIsNotificationOpen(false);
+  }
+};
 
   const handleLogoutClick = (e) => {
     e.preventDefault();
@@ -130,7 +144,7 @@ function DesktopLiveAndMyPage({ onLoginSigninClick }) {
               <div className='profile-actions'>
                 <button
                   className='notification-button'
-                  onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                  onClick={toggleNotification} 
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
