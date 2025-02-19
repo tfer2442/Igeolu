@@ -1,8 +1,9 @@
 // components/common/Chat/ChatModal/ChatModal.jsx
-import React from 'react';
+import React, {useRef, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import ChatRoomList from '../ChatRoomList/ChatRoomList';
 import './ChatModal.css';
+import ChatRoomsWebSocket from '../../../../services/webSocket/chatRoomsWebSocket';
 
 /**
  * 📌 ChatModal 컴포넌트
@@ -10,15 +11,45 @@ import './ChatModal.css';
  * - WebSocket 연결은 App 컴포넌트에서 관리
  * - 채팅방을 선택하면 `onSelectChatRoom` 콜백 실행
  */
-const ChatModal = ({
-  isModalOpen,
-  onSelectChatRoom,
-  onClose,
-  chatRooms,
-  isLoading,
-  error,
-  onRetry
-}) => {
+  const ChatModal = ({ isModalOpen, onSelectChatRoom, onClose, chatRooms, isLoading, error, onRetry, currentUserId }) => {
+    const roomsSocketRef = useRef(null);
+  
+    useEffect(() => {
+      if (!isModalOpen || !currentUserId) return;
+      console.log("testetetsetsetses")
+  
+      const initializeChatList = async () => {
+        if (roomsSocketRef.current?.isConnected) return;
+  
+        try {
+          roomsSocketRef.current = new ChatRoomsWebSocket(
+            currentUserId,
+            async () => {
+              // 새 메시지 수신 시 채팅방 목록 갱신
+              onRetry(); // 기존의 fetchChatRooms 함수 재사용
+            }
+          );
+  
+          await roomsSocketRef.current.connect();
+          roomsSocketRef.current.subscribeToChatRooms(chatRooms);
+        } catch (error) {
+          console.error('ChatModal WebSocket 초기화 실패:', error);
+        }
+      };
+  
+      initializeChatList();
+  
+      // Cleanup
+      return () => {
+        if (roomsSocketRef.current) {
+          roomsSocketRef.current.disconnect();
+          roomsSocketRef.current = null;
+        }
+      };
+    }, [isModalOpen, currentUserId, chatRooms, onRetry]);
+
+
+
   return (
     <div className={`chat-modal ${isModalOpen ? 'active' : ''}`}>
       {/* 📌 모달 헤더 */}

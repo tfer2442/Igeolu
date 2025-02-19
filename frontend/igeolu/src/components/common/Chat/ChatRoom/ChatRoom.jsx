@@ -24,6 +24,7 @@ const ChatRoom = ({
   activeRoomId,
   onRoomUpdate,
   isChatRoomOpen,
+  onRoomExit,
 }) => {
   // currentUserId props
   /* 📌 상태 관리 */
@@ -266,7 +267,7 @@ const ChatRoom = ({
     try {
       await chatApi.exitChatRoom(room.roomId);
       setShowExitModal(false);
-      onBack();
+      onRoomExit(); 
     } catch (error) {
       console.error('채팅방 나가기 실패:', error);
       setError('채팅방 나가기에 실패했습니다.');
@@ -519,6 +520,7 @@ ChatRoom.propTypes = {
       senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired,
     })
   ),
+  onRoomExit: PropTypes.func.isRequired,
 };
 
 export default ChatRoom;

@@ -274,8 +274,8 @@ function MobileMyPageEdit() {
         <div className="additional-info-container">
             
             <div className="additional-info-wrapper">
-                <form onSubmit={handleSubmit} className="info-form">
-                    <div className="form-group">
+                <form onSubmit={handleSubmit} className="MobileMyPageEdit__info-form">
+                    <div className="MobileMyPageEdit__form-group">
                         <label className="form-label">중개사무소이름</label>
                         <input
                             type="text"
@@ -288,7 +288,7 @@ function MobileMyPageEdit() {
                         {errors.title && <p className="error-message">{errors.title}</p>}
                     </div>
 
-                    <div className="form-group">
+                    <div className="MobileMyPageEdit__form-group">
                         <label className="form-label">중개사무소소개</label>
                         <textarea
                             name="content"
@@ -300,7 +300,7 @@ function MobileMyPageEdit() {
                         {errors.content && <p className="error-message">{errors.content}</p>}
                     </div>
 
-                    <div className="form-group">
+                    <div className="MobileMyPageEdit__form-group">
                         <label className="form-label">사업자등록번호</label>
                         <input
                             type="text"
@@ -313,7 +313,7 @@ function MobileMyPageEdit() {
                         {errors.registrationNumber && <p className="error-message">{errors.registrationNumber}</p>}
                     </div>
 
-                    <div className="form-group">
+                    <div className="MobileMyPageEdit__form-group">
                         <label className="form-label">전화번호</label>
                         <input
                             type="tel"
@@ -326,7 +326,7 @@ function MobileMyPageEdit() {
                         {errors.tel && <p className="error-message">{errors.tel}</p>}
                     </div>
 
-                    <div className="form-group">
+                    <div className="MobileMyPageEdit__form-group">
                         <label className="form-label">주소</label>
                         <div className="address-input-group">
                             <input
