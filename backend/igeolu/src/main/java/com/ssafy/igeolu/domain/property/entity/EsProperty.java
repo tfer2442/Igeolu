@@ -90,4 +90,8 @@ public class EsProperty {
 		return updatedAt != null ?
 			LocalDateTime.parse(updatedAt.substring(0, 19)) : null;
 	}
+
+	public Integer getPropertyId() {
+		return Integer.parseInt(propertyId);
+	}
 }
