@@ -106,6 +106,11 @@ public class TestCheckController {
 					.id(38)
 					.role(Role.ROLE_REALTOR)
 					.build();
+			} else if (inputId.equals("realtor4") && inputPassword.equals("realtor4")) { // 박진훈
+				user = User.builder()
+					.id(39)
+					.role(Role.ROLE_INCOMPLETE_REALTOR)
+					.build();
 			} else {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
