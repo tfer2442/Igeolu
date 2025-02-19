@@ -6,8 +6,27 @@ import { useNavigate } from 'react-router-dom';
 
 function MobileEstateList() {
     const [properties, setProperties] = useState([]);
-    const userId = 32; 
     const navigate = useNavigate();
+
+    // localStorage에서 사용자 정보 가져오기
+    const getUserId = () => {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) {
+            // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+            navigate('/mobile-login');
+            return null;
+        }
+        try {
+            const user = JSON.parse(userStr);
+            return user.userId;
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+            navigate('/mobile-login');
+            return null;
+        }
+    };
+
+    const userId = getUserId();
 
     useEffect(() => {
         const fetchProperties = async () => {
