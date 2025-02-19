@@ -409,7 +409,7 @@ const DetailPanel = ({
                 총 {properties.length}개의 매물
               </span>
             </div>
-            <div className='property-list-content'>
+
               {properties.length > 0 ? (
                 <div className='list-items'>
                   {properties.map((property) => (
@@ -467,7 +467,7 @@ const DetailPanel = ({
                   </span>
                 </div>
               )}
-            </div>
+
           </div>
         ) : view === 'propertyDetail' ? (
           <div className='detail-panel-section'>
