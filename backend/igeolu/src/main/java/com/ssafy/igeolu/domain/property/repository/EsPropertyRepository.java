@@ -7,5 +7,5 @@ import com.ssafy.igeolu.domain.property.entity.EsProperty;
 
 @Profile("prod")
 public interface EsPropertyRepository extends ElasticsearchRepository<EsProperty, String>, CustomPropertyRepository {
-
+    void deleteByPropertyId(Integer propertyId);
 }

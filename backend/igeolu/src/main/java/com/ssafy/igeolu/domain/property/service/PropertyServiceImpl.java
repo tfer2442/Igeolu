@@ -55,6 +55,9 @@ public class PropertyServiceImpl implements PropertyService {
 	@Override
 	public void updateProperty(Property property) {
 		propertyRepository.save(property);
+
+		// es 에서 삭제(나중에 업데이트됨)
+		esPropertyRepository.deleteByPropertyId(property.getId());
 	}
 
 	@Override
@@ -67,6 +70,9 @@ public class PropertyServiceImpl implements PropertyService {
 		Property property = propertyRepository.findById(propertyId)
 			.orElseThrow(() -> new CustomException(ErrorCode.PROPERTY_NOT_FOUND));
 		propertyRepository.delete(property);
+
+		// es 에서도 삭제
+		esPropertyRepository.deleteByPropertyId(propertyId);
 	}
 
 	@Override
