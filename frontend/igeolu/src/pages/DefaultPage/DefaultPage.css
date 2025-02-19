@@ -6,44 +6,67 @@
     width: 100vw;
     height: 100vh;
 }
+
 .default-page__logo-container {
-    border:2px solid #01ADFF;
+    border: 2px solid #01ADFF;
     border-radius: 100px;
     width: 150px;
     height: 150px;
     padding: 10px;
-
 }
+
 .default-page__logo-container img {
     width: 100%;
     height: 100%;
 }
-.default-page__button-container {
 
+.default-page__button-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    gap: 20px;
     margin-top: 20px;
 }
 
 .default-page__button-container button {
-    width: 180px;
-    height: 40px;
+    width: 200px;
+    height: 220px;
     border-radius: 10px;
-    border: 1px solid #01ADFF;
-    background-color: #01ADFF;
-    color: white;
+    border: 2px solid #01ADFF;
+    background-color: white;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+    transition: all 0.3s ease;
 }
+
+.button-image {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
 .default-page__button-container button:hover {
     background-color: #01ADFF;
 }
+
 .default-page__button-text {
     font-size: 16px;
     font-weight: 600;
+    color: #01ADFF;
+    transition: color 0.3s ease;
 }
+
+.default-page__button-container button:hover .default-page__button-text {
+    color: white;
+}
+
 .default-page__footer {
     position: fixed;
     bottom: 0;
@@ -51,12 +74,13 @@
     transform: translateX(-50%);
     display: flex;
 }
+
 .default-page__footer img {
     width: 150px;
     height: auto;
 }
 
-/* 눈송이 스타일 */
+/* 눈송이 스타일은 그대로 유지 */
 .snowflake {
     position: fixed;
     left: var(--position);
@@ -73,7 +97,6 @@
     animation: rotate 8s linear infinite;
 }
 
-/* 다양한 크기의 눈송이 */
 .snowflake:nth-child(3n) .snowflake-img {
     width: 30px;
     height: 30px;
@@ -95,7 +118,6 @@
     }
 }
 
-/* 지그재그 효과 */
 .snowflake:nth-child(2n) {
     animation: snowfall-zigzag var(--duration) linear infinite;
 }
