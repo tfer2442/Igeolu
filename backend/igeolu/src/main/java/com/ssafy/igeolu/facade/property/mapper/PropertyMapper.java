@@ -1,5 +1,6 @@
 package com.ssafy.igeolu.facade.property.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ssafy.igeolu.domain.property.entity.Property;
@@ -22,9 +23,15 @@ public class PropertyMapper {
 			.toList();
 
 		// 2) 이미지 파일 경로 리스트 추출
-		List<String> images = property.getPropertyImages().stream()
-			.map(PropertyImage::getFilePath)
-			.toList();
+		List<String> images = new ArrayList<>();
+		final String defaultPropertyImageUrl = "https://i12d205.p.ssafy.io/file/property.png";
+		if (property.getPropertyImages() == null || property.getPropertyImages().isEmpty()) {
+			images.add(defaultPropertyImageUrl);
+		} else {
+			images = property.getPropertyImages().stream()
+				.map(PropertyImage::getFilePath)
+				.toList();
+		}
 
 		// 3) 빌더를 통해 DTO 생성 후 반환
 		return PropertyGetResponseDto.builder()
