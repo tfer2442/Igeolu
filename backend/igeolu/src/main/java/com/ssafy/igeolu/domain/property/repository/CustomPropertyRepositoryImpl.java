@@ -76,10 +76,4 @@ public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
                 .map(SearchHit::getContent)
                 .toList();
     }
-
-    public void deletePropertyById(String propertyId) {
-
-        // Elasticsearch에서 해당 쿼리로 삭제 실행
-        elasticsearchOperations.delete(propertyId, EsProperty.class);
-    }
 }

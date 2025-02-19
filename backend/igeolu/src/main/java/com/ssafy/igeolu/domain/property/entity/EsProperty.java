@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import lombok.Data;
 
 @Data
-@Document(indexName = "property-*") // 날짜 포함 인덱스 매칭 가능
+@Document(indexName = "property-1") // 날짜 포함 인덱스 매칭 가능
 public class EsProperty {
 
 	@Id
