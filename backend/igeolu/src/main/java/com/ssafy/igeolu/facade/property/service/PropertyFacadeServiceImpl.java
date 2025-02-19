@@ -184,19 +184,15 @@ public class PropertyFacadeServiceImpl implements PropertyFacadeService {
 		property.setLongitude(longitude);
 
 		// 이미지 수정 로직
-		// 기존 이미지 목록 조회
-		List<String> existingImageUrls = propertyService.getImagesByPropertyId(propertyId);
-
-		// 기존에 없는 이미지를 삭제
-		existingImageUrls.stream()
-			.filter(imageUrl -> !requestDto.getImageUrls().contains(imageUrl))
-			.forEach(fileService::deleteFile);
-
 		// 매물리스트에서 없는 이미지 삭제
 		List<PropertyImage> propertyImagesToDelete = property.getPropertyImages().stream()
-			.filter(pi -> !existingImageUrls.contains(pi.getFilePath()))
+			.filter(pi -> !requestDto.getImageUrls().contains(pi.getFilePath()))
 			.toList();
-		propertyImagesToDelete.forEach(property::removePropertyImage);
+
+		propertyImagesToDelete.forEach(pi -> {
+			fileService.deleteFile(pi.getFilePath());
+			property.removePropertyImage(pi);
+		});
 
 		// 새로게 추가된 이미지 저장 및 추가
 		if (images != null && !images.isEmpty()) {
