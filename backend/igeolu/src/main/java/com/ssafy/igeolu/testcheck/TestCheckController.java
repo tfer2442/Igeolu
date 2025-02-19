@@ -87,18 +87,30 @@ public class TestCheckController {
 		@RequestBody TestLoginPostRequestDto testLoginPostRequestDto, HttpServletResponse httpServletResponse) {
 		User user = null;
 
-		if (role.equals("realtor")) {
-			if (!(testLoginPostRequestDto.getId().equals("coachlove12") && testLoginPostRequestDto.getPassword()
-				.equals("consultantlove12"))) {
+		if (role.equals("realtor")) { // 공인중개사
+			String inputId = testLoginPostRequestDto.getId();
+			String inputPassword = testLoginPostRequestDto.getPassword();
 
+			if (inputId.equals("realtor1") && inputPassword.equals("realtor1")) { // 조대성
+				user = User.builder()
+					.id(32)
+					.role(Role.ROLE_REALTOR)
+					.build();
+			} else if (inputId.equals("realtor2") && inputPassword.equals("realtor2")) { // 오승우
+				user = User.builder()
+					.id(33)
+					.role(Role.ROLE_REALTOR)
+					.build();
+			} else if (inputId.equals("realtor3") && inputPassword.equals("realtor3")) { // 최재영
+				user = User.builder()
+					.id(38)
+					.role(Role.ROLE_REALTOR)
+					.build();
+			} else {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
-
-			user = User.builder()
-				.id(32)
-				.role(Role.ROLE_REALTOR)
-				.build();
 		}
+
 
 		if (role.equals("member")) {
 			if (!(testLoginPostRequestDto.getId().equals("consultantlove12") && testLoginPostRequestDto.getPassword()
