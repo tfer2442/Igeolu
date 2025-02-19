@@ -40,19 +40,16 @@ function MobileLivePage() {
                 
                 console.log('All video devices:', videoDevices);
                 
-                // 안드로이드와 iOS 모두 지원하는 키워드로 확장
+                // 먼저 일반적인 키워드로 시도
                 let frontCamera = videoDevices.find(device => 
                     device.label.toLowerCase().includes('front') ||
                     device.label.toLowerCase().includes('전면') ||
-                    device.label.toLowerCase().includes('user') ||
-                    device.label.toLowerCase().includes('selfie') ||  // 안드로이드 키워드 추가
-                    device.label.toLowerCase().includes('internal')   // 안드로이드 키워드 추가
+                    device.label.toLowerCase().includes('user')
                 );
                 let backCamera = videoDevices.find(device => 
                     device.label.toLowerCase().includes('back') ||
                     device.label.toLowerCase().includes('후면') ||
-                    device.label.toLowerCase().includes('environment') ||
-                    device.label.toLowerCase().includes('external')   // 안드로이드 키워드 추가
+                    device.label.toLowerCase().includes('environment')
                 );
 
                 // 키워드로 찾지 못한 경우, facingMode 제약 조건을 사용하여 재시도
@@ -220,41 +217,50 @@ function MobileLivePage() {
         };
     }, [sessionId, token, role]);
 
-    // 위치 정보를 가져오고 전송하는 함수
-    const sendLocationUpdate = async () => {
-        try {
-            const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    enableHighAccuracy: true,
-                    timeout: 5000
-                });
-            });
-
-            const locationData = {
-                type: 'host-location',
-                location: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    accuracy: position.coords.accuracy
-                },
-                timestamp: new Date().toISOString()
-            };
-
-            await session.signal({
-                data: JSON.stringify(locationData),
-                type: 'location-update'
-            });
-        } catch (error) {
-            console.error('Error sending location signal:', error);
-        }
-    };
-
-    // 초기 위치 전송을 위한 useEffect
     useEffect(() => {
+        // 세션이 연결되어 있고 호스트인 경우에만 위치 추적 시작
         if (session && role === 'host') {
-            sendLocationUpdate();
+            const locationWatchId = navigator.geolocation.watchPosition(
+                async (position) => {
+                    try {
+                        const locationData = {
+                            type: 'host-location',
+                            location: {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                accuracy: position.coords.accuracy
+                            },
+                            timestamp: new Date().toISOString()
+                        };
+
+                        await session.signal({
+                            data: JSON.stringify(locationData),
+                            type: 'location-update'
+                        });
+                    } catch (error) {
+                        console.error('Error sending location signal:', error);
+                    }
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 4000 // 4초 이전의 캐시된 위치까지만 사용
+                }
+            );
+
+            setWatchId(locationWatchId);
+
+            // cleanup function
+            return () => {
+                if (locationWatchId) {
+                    navigator.geolocation.clearWatch(locationWatchId);
+                }
+            };
         }
-    }, [session, role]);
+    }, [session, role]); // session과 role이 변경될 때만 실행
 
     const toggleMicrophone = () => {
         if (publisher) {
@@ -270,7 +276,50 @@ function MobileLivePage() {
         }
     };
 
-    
+    const switchCamera = async () => {
+        try {
+            if (devices.length < 2) return;
+
+            const currentDevice = currentVideoDevice;
+            let nextDevice;
+
+            const isCurrentFront = currentDevice.label.toLowerCase().includes('front') ||
+                                 currentDevice.label.toLowerCase().includes('전면') ||
+                                 currentDevice.label.toLowerCase().includes('user');
+
+            if (isCurrentFront) {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('후면') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+            } else {
+                nextDevice = devices.find(device => 
+                    device.label.toLowerCase().includes('front') ||
+                    device.label.toLowerCase().includes('전면') ||
+                    device.label.toLowerCase().includes('user')
+                );
+            }
+
+            if (!nextDevice) {
+                const currentIndex = devices.findIndex(device => device.deviceId === currentDevice.deviceId);
+                nextDevice = devices[(currentIndex + 1) % devices.length];
+            }
+
+            if (publisher) {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: nextDevice.deviceId } }
+                });
+                const videoTrack = stream.getVideoTracks()[0];
+                
+                await publisher.replaceTrack(videoTrack);
+                setCurrentVideoDevice(nextDevice);
+            }
+        } catch (error) {
+            console.error('Error switching camera:', error);
+        }
+    };
+
     const toggleRecording = async () => {
         try {
             if (!isRecording) {
@@ -376,11 +425,6 @@ function MobileLivePage() {
         
         try {
             const currentProperty = properties[currentPropertyIndex];
-            
-            // 위치 정보 가져오기 및 전송
-            if (role === 'host') {
-                await sendLocationUpdate();
-            }
             
             const signalData = {
                 propertyId: currentProperty.livePropertyId,
