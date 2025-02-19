@@ -383,78 +383,67 @@ function DesktopLive() {
   useEffect(() => {
     if (subscriberVideoRef.current && model && detectionCanvasRef.current) {
       const videoElement = subscriberVideoRef.current;
-      
-      // 캔버스 visibility 제어
+      let frameCount = 0;
+      let animationFrameId;
+
+      // 캔버스 초기화
       if (detectionCanvasRef.current) {
-        detectionCanvasRef.current.style.visibility = showDetectionOverlay ? 'visible' : 'hidden';
+        detectionCanvasRef.current.width = videoElement.videoWidth;
+        detectionCanvasRef.current.height = videoElement.videoHeight;
       }
-      
+
       const detectFrame = async () => {
         if (!videoElement.paused && !videoElement.ended) {
-          try {
-            const predictions = await detect(
-              videoElement,
-              model,
-              detectionCanvasRef.current
-            );
-            
-            if (predictions && predictions.length > 0) {
-              if (showDetectionOverlay) {
-                const boxes_data = predictions.flatMap(pred => pred.bbox);
-                const scores_data = predictions.map(pred => pred.confidence);
-                const classes_data = predictions.map(pred => labels.indexOf(pred.class));
-                
-                const xRatio = videoElement.videoWidth / detectionCanvasRef.current.width;
-                const yRatio = videoElement.videoHeight / detectionCanvasRef.current.height;
-                
-                renderBoxes(
-                  detectionCanvasRef.current,
-                  boxes_data,
-                  scores_data,
-                  classes_data,
-                  [xRatio, yRatio]
-                );
-              }
-
-              // 아직 처리되지 않은 객체들만 필터링
-              const newObjects = predictions.filter(pred => !processedObjects.has(pred.class));
+          frameCount++;
+          
+          // 5프레임마다 객체 인식 실행
+          if (frameCount % 5 === 0) {
+            try {
+              const predictions = await detect(
+                videoElement,
+                model,
+                detectionCanvasRef.current
+              );
               
-              if (newObjects.length > 0) {
-                // 새로운 객체들에 대한 모든 질문을 수집
-                const allNewQuestions = newObjects.flatMap(pred => {
-                  const questions = objectQuestions[pred.class] || [];
-                  // 해당 객체를 처리된 것으로 표시
-                  setProcessedObjects(prev => new Set([...prev, pred.class]));
-                  return questions;
-                });
+              if (predictions && predictions.length > 0 && showDetectionOverlay) {
+                // 새로운 객체 처리
+                const newObjects = predictions.filter(pred => !processedObjects.has(pred.class));
+                
+                if (newObjects.length > 0) {
+                  // 새로운 객체들에 대한 모든 질문을 수집
+                  const allNewQuestions = newObjects.flatMap(pred => {
+                    const questions = objectQuestions[pred.class] || [];
+                    setProcessedObjects(prev => new Set([...prev, pred.class]));
+                    return questions;
+                  });
 
-                // 수집된 질문들 중 랜덤하게 3개 선택
-                const selectedQuestions = allNewQuestions
-                  .sort(() => 0.5 - Math.random()) // 질문들을 랜덤하게 섞기
-                  .slice(0, 3); // 앞에서 3개만 선택
+                  // 수집된 질문들 중 랜덤하게 3개 선택
+                  const selectedQuestions = allNewQuestions
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3);
 
-                // 선택된 질문들을 displayedQuestions에 추가
-                setDisplayedQuestions(prev => new Set([...prev, ...selectedQuestions]));
+                  setDisplayedQuestions(prev => new Set([...prev, ...selectedQuestions]));
+                }
               }
+            } catch (error) {
+              console.error('Detection error:', error);
             }
-          } catch (error) {
-            console.error('Detection error:', error);
           }
         }
-        requestAnimationFrame(detectFrame);
+        animationFrameId = requestAnimationFrame(detectFrame);
       };
 
       if (videoElement.readyState === 4) {
-        detectionCanvasRef.current.width = videoElement.videoWidth;
-        detectionCanvasRef.current.height = videoElement.videoHeight;
         detectFrame();
       } else {
-        videoElement.addEventListener('loadeddata', () => {
-          detectionCanvasRef.current.width = videoElement.videoWidth;
-          detectionCanvasRef.current.height = videoElement.videoHeight;
-          detectFrame();
-        });
+        videoElement.addEventListener('loadeddata', detectFrame);
       }
+
+      return () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      };
     }
   }, [model, subscriberVideoRef.current, detectionCanvasRef.current, showDetectionOverlay, processedObjects]);
 
