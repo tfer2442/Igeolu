@@ -4,13 +4,12 @@ import { Building2, MapPin, Home } from 'lucide-react';
 import './ListPanel.css';
 
 const ListPanel = ({ type, onItemClick, items = [] }) => {
-  console.log(`ListPanel 렌더링 - type: ${type}, items 개수: ${items.length}`);
   
   // 아이템 타입과 컴포넌트 타입 확인
   const filteredItems = items.filter(item => {
     // 아이템 자체의 타입이 있으면 그것을 우선적으로 확인
     if (item.type && item.type !== type) {
-      console.warn(`데이터 타입(${item.type})과 컴포넌트 타입(${type})이 일치하지 않음:`, item);
+      // console.warn(`데이터 타입(${item.type})과 컴포넌트 타입(${type})이 일치하지 않음:`, item);
       return false;
     }
     
