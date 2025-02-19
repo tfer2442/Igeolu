@@ -276,10 +276,6 @@ const DetailPanel = ({
           src={images[currentImageIndex]}
           alt='매물 이미지'
           className='slider-image'
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '/room-placeholder.jpg';
-          }}
         />
         {images.length > 1 && (
           <>
@@ -308,10 +304,6 @@ const DetailPanel = ({
                     src={image}
                     alt={`썸네일 ${index + 1}`}
                     className='thumbnail-image'
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/room-placeholder.jpg';
-                    }}
                   />
                 </div>
               ))}
@@ -423,10 +415,6 @@ const DetailPanel = ({
                           <img
                             src={property.images[0]}
                             alt='매물 이미지'
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = '/room-placeholder.jpg';
-                            }}
                           />
                         ) : (
                           <div className='no-image-preview'>이미지 없음</div>
