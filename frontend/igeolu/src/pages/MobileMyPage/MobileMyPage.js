@@ -6,6 +6,8 @@ import RealEstateRegistration from "../../components/RealEstateRegistration/Real
 import RealEstateEdit from "../../components/RealEstateEdit/RealEstateEdit";
 import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
 import { useNavigate } from 'react-router-dom';
+import { FaCamera } from 'react-icons/fa';
+import axios from 'axios';
 
 function MobileMyPage() {
   const [realtorInfo, setRealtorInfo] = useState(null);
@@ -51,6 +53,47 @@ function MobileMyPage() {
     fetchData();
   }, []);
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 파일 유효성 검사
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    // 파일 크기 제한 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.put('https://i12d205.p.ssafy.io/api/users/me/profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.data.imageUrl) {
+        setRealtorInfo(prev => ({
+          ...prev,
+          profileImage: response.data.imageUrl
+        }));
+        // 성공 시 페이지 새로고침하여 최신 데이터 반영
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('프로필 이미지 업데이트 실패:', error.response?.data || error);
+      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -68,10 +111,22 @@ function MobileMyPage() {
         <div className="mobile-my-page__my-info">
           <p>나의 프로필 정보</p>
           <div className="mobile-my-page__my-info__profile">
-            <img 
-              src={realtorInfo?.profileImage || "https://via.placeholder.com/120"} 
-              alt="profile"  
-            />
+            <div className="profile-image-wrapper">
+              <img 
+                src={realtorInfo?.profileImage || "https://via.placeholder.com/120"} 
+                alt="profile"  
+              />
+              <label className="profile-edit-overlay" htmlFor="profile-image-input">
+                <FaCamera size={24} />
+              </label>
+              <input
+                type="file"
+                id="profile-image-input"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
+            </div>
             <div className="mobile-my-page__my-info__profile__name">
               <div className="mobile-my-page__my-info__profile__edit-icon"
                 onClick={() => navigate('/mobile-my-page-edit')}
