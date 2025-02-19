@@ -17,7 +17,8 @@ function MobileEditPage() {
   console.log('전달받은 매물 데이터:', propertyData); // 디버깅용 로그
 
   const [images, setImages] = useState(propertyData?.images || []);
-  const [newImageFiles, setNewImageFiles] = useState([]); // 새로 추가된 이미지 파일들을 저장
+  const [newImageFiles, setNewImageFiles] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]); // 삭제된 이미지 추적을 위해 추가
   const fileInputRef = useRef(null);
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -73,6 +74,15 @@ function MobileEditPage() {
   };
 
   const handleDeleteImage = (indexToDelete) => {
+    const deletedImage = images[indexToDelete];
+    
+    // 기존 이미지 URL인 경우에만 deletedImages에 추가
+    if (propertyData?.images?.includes(deletedImage)) {
+      setDeletedImages(prev => [...prev, deletedImage]);
+    }
+    
+    // 새로 추가된 이미지인 경우 newImageFiles에서도 제거
+    setNewImageFiles(prev => prev.filter((_, idx) => idx !== indexToDelete));
     setImages(images.filter((_, index) => index !== indexToDelete));
   };
 
@@ -173,7 +183,11 @@ function MobileEditPage() {
         return;
       }
 
-      // JSON 데이터 구성
+      // 현재 표시된 이미지 중 기존 이미지 URL만 필터링
+      const remainingOriginalImages = images.filter(img => 
+        propertyData?.images?.includes(img)
+      );
+
       const updateData = {
         propertyId: propertyData.propertyId,
         userId: propertyData.userId,
@@ -189,7 +203,7 @@ function MobileEditPage() {
         x: coordinates.x,
         dongcode: coordinates.dongcode,
         options: selectedOptions.map((opt) => opt.optionId),
-        imageUrls: propertyData.images || [], // 기존 이미지 URL들 포함
+        imageUrls: remainingOriginalImages, // 삭제되지 않은 기존 이미지 URL들만 포함
       };
 
       // 데이터 확인용 로그
