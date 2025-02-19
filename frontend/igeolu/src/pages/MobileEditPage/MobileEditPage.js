@@ -17,6 +17,7 @@ function MobileEditPage() {
   console.log('전달받은 매물 데이터:', propertyData); // 디버깅용 로그
 
   const [images, setImages] = useState(propertyData?.images || []);
+  const [newImageFiles, setNewImageFiles] = useState([]); // 새로 추가된 이미지 파일들을 저장
   const fileInputRef = useRef(null);
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -66,6 +67,7 @@ function MobileEditPage() {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
+    setNewImageFiles(prev => [...prev, ...files]); // 새 파일들 저장
     const imageUrls = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...imageUrls]);
   };
@@ -187,6 +189,7 @@ function MobileEditPage() {
         x: coordinates.x,
         dongcode: coordinates.dongcode,
         options: selectedOptions.map((opt) => opt.optionId),
+        imageUrls: propertyData.images || [], // 기존 이미지 URL들 포함
       };
 
       // 데이터 확인용 로그
@@ -201,13 +204,10 @@ function MobileEditPage() {
         new Blob([JSON.stringify(updateData)], { type: 'application/json' })
       );
 
-      // 이미지 파일들 추가
-      const fileInput = fileInputRef.current;
-      if (fileInput && fileInput.files) {
-        Array.from(fileInput.files).forEach((file) => {
-          formData.append('images', file);
-        });
-      }
+      // 새로 추가된 이미지 파일들만 FormData에 추가
+      newImageFiles.forEach((file) => {
+        formData.append('images', file);
+      });
 
       // FormData 내용 확인
       for (let pair of formData.entries()) {
