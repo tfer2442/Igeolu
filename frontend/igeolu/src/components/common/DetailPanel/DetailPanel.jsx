@@ -22,15 +22,45 @@ const DetailPanel = ({
     const [optionsData, setOptionsData] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+    // useEffect(() => {
+    //     const fetchOptions = async () => {
+    //         if (data?.options && Array.isArray(data.options)) {
+    //             try {
+    //                 const response = await axios.get('https://i12d205.p.ssafy.io/api/options');
+    //                 const allOptions = response.data;
+    //                 const filteredOptions = allOptions.filter(option => 
+    //                     data.options.includes(option.optionId)
+    //                 );
+    //                 setOptionsData(filteredOptions);
+    //             } catch (error) {
+    //                 console.error('옵션 정보 로드 실패:', error);
+    //             }
+    //         }
+    //     };
+
+    //     if (isVisible && data) {
+    //         fetchOptions();
+    //     }
+    // }, [isVisible, data]);
+
     useEffect(() => {
         const fetchOptions = async () => {
+            console.log("fetchOptions 호출됨", {
+                dataType: data?.type,
+                hasOptions: Boolean(data?.options),
+                isOptionsArray: Array.isArray(data?.options),
+                options: data?.options
+            });
+            
             if (data?.options && Array.isArray(data.options)) {
                 try {
                     const response = await axios.get('https://i12d205.p.ssafy.io/api/options');
+                    console.log("옵션 API 응답:", response.data);
                     const allOptions = response.data;
                     const filteredOptions = allOptions.filter(option => 
                         data.options.includes(option.optionId)
                     );
+                    console.log("필터링된 옵션:", filteredOptions);
                     setOptionsData(filteredOptions);
                 } catch (error) {
                     console.error('옵션 정보 로드 실패:', error);
@@ -39,6 +69,14 @@ const DetailPanel = ({
         };
 
         if (isVisible && data) {
+            console.log("DetailPanel 데이터 변경:", {
+                isVisible,
+                type,
+                dataType: data?.type,
+                view,
+                propertyId: data?.propertyId,
+                hasOptions: Boolean(data?.options)
+            });
             fetchOptions();
         }
     }, [isVisible, data]);
@@ -69,6 +107,18 @@ const DetailPanel = ({
             setSelectedProperty(null);
         }
     }, [data, setView]);
+
+    // 추가: 속성 상세 조회 시 로그
+    useEffect(() => {
+        if (view === 'propertyDetail' && selectedProperty) {
+            console.log("속성 상세 조회:", {
+                propertyId: selectedProperty.propertyId,
+                hasOptions: Boolean(selectedProperty.options),
+                options: selectedProperty.options
+            });
+        }
+    }, [view, selectedProperty]);
+
 
     if (!isVisible) return null;
 
@@ -110,6 +160,7 @@ const DetailPanel = ({
             const response = await axios.get(`https://i12d205.p.ssafy.io/api/properties`, {
                 params: { userId: data.userId }
             });
+            console.log("공인중개사 매물 목록 응답:", response.data);
             setProperties(response.data);
             setView('propertyList');
             onViewProperties(data.userId, null, response.data);
@@ -121,6 +172,11 @@ const DetailPanel = ({
     };
 
     const handlePropertyClick = (property) => {
+        console.log("매물 선택:", {
+            propertyId: property.propertyId,
+            hasOptions: Boolean(property.options),
+            options: property.options
+        });
         setSelectedProperty(property);
         setView('propertyDetail');
         setCurrentImageIndex(0);
@@ -154,10 +210,6 @@ const DetailPanel = ({
                     src={images[currentImageIndex]} 
                     alt="매물 이미지" 
                     className="slider-image"
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/room-placeholder.jpg';
-                    }}
                 />
                 {images.length > 1 && (
                     <>
@@ -186,10 +238,6 @@ const DetailPanel = ({
                                         src={image}
                                         alt={`썸네일 ${index + 1}`}
                                         className="thumbnail-image"
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = '/room-placeholder.jpg';
-                                        }}
                                     />
                                 </div>
                             ))}
@@ -201,6 +249,11 @@ const DetailPanel = ({
     };
 
     const renderOptions = () => {
+        console.log("renderOptions 호출됨", {
+            optionsDataLength: optionsData?.length,
+            currentOptions: optionsData
+        });
+        
         if (!optionsData || optionsData.length === 0) {
             return <span className='no-options'>제공된 옵션 정보가 없습니다</span>;
         }
@@ -286,10 +339,6 @@ const DetailPanel = ({
                                                     <img 
                                                         src={property.images[0]} 
                                                         alt="매물 이미지"
-                                                        onError={(e) => {
-                                                            e.target.onerror = null;
-                                                            e.target.src = '/room-placeholder.jpg';
-                                                        }}
                                                     />
                                                 ) : (
                                                     <div className="no-image-preview">이미지 없음</div>
