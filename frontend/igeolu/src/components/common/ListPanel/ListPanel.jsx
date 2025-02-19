@@ -42,12 +42,6 @@ const ListPanel = ({ type, onItemClick, items = [] }) => {
                     }
                     alt={type === 'room' ? "매물 이미지" : "공인중개사 프로필"}
                     className="item-image"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = type === 'room' ? 
-                        '/room-placeholder.jpg' : 
-                        '/default-agent.png';
-                    }}
                   />
                 </div>
                 
