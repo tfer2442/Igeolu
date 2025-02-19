@@ -118,16 +118,22 @@ public class TestCheckController {
 
 
 		if (role.equals("member")) {
-			if (!(testLoginPostRequestDto.getId().equals("consultantlove12") && testLoginPostRequestDto.getPassword()
-				.equals("coachlove12"))) {
+			String inputId = testLoginPostRequestDto.getId();
+			String inputPassword = testLoginPostRequestDto.getPassword();
 
+			if (inputId.equals("member1") && inputPassword.equals("member1")) { // 이진형
+				user = User.builder()
+					.id(35)
+					.role(Role.ROLE_MEMBER)
+					.build();
+			} else if (inputId.equals("member2") && inputPassword.equals("member2")) { // 박진훈
+				user = User.builder()
+					.id(40)
+					.role(Role.ROLE_MEMBER)
+					.build();
+			} else {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
-
-			user = User.builder()
-				.id(35)
-				.role(Role.ROLE_MEMBER)
-				.build();
 		}
 
 		setNewAccessTokenCookie(user, httpServletResponse);
