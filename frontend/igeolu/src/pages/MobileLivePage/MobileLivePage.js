@@ -40,19 +40,16 @@ function MobileLivePage() {
                 
                 console.log('All video devices:', videoDevices);
                 
-                // 안드로이드와 iOS 모두 지원하는 키워드로 확장
+                // 먼저 일반적인 키워드로 시도
                 let frontCamera = videoDevices.find(device => 
                     device.label.toLowerCase().includes('front') ||
                     device.label.toLowerCase().includes('전면') ||
-                    device.label.toLowerCase().includes('user') ||
-                    device.label.toLowerCase().includes('selfie') ||  // 안드로이드 키워드 추가
-                    device.label.toLowerCase().includes('internal')   // 안드로이드 키워드 추가
+                    device.label.toLowerCase().includes('user')
                 );
                 let backCamera = videoDevices.find(device => 
                     device.label.toLowerCase().includes('back') ||
                     device.label.toLowerCase().includes('후면') ||
-                    device.label.toLowerCase().includes('environment') ||
-                    device.label.toLowerCase().includes('external')   // 안드로이드 키워드 추가
+                    device.label.toLowerCase().includes('environment')
                 );
 
                 // 키워드로 찾지 못한 경우, facingMode 제약 조건을 사용하여 재시도
@@ -286,32 +283,24 @@ function MobileLivePage() {
             const currentDevice = currentVideoDevice;
             let nextDevice;
 
-            // 현재 카메라가 전면인지 확인하는 로직 개선
             const isCurrentFront = currentDevice.label.toLowerCase().includes('front') ||
                                  currentDevice.label.toLowerCase().includes('전면') ||
-                                 currentDevice.label.toLowerCase().includes('user') ||
-                                 currentDevice.label.toLowerCase().includes('selfie') ||
-                                 currentDevice.label.toLowerCase().includes('internal');
+                                 currentDevice.label.toLowerCase().includes('user');
 
-            // 다음 카메라 찾기
             if (isCurrentFront) {
                 nextDevice = devices.find(device => 
                     device.label.toLowerCase().includes('back') ||
                     device.label.toLowerCase().includes('후면') ||
-                    device.label.toLowerCase().includes('environment') ||
-                    device.label.toLowerCase().includes('external')
+                    device.label.toLowerCase().includes('environment')
                 );
             } else {
                 nextDevice = devices.find(device => 
                     device.label.toLowerCase().includes('front') ||
                     device.label.toLowerCase().includes('전면') ||
-                    device.label.toLowerCase().includes('user') ||
-                    device.label.toLowerCase().includes('selfie') ||
-                    device.label.toLowerCase().includes('internal')
+                    device.label.toLowerCase().includes('user')
                 );
             }
 
-            // 키워드로 찾지 못한 경우 순차적으로 전환
             if (!nextDevice) {
                 const currentIndex = devices.findIndex(device => device.deviceId === currentDevice.deviceId);
                 nextDevice = devices[(currentIndex + 1) % devices.length];
@@ -319,11 +308,7 @@ function MobileLivePage() {
 
             if (publisher) {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        deviceId: { exact: nextDevice.deviceId },
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
+                    video: { deviceId: { exact: nextDevice.deviceId } }
                 });
                 const videoTrack = stream.getVideoTracks()[0];
                 
