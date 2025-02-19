@@ -396,3 +396,28 @@
 .chat-room.mobile .welcome-message {
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
+
+/* 문자 수 카운터 */
+.character-count {
+  position: absolute;
+  right: 60px;
+  bottom: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* 문자 수 제한 경고 메시지 */
+.character-limit-warning {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff0000;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* 모바일 환경에서의 경고 메시지 */
+.chat-room.mobile .character-limit-warning {
+  color: #ff4d4d;
+}

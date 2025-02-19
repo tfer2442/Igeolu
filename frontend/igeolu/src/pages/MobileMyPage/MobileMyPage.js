@@ -1,15 +1,18 @@
-import "./MobileMyPage.css";
-import { useState, useEffect } from "react";
-import MobileBottomTab from "../../components/MobileBottomTab/MobileBottomTab";
-import { FiEdit } from "react-icons/fi";
-import RealEstateRegistration from "../../components/RealEstateRegistration/RealEstateRegistration";
-import RealEstateEdit from "../../components/RealEstateEdit/RealEstateEdit";
-import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner'
+import './MobileMyPage.css';
+import { useState, useEffect } from 'react';
+import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
+import { FiEdit } from 'react-icons/fi';
+import RealEstateRegistration from '../../components/RealEstateRegistration/RealEstateRegistration';
+import RealEstateEdit from '../../components/RealEstateEdit/RealEstateEdit';
+import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner';
 import { useNavigate } from 'react-router-dom';
 import { FaCamera } from 'react-icons/fa';
 import axios from 'axios';
+import { useUser } from '../../contexts/UserContext';
 
 function MobileMyPage() {
+  const { logout } = useUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [realtorInfo, setRealtorInfo] = useState(null);
   const [myProperties, setMyProperties] = useState([]);
   const [error, setError] = useState(null);
@@ -23,11 +26,13 @@ function MobileMyPage() {
         if (!cachedUser) {
           throw new Error('No user data found');
         }
-        
+
         const { userId } = JSON.parse(cachedUser);
-        
+
         // 중개인 정보조회
-        const realtorResponse = await fetch(`https://i12d205.p.ssafy.io/api/users/${userId}/realtor`);
+        const realtorResponse = await fetch(
+          `https://i12d205.p.ssafy.io/api/users/${userId}/realtor`
+        );
         if (!realtorResponse.ok) {
           throw new Error('Failed to fetch realtor data');
         }
@@ -35,13 +40,14 @@ function MobileMyPage() {
         setRealtorInfo(realtorData);
 
         // 중개인 매물조회
-        const propertiesResponse = await fetch(`https://i12d205.p.ssafy.io/api/properties?userId=${userId}`);
+        const propertiesResponse = await fetch(
+          `https://i12d205.p.ssafy.io/api/properties?userId=${userId}`
+        );
         if (!propertiesResponse.ok) {
           throw new Error('Failed to fetch properties data');
         }
         const propertiesData = await propertiesResponse.json();
         setMyProperties(propertiesData);
-
       } catch (err) {
         setError(err.message);
         console.error('Error fetching data:', err);
@@ -52,6 +58,22 @@ function MobileMyPage() {
 
     fetchData();
   }, []);
+
+  // 로그아웃 버튼 클릭 핸들러
+  const handleLogoutClick = () => {
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // 로그아웃 확인 핸들러
+  const handleLogoutConfirm = () => {
+    logout();
+    setIsModalOpen(false);
+  };
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -70,32 +92,37 @@ function MobileMyPage() {
     }
 
     const formData = new FormData();
-    formData.append('file', file);  // Swagger 문서에 따라 'file'로 지정
+    formData.append('file', file); // Swagger 문서에 따라 'file'로 지정
 
     try {
       setIsLoading(true); // 로딩 상태 시작
 
       const response = await axios.put('/api/users/me/profile', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       // Swagger 응답 형식에 맞춰 처리
       if (response.data && response.data.imageUrl) {
-        setRealtorInfo(prev => ({
+        setRealtorInfo((prev) => ({
           ...prev,
-          profileImage: response.data.imageUrl
+          profileImage: response.data.imageUrl,
         }));
-        
+
         alert('프로필 이미지가 성공적으로 업데이트되었습니다.');
         window.location.reload();
       }
     } catch (error) {
-      console.error('프로필 이미지 업데이트 실패:', error.response?.data || error);
-      
+      console.error(
+        '프로필 이미지 업데이트 실패:',
+        error.response?.data || error
+      );
+
       // 서버 응답의 구체적인 에러 메시지가 있다면 그것을 표시
-      const errorMessage = error.response?.data?.error || '이미지 업로드에 실패했습니다. 다시 시도해주세요.';
+      const errorMessage =
+        error.response?.data?.error ||
+        '이미지 업로드에 실패했습니다. 다시 시도해주세요.';
       alert(errorMessage);
     } finally {
       setIsLoading(false); // 로딩 상태 종료
@@ -111,69 +138,98 @@ function MobileMyPage() {
   }
 
   return (
-    <div className="mobile-my-page-container">
-      <div className="mobile-my-page">
-        <div className="mobile-my-page__top">
+    <div className='mobile-my-page-container'>
+      <div className='mobile-my-page'>
+        <div className='mobile-my-page__top'>
           <p>마이페이지</p>
         </div>
-        <div className="mobile-my-page__my-info">
+        <div className='mobile-my-page__my-info'>
           <p>나의 프로필 정보</p>
-          <div className="mobile-my-page__my-info__profile">
-            <div className="profile-image-wrapper">
-              <img 
-                src={realtorInfo?.profileImage || "https://via.placeholder.com/120"} 
-                alt="profile"  
+          <div className='mobile-my-page__my-info__profile'>
+            <div className='profile-image-wrapper'>
+              <img
+                src={
+                  realtorInfo?.profileImage || 'https://via.placeholder.com/120'
+                }
+                alt='profile'
               />
-              <label className="profile-edit-overlay" htmlFor="profile-image-input">
+              <label
+                className='profile-edit-overlay'
+                htmlFor='profile-image-input'
+              >
                 <FaCamera size={24} />
               </label>
               <input
-                type="file"
-                id="profile-image-input"
-                accept="image/*"
+                type='file'
+                id='profile-image-input'
+                accept='image/*'
                 onChange={handleImageChange}
                 style={{ display: 'none' }}
               />
             </div>
-            <div className="mobile-my-page__my-info__profile__name">
-              <div className="mobile-my-page__my-info__profile__edit-icon"
+            <div className='mobile-my-page__my-info__profile__name'>
+              <div
+                className='mobile-my-page__my-info__profile__edit-icon'
                 onClick={() => navigate('/mobile-my-page-edit')}
                 style={{ cursor: 'pointer' }}
               >
-                <FiEdit size={20} color="#01ADFF" />
+                <FiEdit size={20} color='#01ADFF' />
               </div>
-              <div className="mobile-my-page__my-info__profile__name-text">
-                <p id="name">{realtorInfo?.username}</p>
-                <div className="mobile-my-page__my-info__profile__name-text__address">
+              <div className='mobile-my-page__my-info__profile__name-text'>
+                <p id='name'>{realtorInfo?.username}</p>
+                <div className='mobile-my-page__my-info__profile__name-text__address'>
                   <p>주소 : {realtorInfo?.address}</p>
                   <p>전화번호 : {realtorInfo?.tel}</p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="mobile-my-page__my-live-count">
-            <div className="live-info">
-              <p id="live-count">부동산 라이브 횟수</p>
-              <p id="live-count-number">{realtorInfo?.liveCount}회</p>
+          <div className='mobile-my-page__my-live-count'>
+            <div className='live-info'>
+              <p id='live-count'>부동산 라이브 횟수</p>
+              <p id='live-count-number'>{realtorInfo?.liveCount}회</p>
             </div>
-            <div className="rating-info">
-              <p id="rating">나의 평점</p>
-              <p id="rating-number">{realtorInfo?.ratingAvg?.toFixed(1) || '0.0'}</p>
+            <div className='rating-info'>
+              <p id='rating'>나의 평점</p>
+              <p id='rating-number'>
+                {realtorInfo?.ratingAvg?.toFixed(1) || '0.0'}
+              </p>
             </div>
           </div>
-          <div className="mobile-my-page__my-real-estate">
+          <div className='mobile-my-page__my-real-estate'>
             <p>나의 부동산</p>
-            <div className="mobile-my-page__my-real-estate-content">
+            <div className='mobile-my-page__my-real-estate-content'>
               <p>등록된 매물</p>
-              <p id="real-estate-count" style={{ color: '#01ADFF' }}>{myProperties.length}</p>
+              <p id='real-estate-count' style={{ color: '#01ADFF' }}>
+                {myProperties.length}
+              </p>
             </div>
           </div>
         </div>
-        <div className="mobile-my-page__component-container">
+        <div className='mobile-my-page__component-container'>
           <RealEstateRegistration />
           <RealEstateEdit />
+          <button
+            className='mobile-my-page__logout-button'
+            onClick={handleLogoutClick}
+          >
+            로그아웃
+          </button>
         </div>
         <MobileBottomTab />
+        {/* 로그아웃 확인 모달 */}
+        {isModalOpen && (
+          <div className='mobile-logout-modal'>
+            <div className='mobile-logout-modal-content'>
+              <h3>로그아웃</h3>
+              <p>정말 로그아웃 하시겠습니까?</p>
+              <div className='mobile-modal-buttons'>
+                <button onClick={handleLogoutConfirm}>예</button>
+                <button onClick={closeModal}>아니오</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
