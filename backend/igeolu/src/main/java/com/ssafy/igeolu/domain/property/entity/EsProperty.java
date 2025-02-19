@@ -17,7 +17,7 @@ import lombok.Data;
 public class EsProperty {
 
 	@Id
-	private Integer propertyId; // property_id
+	private String propertyId; // property_id
 
 	@Field(type = FieldType.Text)
 	private String description;
