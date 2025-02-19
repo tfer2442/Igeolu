@@ -125,12 +125,6 @@ function MobileRegisterPage() {
 
   // 주소 선택 처리 함수
   const handleAddressSelect = async (result) => {
-    // 빈 문자열도 체크
-    if (!result.entX?.trim() || !result.entY?.trim()) {
-        alert('좌표 정보가 없는 주소는 선택할 수 없습니다.');
-        return;
-    }
-    
     try {
       const coords = await getCoordinates(
         result.admCd,
@@ -140,16 +134,10 @@ function MobileRegisterPage() {
         result.buldSlno
       );
 
-      // coords가 null이거나 좌표가 없는 경우 체크
-      if (!coords?.entX || !coords?.entY) {
-        alert('주소의 좌표 정보를 가져올 수 없습니다.');
-        return;
-      }
-
       setAddress(result.roadAddr);
       setCoordinates({
-        x: coords.entX,
-        y: coords.entY,
+        x: coords?.entX || 0,
+        y: coords?.entY || 0,
         dongcode: result.admCd,
       });
 
@@ -157,7 +145,11 @@ function MobileRegisterPage() {
       setAddressKeyword('');
     } catch (error) {
       console.error('주소 선택 처리 실패:', error);
-      alert('주소 좌표 변환에 실패했습니다.');
+      setCoordinates({
+        x: 0,
+        y: 0,
+        dongcode: result.admCd,
+      });
     }
   };
 
@@ -427,29 +419,20 @@ function MobileRegisterPage() {
           {searchError && <div className='error-message'>{searchError}</div>}
 
           {showResults && addressResults.length > 0 && (
-  <div className='address-results'>
-    {addressResults.map((result, index) => {
-      const hasCoordinates = result.entX?.trim() && result.entY?.trim();
-      return (
-        <div
-          key={index}
-          className={`address-item ${!hasCoordinates ? 'disabled' : ''}`}
-          onClick={() => hasCoordinates && handleAddressSelect(result)}
-          style={{
-            opacity: hasCoordinates ? 1 : 0.5,
-            cursor: hasCoordinates ? 'pointer' : 'not-allowed'
-          }}
-        >
-          <p className='road-address'>
-            {result.roadAddr}
-            {!hasCoordinates && ' (좌표 정보 없음)'}
-          </p>
-          <p className='jibun-address'>[지번] {result.jibunAddr}</p>
-        </div>
-      );
-    })}
-  </div>
-)}
+            <div className='address-results'>
+              {addressResults.map((result, index) => (
+                <div
+                  key={index}
+                  className='address-item'
+                  onClick={() => handleAddressSelect(result)}
+                >
+                  <p className='road-address'>{result.roadAddr}</p>
+                  <p className='jibun-address'>[지번] {result.jibunAddr}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
 {!isSearching && !searchError && addressResults.length === 0 && addressKeyword && (
                         <div className="no-results" style={{ color: 'white', backgroundColor: '#2F2E2E',margin:0 }}>
                             검색 결과가 없습니다.
