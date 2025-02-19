@@ -40,6 +40,8 @@ const ChatRoom = ({
   const messagesEndRef = useRef(null); // 메시지 목록 끝 위치 참조
   const [showExitModal, setShowExitModal] = useState(false);
   const [myName, setMyName] = useState('');
+  const [messageLength, setMessageLength] = useState(0);
+  const [showLengthWarning, setShowLengthWarning] = useState(false);
 
   const isRoomActive = activeRoomId === room.roomId && isChatRoomOpen;
 
@@ -61,6 +63,16 @@ const ChatRoom = ({
       });
     }, 50);
   }, []);
+
+  // handleChange 함수 수정
+const handleMessageChange = (e) => {
+  const text = e.target.value;
+  setNewMessage(text);
+  setMessageLength(text.length);
+  
+  // 900자 이상일 때 경고 표시
+  setShowLengthWarning(text.length >= 900);
+};
 
   /* 📌 메시지 읽음 처리 핸들러 */
   const handleMarkAsRead = useCallback(async () => {
@@ -473,29 +485,36 @@ const ChatRoom = ({
         {/* 📌 메시지 입력창 및 추가 기능 */}
 
         <div className='message-input-container'>
-          <button
-            className='extras-toggle-button'
-            onClick={toggleExtras}
-            aria-label={isExtrasOpen ? '추가 기능 닫기' : '추가 기능 열기'}
-          >
-            {isExtrasOpen ? '✕' : '+'}
-          </button>
-          <textarea
-            className='message-input'
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            rows={1}
-            maxLength={1000}
-          />
-          <button
-            onClick={handleSendMessage}
-            className='send-button'
-            disabled={!newMessage.trim()}
-            aria-label='메시지 전송'
-          />
-        </div>
-
+  <button
+    className='extras-toggle-button'
+    onClick={toggleExtras}
+    aria-label={isExtrasOpen ? '추가 기능 닫기' : '추가 기능 열기'}
+  >
+    {isExtrasOpen ? '✕' : '+'}
+  </button>
+  {messageLength > 1000 && (
+    <div className="character-limit-warning">
+      문자수가 너무 깁니다 (최대 1000자)
+    </div>
+  )}
+  <textarea
+    className='message-input'
+    value={newMessage}
+    onChange={(e) => {
+      setNewMessage(e.target.value);
+      setMessageLength(e.target.value.length);
+    }}
+    onKeyPress={handleKeyPress}
+    rows={1}
+    maxLength={1000}
+  />
+  <button
+    onClick={handleSendMessage}
+    className='send-button'
+    disabled={!newMessage.trim()}
+    aria-label='메시지 전송'
+  />
+</div>
         {/* 📌 추가 기능 패널 */}
         <ChatExtras
           isOpen={isExtrasOpen}
