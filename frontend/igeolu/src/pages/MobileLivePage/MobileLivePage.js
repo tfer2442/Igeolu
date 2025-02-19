@@ -286,7 +286,7 @@ function MobileLivePage() {
             const currentDevice = currentVideoDevice;
             let nextDevice;
 
-            // 현재 카메라가 전면인지 확인하는 로직 개선
+            // 현재 카메라가 전면인지 확인하는 로직
             const isCurrentFront = currentDevice.label.toLowerCase().includes('front') ||
                                  currentDevice.label.toLowerCase().includes('전면') ||
                                  currentDevice.label.toLowerCase().includes('user') ||
@@ -317,21 +317,53 @@ function MobileLivePage() {
                 nextDevice = devices[(currentIndex + 1) % devices.length];
             }
 
-            if (publisher) {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        deviceId: { exact: nextDevice.deviceId },
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                });
-                const videoTrack = stream.getVideoTracks()[0];
-                
-                await publisher.replaceTrack(videoTrack);
-                setCurrentVideoDevice(nextDevice);
+            if (publisher && nextDevice) {
+                // 기존 트랙 정리
+                if (publisher.stream && publisher.stream.getVideoTracks()) {
+                    publisher.stream.getVideoTracks().forEach(track => track.stop());
+                }
+
+                try {
+                    // 새로운 스트림 생성
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            deviceId: { exact: nextDevice.deviceId },
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    });
+
+                    // 새로운 비디오 트랙만 교체
+                    const videoTrack = stream.getVideoTracks()[0];
+                    await publisher.replaceTrack(videoTrack);
+                    
+                    // 상태 업데이트
+                    setCurrentVideoDevice(nextDevice);
+                    
+                    // 사용하지 않는 오디오 트랙 정리
+                    stream.getAudioTracks().forEach(track => track.stop());
+                } catch (streamError) {
+                    console.error('Error getting new stream:', streamError);
+                    
+                    // 폴백: 더 낮은 해상도로 시도
+                    const fallbackStream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            deviceId: { exact: nextDevice.deviceId },
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        },
+                        audio: false
+                    });
+                    
+                    const videoTrack = fallbackStream.getVideoTracks()[0];
+                    await publisher.replaceTrack(videoTrack);
+                    setCurrentVideoDevice(nextDevice);
+                }
             }
         } catch (error) {
             console.error('Error switching camera:', error);
+            alert('카메라 전환 중 오류가 발생했습니다. 다시 시도해주세요.');
         }
     };
 
