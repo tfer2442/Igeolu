@@ -94,21 +94,25 @@ public class Property {
 	public void addPropertyOption(PropertyOption propertyOption) {
 		propertyOptions.add(propertyOption);
 		propertyOption.setProperty(this);
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public void removePropertyOption(PropertyOption propertyOption) {
 		propertyOptions.remove(propertyOption);
 		propertyOption.setProperty(null);
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public void addPropertyImage(PropertyImage propertyImage) {
 		propertyImages.add(propertyImage);
 		propertyImage.setProperty(this);
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public void removePropertyImage(PropertyImage propertyImage) {
 		propertyImages.remove(propertyImage);
 		propertyImage.setProperty(null);
+		this.updatedAt = LocalDateTime.now();
 	}
 }
 
