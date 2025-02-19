@@ -303,11 +303,8 @@ function MapPage({
   useEffect(() => {
     // 현재 activeMenu 값 캡처
     const currentMenu = activeMenu;
-    console.log(`useEffect 실행 - activeMenu: ${currentMenu}`);
-    console.log(`selectedCity: ${selectedCity}, selectedDistrict: ${selectedDistrict}, selectedNeighborhood: ${selectedNeighborhood}`);
     
     if (currentMenu === 'room') {
-      console.log('Room 메뉴 데이터 로딩 시작');
       const fetchAndUpdateResults = async () => {
         try {
           const params = new URLSearchParams();
@@ -341,9 +338,7 @@ function MapPage({
           );
   
           // 현재 activeMenu가 여전히 일치하는지 확인
-          if (activeMenu === currentMenu) {
-            console.log(`Room 데이터 로드 완료 - 매물 ${validResults.length}개 로드됨`);
-            
+          if (activeMenu === currentMenu) {           
             // 데이터에 type 속성 명시적으로 추가
             const roomsWithType = validResults.map(room => ({
               ...room,
@@ -357,7 +352,6 @@ function MapPage({
               const itemExists = validResults.some(
                 (item) => item.propertyId === selectedItem.propertyId
               );
-              console.log(`선택된 매물 존재 여부: ${itemExists}`, selectedItem);
               if (!itemExists) {
                 setSelectedItem(null);
                 setDetailPanelView('main');
@@ -395,7 +389,7 @@ function MapPage({
               setMapLevel(3);
             }
           } else {
-            console.log(`메뉴가 변경됨 - ${currentMenu} → ${activeMenu}. Room 데이터 로드 취소`);
+            // console.log(`메뉴가 변경됨 - ${currentMenu} → ${activeMenu}. Room 데이터 로드 취소`);
           }
         } catch (error) {
           console.error('Error fetching search results:', error);
@@ -407,7 +401,7 @@ function MapPage({
   
       fetchAndUpdateResults();
     } else if (currentMenu === 'agent') {
-      console.log('Agent 메뉴 데이터 로딩 시작');
+      // console.log('Agent 메뉴 데이터 로딩 시작');
       // 공인중개사 메뉴일 때의 로직
       const fetchFilteredRealtors = async () => {
         try {
@@ -466,7 +460,6 @@ function MapPage({
               type: 'agent'
             }));
             
-            console.log(`Agent 데이터 로드 완료 - 공인중개사 ${realtorsWithType.length}개 로드됨`, realtorsWithType);
             setSearchResults(realtorsWithType);
             setPropertyMarkers(realtorsWithType);
   
@@ -501,7 +494,7 @@ function MapPage({
               setMapLevel(3);
             }
           } else {
-            console.log(`메뉴가 변경됨 - ${currentMenu} → ${activeMenu}. Agent 데이터 로드 취소`);
+            // console.log(`메뉴가 변경됨 - ${currentMenu} → ${activeMenu}. Agent 데이터 로드 취소`);
           }
         } catch (error) {
           console.error('Error fetching realtors:', error);
@@ -523,9 +516,6 @@ function MapPage({
   ]);
 
   const handleMenuClick = async (menuType) => {
-    console.log(`메뉴 전환: ${activeMenu} -> ${menuType}`);
-    console.log(`전환 전 searchResults:`, searchResults);
-    console.log(`전환 전 propertyMarkers:`, propertyMarkers);
     
     // 즉시 상태 초기화 - 데이터 일관성 문제 방지
     setSelectedItem(null);
@@ -543,7 +533,7 @@ function MapPage({
     setTimeout(async () => {
       // 메뉴가 여전히 현재 메뉴인지 확인
       if (activeMenu !== menuType) {
-        console.log('메뉴가 이미 변경되어 데이터 로딩 취소');
+        // console.log('메뉴가 이미 변경되어 데이터 로딩 취소');
         return;
       }
       
@@ -565,8 +555,6 @@ function MapPage({
               ...realtor,
               type: 'agent'
             }));
-  
-            console.log(`Agent 메뉴 데이터 설정: ${realtorsWithType.length}개`);
             setSearchResults(realtorsWithType);
             setPropertyMarkers(realtorsWithType);
             
@@ -620,8 +608,6 @@ function MapPage({
               ...room,
               type: 'room'
             }));
-  
-            console.log(`Room 메뉴 데이터 설정: ${roomsWithType.length}개`);
             setSearchResults(roomsWithType);
             
             // 지도 중심 설정
@@ -637,11 +623,6 @@ function MapPage({
           console.error('원룸 데이터 로딩 실패:', error);
         }
       }
-      
-      // 상태 변경 후 확인을 위한 로그
-      console.log(`메뉴 전환 후 searchResults:`, searchResults);
-      console.log(`메뉴 전환 후 propertyMarkers:`, propertyMarkers);
-      console.log(`현재 activeMenu:`, activeMenu);
     }, 0);
   };
 
