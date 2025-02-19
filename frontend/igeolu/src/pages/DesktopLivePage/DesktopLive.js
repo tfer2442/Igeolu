@@ -122,7 +122,7 @@ function DesktopLive() {
       // 세션 종료 및 페이지 이동
       if (session) {
         session.disconnect();
-        window.location.href = '/';
+        window.location.href = '/desktop-main';
       }
     } catch (error) {
       console.error('Error submitting rating:', error);
