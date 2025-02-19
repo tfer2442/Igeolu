@@ -76,6 +76,14 @@ public class EsProperty {
 	@Field(type = FieldType.Integer, name = "option_ids")
 	private List<Integer> optionIds;
 
+	public List<String> getImageUrls() {
+		final String defaultPropertyImageUrl = "https://i12d205.p.ssafy.io/file/property.png";
+		if (imageUrls.isEmpty()) {
+			imageUrls.add(defaultPropertyImageUrl);
+		}
+		return imageUrls;
+	}
+
 	public LocalDate getApprovalDate() {
 		return approvalDate != null ?
 			LocalDate.parse(approvalDate.substring(0, 10)) : null;  // 날짜 부분만 추출하여 변환
