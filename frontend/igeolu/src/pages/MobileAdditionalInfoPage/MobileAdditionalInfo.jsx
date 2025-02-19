@@ -207,8 +207,8 @@ const MobileAdditionalInfo = () => {
   return (
     <div className="additional-info-container">
       <div className="additional-info-wrapper">
-        <form onSubmit={handleSubmit} className="info-form">
-          <div className="form-group">
+        <form onSubmit={handleSubmit} className="MobileAdditionalInfo__info-form">
+          <div className="MobileAdditionalInfo__form-group">
             <label className="form-label">
               중개사무소이름
             </label>
@@ -225,7 +225,7 @@ const MobileAdditionalInfo = () => {
             )}
           </div>
 
-          <div className="form-group">
+          <div className="MobileAdditionalInfo__form-group">
             <label className="form-label">
               중개사무소소개
             </label>
@@ -241,7 +241,7 @@ const MobileAdditionalInfo = () => {
             )}
           </div>
 
-          <div className="form-group">
+          <div className="MobileAdditionalInfo__form-group">
             <label className="form-label">
               사업자등록번호
             </label>
@@ -258,7 +258,7 @@ const MobileAdditionalInfo = () => {
             )}
           </div>
 
-          <div className="form-group">
+          <div className="MobileAdditionalInfo__form-group">
             <label className="form-label">
               전화번호
             </label>
@@ -275,7 +275,7 @@ const MobileAdditionalInfo = () => {
             )}
           </div>
 
-          <div className="form-group">
+          <div className="MobileAdditionalInfo__form-group">
             <label className="form-label">
               주소
             </label>

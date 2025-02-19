@@ -243,11 +243,30 @@ function App() {
     setActiveRoomId(room.roomId);
     setIsChatRoomOpen(true); // 채팅방 열기
   };
-  const handleBack = () => {
+  const handleRoomUpdate = useCallback(async () => {
+    if (!user?.userId || !user?.role) return;
+    
+    try {
+      const response = await ChatApi.getChatRooms(user.userId, user.role);
+      setChatRooms(response);
+    } catch (error) {
+      console.error('채팅방 목록 업데이트 실패:', error);
+    }
+  }, [user?.userId, user?.role]);
+
+  // ChatRoom에서 뒤로가기나 방 나가기할 때 이 함수를 호출하도록 전달
+  const handleBack = useCallback(() => {
     setSelectedRoom(null);
     setActiveRoomId(null);
-    setIsChatRoomOpen(false); // 채팅방 닫기
-  };
+    setIsChatRoomOpen(false);
+    handleRoomUpdate(); // 채팅방 목록 강제 갱신
+  }, [handleRoomUpdate]);
+
+  // ChatRoom에서 방 나가기할 때도 호출
+  const handleRoomExit = useCallback(async () => {
+    await handleRoomUpdate(); // 채팅방 목록 강제 갱신
+    handleBack();
+  }, [handleBack, handleRoomUpdate]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -297,6 +316,7 @@ function App() {
               <ChatRoom
                 room={selectedRoom}
                 onBack={handleBack}
+                onRoomExit={handleRoomExit}
                 currentUserId={user?.userId}
                 activeRoomId={activeRoomId}
                 onRoomUpdate={updateChatRoomInfo}
