@@ -15,18 +15,13 @@ const MobileChatList = ({ chatRooms, isLoading, error, onRetry: originalOnRetry 
 
 // onRetry를 래핑하여 userRole 전달
 const handleRetry = useCallback(async () => {
-  if (!user?.role) {
-    console.warn('User role not available yet');
-    return;
-  }
-  await originalOnRetry(user.role);
+  const roleToUse = user?.role || 'ROLE_REALTOR';
+  await originalOnRetry(roleToUse);
 }, [user?.role, originalOnRetry]);
 
 useEffect(() => {
-  if (user?.role) {
-    handleRetry();
-  }
-}, [user?.role, handleRetry]); // user.role이 변경될 때마다 실행
+  handleRetry();
+}, [handleRetry]); // user.role이 변경될 때마다 실행
 
 
   const handleSelectRoom = (room) => {
