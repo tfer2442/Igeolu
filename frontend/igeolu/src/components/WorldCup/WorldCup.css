@@ -28,7 +28,6 @@
 }
 
 .world-cup__button::before {
-    content: "🏆";
     font-size: 16px;
 }
 
@@ -134,6 +133,11 @@
     gap: 50px;
     position: relative;
 }
+
+.world-cup-modal__winner h3 svg {
+    width: 1em;
+    height: 1em;
+  }
 
 .room-option {
     flex: 1;

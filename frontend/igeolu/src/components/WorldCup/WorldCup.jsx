@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import './WorldCup.css';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { BsTrophyFill } from 'react-icons/bs';
 
 function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,7 +120,7 @@ function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
                 onClick={handleWorldCupClick}
                 disabled={properties.length < 2}
             >
-                이상집 월드컵
+                <BsTrophyFill color="#FFD700" /> 이상집 월드컵
             </button>
 
             {isModalOpen && (
@@ -143,7 +144,7 @@ function WorldCup({ properties = [], isOpen, onClose, onSelectWinner }) {
                             <div className="world-cup-modal__content">
                                 {winner ? (
                                     <div className="world-cup-modal__winner">
-                                        <h3>🏆 우승 매물 🏆</h3>
+                                        <h3><BsTrophyFill color="#FFD700" /> 우승 매물 <BsTrophyFill color="#FFD700" /></h3>
                                         <div className="room-option">
                                             <div className="image-container">
                                                 {winner.images && winner.images.length > 0 && (

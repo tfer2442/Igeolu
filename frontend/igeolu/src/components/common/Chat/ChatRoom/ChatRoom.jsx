@@ -10,6 +10,7 @@ import DesktopLoadingSpinner from '../../../LoadingSpinner/DesktopLoadingSpinner
 import MobileLoadingSpinner from '../../../LoadingSpinner/MobileLoadingSpinner';
 import { LogOut } from 'lucide-react'; // lucide-react 아이콘 import
 import { useUser } from '../../../../contexts/UserContext';
+import { HiSparkles } from 'react-icons/hi';
 
 /**
  * 📌 ChatRoom 컴포넌트
@@ -447,7 +448,13 @@ const handleMessageChange = (e) => {
         <ChatMessage
           message={{
             userId: 0,
-            content: `✨ 환영합니다 ${user.role === 'ROLE_REALTOR' ? '중개인' : '세입자'}님! ✨`,
+            content: (
+              <>
+                <HiSparkles color="#FFD700" /> 
+                환영합니다 {user.role === 'ROLE_REALTOR' ? '중개인' : '세입자'}님! 
+                <HiSparkles color="#FFD700" />
+              </>
+            ),
             createdAt: new Date().toISOString(),
             senderType: 'SYSTEM',
           }}
