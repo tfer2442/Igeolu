@@ -192,7 +192,7 @@ function App() {
           user.userId,
           async () => {
             // 새 메시지 수신 시 채팅방 목록 갱신
-            const updatedRooms = await ChatApi.getChatRooms(user.userId);
+            const updatedRooms = await ChatApi.getChatRooms(user.userId, user.role);
             setChatRooms(updatedRooms);
           }
         );
