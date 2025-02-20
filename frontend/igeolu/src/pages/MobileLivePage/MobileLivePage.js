@@ -142,7 +142,7 @@ function MobileLivePage() {
                     videoSource: undefined,
                     publishAudio: true,
                     publishVideo: true,
-                    resolution: '1280x720',
+                    resolution: '640x480',
                     frameRate: 30,
                     insertMode: 'APPEND',
                     mirror: true,
