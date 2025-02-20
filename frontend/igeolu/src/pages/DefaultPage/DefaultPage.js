@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './DefaultPage.css';
-import logo from '../../assets/images/모바일로고.png';
+import logo from '../../assets/images/메인로고.png';
 import { useNavigate } from 'react-router-dom';
 import bear from '../../assets/images/곰누끼.png';
 import penguin from '../../assets/images/펭귄누끼.png';
 import snowflake from '../../assets/images/눈누끼.png';
+import bearBefore from '../../assets/images/곰곰.png';
+import penguinBefore from '../../assets/images/펭펭.png';
+import bearAfter from '../../assets/images/곰웃.png';
+import penguinAfter from '../../assets/images/펭웃.png';
 
 function DefaultPage() {
     const navigate = useNavigate();
+    const [isMobileHovered, setIsMobileHovered] = useState(false);
+    const [isDesktopHovered, setIsDesktopHovered] = useState(false);
 
     return (
         <div className="default-page">
@@ -33,19 +39,35 @@ function DefaultPage() {
                 <button 
                     className="default-page__mobile-button"
                     onClick={() => navigate('/mobile-login')}
+                    onMouseEnter={() => setIsMobileHovered(true)}
+                    onMouseLeave={() => setIsMobileHovered(false)}
                 >
+                    <img 
+                        src={isMobileHovered ? bearAfter : bearBefore} 
+                        alt="bear" 
+                        className="button-image"
+                    />
                     <span className="default-page__button-text">공인중개사 페이지</span>
                 </button>
                 <button 
                     className="default-page__desktop-button" 
-                    onClick={() => navigate('/desktop-main')}>
+                    onClick={() => navigate('/desktop-main')}
+                    onMouseEnter={() => setIsDesktopHovered(true)}
+                    onMouseLeave={() => setIsDesktopHovered(false)}
+                >
+                    <img 
+                        src={isDesktopHovered ? penguinAfter : penguinBefore} 
+                        alt="penguin" 
+                        className="button-image"
+                    />
                     <span className="default-page__button-text">일반 페이지</span>
                 </button>
             </div>
-            <div className="default-page__footer">
+            {/* <div className="default-page__footer">
                 <img src={bear} alt="bear" />
                 <img src={penguin} alt="penguin" />
-            </div>
+            </div> */}
+            {/* 뭔가 이미지가 겹치는거 같아서 일단 없앴어 ㅠㅠ 다시 추가하려면 해도 될 것 같아. -오승우- */}
         </div>
     );
 }

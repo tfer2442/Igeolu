@@ -93,7 +93,7 @@ function DesktopLive() {
         // 자격이 없는 경우 바로 세션 종료
         if (session) {
           session.disconnect();
-          window.location.href = '/';
+          window.location.href = '/desktop-main';
         }
       }
     } catch (error) {
@@ -106,7 +106,7 @@ function DesktopLive() {
       // 에러 발생 시 세션 종료
       if (session) {
         session.disconnect();
-        window.location.href = '/';
+        window.location.href = '/desktop-main';
       }
     }
   };
@@ -122,7 +122,7 @@ function DesktopLive() {
       // 세션 종료 및 페이지 이동
       if (session) {
         session.disconnect();
-        window.location.href = '/';
+        window.location.href = '/desktop-main';
       }
     } catch (error) {
       console.error('Error submitting rating:', error);

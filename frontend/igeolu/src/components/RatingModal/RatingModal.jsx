@@ -78,7 +78,7 @@ const RatingModal = ({ isOpen, onClose, sessionId }) => {
 
             alert('평가가 완료되었습니다.');
             onClose();
-            window.location.href = '/';
+            window.location.href = '/desktop-main';
         } catch (error) {
             console.error('Error submitting rating:', {
                 message: error.message,
