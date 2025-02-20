@@ -41,7 +41,30 @@ const MyPageModal = ({ property, onClose }) => {
         const summaryResponse = await LiveControllerApi.getLivePropertySummary(
           property.livePropertyId
         );
-        setSummary(summaryResponse['summary']);
+        
+        // "매물 요약:" 부분을 처리하기 위해 먼저 ':' 으로 분리
+        const [title, content] = summaryResponse['summary'].split(':');
+        
+        // 내용 부분을 '.' 으로 분할하고 각각 줄바꿈 처리
+        const lines = content
+          .split('.')
+          .filter(line => line.trim()) // 빈 문자열 제거
+          .map((line, index) => (
+            <React.Fragment key={index}>
+              {line.trim()}.
+              <br />
+            </React.Fragment>
+          ));
+          
+        // 제목과 내용을 합쳐서 최종 요약본 생성
+        const formattedSummary = (
+          <>
+            {title}:<br />
+            {lines}
+          </>
+        );
+        
+        setSummary(formattedSummary);
       }
     } catch (error) {
       console.error('Error fetching property summary:', error);

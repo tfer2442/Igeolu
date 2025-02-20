@@ -235,3 +235,15 @@
   align-items: center;
   text-align: center;
 }
+
+.summary-content {
+  white-space: pre-line;
+  line-height: 1.5;
+  padding: 10px;
+}
+
+.memo-content {
+  white-space: pre-line;
+  line-height: 1.5;
+  padding: 10px;
+}
