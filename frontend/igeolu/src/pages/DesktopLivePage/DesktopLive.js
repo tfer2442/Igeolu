@@ -390,40 +390,33 @@ function DesktopLive() {
       if (detectionCanvasRef.current) {
         detectionCanvasRef.current.width = videoElement.videoWidth;
         detectionCanvasRef.current.height = videoElement.videoHeight;
-        const ctx = detectionCanvasRef.current.getContext('2d');
-        
-        // 객체 인식이 꺼져있을 때는 캔버스를 클리어
-        if (!showDetectionOverlay) {
-          ctx.clearRect(0, 0, detectionCanvasRef.current.width, detectionCanvasRef.current.height);
-        }
       }
 
       const detectFrame = async () => {
-        if (!videoElement.paused && !videoElement.ended && showDetectionOverlay) {
+        if (!videoElement.paused && !videoElement.ended) {
           frameCount++;
           
-          // 5프레임마다 객체 인식 실행
+          // 5프레임마다 객체 인식 실행 (오버레이 상태와 관계없이)
           if (frameCount % 5 === 0) {
             try {
               const predictions = await detect(
                 videoElement,
                 model,
-                detectionCanvasRef.current
+                detectionCanvasRef.current,
+                showDetectionOverlay // renderBox 함수에 오버레이 표시 여부 전달
               );
               
               if (predictions && predictions.length > 0) {
-                // 새로운 객체 처리
+                // 새로운 객체 처리 (오버레이 상태와 관계없이)
                 const newObjects = predictions.filter(pred => !processedObjects.has(pred.class));
                 
                 if (newObjects.length > 0) {
-                  // 새로운 객체들에 대한 모든 질문을 수집
                   const allNewQuestions = newObjects.flatMap(pred => {
                     const questions = objectQuestions[pred.class] || [];
                     setProcessedObjects(prev => new Set([...prev, pred.class]));
                     return questions;
                   });
 
-                  // 수집된 질문들 중 랜덤하게 3개 선택
                   const selectedQuestions = allNewQuestions
                     .sort(() => 0.5 - Math.random())
                     .slice(0, 3);
@@ -451,7 +444,7 @@ function DesktopLive() {
         }
       };
     }
-  }, [model, subscriberVideoRef.current, detectionCanvasRef.current, showDetectionOverlay, processedObjects]);
+  }, [model, subscriberVideoRef.current, detectionCanvasRef.current, processedObjects]);
 
   // 질문 클릭 핸들러 추가
   const handleQuestionClick = (question) => {
@@ -535,12 +528,12 @@ function DesktopLive() {
     setHiddenQuestions(prev => new Set([...prev, question]));
   };
 
-  // 토글 버튼 클릭 핸들러 수정
+  // 토글 버튼 클릭 핸들러 수정 - 캔버스 클리어만 수행
   const handleToggleDetection = () => {
     setShowDetectionOverlay(prev => {
       const newState = !prev;
       if (!newState && detectionCanvasRef.current) {
-        // 객체 인식을 끌 때 캔버스 클리어
+        // 오버레이를 숨길 때 캔버스만 클리어
         const ctx = detectionCanvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, detectionCanvasRef.current.width, detectionCanvasRef.current.height);
       }
@@ -569,6 +562,7 @@ function DesktopLive() {
                   <canvas
                     ref={detectionCanvasRef}
                     className="detection-canvas"
+                    style={{ display: showDetectionOverlay ? 'block' : 'none' }}
                   />
                   <button 
                     className="overlay-toggle-button"
