@@ -13,7 +13,7 @@ export const renderBoxes = (canvasRef, boxes_data, scores_data, classes_data, ra
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // clean canvas
 
   const colors = new Colors();
-  const SCORE_THRESHOLD = 0.4; 
+  const SCORE_THRESHOLD = 0.6; 
 
   // font configs
   const font = `${Math.max(
