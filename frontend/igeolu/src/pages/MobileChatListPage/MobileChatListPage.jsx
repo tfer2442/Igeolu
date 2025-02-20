@@ -1,5 +1,5 @@
 // pages/MobileChatListPage/MobileChatListPage.jsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import ChatRoomList from '../../components/common/Chat/ChatRoomList/ChatRoomList';
@@ -10,6 +10,10 @@ import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
 
 const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    onRetry(); // 컴포넌트 마운트 시 채팅방 목록 갱신
+  }, [onRetry]);
 
   const handleSelectRoom = (room) => {
     navigate(`/mobile-chat/${room.roomId}`);

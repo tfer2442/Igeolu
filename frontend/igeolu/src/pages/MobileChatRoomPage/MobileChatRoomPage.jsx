@@ -7,7 +7,7 @@ import LoadingSpinner from '../../components/LoadingSpinner/MobileLoadingSpinner
 import chatApi from '../../services/ChatApi';
 import './MobileChatRoomPage.css';
 
-const MobileChatRoom = ({ currentUserId: propCurrentUserId }) => {
+const MobileChatRoom = ({ currentUserId: propCurrentUserId, onChatListUpdate }) => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
@@ -116,7 +116,22 @@ const MobileChatRoom = ({ currentUserId: propCurrentUserId }) => {
     }
   }, [roomId, currentUserId]);
 
+  const handleRoomExit = async () => {
+    try {
+      await chatApi.exitChatRoom(room.roomId);
+      // 방 나가기 후 채팅방 목록 갱신
+      onChatListUpdate && onChatListUpdate();
+      navigate('/mobile-chat');
+    } catch (error) {
+      console.error('채팅방 나가기 실패:', error);
+      setError('채팅방 나가기에 실패했습니다.');
+    }
+  };
+
+
   const handleBack = () => {
+    // 뒤로가기 전에 채팅방 목록 갱신
+    onChatListUpdate && onChatListUpdate();
     navigate('/mobile-chat');
   };
 
@@ -128,15 +143,16 @@ const MobileChatRoom = ({ currentUserId: propCurrentUserId }) => {
   return (
     <div className='mobile-chat-room-page-container'>
       <div className='mobile-chat-room'>
-        <ChatRoom
-          room={room}
-          onBack={handleBack}
-          isMobile={true}
-          currentUserId={currentUserId}
-          activeRoomId={Number(roomId)}
-          onRoomUpdate={handleRoomUpdate}
-          isChatRoomOpen={isChatRoomOpen}
-        />
+      <ChatRoom
+        room={room}
+        onBack={handleBack}
+        onRoomExit={handleRoomExit}  // 추가
+        isMobile={true}
+        currentUserId={currentUserId}
+        activeRoomId={Number(roomId)}
+        onRoomUpdate={handleRoomUpdate}
+        isChatRoomOpen={isChatRoomOpen}
+      />
       </div>
     </div>
   );
