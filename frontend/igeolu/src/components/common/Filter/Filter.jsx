@@ -23,7 +23,8 @@ const Filter = ({
   deposit,
   monthlyRent,
   selectedOptions,
-  activeMenu
+  activeMenu,
+  onDetailClose  // 추가
 }) => {
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
@@ -134,6 +135,7 @@ const Filter = ({
     setIsLocationDropdownOpen(false);
     setIsPriceDropdownOpen(false);
     setIsOptionDropdownOpen(false);
+    onDetailClose(); // DetailPanel 닫기
   };
 
   return (
