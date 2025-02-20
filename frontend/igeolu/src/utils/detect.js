@@ -72,7 +72,7 @@ export const detect = async (source, model, canvasRef) => {
 
     renderBoxes(canvasRef, boxes_data, scores_data, classes_data, [xRatio, yRatio]);
 
-    const SCORE_THRESHOLD = 0.4; // 30% threshold
+    const SCORE_THRESHOLD = 0.6; // 30% threshold
     const predictions = Array.from(scores_data)
       .map((score, i) => ({
         class: labels[classes_data[i]],
