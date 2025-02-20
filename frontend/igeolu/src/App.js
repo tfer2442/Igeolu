@@ -192,7 +192,7 @@ function App() {
           user.userId,
           async () => {
             // 새 메시지 수신 시 채팅방 목록 갱신
-            const updatedRooms = await ChatApi.getChatRooms(user.userId);
+            const updatedRooms = await ChatApi.getChatRooms(user.userId, user.role);
             setChatRooms(updatedRooms);
           }
         );
@@ -214,13 +214,24 @@ function App() {
   }, [user?.userId, isUserInitialized, isNotificationInitialized]);
 
   // 채팅방 목록 초기 로드
-  const fetchChatRooms = useCallback(async () => {
-    if (!user?.userId || !user?.role) return;
+  const fetchChatRooms = useCallback(async (providedRole) => {
+    if (!user?.userId) return;
 
     try {
       setIsLoading(true);
       setError(null);
-      const response = await ChatApi.getChatRooms(user.userId, user.role); // role 전달
+
+
+    // providedRole이 있으면 사용하고, 없으면 user.role 사용
+    const userRole = providedRole || user.role;
+
+      if (!userRole) {
+        console.warn('User role not available');
+        return;
+      }
+
+    const response = await ChatApi.getChatRooms(user.userId, userRole);
+
       setChatRooms(response);
     } catch (error) {
       setError('채팅방 목록을 불러오는데 실패했습니다.');

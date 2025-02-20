@@ -1,19 +1,27 @@
 // pages/MobileChatListPage/MobileChatListPage.jsx
-import React, {useEffect} from 'react';
+import React, {useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../contexts/UserContext';
 import ChatRoomList from '../../components/common/Chat/ChatRoomList/ChatRoomList';
 import './MobileChatListPage.css';
 import MobileBottomTab from '../../components/MobileBottomTab/MobileBottomTab';
 import mobileDefaultProfile from '../../assets/images/defaultProfileImageIMSI.png';
 import MobileTopBar from '../../components/MobileTopBar/MobileTopBar';
 
-const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
+const MobileChatList = ({ chatRooms, isLoading, error, onRetry: originalOnRetry  }) => {
   const navigate = useNavigate();
+  const { user } = useUser(); 
 
-  useEffect(() => {
-    onRetry(); // 컴포넌트 마운트 시 채팅방 목록 갱신
-  }, [onRetry]);
+// onRetry를 래핑하여 userRole 전달
+const handleRetry = useCallback(async () => {
+  await originalOnRetry('ROLE_REALTOR');  // 직접 ROLE_REALTOR 전달
+}, [originalOnRetry]);
+
+useEffect(() => {
+  handleRetry();
+}, [handleRetry]); // user.role이 변경될 때마다 실행
+
 
   const handleSelectRoom = (room) => {
     navigate(`/mobile-chat/${room.roomId}`);
@@ -30,7 +38,7 @@ const MobileChatList = ({ chatRooms, isLoading, error, onRetry }) => {
           ) : error ? (
             <div className='mobile-error-state'>
               <p>{error}</p>
-              <button onClick={onRetry} className='retry-button'>
+              <button onClick={handleRetry} className='retry-button'>
                 다시 시도
               </button>
             </div>
