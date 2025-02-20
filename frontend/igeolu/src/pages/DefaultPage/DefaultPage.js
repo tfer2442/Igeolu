@@ -62,7 +62,7 @@ function DefaultPage() {
                         alt="penguin" 
                         className="button-image"
                     />
-                    <span className="default-page__button-text">일반 페이지</span>
+                    <span className="default-page__button-text">고객 페이지</span>
                 </button>
             </div>
         </div>
