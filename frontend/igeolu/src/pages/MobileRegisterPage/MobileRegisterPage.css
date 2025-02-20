@@ -521,12 +521,3 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
-
-.address-item.disabled {
-  background-color: rgba(47, 46, 46, 0.5);
-}
-
-.address-item.disabled:hover {
-  background-color: rgba(47, 46, 46, 0.5);
-  cursor: not-allowed;
-}

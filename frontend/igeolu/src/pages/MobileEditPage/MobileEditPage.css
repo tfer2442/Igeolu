@@ -436,3 +436,8 @@
     padding-left: 10px;
 }
 
+.address-item:hover {
+    background-color: #FFFFFF;
+    color: #272626;
+}
+

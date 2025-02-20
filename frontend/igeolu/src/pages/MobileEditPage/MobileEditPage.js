@@ -136,6 +136,8 @@ function MobileEditPage() {
   };
 
   const handleAddressSelect = async (result) => {
+    console.log('선택된 주소 정보:', result);
+
     try {
       const coords = await getCoordinates(
         result.admCd,
@@ -145,27 +147,50 @@ function MobileEditPage() {
         result.buldSlno
       );
 
-      setAddress(result.roadAddr);
-      setCoordinates({
-        x: coords?.entX || propertyData.longitude || 0,
-        y: coords?.entY || propertyData.latitude || 0,
-        dongcode: result.admCd,
-      });
+      console.log('좌표 조회 결과:', coords);
 
-      setShowResults(false);
-      setAddressKeyword('');
+      // 좌표가 없는 경우의 체크를 더 엄격하게 수정
+      if (!coords || 
+          !coords.entX || 
+          !coords.entY || 
+          coords.entX === '' || 
+          coords.entY === '' ||
+          coords.entX === '0' ||
+          coords.entY === '0') {
+        alert('좌표 정보가 없는 주소입니다. 다른 주소를 선택해주세요.');
+        return;
+      }
+
+      // 좌표가 유효한 경우에만 상태 업데이트
+      if (coords.entX && coords.entY) {
+        setAddress(result.roadAddr);
+        setCoordinates({
+          x: coords.entX,
+          y: coords.entY,
+          dongcode: result.admCd,
+        });
+
+        setShowResults(false);
+        setAddressKeyword('');
+      } else {
+        alert('유효하지 않은 좌표입니다. 다른 주소를 선택해주세요.');
+      }
     } catch (error) {
       console.error('주소 선택 처리 실패:', error);
-      setCoordinates({
-        x: propertyData.longitude || 0,
-        y: propertyData.latitude || 0,
-        dongcode: result.admCd,
-      });
+      alert('주소 좌표 변환에 실패했습니다.');
     }
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    // 좌표 유효성 검사 추가
+    if (!coordinates.x || !coordinates.y || 
+        coordinates.x === '' || coordinates.y === '' ||
+        coordinates.x === '0' || coordinates.y === '0') {
+      alert('유효한 주소를 선택해주세요.');
+      return;
+    }
 
     try {
       // 데이터 유효성 검사 추가
@@ -501,7 +526,7 @@ function MobileEditPage() {
               {addressResults.map((result, index) => (
                 <div
                   key={index}
-                  className='address-item'
+                  className="address-item"
                   onClick={() => handleAddressSelect(result)}
                 >
                   <p className='road-address'>{result.roadAddr}</p>
