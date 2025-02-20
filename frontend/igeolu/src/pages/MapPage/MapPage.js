@@ -1069,6 +1069,7 @@ function MapPage({
               monthlyRent={monthlyRent}
               selectedOptions={selectedOptions}
               activeMenu={activeMenu}
+              onDetailClose={() => setSelectedItem(null)}
             />
             {activeMenu !== 'agent' && (
               <div className='filter-worldcup-container'>
