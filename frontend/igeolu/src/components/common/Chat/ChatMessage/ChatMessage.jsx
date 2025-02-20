@@ -164,10 +164,7 @@ const ChatMessage = ({
 ChatMessage.propTypes = {
   message: PropTypes.shape({
     userId: PropTypes.number.isRequired,
-    content: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.node  // JSX 요소도 허용
-    ]).isRequired,
+    content: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
     senderType: PropTypes.oneOf(['USER', 'SYSTEM']).isRequired,
   }).isRequired,

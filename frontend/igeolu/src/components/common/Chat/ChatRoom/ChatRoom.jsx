@@ -445,16 +445,10 @@ const handleMessageChange = (e) => {
             <>
               {/* 환영 메시지 */}
               <div className='welcome-message'>
-        <ChatMessage
+              <ChatMessage
           message={{
             userId: 0,
-            content: (
-              <>
-                <HiSparkles color="#FFD700" /> 
-                환영합니다 {user.role === 'ROLE_REALTOR' ? '중개인' : '세입자'}님! 
-                <HiSparkles color="#FFD700" />
-              </>
-            ),
+            content: `환영합니다 ${user.role === 'ROLE_REALTOR' ? '중개인' : '세입자'}님!`,
             createdAt: new Date().toISOString(),
             senderType: 'SYSTEM',
           }}
