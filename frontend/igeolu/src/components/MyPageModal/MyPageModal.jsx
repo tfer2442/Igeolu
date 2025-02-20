@@ -41,30 +41,22 @@ const MyPageModal = ({ property, onClose }) => {
         const summaryResponse = await LiveControllerApi.getLivePropertySummary(
           property.livePropertyId
         );
+
+        console.log("-------", summaryResponse, "---------");
         
-        // "매물 요약:" 부분을 처리하기 위해 먼저 ':' 으로 분리
-        const [title, content] = summaryResponse['summary'].split(':');
-        
-        // 내용 부분을 '.' 으로 분할하고 각각 줄바꿈 처리
-        const lines = content
-          .split('.')
-          .filter(line => line.trim()) // 빈 문자열 제거
-          .map((line, index) => (
+        // "\n" 문자열을 제거하고 숫자 앞에서 줄바꿈 처리
+        const lines = summaryResponse['summary']
+          .replace(/\\n/g, '') // "\n" 문자열 제거
+          .split(/(?=\d+\.)/)  // 숫자+마침표 앞에서 분리
+          .filter(line => line.trim())
+          .map((line, index, array) => (
             <React.Fragment key={index}>
-              {line.trim()}.
-              <br />
+              {line.trim()}
+              {index !== array.length - 1 && <br />}
             </React.Fragment>
           ));
-          
-        // 제목과 내용을 합쳐서 최종 요약본 생성
-        const formattedSummary = (
-          <>
-            {title}:<br />
-            {lines}
-          </>
-        );
         
-        setSummary(formattedSummary);
+        setSummary(lines);
       }
     } catch (error) {
       console.error('Error fetching property summary:', error);
@@ -75,59 +67,59 @@ const MyPageModal = ({ property, onClose }) => {
 
   if (isLoading) {
     return (
-      <div className="modal-overlay">
-        <div className="modal-container">
-          <div className="loading">로딩중...</div>
+      <div className='modal-overlay'>
+        <div className='modal-container'>
+          <div className='loading'>로딩중...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mypage-modal-overlay">
-      <div className="mypage-modal-container">
-        <div className="mypage-modal-header">
+    <div className='mypage-modal-overlay'>
+      <div className='mypage-modal-container'>
+        <div className='mypage-modal-header'>
           <h2>{property.description}</h2>
-          <button onClick={onClose} className="close-button">
+          <button onClick={onClose} className='close-button'>
             <X size={24} />
           </button>
         </div>
 
-        <div className="mypage-modal-content">
-          <div className="content-main">
-            <div className="video-container">
+        <div className='mypage-modal-content'>
+          <div className='content-main'>
+            <div className='video-container'>
               {recordingInfo?.url ? (
-                <div className="video-wrapper">
+                <div className='video-wrapper'>
                   {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                   <video src={recordingInfo.url} controls />
                 </div>
               ) : (
-                <div className="video-placeholder">
-                  <div className="play-button">
-                    <div className="play-icon" />
+                <div className='video-placeholder'>
+                  <div className='play-button'>
+                    <div className='play-icon' />
                   </div>
                 </div>
               )}
             </div>
-            
-            <div className="thumbnails">
+
+            <div className='thumbnails'>
               {property.images.map((image, index) => (
-                <div key={index} className="thumbnail">
+                <div key={index} className='thumbnail'>
                   <img src={image} alt={`Property view ${index + 1}`} />
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="content-info">
-            <div className="tabs">
-              <button 
+          <div className='content-info'>
+            <div className='tabs'>
+              <button
                 className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
                 onClick={() => setActiveTab('summary')}
               >
                 음성요약
               </button>
-              <button 
+              <button
                 className={`tab ${activeTab === 'memo' ? 'active' : ''}`}
                 onClick={() => setActiveTab('memo')}
               >
@@ -135,19 +127,19 @@ const MyPageModal = ({ property, onClose }) => {
               </button>
             </div>
 
-            <div className="tab-content">
+            <div className='tab-content'>
               {activeTab === 'summary' ? (
-                <div className="summary-content">
+                <div className='summary-content'>
                   {summary ? (
                     summary
                   ) : (
-                    <div className="summary-loading-container">
+                    <div className='summary-loading-container'>
                       {isSummaryLoading ? (
                         <div>요약 정보를 불러오는 중...</div>
                       ) : (
-                        <button 
+                        <button
                           onClick={handleLoadSummary}
-                          className="load-summary-button"
+                          className='load-summary-button'
                         >
                           <FaRobot style={{ marginRight: '8px' }} />
                           요약 정보 불러오기
@@ -157,8 +149,23 @@ const MyPageModal = ({ property, onClose }) => {
                   )}
                 </div>
               ) : (
-                <div className="memo-content">
-                  {property.memo || '메모가 없습니다.'}
+                <div className='memo-content'>
+                  {property.memo
+                    ? property.memo.split('.').map((line, index, array) => {
+                        // 빈 문자열이 아닌 경우에만 렌더링
+                        if (line.trim()) {
+                          return (
+                            <React.Fragment key={index}>
+                              {line.trim()}
+                              {/* 마지막이 아닌 경우에만 마침표와 줄바꿈 추가 */}
+                              {index !== array.length - 1 ? '.' : ''}
+                              {index !== array.length - 1 && <br />}
+                            </React.Fragment>
+                          );
+                        }
+                        return null;
+                      })
+                    : '메모가 없습니다.'}
                 </div>
               )}
             </div>
