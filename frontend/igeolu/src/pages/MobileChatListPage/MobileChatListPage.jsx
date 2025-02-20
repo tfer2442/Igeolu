@@ -15,9 +15,8 @@ const MobileChatList = ({ chatRooms, isLoading, error, onRetry: originalOnRetry 
 
 // onRetry를 래핑하여 userRole 전달
 const handleRetry = useCallback(async () => {
-  const roleToUse = user?.role || 'ROLE_REALTOR';
-  await originalOnRetry(roleToUse);
-}, [user?.role, originalOnRetry]);
+  await originalOnRetry('ROLE_REALTOR');  // 직접 ROLE_REALTOR 전달
+}, [originalOnRetry]);
 
 useEffect(() => {
   handleRetry();
