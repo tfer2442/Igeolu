@@ -275,6 +275,16 @@ function App() {
     setIsChatRoomOpen(false); // 채팅방 닫기
   };
 
+  const handleChatListUpdate = useCallback(async () => {
+    if (!user?.userId || !user?.role) return;
+    try {
+      const response = await ChatApi.getChatRooms(user.userId, user.role);
+      setChatRooms(response);
+    } catch (error) {
+      console.error('채팅방 목록 업데이트 실패:', error);
+    }
+  }, [user?.userId, user?.role]);
+
   useEffect(() => {
     console.log('activeRoomId 변경:', activeRoomId);
   }, [activeRoomId]);
@@ -466,24 +476,27 @@ function App() {
               path='/mobile-chat'
               element={
                 <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
-                  <MobileChatList
-                    chatRooms={chatRooms}
-                    isLoading={isLoading}
-                    error={error}
-                    onRetry={fetchChatRooms}
-                    currentUserId={currentUserId}
-                  />
-                </PrivateRoute>
+              <MobileChatList
+                chatRooms={chatRooms}
+                isLoading={isLoading}
+                error={error}
+                onRetry={fetchChatRooms}
+                currentUserId={currentUserId}
+              />
+            </PrivateRoute>
               }
             />
             <Route
-              path='/mobile-chat/:roomId'
-              element={
-                <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
-                  <MobileChatRoom currentUserId={currentUserId} />
-                </PrivateRoute>
-              }
-            />
+          path='/mobile-chat/:roomId'
+          element={
+            <PrivateRoute user={user} isUserInitialized={isUserInitialized} isMobile>
+              <MobileChatRoom 
+                currentUserId={currentUserId} 
+                onChatListUpdate={handleChatListUpdate}  // 추가
+              />
+            </PrivateRoute>
+          }
+        />
 
             <Route
               path='/mobile-register'
