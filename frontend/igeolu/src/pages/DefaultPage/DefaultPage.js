@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import './DefaultPage.css';
 import logo from '../../assets/images/메인로고.png';
 import { useNavigate } from 'react-router-dom';
-import bear from '../../assets/images/곰누끼.png';
-import penguin from '../../assets/images/펭귄누끼.png';
 import snowflake from '../../assets/images/눈누끼.png';
 import bearBefore from '../../assets/images/곰곰.png';
 import penguinBefore from '../../assets/images/펭펭.png';
@@ -36,11 +34,13 @@ function DefaultPage() {
                 <img src={logo} alt="logo" />
             </div>
             <div className="default-page__button-container">
-                <button 
+            <button 
                     className="default-page__mobile-button"
                     onClick={() => navigate('/mobile-login')}
                     onMouseEnter={() => setIsMobileHovered(true)}
                     onMouseLeave={() => setIsMobileHovered(false)}
+                    onTouchStart={() => setIsMobileHovered(true)}
+                    onTouchEnd={() => setIsMobileHovered(false)}    
                 >
                     <img 
                         src={isMobileHovered ? bearAfter : bearBefore} 
@@ -54,6 +54,8 @@ function DefaultPage() {
                     onClick={() => navigate('/desktop-main')}
                     onMouseEnter={() => setIsDesktopHovered(true)}
                     onMouseLeave={() => setIsDesktopHovered(false)}
+                    onTouchStart={() => setIsDesktopHovered(true)}
+                    onTouchEnd={() => setIsDesktopHovered(false)}
                 >
                     <img 
                         src={isDesktopHovered ? penguinAfter : penguinBefore} 
@@ -63,11 +65,6 @@ function DefaultPage() {
                     <span className="default-page__button-text">일반 페이지</span>
                 </button>
             </div>
-            {/* <div className="default-page__footer">
-                <img src={bear} alt="bear" />
-                <img src={penguin} alt="penguin" />
-            </div> */}
-            {/* 뭔가 이미지가 겹치는거 같아서 일단 없앴어 ㅠㅠ 다시 추가하려면 해도 될 것 같아. -오승우- */}
         </div>
     );
 }
