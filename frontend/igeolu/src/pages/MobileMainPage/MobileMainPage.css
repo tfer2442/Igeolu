@@ -189,6 +189,6 @@
 /* iOS safe area 대응 */
 @supports (padding: max(0px)) {
     .mobile-main-page {
-        padding-top: max(20px, env(safe-area-inset-top));
+        padding-top: max(0px, env(safe-area-inset-top));
     }
 }

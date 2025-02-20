@@ -33,7 +33,7 @@ const LiveHistory = ({ liveData, onSelectLive, selectedLiveId }) => {
     const created = new Date(dateString);
     const now = new Date();
     const diffHours = (now - created) / (1000 * 60 * 60);
-    return diffHours <= 24;
+    return diffHours <= 3;
   };
 
   const handlePropertyDetail = (property) => {
