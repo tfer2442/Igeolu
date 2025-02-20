@@ -6,13 +6,13 @@
 
 <aside>
 
-1. 프로젝트 소개
-2. 기획 배경
-3. 화면 소개
-4. 기술 스택
-5. 시스템 아키텍처
-6. 프로젝트 산출물
-7. 이걸루 History
+1. [프로젝트 소개](#프로젝트-소개)
+2. [기획 배경](#기획-배경)
+3. [화면 소개](#화면-소개)
+4. [기술 스택](#기술-스택)
+5. [시스템 아키텍처](#시스템-아키텍처)
+6. [프로젝트 산출물](#프로젝트-산출물)
+7. [이걸루 History](#이걸루-History)
 
 </aside>
 
@@ -133,9 +133,17 @@
 
 ## 마이페이지
 
+- 마이페이지에서는 본인 프로필 사진을 수정할 수 있습니다.
+- 공인중개사와 약속된 라이브를 확인할 수 있습니다.
+- 과거에 라이브했던 매물을 다시볼 수 있습니다.
+
 ![image.png](assets/image%2014.png)
 
 ## 다시보기 페이지
+
+- 매물별로 다시보기가 가능합니다.
+- 매물별로 CLOVA + GPT 로 요약된 정보를 확인할 수 있습니다.
+- 사용자가 별도로 메모한 내용도 확인할 수 있습니다.
 
 ![image.png](assets/image%2015.png)
 
@@ -149,23 +157,32 @@
 
 ## 채팅 페이지 - 중개인
 
-![image.png](assets/image%2018.png)
+- 중개인 채팅페이지에서는 “예약” 과 “라이브” 가 가능합니다.
+- 라이브를 시작시, 라이브를 할 매물을 선택하고 라이브를 시작합니다.
 
-![image.png](assets/image%2019.png)
+<div style="display: flex; justify-content: center; width: 100%; gap: 10px; margin-bottom: 10px;">
+    <img src="assets/image%2018.png" alt="image18" style="width: 100%; max-width: 50%; height: auto;">
+    <img src="assets/image%2019.png" alt="image19" style="width: 100%; max-width: 50%; height: auto;">
+</div>
 
-![image.png](assets/image%2020.png)
-
-![image.png](assets/image%2021.png)
+<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
+    <img src="assets/image%2020.png" alt="image20" style="width: 100%; max-width: 50%; height: auto;">
+    <img src="assets/image%2021.png" alt="image21" style="width: 100%; max-width: 50%; height: auto;">
+</div>
 
 ## 마이페이지 - 중개인
+
+- 마이페이지에서 중개인은 새로운 “매물 등록” 이 가능합니다.
+- 그리고 등록한 매물에 대해서 “매물 수정” 이 가능합니다.
 
 ![image.png](assets/image%2022.png)
 
 ## 매물 등록/수정 페이지
 
-![image.png](assets/image%2023.png)
-
-![image.png](assets/image%2024.png)
+<div style="display: flex; justify-content: center; width: 100%; gap: 10px; margin-bottom: 10px;">
+    <img src="assets/image%2023.png" alt="image23" style="max-width: 50%; height: auto;">
+    <img src="assets/image%2024.png" alt="image24" style="max-width: 50%; height: auto;">
+</div>
 
 # 🛠️기술 스택
 
@@ -204,10 +221,10 @@ WebRTC 를 기반으로 만들어진 오픈소스 라이브러리 입니다. Ope
 
 ## 2. WebSocket + Spring WebFlux + MongoDB
 
-<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
-    <img src="assets/image%2025.png" alt="image1" style="width: 100%; max-width: 33.33%; height: auto;">
-    <img src="assets/image%2026.png" alt="image2" style="width: 100%; max-width: 33.33%; height: auto;">
-    <img src="assets/image%2027.png" alt="image3" style="width: 100%; max-width: 33.33%; height: auto;">
+<div style="display: flex; justify-content: center; width: 100%;">
+    <img src="assets/image%2025.png" alt="image1" style="max-width: 33.33%; height: auto;">
+    <img src="assets/image%2026.png" alt="image2" style="max-width: 33.33%; height: auto;">
+    <img src="assets/image%2027.png" alt="image3" style="max-width: 33.33%; height: auto;">
 </div>
 
 ### WebSocket?
@@ -299,12 +316,12 @@ YOLO 는 실시간 객체 탐지를 위한 딥러닝 모델로, 이미지를 분
   Your browser does not support the video tag.
 </video>
 
-![image.png](assets/sql_vs_es_graph.png)
-
 ### 결과
 
 - 검색어 자동완성을 대상으로 기존의 MySQL 를 이용했을때와 Elasticsearch 를 이용했을때에 대해 JMeter 로 부하테스틀 진행하였습니다.
 - Elasticsearch 를 이용했을 경우 기존 MySQL 를 사용했을 때 보다 **200% 이상** 향상된 응답시간을 보였습니다.
+
+![image.png](assets/sql_vs_es_graph.png)
 
 # 🏗️시스템 아키텍처
 
@@ -348,18 +365,18 @@ RAM 사용량 등을 알 수 있습니다.
 
 **Alarm**
 
-<div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/image%2034.png" alt="image34" style="width: 100%; max-width: 50%; height: auto;">
-    <img src="assets/image%2035.png" alt="image35" style="width: 100%; max-width: 50%; height: auto;">
+<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
+    <img src="assets/image%2034.png" alt="image34" style="max-width: 50%; height: auto;">
+    <img src="assets/image%2035.png" alt="image35" style="max-width: 50%; height: auto;">
 </div>
 
-<div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/image%2036.png" alt="image36" style="width: 100%; max-width: 50%; height: auto;">
-    <img src="assets/image%2037.png" alt="image37" style="width: 100%; max-width: 50%; height: auto;">
+<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
+    <img src="assets/image%2036.png" alt="image36" style="max-width: 50%; height: auto;">
+    <img src="assets/image%2037.png" alt="image37" style="max-width: 50%; height: auto;">
 </div>
 
-<div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/image%2038.png" alt="image38" style="width: 100%; max-width: 100%; height: auto;">
+<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
+    <img src="assets/image%2038.png" alt="image38" style="max-width: 100%; height: auto;">
 </div>
 
 - **RAM 평균 사용률** : EC2 RAM 평균 사용률이 90% 를 넘어가면 알람을 보내 서버가 RAM 이 부족한 상태임을 알립니다.
@@ -408,7 +425,7 @@ RAM 사용량 등을 알 수 있습니다.
         <td><img src="assets/판다곰탱이.jpg" alt="판다곰탱이" style="width: 100%; height: auto;"></td>
     </tr>
     <tr>
-        <td><strong>Frontend/팀장장</strong></td>
+        <td><strong>Frontend/팀장</strong></td>
         <td><strong>Frontend</strong></td>
         <td><strong>Frontend</strong></td>
         <td><strong>Backend/Infra</strong></td>
@@ -452,16 +469,17 @@ RAM 사용량 등을 알 수 있습니다.
 ### **2025.01.24 - 곰펭이 등장**
 
 <div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/왕관펭귄.jpg" alt="왕관펭귄" style="width: 100%; max-width: 33.33%; height: auto;">
-    <img src="assets/까망펭귄.jpg" alt="까망펭귄" style="width: 100%; max-width: 33.33%; height: auto;">
-    <img src="assets/넥타이펭귄.jpg" alt="넥타이펭귄" style="width: 100%; max-width: 33.33%; height: auto;">
+    <img src="assets/왕관펭귄.jpg" alt="왕관펭귄" style="max-width: 33.33%; height: auto;">
+    <img src="assets/까망펭귄.jpg" alt="까망펭귄" style="max-width: 33.33%; height: auto;">
+    <img src="assets/넥타이펭귄.jpg" alt="넥타이펭귄" style="max-width: 33.33%; height: auto;">
 </div>
 
 <div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/갈색곰탱이.jpg" alt="갈색곰탱이" style="width: 100%; max-width: 33.33%; height: auto;">
-    <img src="assets/판다곰탱이.jpg" alt="판다곰탱이" style="width: 100%; max-width: 33.33%; height: auto;">
-    <img src="assets/북극곰탱이.jpg" alt="북극곰탱이" style="width: 100%; max-width: 33.33%; height: auto;">
+    <img src="assets/갈색곰탱이.jpg" alt="갈색곰탱이" style="max-width: 33.33%; height: auto;">
+    <img src="assets/판다곰탱이.jpg" alt="판다곰탱이" style="max-width: 33.33%; height: auto;">
+    <img src="assets/북극곰탱이.jpg" alt="북극곰탱이" style="max-width: 33.33%; height: auto;">
 </div>
+
 
 
 
