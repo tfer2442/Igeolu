@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './DefaultPage.css';
-import logo from '../../assets/images/모바일로고.png';
+import logo from '../../assets/images/메인로고.png';
 import { useNavigate } from 'react-router-dom';
 import bear from '../../assets/images/곰누끼.png';
 import penguin from '../../assets/images/펭귄누끼.png';
