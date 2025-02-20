@@ -93,7 +93,7 @@ const MobileLoginPage = () => {
       <div className="mobile-login-page">
         <div className="mobile-login-content">
           <div className="mobile-login-logo">
-            <img src={mobileLogo} alt="다봄 로고" className="mobile-logo-image" />
+            <img src={mobileLogo} alt="이걸루 로고" className="mobile-logo-image" />
           </div>
           
           <div className="mobile-login-header">
