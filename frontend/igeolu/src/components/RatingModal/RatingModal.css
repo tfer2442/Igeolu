@@ -1,0 +1,134 @@
+.rating-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.rating-modal__container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.rating-modal__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.rating-modal__subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.rating-modal__stars-container {
+    margin: 20px 0;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.rating-modal__star-container {
+    position: relative;
+    display: inline-block;
+}
+
+.rating-modal__star {
+    color: #ffd700;
+    position: relative;
+    z-index: 1;
+}
+
+.rating-modal__star--empty {
+    color: #e4e5e9;
+}
+
+.rating-modal__star-half-clickable {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.rating-modal__star-half-clickable--left {
+    left: 0;
+}
+
+.rating-modal__star-half-clickable--right {
+    right: 0;
+}
+
+.rating-modal__rating-value {
+    font-size: 18px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.rating-modal__buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.rating-modal__submit-button {
+    width: 100px;
+    height: 40px;
+    padding: 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3182F6;
+    color: white;
+}
+
+.rating-modal__cancel-button {
+    width: 100px;
+    height: 40px;
+    padding: 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2F4F6;
+    color: #4E5968;
+}
+
+.rating-modal__submit-button:hover {
+    background-color: #1b64da;
+}
+
+.rating-modal__cancel-button:hover {
+    background-color: #e1e4e8;
+}
+
+.rating-modal__submit-button:disabled,
+.rating-modal__cancel-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

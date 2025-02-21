@@ -1,0 +1,76 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 32px;
+    max-width: 400px;
+    width: 90%;
+  }
+  
+  .modal-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .modal-logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .modal-header {
+    text-align: center;
+  }
+  
+  .modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .modal-header p {
+    color: #666;
+  }
+  
+  .kakao-button {
+    width: 100%;
+    background-color: #FEE500;
+    color: black;
+    padding: 12px 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  
+  .kakao-button:hover {
+    background-color: #FED000;
+  }
+  
+  .close-button {
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .close-button:hover {
+    color: #333;
+  }

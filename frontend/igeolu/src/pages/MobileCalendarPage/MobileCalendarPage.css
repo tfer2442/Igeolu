@@ -1,0 +1,318 @@
+/* src/pages/MobileCalendarPage/MobileCalendarPage.css */
+.mobile-calendar-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1E1D1D;
+    width: 100%;
+    height: 100vh; /* 추가 */
+    overflow: hidden; /* 추가 */
+}
+.mobile-calendar-page {
+    border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* 추가 */
+}
+.mobile-calendar-page__top {
+    width: calc(100% - 40px); 
+    margin-top: max(44px, env(safe-area-inset-top));  /* iOS 상태바 고려 */
+    display: flex;
+    align-items: center;
+    margin-bottom: 45px;
+    position: sticky; /* 추가 */
+    top: 0; /* 추가 */
+    background: #272626; /* 추가 */
+    z-index: 10; /* 추가 */
+    flex-shrink: 0; /* 추가 */
+}
+.mobile-calendar-page__top p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-calendar-page__content {
+    width: calc(100% - 40px);
+    height: calc(100vh - 100px); /* 수정 */
+    display: flex;
+    flex-direction: column;
+    position: relative; /* 추가 */
+    flex: 1;
+    min-height: 0; /* 추가: flexbox 스크롤을 위해 필요 */
+}
+
+.mobile-calendar-page__calendar {
+    position: sticky; /* 추가 */
+    top: 80px; /* 헤더 높이에 맞게 조정 */
+    background: #272626; /* 추가 */
+    z-index: 5; /* 추가 */
+    padding-bottom: 20px; /* 추가 */
+    
+    flex-shrink: 0; /* 추가 */
+}
+
+.mobile-calendar-page__schedule {
+    flex: 1;
+    overflow-y: auto; /* 수정 */
+    padding-bottom: 80px; /* bottom tab 고려 */
+    
+    min-height: 0; /* 추가: flexbox 스크롤을 위해 필요 */
+}
+
+
+/* 기존 스타일에 추가 */
+.custom-calendar {
+    width: 100%;
+    border: none;
+   
+    background-color: #272626;  
+    
+}
+
+/* 캘린더 타일 스타일링 */
+.react-calendar__tile {
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    position: relative;
+}
+
+/* 호버 효과 추가 */
+.react-calendar__tile:hover {
+    color: #01ADFF;
+    cursor: pointer;
+    background-color: #e2e1e1;
+    border-radius: 50%;
+}
+
+/* 오늘 날짜 스타일링 */
+.react-calendar__tile--now {
+    background-color: #272626 !important;
+    color: #01ADFF ;
+}
+
+/* 선택된 날짜 스타일링 */
+.react-calendar__tile--active {
+    color: white!important;
+    background-color: #01ADFF !important;
+    border-radius: 50%;
+}
+.react-calendar__navigation{
+    border-bottom: 1px solid #01ADFF;
+
+}
+/* 네비게이션 버튼 스타일링 */
+.react-calendar__navigation button {
+    color: white;
+    font-size: 22px;
+    margin-top: 10px;
+}
+.react-calendar__navigation button:hover{
+    color: #01ADFF;
+    background-color: #272626 !important;
+}
+
+/* 요일 헤더 스타일링 */
+.react-calendar__month-view__weekdays {
+    color: #9F9F9F;
+    font-size: 20px;
+}
+.react-calendar__month-view__days{
+    margin-bottom: 15px;
+}
+.react-calendar__title:disabled{
+    color: white;
+    background-color: #272626;
+}
+
+.schedule-item-container {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+.schedule-list {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.schedule-item {
+    display: flex;
+    padding: 15px;
+    background-color: #2F2E2E;
+    border-radius: 8px;
+    position: relative;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+    touch-action: pan-x;
+}
+
+.schedule-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 70%;
+    border-radius: 2px;
+}
+
+.schedule-item.type-live::before {
+    background-color: #FF6B6B;
+}
+
+.schedule-item.type-common::before {
+    background-color: #01ADFF;
+}
+.schedule-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 15px;
+}
+
+.schedule-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.schedule-opponent {
+    color: white;
+    font-weight: 500;
+}
+
+.schedule-time {
+    color: #9F9F9F;
+    font-size: 14px;
+}
+
+.schedule-title {
+    color: #E2E1E1;
+    font-size: 14px;
+    margin-top: 2px;
+    opacity: 0.9;
+}
+
+.schedule-actions {
+    position: absolute;
+    top: 0;
+    right: -210px;
+    height: 100%;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-right: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .edit-btn, .delete-btn {
+    height: 100%;
+    width: 90px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .action-icon {
+    width: 32px;  /* 아이콘 크기 조절 */
+    height: 32px;  /* 아이콘 크기 조절 */
+  }
+  
+  .edit-btn {
+    background-color: #01ADFF;
+  }
+  
+  .delete-btn {
+    background-color: #FF6B6B;
+  }
+
+  .edit-btn span, .delete-btn span {
+    font-size: 12px;  /* 텍스트 크기 조절 */
+  }
+
+.no-schedule {
+    text-align: center;
+    color: #666;
+    padding: 20px 0;
+}   
+#schedule-date {
+    color: #02ADFF;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.mobile-calendar-page__bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 395px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #1E1D1D;
+    border-top: 1px solid #403F3F;
+    z-index: 1000;
+    height: 56px;  /* Android Material Design 기준 */
+    margin: 0;
+    padding: 0;
+}
+
+
+.custom-calendar .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+}
+
+
+/* 스크롤바 스타일링 */
+.mobile-calendar-page__schedule::-webkit-scrollbar {
+    width: 0px;
+}
+
+.date-group {
+    margin-bottom: 30px;
+    scroll-margin-top: 20px;
+}
+
+.schedule-header {
+    margin-bottom: 15px;
+}
+
+/* MobileBottomTab 관련 스타일 */
+.mobile-bottom-tab {
+    flex-shrink: 0; /* 추가 */
+    background: #272626;
+    z-index: 10;
+}
+
+.dot-container {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.appointment-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #FF6B6B;
+    border-radius: 50%;
+}

@@ -1,0 +1,80 @@
+/* pages/MobileChatListPage/MobileChatListPage.css */
+.mobile-chat-list-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1E1D1D;
+  width: 100vw; /* 100%에서 100vw로 변경 */
+  height: 100vh; /* 높이 추가 */
+}
+
+.mobile-chat-list {
+  border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;  /* 전체 스크롤 적용 */
+    padding-bottom: calc(70px + env(safe-area-inset-bottom)); /* 바텀바 높이 + safe area 고려 */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.mobile-header {
+  margin-top: 28px;
+  padding: 16px;
+  border-bottom: 1px solid #343434;
+  background-color: #272626;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #01adff;
+  width: 100%;
+  padding-left: 8px;
+}
+
+.mobile-chat-content {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.mobile-loading-state,
+.mobile-error-state,
+.mobile-empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.mobile-error-state {
+  color: #dc3545;
+}
+
+.retry-button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.retry-button:hover {
+  background-color: #c82333;
+}

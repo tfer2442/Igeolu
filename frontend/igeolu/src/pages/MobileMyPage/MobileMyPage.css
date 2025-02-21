@@ -1,0 +1,286 @@
+/* MobileMyPage.css */
+.mobile-my-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1E1D1D;
+    width: 100%;
+}
+.mobile-my-page {
+    border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;  /* 전체 스크롤 적용 */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.mobile-my-page__top {
+    width: calc(100% - 40px); 
+    margin-top: max(44px, env(safe-area-inset-top));  /* iOS 상태바 고려 */
+    display: flex;
+    align-items: center;
+    margin-bottom: 45px;
+}
+.mobile-my-page__top p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-my-page__my-info {
+    width: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+}
+.mobile-my-page__my-info p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-my-page__my-info__profile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    height: 140px;
+    border: 1px solid #403F3F;
+    border-radius: 15px;
+    padding: 10px;
+    margin-top: 20px;
+}
+.mobile-my-page__my-info__profile img {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.mobile-my-page__my-info__profile__name {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+    width: 60%;
+}
+.mobile-my-page__my-info__profile__edit-icon {
+    display: flex;
+    justify-content: flex-end;
+}
+.mobile-my-page__my-info__profile__name-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    margin-left: 5px;
+}
+.mobile-my-page__my-info__profile__name-text p {
+    font-size: 13px;
+    color: #808080;
+}
+#name {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
+
+.mobile-my-page__my-live-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 50px 0 30px;
+    margin-top: 30px;
+}
+
+.live-info, .rating-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#live-count, #rating {
+    font-size: 16px;
+    color: white;
+}
+
+#live-count-number, #rating-number {
+    font-size: 24px;
+    color: #01ADFF;
+    font-weight: normal;
+}
+
+.mobile-my-page__my-real-estate {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    gap: 10px;
+}
+.mobile-my-page__my-real-estate p {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+.mobile-my-page__my-real-estate-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+.mobile-my-page__my-real-estate-content p {
+    font-size: 16px;
+    font-weight: normal;
+}
+.mobile-my-page__component-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    width:100%;
+    align-items: center;
+}
+.mobile-my-page__my-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.mobile-my-page__my-rating #rating {
+    font-size: 16px;
+    color: white;
+}
+
+.mobile-my-page__my-rating #rating-number {
+    font-size: 24px;
+    color: #01ADFF;
+    font-weight: normal;
+}
+
+.profile-image-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.profile-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-edit-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-image-wrapper:hover .profile-edit-overlay {
+    opacity: 1;
+}
+
+.profile-edit-overlay svg {
+    color: white;
+}
+
+.mobile-my-page__logout-button {
+    width: calc(100% - 40px);
+    height: 50px;
+    background: transparent;
+    border: 1px solid #01ADFF;
+    border-radius: 10px;
+    color: #01ADFF;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 20px 0 30px 0;
+    transition: all 0.3s ease;
+}
+
+.mobile-my-page__logout-button:hover {
+    background: #01ADFF;
+    color: white;
+}
+
+.mobile-my-page__logout-button:active {
+    transform: scale(0.98);
+}
+
+.mobile-logout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.mobile-logout-modal-content {
+    background: #272626;
+    border-radius: 15px;
+    padding: 20px;
+    width: 80%;
+    max-width: 300px;
+    border: 1px solid #403F3F;
+}
+
+.mobile-logout-modal-content h3 {
+    color: white;
+    font-size: 20px;
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+.mobile-logout-modal-content p {
+    color: #808080;
+    font-size: 16px;
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+.mobile-modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mobile-modal-buttons button {
+    padding: 10px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.mobile-modal-buttons button:first-child {
+    background: #01ADFF;
+    color: white;
+}
+
+.mobile-modal-buttons button:last-child {
+    background: #403F3F;
+    color: white;
+}

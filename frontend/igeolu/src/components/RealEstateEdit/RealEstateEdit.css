@@ -1,0 +1,35 @@
+.real-estate-edit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 25px;
+    background-color: #2F2E2E;
+    height: 47px;
+    width: 95%;
+}
+.real-estate-edit__p p{
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    color: white;
+}
+.real-estate-edit__p #title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.real-estate-edit__p #p-color {
+    color: #01ADFF;
+    margin-left: 10px;
+    font-weight: normal;
+}
+.real-estate-edit__arrow {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+    color: white;
+    font-size: 20px;
+}
+

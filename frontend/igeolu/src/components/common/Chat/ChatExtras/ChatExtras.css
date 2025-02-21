@@ -1,0 +1,67 @@
+/* components/common/Chat/ChatExtras/ChatExtras.css */
+/* 📌 추가 기능 섹션 (기본 스타일) */
+.chat-extras {
+  padding: 16px;
+  height: 120px;
+  background-color: #272626;
+  bottom: 64px; /* 입력창 높이만큼 띄움 */
+  left: 0;
+  right: 0;
+  border-top: 1px solid #343434;
+
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 📌 추가 기능이 열렸을 때 스타일 */
+.chat-extras.open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 📌 추가 기능이 닫혀 있을 때 숨김 */
+.chat-extras:not(.open) {
+  display: none;
+}
+
+/* 📌 추가 기능 내부 컨텐츠 (버튼 컨테이너) */
+.chat-extras-content {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+  padding: 0 16px;
+  height: 100%; /* 컨테이너 높이 100%로 설정 */
+  align-items: center;
+}
+
+/* 📌 추가 기능 버튼 스타일 */
+.extra-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px; /* 아이콘과 텍스트 사이 간격 */
+  background: none;
+  border: none;
+  color: white; /* 텍스트 색상 */
+  padding: 8px;
+  cursor: pointer;
+}
+
+.icon-circle {
+  width: 56px;
+  height: 56px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-circle img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}

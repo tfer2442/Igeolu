@@ -1,0 +1,118 @@
+/* src/components/PropertySlider/PropertySlider.css */
+.mypage-property-slider-container {
+  width: 564px;
+  margin: 20px 0;
+}
+
+.mypage-property-empty {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e2e1e1;
+  border-radius: 8px;
+  color: #666;
+  font-size: 16px;
+  background-color: #f8f8f8;
+}
+
+.mypage-property-slider {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #01ADFF #e8f7ff;
+}
+
+/* 웹킷 기반 브라우저를 위한 스크롤바 스타일링 */
+.mypage-property-slider::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mypage-property-slider::-webkit-scrollbar-track {
+  background: #e8f7ff;
+  border-radius: 3px;
+}
+
+.mypage-property-slider::-webkit-scrollbar-thumb {
+  background: #01ADFF;
+  border-radius: 3px;
+}
+
+.mypage-property-slider::-webkit-scrollbar-thumb:hover {
+  background: #0088cc;
+}
+
+.mypage-property-slider-track {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0;
+  min-width: min-content;
+}
+
+.mypage-property-slide {
+  flex: 0 0 178px;
+  cursor: pointer;
+}
+
+.mypage-property-slide-content {
+  position: relative;
+  border: 1px solid #e2e1e1;
+  border-radius: 8px;
+  background-color: white;
+  width: 178px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mypage-property-image {
+  width: 100%;
+  height: 160px;
+  flex: 0 0 160px;
+  border-bottom: 1px solid #e2e1e1;
+}
+
+.mypage-property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.mypage-property-info {
+  padding: 8px 10px;
+  height: 60px;
+  flex: 0 0 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+}
+
+.mypage-property-description {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+.mypage-property-price {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 호버 효과 */
+.mypage-property-slide-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}

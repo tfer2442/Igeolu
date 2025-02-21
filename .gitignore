@@ -15,3 +15,42 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Frontend ###
+# 의존성
+frontend/igeolu/node_modules
+frontend/igeolu/.pnp
+frontend/igeolu/.pnp.js
+
+# 빌드 결과물
+frontend/igeolu/build/
+frontend/igeolu/dist/
+frontend/igeolu/.next/
+frontend/igeolu/out/
+
+# 환경 변수
+frontend/igeolu/.env
+frontend/igeolu/.env.local
+frontend/igeolu/.env.development.local
+frontend/igeolu/.env.test.local
+frontend/igeolu/.env.production.local
+
+# 로그
+frontend/igeolu/npm-debug.log*
+frontend/igeolu/yarn-debug.log*
+frontend/igeolu/yarn-error.log*
+
+# 캐시
+frontend/igeolu/.cache/
+frontend/igeolu/.parcel-cache
+
+# 테스트 커버리지
+frontend/igeolu/coverage/
+
+# PWA
+frontend/igeolu/public/sw.js
+frontend/igeolu/public/workbox-*.js
+
+# 기타
+frontend/igeolu/.DS_Store
+frontend/igeolu/Thumbs.db

@@ -1,0 +1,211 @@
+/* MobileAdditionalInfo.css의 내용을 그대로 복사 */
+.additional-info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1E1D1D;
+    width: 100%;
+}
+
+.additional-info-wrapper {
+    border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    padding-bottom: 120px;
+    min-height: calc(100vh - 70px);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.additional-info-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.MobileMyPageEdit__info-form {
+    width: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.MobileMyPageEdit__form-group {
+    width: 100%;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.form-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.form-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #403F3F;
+    border-radius: 5px;
+    background-color: #2F2E2E;
+    color: white;
+    padding-left: 10px;
+}
+
+.form-textarea {
+    width: 100%;
+    height: 120px;
+    padding: 16px;
+    background-color: #2F2E2E;
+    color: white;
+    border: 1px solid #403F3F;
+    border-radius: 5px;
+    resize: none;
+    font-size: 16px;
+}
+
+.search-button {
+    width: 30%;
+    background-color: #272626;
+    border: 1px solid #403F3F;
+    border-radius: 5px;
+    color: #E2E1E1;
+    cursor: pointer;
+    height: 40px;
+}
+
+.search-button:hover {
+    background-color: #2F2E2E;
+    border-color: #535252;
+    color: white;
+}
+
+.submit-button {
+    width: 100%;
+    height: 40px;
+    background-color: #01ADFF;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.address-input-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.address-input-group input {
+    width: 70%;
+}
+
+.error-message {
+    color: red;
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: #9CA3AF;
+}
+
+/* Dialog 관련 스타일도 동일하게 적용 */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+}
+
+.dialog-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background: #272626;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 9999;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 나머지 Dialog 관련 스타일들도 동일하게 적용 */
+.dialog-header {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.dialog-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: white;
+}
+
+.dialog-description {
+    color: #9CA3AF;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.dialog-body {
+    margin-top: 16px;
+}
+
+.search-form-group {
+    display: flex;
+    gap: 8px;
+}
+
+.search-results {
+    margin-top: 8px;
+    border: 1px solid #403F3F;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.result-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #E2E1E1;
+    color: #E2E1E1;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.result-item:hover {
+    background-color: #FFFFFF;
+    color: #272626;
+}
+
+.result-road {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.result-jibun {
+    font-size: 12px;
+    color: #9CA3AF;
+}
+
+@supports (padding: max(0px)) {
+    .form-title {
+        padding-top: env(safe-area-inset-top);
+    }
+}

@@ -1,0 +1,24 @@
+/* src/components/common/Button/ChatButton.css */
+.chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #01adff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+.chat-button-image {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}

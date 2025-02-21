@@ -1,0 +1,85 @@
+.map-option-panel {
+    width: 320px;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+}
+  
+.map-option-content {
+    padding: 1rem;
+}
+  
+.map-option-header {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+  
+.map-option-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+  
+.map-option-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+  
+.map-option-item:hover {
+    border-color: #01ADFF;
+    background-color: #f0f7ff;
+}
+  
+.map-option-item.selected {
+    background-color: #f0f7ff;
+    border-color: #01ADFF;
+    color: #01ADFF;
+}
+  
+.map-option-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+}
+  
+.map-option-action-button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+  
+.map-option-action-button.reset {
+    background: none;
+    border: 1px solid #e1e1e1;
+    color: #666;
+}
+  
+.map-option-action-button.reset:hover {
+    background-color: #f5f5f5;
+}
+  
+.map-option-action-button.apply {
+    background-color: #01ADFF;
+    border: 1px solid #01ADFF;
+    color: white;
+}
+  
+.map-option-action-button.apply:hover {
+    background-color: #009CE6;
+}

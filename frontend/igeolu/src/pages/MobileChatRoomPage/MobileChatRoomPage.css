@@ -1,0 +1,63 @@
+/* src/pages/MobileChatRoomPage/MobileChatRoomPage.css */
+.mobile-chat-room-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1E1D1D;
+  width: 100%;
+}
+
+.mobile-chat-room {
+  border: 1px solid #1E1D1D;
+    background: #272626;
+    height: 100vh;
+    width: 393px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;  /* 전체 스크롤 적용 */
+    /* padding-bottom: calc(70px + env(safe-area-inset-bottom)); */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.mobile-chat-room .chat-room {
+  flex: 1;
+  background-color: #272626;
+}
+
+.mobile-chat-room .chat-room-header {
+  padding: 16px;
+  background-color: #272626;
+  border-bottom: 1px solid #343434;
+}
+
+.mobile-chat-room .back-button {
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.mobile-chat-room .chat-room-title {
+  color: #FFFFFF; /* 채팅방 제목 색상 흰색으로 */
+}
+
+.mobile-chat-room .messages-container {
+  flex: 1;
+  padding: 16px;
+}
+
+.mobile-chat-room .message-input-container {
+  padding: 16px;
+  
+  /* border-top: 1px solid #e9ecef; */
+}
+
+.loading-message {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #272626;
+  color: #FFFFFF;
+}

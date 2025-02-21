@@ -1,0 +1,128 @@
+/* .filter-content {
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e1e1e1;
+  padding: 0.75rem;
+  position: relative;
+} */
+
+.filter-wrapper {
+  padding: 0.5rem;
+  position: relative;
+}
+
+.location-filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #222;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.location-filter-button.active {
+  border-color: #01ADFF;
+}
+
+.location-text {
+  flex: 1;
+  text-align: left;
+}
+
+.price-filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #222;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.price-filter-button.active {
+  border-color: #01ADFF;
+}
+
+.price-text {
+  flex: 1;
+  text-align: left;
+}
+
+.option-filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #222;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.option-filter-button.active {
+  border-color: #01ADFF;
+}
+
+.option-text {
+  flex: 1;
+  text-align: left;
+}
+
+.chevron-icon {
+  transition: transform 0.2s ease;
+}
+
+.chevron-icon.rotate {
+  transform: rotate(180deg);
+}
+
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+
+
+
+
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.reset-all-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.reset-all-button:hover {
+  background-color: #f5f5f5;
+  border-color: #d1d1d1;
+}
