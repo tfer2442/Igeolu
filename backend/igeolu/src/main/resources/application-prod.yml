@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(Z4z5nNVsr/niF/CAvdZ4W/0KhwmENBW6EjZp808oJVinAWw9YrzpGmtZFU5K2GTHiyzy9RD9W6CioSCb+9EJDcopW0D2jdu2DXE4kDdFMA0=)
+    username: ENC(HfwR05w1E/RITtuOu9w04w==)
+    password: ENC(LJz0MQqtLrZhbORaBA0Mdg==)
+  data:
+    mongodb:
+      uri: ENC(2TFSKUX5qxvJmH/3Mp4GVd28hTZr132l0dMzBmhqV7/VpcCTlcmNs8t2IgZR4U3FnzreQ2rGpuc7AABGoSJN+H9I72ZGLwGporjrOD+rS2lWJXoqJ1eE7Q==)
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: ENC(Az1s8b/I1VHwhQwHPYVI7cQ8LXqTFNc05y+UuAOAJHhEeen0mlMcRaR4aCXnEVLa)
+            client-secret: ENC(0sdaWwUcVxpf01vWS1xN72CAq3s3KUYOVLSVhGEpWeFG9Eg9NC+k8jiZBtA0m3Un)
+            redirect-uri: "https://i12d205.p.ssafy.io/api/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: "https://kauth.kakao.com/oauth/authorize"
+            token-uri: "https://kauth.kakao.com/oauth/token"
+            user-info-uri: "https://kapi.kakao.com/v2/user/me"
+            user-name-attribute: id
+  jwt:
+    secret: ENC(mUrIeioFDbdSY+cm/TPqIcN4GIqnTauE31oe2zgmn552uW6EmHqoJPovTDq6NGpmPtrlcZvY6Gdt4Iin/c/3sh7HnCMtdZNr4HPCv6o2OIE=)
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+kakao:
+  logout:
+    redirect:
+      uri: "https://i12d205.p.ssafy.io"
+
+openvidu:
+  url: ENC(dHcH9uvYd42Efm/FQf80vH9Q/1a6pRNBZX4YRNISN+t15bmSVSWCGA==)
+  secret: ENC(ETKG8ZovYz+lEMiK+WFfilJ9+JrZK5NO)
+
+file:
+  upload-dir: "/app/igeolu-file" # 절대 경로 사용을 통한 명확한 파일 위치 지정
+  base-url: "https://i12d205.p.ssafy.io/file"

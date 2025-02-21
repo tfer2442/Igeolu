@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/igeolu?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: local
+    password: local
+  data:
+    mongodb:
+      # username = local, password = local, dbname = igeolu
+      uri: mongodb://local:local@mongodb:27017/igeolu?authSource=admin
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: ENC(Az1s8b/I1VHwhQwHPYVI7cQ8LXqTFNc05y+UuAOAJHhEeen0mlMcRaR4aCXnEVLa)
+            client-secret: ENC(0sdaWwUcVxpf01vWS1xN72CAq3s3KUYOVLSVhGEpWeFG9Eg9NC+k8jiZBtA0m3Un)
+            redirect-uri: "http://localhost:8080/api/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: "https://kauth.kakao.com/oauth/authorize"
+            token-uri: "https://kauth.kakao.com/oauth/token"
+            user-info-uri: "https://kapi.kakao.com/v2/user/me"
+            user-name-attribute: id
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+kakao:
+  logout:
+    redirect:
+      uri: "http://localhost:8080/api/logout"
+
+openvidu:
+  url: http://openvidu:4443
+  secret: MY_SECRET
+
+file:
+  upload-dir: "/app/igeolu-file"
+  base-url: "http://localhost:8080/file"

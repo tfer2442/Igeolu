@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  spring-app:
+    build:
+      context: .  # Dockerfile이 위치한 폴더
+      dockerfile: Dockerfile.local  # Spring Boot Dockerfile 이름
+    restart: always
+    ports:
+      - "8080:8080"  # Spring Boot 애플리케이션 포트 매핑
+    environment:
+      SPRING_PROFILES_ACTIVE: local  # Spring Boot 활성 프로파일 설정
+      TZ: Asia/Seoul
+    depends_on:
+      - mysql  # MySQL이 먼저 실행되도록 설정
+    volumes:
+      - igeolu-files:/app/igeolu-file  # 파일 업로드용 볼륨 추가
+  mysql:
+    image: mysql:8.0.36
+    restart: always
+    ports:
+      - "3300:3306"
+    volumes:
+      - igeolu-mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: igeolu
+      MYSQL_USER: local
+      MYSQL_PASSWORD: local
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: igeolu
+      MONGO_INITDB_ROOT_USERNAME: local
+      MONGO_INITDB_ROOT_PASSWORD: local
+      TZ: Asia/Seoul
+    volumes:
+      - mongodb_data:/data/db # MongoDB 데이터 저장
+      - mongodb_config:/data/configdb # MongoDB 설정 저장
+    ports:
+      - "27017:27017"
+
+  openvidu:
+    image: openvidu/openvidu-dev:2.31.0
+    ports:
+      - "4443:4443"
+    environment:
+      - OPENVIDU_SECRET=MY_SECRET
+      - OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings
+      - OPENVIDU_RECORDING=true
+    volumes:
+      - openvidu_recordings:/opt/openvidu/recordings
+      - /var/run/docker.sock:/var/run/docker.sock  # 호스트 Docker 소켓 마운트
+
+volumes:
+  igeolu-mysql:  # MySQL 데이터 저장소
+  mongodb_data:
+  mongodb_config:
+  openvidu_recordings:
+  igeolu-files:
