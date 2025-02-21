@@ -221,11 +221,13 @@ WebRTC 를 기반으로 만들어진 오픈소스 라이브러리 입니다. Ope
 
 ## 2. WebSocket + Spring WebFlux + MongoDB
 
-<div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/image%2025.png" alt="image1" style="max-width: 33.33%; height: auto;">
-    <img src="assets/image%2026.png" alt="image2" style="max-width: 33.33%; height: auto;">
-    <img src="assets/image%2027.png" alt="image3" style="max-width: 33.33%; height: auto;">
-</div>
+<table>
+  <tr>
+    <td><img src="assets/image%2025.png" alt="image1" width="200"></td>
+    <td><img src="assets/image%2026.png" alt="image2" width="200"></td>
+    <td><img src="assets/image%2027.png" alt="image3" width="200"></td>
+  </tr>
+</table>
 
 ### WebSocket?
 
@@ -311,10 +313,7 @@ YOLO 는 실시간 객체 탐지를 위한 딥러닝 모델로, 이미지를 분
 - 동기화된 매물데이터를 대상으로 검색을 할 수 있습니다.
 - 시군구 데이터를 Nori, N-gram, 자소 분석기를 이용해 저장해 부분 문자열 일치, 초성 검색, 영어 오타 검색이 가능합니다. 또한 검색필터에 가중치를 중요한 키워드를 우선으로 검색되게 하였습니다.
 
-<video controls>
-  <source src="assets/검색.mov" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<img src="assets/검색.gif"></img>
 
 ### 결과
 
@@ -364,20 +363,27 @@ RAM 사용량 등을 알 수 있습니다.
 ![image.png](assets/image%2033.png)
 
 **Alarm**
+<table>
+  <tr>
+    <td><img src="assets/image%2034.png" alt="image34"></td>
+    <td><img src="assets/image%2035.png" alt="image35"></td>
+  </tr>
+</table>
 
-<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
-    <img src="assets/image%2034.png" alt="image34" style="max-width: 50%; height: auto;">
-    <img src="assets/image%2035.png" alt="image35" style="max-width: 50%; height: auto;">
-</div>
+<table>
+  <tr>
+    <td><img src="assets/image%2036.png" alt="image36"></td>
+    <td><img src="assets/image%2037.png" alt="image37"></td>
+  </tr>
+</table>
 
-<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
-    <img src="assets/image%2036.png" alt="image36" style="max-width: 50%; height: auto;">
-    <img src="assets/image%2037.png" alt="image37" style="max-width: 50%; height: auto;">
-</div>
-
-<div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
-    <img src="assets/image%2038.png" alt="image38" style="max-width: 100%; height: auto;">
-</div>
+<table>
+  <tr>
+    <td>    
+      <img src="assets/image%2038.png" alt="image38">
+    </td>
+  </tr>
+</table>
 
 - **RAM 평균 사용률** : EC2 RAM 평균 사용률이 90% 를 넘어가면 알람을 보내 서버가 RAM 이 부족한 상태임을 알립니다.
 - **RAM 피크 사용률** : EC2 RAM 피크 사용률이 96% 를 넘어가면 위험한 상황임을 알리고, 서버가 다운될 수 있으니 조치를 취할 필요가 있습니다.
@@ -398,10 +404,7 @@ RAM 사용량 등을 알 수 있습니다.
 
 ## 3. API
 
-<video controls>
-  <source src="assets/api.mov" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<img src="assets/api.gif"></img>
 
 # 🍿이걸루 History
 
@@ -446,10 +449,7 @@ RAM 사용량 등을 알 수 있습니다.
 
 ### 2025.02.10 - 몬데이스피치
 
-<video controls>
-  <source src="assets/0209.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<img src="assets/0209.gif"></img>
 
 ### 2025.02.07 - AI 로 표현하는 나만의 프로젝트 수상
 
@@ -459,26 +459,27 @@ RAM 사용량 등을 알 수 있습니다.
 
 ### **2025.02.05 - 중간발표**
 
-<video controls>
-  <source src="assets/칠가이.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<img src="assets/칠가이.gif"></img>
 
 ---
 
 ### **2025.01.24 - 곰펭이 등장**
 
-<div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/왕관펭귄.jpg" alt="왕관펭귄" style="max-width: 33.33%; height: auto;">
-    <img src="assets/까망펭귄.jpg" alt="까망펭귄" style="max-width: 33.33%; height: auto;">
-    <img src="assets/넥타이펭귄.jpg" alt="넥타이펭귄" style="max-width: 33.33%; height: auto;">
-</div>
+<table>
+  <tr>
+    <td align="center"><img src="assets/왕관펭귄.jpg" alt="왕관펭귄"><br>왕관펭귄</td>
+    <td align="center"><img src="assets/까망펭귄.jpg" alt="까망펭귄"><br>까망펭귄</td>
+    <td align="center"><img src="assets/넥타이펭귄.jpg" alt="넥타이펭귄"><br>넥타이펭귄</td>
+  </tr>
+</table>
 
-<div style="display: flex; justify-content: center; width: 100%;">
-    <img src="assets/갈색곰탱이.jpg" alt="갈색곰탱이" style="max-width: 33.33%; height: auto;">
-    <img src="assets/판다곰탱이.jpg" alt="판다곰탱이" style="max-width: 33.33%; height: auto;">
-    <img src="assets/북극곰탱이.jpg" alt="북극곰탱이" style="max-width: 33.33%; height: auto;">
-</div>
+<table>
+  <tr>
+    <td align="center"><img src="assets/갈색곰탱이.jpg" alt="갈색곰탱이"><br>갈색곰탱이</td>
+    <td align="center"><img src="assets/판다곰탱이.jpg" alt="판다곰탱이"><br>판다곰탱이</td>
+    <td align="center"><img src="assets/북극곰탱이.jpg" alt="북극곰탱이"><br>북극곰탱이</td>
+  </tr>
+</table>
 
 
 
