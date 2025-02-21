@@ -313,7 +313,7 @@ YOLO 는 실시간 객체 탐지를 위한 딥러닝 모델로, 이미지를 분
 - 동기화된 매물데이터를 대상으로 검색을 할 수 있습니다.
 - 시군구 데이터를 Nori, N-gram, 자소 분석기를 이용해 저장해 부분 문자열 일치, 초성 검색, 영어 오타 검색이 가능합니다. 또한 검색필터에 가중치를 중요한 키워드를 우선으로 검색되게 하였습니다.
 
-<img src="assets/검색.gif"></img>
+![검색.gif](assets/검색.gif)
 
 ### 결과
 
@@ -404,7 +404,7 @@ RAM 사용량 등을 알 수 있습니다.
 
 ## 3. API
 
-<img src="assets/api.gif"></img>
+![api.gif](assets/api.gif)
 
 # 🍿이걸루 History
 
@@ -449,7 +449,7 @@ RAM 사용량 등을 알 수 있습니다.
 
 ### 2025.02.10 - 몬데이스피치
 
-<img src="assets/0209.gif"></img>
+![0209.gif](assets/0209.gif)
 
 ### 2025.02.07 - AI 로 표현하는 나만의 프로젝트 수상
 
@@ -459,7 +459,7 @@ RAM 사용량 등을 알 수 있습니다.
 
 ### **2025.02.05 - 중간발표**
 
-<img src="assets/칠가이.gif"></img>
+![칠가이.gif](assets/칠가이.gif)
 
 ---
 
@@ -467,17 +467,17 @@ RAM 사용량 등을 알 수 있습니다.
 
 <table>
   <tr>
-    <td align="center"><img src="assets/왕관펭귄.jpg" alt="왕관펭귄"><br>왕관펭귄</td>
-    <td align="center"><img src="assets/까망펭귄.jpg" alt="까망펭귄"><br>까망펭귄</td>
-    <td align="center"><img src="assets/넥타이펭귄.jpg" alt="넥타이펭귄"><br>넥타이펭귄</td>
+    <td align="center"><img src="assets/왕관펭귄.jpg" alt="왕관펭귄"></td>
+    <td align="center"><img src="assets/까망펭귄.jpg" alt="까망펭귄"></td>
+    <td align="center"><img src="assets/넥타이펭귄.jpg" alt="넥타이펭귄"></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <td align="center"><img src="assets/갈색곰탱이.jpg" alt="갈색곰탱이"><br>갈색곰탱이</td>
-    <td align="center"><img src="assets/판다곰탱이.jpg" alt="판다곰탱이"><br>판다곰탱이</td>
-    <td align="center"><img src="assets/북극곰탱이.jpg" alt="북극곰탱이"><br>북극곰탱이</td>
+    <td align="center"><img src="assets/갈색곰탱이.jpg" alt="갈색곰탱이"></td>
+    <td align="center"><img src="assets/판다곰탱이.jpg" alt="판다곰탱이"></td>
+    <td align="center"><img src="assets/북극곰탱이.jpg" alt="북극곰탱이"></td>
   </tr>
 </table>
 
