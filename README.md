@@ -153,11 +153,6 @@
 - 중개인 채팅페이지에서는 “예약” 과 “라이브” 가 가능합니다.
 - 라이브를 시작시, 라이브를 할 매물을 선택하고 라이브를 시작합니다.
 
-<div style="display: flex; justify-content: center; width: 100%; gap: 10px; margin-bottom: 10px;">
-    <img src="assets/image%2018.png" alt="image18" style="width: 100%; max-width: 50%; height: auto;">
-    <img src="assets/image%2019.png" alt="image19" style="width: 100%; max-width: 50%; height: auto;">
-</div>
-
 <div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
     <img src="assets/공인중개사약속.gif" alt="공인중개사약속" style="width: 100%; max-width: 50%; height: auto;">
     <img src="assets/공인중개사라이브시작.gif" alt="공인중개사라이브시작" style="width: 100%; max-width: 50%; height: auto;">
