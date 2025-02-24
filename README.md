@@ -416,19 +416,19 @@ RAM 사용량 등을 알 수 있습니다.
         <td><img src="assets/판다곰탱이.jpg" alt="판다곰탱이" style="width: 100%; height: auto;"></td>
     </tr>
     <tr>
-        <td><strong>Frontend/팀장</strong></td>
         <td><strong>Frontend</strong></td>
         <td><strong>Frontend</strong></td>
-        <td><strong>Backend/Infra</strong></td>
+        <td><strong>Frontend</strong></td>
+        <td><strong>Backend</strong></td>
         <td><strong>Backend</strong></td>
         <td><strong>Backend</strong></td>
     </tr>
     <tr>
-        <td>라이브, 마이페이지, 객체탐지AI</td>
+        <td>라이브, 마이페이지, 객체 탐지AI</td>
         <td>채팅방, 유저, 알림</td>
-        <td>QA, 매물, 지도</td>
-        <td>인프라, 객체 탐지AI, 채팅 with WebFlux</td>
-        <td>STT, 라이브, 알림</td>
+        <td>매물, 지도</td>
+        <td>인프라, 객체 탐지AI, 채팅</td>
+        <td>라이브, 알림, 다시보기</td>
         <td>발표, 매물, 유저</td>
     </tr>
 </table>
