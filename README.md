@@ -68,68 +68,61 @@
 
 - 공인중개사와 고객(세입자) 로 나뉘어져 있습니다.
 
-![image.png](assets/image.png)
+![로그인선택.gif](assets/로그인선택.gif)
 
 - 고객 로그인
 
-![image.png](assets/image%201.png)
+![고객로그인.gif](assets/고객로그인.gif)
 
 - 공인중개사 로그인
 
-![image.png](assets/image%202.png)
+![공인중개사로그인.gif](assets/공인중개사로그인.gif)
 
-## 메인페이지 - 세입자
+## 메인 페이지 - 세입자
 
 - 세입자 메인페이지 입니다. 세입자는 웹으로 이용할 수 있습니다.
 - 메인페이지에는 알람, 채팅을 확인할 수 있습니다.
 - 알람의 경우 예약된 날짜를 알려줍니다.
 
-![image.png](assets/image%203.png)
-
-![image.png](assets/image%204.png)
+![메인페이지.gif](assets/메인페이지.gif)
 
 ## 원룸 페이지
 
 - 지도페이지에서는 매물들을 확인할 수 있으며, 옵션을 걸어서 원하는 조건의 매물들을 검색할 수 있습니다.
 
-![image.png](assets/image%205.png)
-
-![image.png](assets/image%206.png)
+![지도.gif](assets/지도.gif)
 
 ## 이상집월드컵 페이지
 
 - 선택하는데 어려움을 겪는다면 “이상집월드컵” 을 통해 마음에 드는 매물을 고를 수 있습니다.
 
-![image.png](assets/image%207.png)
+![이상집월드컵.gif](assets/이상집월드컵.gif)
 
-![image.png](assets/image%208.png)
-
-## 중개인페이지
+## 중개인 페이지
 
 - 중개인 페이지에서는 근처 중개인들을 조회 가능하며, 클릭하면 해당 중개인의 상세정보를 살펴볼 수 있습니다.
 - 중개인 상세정보 페이지에서는 해당 중개인이 가지고 있는 매물을 볼 수 있는 “매물보기” 기능과 상담을 하기위한 “채팅하기” 기능이 있습니다.
 
-![image.png](assets/image%209.png)
+![공인중개사목록.gif](assets/공인중개사목록.gif)
 
-![image.png](assets/image%2010.png)
+## 고객 라이브 페이지
 
-![image.png](assets/image%2011.png)
-
-## 라이브페이지
-
-![image.png](assets/image%2012.png)
-
-- 고객(사용자) 라이브 페이지
+- 채팅 또는 라이브 방송 참여하기 페이지에서 라이브에 참여할 수 있습니다.
 - 사용자 라이브페이지 에서는 AI 체크리스트를 통해 확인해야할 사항을 자동으로 받습니다.
 - 사용자가 현재 라이브매물에 기록하고 싶은것을 메모할 수 있습니다.
 - 공인중개사가 설정한 매물 순서가 뜨고, 현재 공인중개사의 실시간 위치를 알 수 있습니다.
 
-![image (1).png](assets/image_(1).png)
+![라이브페이지.png](assets/라이브페이지.png)
 
-- 공인중개사 라이브 페이지
-- 공인중개사 라이브 페이지에서는 다음 매물로 넘어갈려면 화살표를 터치하면 됩니다.
+![assets/객체탐지2.gif](assets/객체탐지2.gif)
 
-![image.png](assets/image%2013.png)
+## 공인중개사 라이브 페이지
+
+- 채팅방에서 라이브를 클릭 후, 라이브에서 보여줄 매물을 선택한 후 시작합니다.
+- 화살표를 눌러 다음 매물로 넘어갈 수 있습니다.
+- 매물별 녹화 버튼을 지원합니다.
+
+![공인중개사라이브화면.gif](assets/공인중개사라이브화면.gif)
 
 ## 마이페이지
 
@@ -137,7 +130,7 @@
 - 공인중개사와 약속된 라이브를 확인할 수 있습니다.
 - 과거에 라이브했던 매물을 다시볼 수 있습니다.
 
-![image.png](assets/image%2014.png)
+![고객마이페이지.gif](assets/고객마이페이지.gif)
 
 ## 다시보기 페이지
 
@@ -145,15 +138,15 @@
 - 매물별로 CLOVA + GPT 로 요약된 정보를 확인할 수 있습니다.
 - 사용자가 별도로 메모한 내용도 확인할 수 있습니다.
 
-![image.png](assets/image%2015.png)
+![매물다시보기.gif](assets/매물다시보기.gif)
 
 ## 메인페이지 - 중개인
 
-![image.png](assets/image%2016.png)
+![공인중개사메인페이지.gif](assets/공인중개사메인페이지.gif)
 
 ## 달력 페이지 - 중개인
 
-![image.png](assets/image%2017.png)
+![공인중개사캘린더.gif](assets/공인중개사캘린더.gif)
 
 ## 채팅 페이지 - 중개인
 
@@ -166,8 +159,8 @@
 </div>
 
 <div style="display: flex; justify-content: center; width: 100%; gap: 10px;">
-    <img src="assets/image%2020.png" alt="image20" style="width: 100%; max-width: 50%; height: auto;">
-    <img src="assets/image%2021.png" alt="image21" style="width: 100%; max-width: 50%; height: auto;">
+    <img src="assets/공인중개사약속.gif" alt="공인중개사약속" style="width: 100%; max-width: 50%; height: auto;">
+    <img src="assets/공인중개사라이브시작.gif" alt="공인중개사라이브시작" style="width: 100%; max-width: 50%; height: auto;">
 </div>
 
 ## 마이페이지 - 중개인
@@ -175,13 +168,13 @@
 - 마이페이지에서 중개인은 새로운 “매물 등록” 이 가능합니다.
 - 그리고 등록한 매물에 대해서 “매물 수정” 이 가능합니다.
 
-![image.png](assets/image%2022.png)
+![공인중개사마이페이지.gif](assets/공인중개사마이페이지.gif)
 
 ## 매물 등록/수정 페이지
 
 <div style="display: flex; justify-content: center; width: 100%; gap: 10px; margin-bottom: 10px;">
-    <img src="assets/image%2023.png" alt="image23" style="max-width: 50%; height: auto;">
-    <img src="assets/image%2024.png" alt="image24" style="max-width: 50%; height: auto;">
+    <img src="assets/매물등록.gif" alt="매물등록" style="max-width: 50%; height: auto;">
+    <img src="assets/매물수정.gif" alt="매물수정" style="max-width: 50%; height: auto;">
 </div>
 
 # 🛠️기술 스택
