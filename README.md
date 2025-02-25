@@ -197,7 +197,7 @@ WebRTC (Web Real-Time Communication) 은 별도의 서버 없이 P2P 방식으�
 
 <aside>
 
-WebRTC 를 기반으로 만들어진 오픈소스 라이브러리 입니다. Openvidu 2.30.0 버전의 경우 내부적으로 Kurento 미디어 서버를 사용합니다.
+WebRTC 를 기반으로 만들어진 오픈소스 라이브러리 입니다. Openvidu 2.31.0 버전의 경우 내부적으로 Kurento 미디어 서버를 사용합니다.
 
 </aside>
 
